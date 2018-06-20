@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <form>
+	<label for="lcopy" style="display: none; white-space:nowrap;">WebDAV:&nbsp;<input id="webdav_check" style="display: none; position: absolute;left: 80px;" type="checkbox" checked></label>
+	<fieldset id="webdav_set" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
+	<legend>WebDAV</legend>
+		<table style="border-collapse: separate; border-spacing: 0; width: 100%">
+			<tr>
+				<td style="white-space:nowrap; width:100px"><label for="wdurl">WebDAV URL:&nbsp;</label></td>
+				<td><input type="text" id="wdurl" style="display:table-cell; width:100%" placeholder="https://servername.com/your/davfolder" /></td>
+			</tr>
+			<tr>
+				<td colspan=2>
+				<table style="border-collapse: separate; border-spacing: 0; width: 100%">
+					<tr>
+						<td style="white-space:nowrap; width:100px"><label for="user" >Username:&nbsp;</label></td>
+						<td><input type="text" id="user" style="width:100%" placeholder="username"></td>
+						<td style="white-space:nowrap; width:10px"><label for="password" >Password:&nbsp;</label></td>
+						<td><input type="password" id="password" style="width:100%" placeholder="password"></td>
+					</tr>
+				</table>
+				</td>
+			</tr>
+		
+		</table>
+	</fieldset>
+	<div id="wmessage" style="background: transparent; padding: 3px; margin: 2px;">&nbsp;</div>
+	<fieldset id="common" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
+	<legend>Automatic:</legend>
+		<table style="border-collapse: separate; border-spacing: 0; width: 100%">
+			<tr>
+				<td><label style="white-space:nowrap;">Browser startup:&nbsp;<input class="browser-style" id="s_startup" type="checkbox"></label></div></div></td>
+				<td><label style="white-space:nowrap;">Bookmark create:&nbsp;<input id="s_create" type="checkbox"></label></td>
+				<td><label style="white-space:nowrap;">Bookmark change:&nbsp;<input id="s_change" type="checkbox"></label></td>
+				<td><label style="white-space:nowrap;">Bookmark remove:&nbsp;<input id="s_remove" type="checkbox"></label></td>
+			</tr>
+		</table>
+	</fieldset><br>
+	<button id="ssubmit" type="submit" class="browser-style" disabled style="float: right; margin-right: 5px">Save</button>
+	<br><br>
+	<!-- <br> -->
+	<label for="lcopy" style="display: none; white-space:nowrap; width:100px;">Local:&nbsp;<input id="local_check" style="left: 80px;position: absolute;" type="checkbox"></label>
+	<fieldset id="local_set" style="display: none;">
+	<legend>Local</legend>
+		<table style="display: none; border-collapse: separate; border-spacing: 0; width: 100%">
+			<tr>
+				<td style="white-space:nowrap; width:100px"><label for="lcpath">Local Folder:&nbsp;</label></td>
+				<td><input type="text" id="lcpath" style="display:table-cell; width:100%" /></td>
+			</tr>
+		</table>
+	</fieldset>
+	<div id="lmessage" style="display: none; background: transparent; padding: 3px; margin: 2px;">&nbsp;</div>
+	<!-- <br> -->
+    </form>
+	<fieldset id="manual" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
+	<legend>Manual:</legend>
+		<table style="border-collapse: separate; border-spacing: 0; width: 100%">
+			<tr>
+				<td style="text-align: center;"><button id="mdownload" type="button" class="browser-style" disabled>Import</button></td>
+				<td style="text-align: center;"><button id="mupload" type="button" class="browser-style" disabled>Export</button></td>
+			</tr>
+		</table>
+	</fieldset>
+    <script src="options.js"></script>
+  </body>
+</html>
