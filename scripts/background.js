@@ -230,7 +230,7 @@ function onGot(item) {
 	s_create = item.s_create;
 	s_remove = item.s_remove;
 	s_change = item.s_change;
-	last_s = item.last_s || "";
+	last_s = item.last_s || 0;
 	
 	if(item.webdav_check === true || item.local_check === true) {
 		if(item.webdav_check === true) {

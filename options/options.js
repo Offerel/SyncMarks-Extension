@@ -18,7 +18,7 @@ function checkForm() {
 function saveOptions(e) {
 	e.preventDefault();
 	
-	if(typeof last_sync === "undefined" || last_sync.length <= 0) {
+	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
 		document.getElementById('smessage').innerHTML = "It looks like you haven't used the add-on yet. You can now import any bookmarks saved on the server with <b>\"Import\"</b>. If you have already created bookmarks in your browser, it might be a good idea to delete them with <b>\"Remove\"</b>.";
 	}
 	
@@ -73,9 +73,9 @@ function restoreOptions() {
 
 		toggleFieldset();
 		checkForm();
-
-		last_sync = result.last_s || "";
-		if(last_sync.length > 0) {
+		
+		last_sync = result.last_s || 0;
+		if(last_sync.toString().length > 0) {
 			document.querySelector("#s_startup").removeAttribute("disabled");
 		}
 	}
