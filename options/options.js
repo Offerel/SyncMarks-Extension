@@ -5,11 +5,13 @@ function checkForm() {
         document.getElementById('ssubmit').disabled=false;
 		document.getElementById('mdownload').disabled=false;
 		document.getElementById('mupload').disabled=false;
+		document.getElementById('mremove').disabled=false;
     }
 	else{
         document.getElementById('ssubmit').disabled=true;
 		document.getElementById('mdownload').disabled=true;
 		document.getElementById('mupload').disabled=true;
+		document.getElementById('mremove').disabled=false;
     }
 }
 
@@ -88,8 +90,14 @@ function toggleFieldset() {
 }
 
 function manualImport() {
-	if(confirm("When you continue, all your current bookmarks are removed and replaced by the bookmarks from the WebDAV server. Are you sure?")) {
+	if(confirm("When you continue, you are get the bookmarks saved on the server and your local bookmarks could be removed. Are you sure?")) {
 		background_page.getDAVMarks();
+	}
+}
+
+function manualRemove() {
+	if(confirm("When you continue, all your current bookmarks are removed. Are you sure?")) {
+		background_page.removeAllMarks();
 	}
 }
 
@@ -99,7 +107,7 @@ function manualExport() {
 
 function syncWarning() {
 	if(document.getElementById("s_startup").checked) {
-		if(confirm("Warning: If you use \"Firefox Sync\" and activate the option \"Browser startup\", this will lead to duplicate bookmarks. Should this option still be activated?")) {
+		if(confirm("Warning: If you use \"Firefox Sync\" and activate the option \"Browser startup\", it is possible that bookmarks you get duplicates, even if the bookmarks are validated during import. Should this option still be activated?")) {
 			document.getElementById("s_startup").checked = true;
 		}
 		else {
@@ -113,6 +121,7 @@ document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.getElementById("mdownload").addEventListener("click", manualImport);
 document.getElementById("mupload").addEventListener("click", manualExport);
+document.getElementById("mremove").addEventListener("click", manualRemove);
 
 document.getElementById("wdurl").addEventListener("keyup", checkForm);
 document.getElementById("user").addEventListener("keyup", checkForm);

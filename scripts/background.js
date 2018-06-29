@@ -68,8 +68,13 @@ function saveMarks() {
 	var gettingTree = browser.bookmarks.getTree();
 	gettingTree.then(saveDAVMarks, onRejected);
 	
-	let date = new Date();
+	let datems = Date.now();
+	let date = new Date(datems);
 	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	browser.storage.local.set({
+		last_s: datems,
+	});
+	
 	browser.browserAction.setTitle({title: "DAVMarks exported: " + date.toLocaleDateString(navigator.language,doptions)});
 }
 
@@ -113,11 +118,12 @@ function getDAVMarks() {
 		}
 		else {
 			let DAVMarks = JSON.parse(xhr.responseText);
-			removeAllMarks();
 			browser.bookmarks.onCreated.removeListener(onCreatedCheck);
 			browser.bookmarks.onRemoved.removeListener(onRemovedCheck);
+			//removeAllMarks();
 			pMarks = [];
 			let parsedMarks = parseMarks(DAVMarks, index=0);
+			count = 0;
 			addAllMarks(parsedMarks);			
 		}
 	}
@@ -156,9 +162,10 @@ function addAllMarks(parsedMarks, index=1) {
     let bmtitle = parsedMarks[index].title;
     let bmtype = parsedMarks[index].type;
     let bmurl = parsedMarks[index].url;
+	let bmdate = parsedMarks[index].dateAdded;
     let newParentId = (typeof bmparentId !== 'undefined' && bmparentId.substr(bmparentId.length - 2) == "__") ? bmparentId : dictOldIDsToNewIDs[bmparentId];
 	
-	if(bmparentId == "root________") {
+	if(bmparentId == "root________" || bmdate < last_s) {
 		addAllMarks(parsedMarks, ++index);
 		return false;
 	}
@@ -189,17 +196,22 @@ function addAllMarks(parsedMarks, index=1) {
 	).then(function(node) {
 		let newID = bmid.substr(bmid.length - 2) == "__" ? bmid : node.id;
 		dictOldIDsToNewIDs[bmid] = newID;
+		++count;
 
 		if (typeof parsedMarks[index+1] !== 'undefined') {
 			addAllMarks(parsedMarks, ++index);
 		}
 		else {
-			notify('info','Imported ' + index + ' bookmarks/folders.');
+			notify('info','Imported ' + count + ' bookmarks/folders.');
 			browser.bookmarks.onCreated.addListener(onCreatedCheck);
 			browser.bookmarks.onRemoved.addListener(onRemovedCheck);
 			
-			let date = new Date();
+			let datems = Date.now();
+			let date = new Date(datems);
 			let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+			browser.storage.local.set({
+				last_s: datems,
+			});
 			browser.browserAction.setTitle({title: "DAVMarks imported: " + date.toLocaleDateString(navigator.language,doptions)});
 		}
 	}, function(err) {
@@ -216,6 +228,7 @@ function onGot(item) {
 	s_create = item.s_create;
 	s_remove = item.s_remove;
 	s_change = item.s_change;
+	last_s = item.last_s;
 	
 	if(item.webdav_check === true || item.local_check === true) {
 		if(item.webdav_check === true) {
