@@ -18,6 +18,10 @@ function checkForm() {
 function saveOptions(e) {
 	e.preventDefault();
 	
+	if(typeof last_sync === "undefined" || last_sync.length <= 0) {
+		document.getElementById('smessage').innerHTML = "It looks like you haven't used the add-on yet. You can now import any bookmarks saved on the server with <b>\"Import\"</b>. If you have already created bookmarks in your browser, it might be a good idea to delete them with <b>\"Remove\"</b>.";
+	}
+	
 	browser.storage.local.set({
 		s_startup: document.querySelector("#s_startup").checked,
 		s_create: document.querySelector("#s_create").checked,
@@ -44,8 +48,6 @@ function saveOptions(e) {
 							user: document.querySelector("#user").value,
 							password: document.querySelector("#password").value,
 							webdav_check: document.querySelector("#webdav_check").checked,
-							//local_check: document.querySelector("#local_check").checked,
-							//lcpath: document.querySelector("#lcpath").value
 						});
 						break;
 			default:	document.getElementById('wmessage').innerHTML = "Login failed: Status = " + xhr.status;
@@ -63,15 +65,19 @@ function restoreOptions() {
 		document.querySelector("#user").value = result.user || "";
 		document.querySelector("#password").value = result.password || "";
 		document.querySelector("#webdav_check").checked = result.webdav_check || true;
-		//document.querySelector("#local_check").checked = result.local_check || false;
-		//document.querySelector("#lcpath").value = result.lcpath || "";
 		
 		document.querySelector("#s_startup").checked = result.s_startup || false;
 		document.querySelector("#s_create").checked = result.s_create || false;
 		document.querySelector("#s_remove").checked = result.s_remove || false;
 		document.querySelector("#s_change").checked = result.s_change || false;
+
 		toggleFieldset();
 		checkForm();
+
+		last_sync = result.last_s || "";
+		if(last_sync.length > 0) {
+			document.querySelector("#s_startup").removeAttribute("disabled");
+		}
 	}
 
 	function onError(error) {
@@ -84,13 +90,13 @@ function restoreOptions() {
 
 function toggleFieldset() {
 	var dav_toggle = document.getElementById("webdav_set");
-	var local_toggle = document.getElementById("local_set");
 	document.getElementById("webdav_check").checked ? dav_toggle.disabled = false : dav_toggle.disabled = true;
-	document.getElementById("local_check").checked ? local_toggle.disabled = false : local_toggle.disabled = true;
 }
 
 function manualImport() {
 	if(confirm("When you continue, you are get the bookmarks saved on the server and your local bookmarks could be removed. Are you sure?")) {
+		browser.storage.local.set({last_s: 1});
+		document.querySelector("#s_startup").removeAttribute("disabled");
 		background_page.getDAVMarks();
 	}
 }
@@ -122,9 +128,7 @@ document.querySelector("form").addEventListener("submit", saveOptions);
 document.getElementById("mdownload").addEventListener("click", manualImport);
 document.getElementById("mupload").addEventListener("click", manualExport);
 document.getElementById("mremove").addEventListener("click", manualRemove);
-
 document.getElementById("wdurl").addEventListener("keyup", checkForm);
 document.getElementById("user").addEventListener("keyup", checkForm);
 document.getElementById("password").addEventListener("keyup", checkForm);
-
 document.getElementById("s_startup").addEventListener("input", syncWarning);

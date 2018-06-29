@@ -45,7 +45,6 @@ function onCreatedCheck() {
 function onChangedCheck() {
 	checkSettings();
 	if(s_change === true) {
-		console.log("changed");
 		saveMarks();
 	}
 }
@@ -105,6 +104,7 @@ function saveDAVMarks(bookmarkItems) {
 
 function getDAVMarks() {
 	checkSettings();
+
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', davurl + '/' + filename + '?t=' + Math.random(), true);
 	
@@ -120,7 +120,6 @@ function getDAVMarks() {
 			let DAVMarks = JSON.parse(xhr.responseText);
 			browser.bookmarks.onCreated.removeListener(onCreatedCheck);
 			browser.bookmarks.onRemoved.removeListener(onRemovedCheck);
-			//removeAllMarks();
 			pMarks = [];
 			let parsedMarks = parseMarks(DAVMarks, index=0);
 			count = 0;
@@ -152,6 +151,9 @@ function removeAllMarks() {
 		});
 	});
 	browser.bookmarks.onRemoved.addListener(onRemovedCheck);
+	browser.storage.local.set({
+		last_s: 1,
+	});
 }
 
 function addAllMarks(parsedMarks, index=1) {
@@ -228,7 +230,7 @@ function onGot(item) {
 	s_create = item.s_create;
 	s_remove = item.s_remove;
 	s_change = item.s_change;
-	last_s = item.last_s;
+	last_s = item.last_s || "";
 	
 	if(item.webdav_check === true || item.local_check === true) {
 		if(item.webdav_check === true) {
