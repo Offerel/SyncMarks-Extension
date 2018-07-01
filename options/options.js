@@ -47,7 +47,6 @@ function saveOptions(e) {
 							wdurl: document.querySelector("#wdurl").value,
 							user: document.querySelector("#user").value,
 							password: document.querySelector("#password").value,
-							webdav_check: document.querySelector("#webdav_check").checked,
 						});
 						break;
 			default:	document.getElementById('wmessage').innerHTML = "Login failed: Status = " + xhr.status;
@@ -64,14 +63,12 @@ function restoreOptions() {
 		document.querySelector("#wdurl").value = result.wdurl || "";
 		document.querySelector("#user").value = result.user || "";
 		document.querySelector("#password").value = result.password || "";
-		document.querySelector("#webdav_check").checked = result.webdav_check || true;
 		
 		document.querySelector("#s_startup").checked = result.s_startup || false;
 		document.querySelector("#s_create").checked = result.s_create || false;
 		document.querySelector("#s_remove").checked = result.s_remove || false;
 		document.querySelector("#s_change").checked = result.s_change || false;
 
-		toggleFieldset();
 		checkForm();
 		
 		last_sync = result.last_s || 0;
@@ -86,11 +83,6 @@ function restoreOptions() {
 
 	var getting = browser.storage.local.get();
 	getting.then(setCurrentChoice, onError);
-}
-
-function toggleFieldset() {
-	var dav_toggle = document.getElementById("webdav_set");
-	document.getElementById("webdav_check").checked ? dav_toggle.disabled = false : dav_toggle.disabled = true;
 }
 
 function manualImport() {
@@ -122,7 +114,6 @@ function syncWarning() {
 	}
 }
 
-document.querySelector("form").addEventListener("change", toggleFieldset);
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.getElementById("mdownload").addEventListener("click", manualImport);

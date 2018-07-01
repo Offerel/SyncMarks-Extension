@@ -1,8 +1,8 @@
 {
 	"manifest_version": 2,
 	"name": "DAVMarks",
-	"version": "1.0.2",
-	"description": "Export current bookmarks when Firefox closes",
+	"version": "1.0.3",
+	"description": "Export/Import/Sync Firefox bookmarks to a WebDAV share.",
 	"icons": {
 		"48": "icons/bookmark.png"
 	},
@@ -18,7 +18,8 @@
 	},
 	"browser_action": {
 		"default_icon": "icons/bookmark.png",
-		"default_title": "DAVMarks"
+		"default_title": "DAVMarks",
+		"default_popup": "scripts/popup.html"
 	},
 	"options_ui": {
 		"page": "options/options.html",
