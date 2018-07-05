@@ -232,14 +232,11 @@ function onGot(item) {
 	s_change = item.s_change;
 	last_s = item.last_s || 0;
 	
-	if(item.webdav_check === true || item.local_check === true) {
-		if(item.webdav_check === true) {
-			davurl = item.wdurl;
-			user = item.user;
-			pw = item.password;
-		}
-	}
-	else {
-		notify('setting', 'You have to configure and activate at least one storage type in the options of DAVMarks, so that the AddOn can process the bookmarks.');
+	davurl = item.wdurl || "";
+	user = item.user || "";
+	pw = item.password || "";
+	
+	if(davurl.length <= 0 || user.length <= 0 || pw.length <= 0) {
+		notify('setting', 'You should configure url, user and password in the options of DAVMarks, so that the AddOn can process the bookmarks.');
 	}
 }

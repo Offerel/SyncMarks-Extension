@@ -90,10 +90,49 @@ function restoreOptions() {
 }
 
 function manualImport() {
-	if(confirm("When you continue, you are get the bookmarks saved on the server and your local bookmarks could be removed. Are you sure?")) {
-		browser.storage.local.set({last_s: 1});
-		document.querySelector("#s_startup").removeAttribute("disabled");
-		background_page.getDAVMarks();
+	var bookmarks = browser.bookmarks.search({});
+	bookmarks.then(doImport, background_page.onRejected);
+	
+	function doImport(bookmarks) {
+		let count = 0;
+		for (item of bookmarks) {
+			if(typeof item.url !== 'undefined' && item.url.startsWith("http"))
+				count++;
+		}
+		
+		if(count > 0) {
+			let modal = document.getElementById('importConfirm');
+			let impMessage = document.getElementById('impMessage');
+			var span = document.getElementsByClassName("close")[0];
+			
+			modal.style.display = "block";
+			span.onclick = function() {
+				modal.style.display = "none";
+			}
+			
+			impMessage.textContent = 'You have ' + count + ' bookmarks saved in your library. Would you like to remove them before you import new bookmarks?';
+			
+			document.getElementById('impYes').onclick = function(e) {
+				background_page.removeAllMarks();
+				browser.storage.local.set({last_s: 1});
+				background_page.getDAVMarks();
+				modal.style.display = "none";
+			};
+			
+			document.getElementById('impNo').onclick = function(e) {
+				background_page.getDAVMarks();
+				modal.style.display = "none";
+			};
+			
+			document.getElementById('impCancel').onclick = function(e) {
+				modal.style.display = "none";
+			};
+		}
+		else {
+			browser.storage.local.set({last_s: 1});
+			document.querySelector("#s_startup").removeAttribute("disabled");
+			background_page.getDAVMarks();
+		}
 	}
 }
 
@@ -104,6 +143,7 @@ function manualRemove() {
 }
 
 function manualExport() {
+	var gettingTree = browser.bookmarks.getTree();
 	background_page.saveMarks();
 }
 
