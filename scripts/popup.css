@@ -1,34 +1,44 @@
 .popupButton {
-	box-shadow: inset 0px 1px 0px 0px #ffffff;
-	background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
-	background-color: #f9f9f9;
-	border-radius: 6px;
-	border: 1px solid #dcdcdc;
-	display: block;
-	cursor: pointer;
-	color: #666666;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	font-weight: bold;
-	padding: 3px 0 3px 6px;
-	text-decoration: none;
-	text-shadow: 0px 1px 0px #ffffff;
-	width: 100%;
-	margin: 0 0 5px 0;
 	text-align: left;
+	font: menu;
+	background-color: transparent;
+	width: 100%;
+	min-height: 25px;
+	background-repeat: no-repeat;
+	padding-left: 40px;
+	border: 0;
+	background-position-x: 10px;
+	margin-top: 5px;
 }
 .popupButton:hover {
-	background: linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
-	background-color: #e9e9e9;
+	background-color: #f2f2f2;
 }
 .popupButton:active {
-	position:relative;
-	top:1px;
+	position: relative;
+	top: 1px;
+	background-color: Highlight;
+}
+#import {
+	background-image: url(import.png);
+}
+#export {
+	background-image: url(export.png);
+}
+#remove {
+	background-image: url(remove.png);
+	background-position-x: 6px;
+}
+#settings {
+	background-image: url(settings.png);
+	background-position-x: 7px;
 }
 #popup-content {
 	min-width: 120px;
 }
 html {
 	max-height: 100px;
-	background: #D3D3D3;
+}
+body {
+	margin: 0;
+	padding: 0;
 }

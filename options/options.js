@@ -33,24 +33,28 @@ function saveOptions(e) {
 	xhr.open("GET", document.querySelector("#wdurl").value, true);
 	xhr.withCredentials = true;
 	xhr.setRequestHeader("Authorization", 'Basic ' + btoa(document.querySelector("#user").value + ":" + document.querySelector("#password").value));
+	let message = document.getElementById('wmessage');
 	xhr.onload = function () {
 		switch(xhr.status) {
-			case 404: 	document.getElementById('wmessage').innerHTML = "Login failed: Please check the WebDAV URL. It should be in a form like https://servername/folder";
-						document.getElementById('wmessage').style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
+
+			
+			
+			case 404: 	message.textContent = 'Login failed: Please check the WebDAV URL. It should be in a form like https://servername/folder';
+						message.style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
 						break;
-			case 401:	document.getElementById('wmessage').innerHTML = "Login failed: Please check username and password";
-						document.getElementById('wmessage').style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
+			case 401:	message.textContent = 'Login failed: Please check username and password';
+						message.style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
 						break;
-			case 200:	document.getElementById('wmessage').innerHTML = "Login successfully. Options saved";
-						document.getElementById('wmessage').style.cssText = "background: #98FB98; padding: 3px; margin: 2px;";
+			case 200:	message.textContent = 'Login successfully. Options saved';
+						message.style.cssText = "background: #98FB98; padding: 3px; margin: 2px;";
 						browser.storage.local.set({
 							wdurl: document.querySelector("#wdurl").value,
 							user: document.querySelector("#user").value,
 							password: document.querySelector("#password").value,
 						});
 						break;
-			default:	document.getElementById('wmessage').innerHTML = "Login failed: Status = " + xhr.status;
-						document.getElementById('wmessage').style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
+			default:	message.textContent = 'Login failed: Status = ' + xhr.status;
+						message.style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
 						break;
 		}
 	};
