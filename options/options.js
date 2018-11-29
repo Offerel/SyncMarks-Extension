@@ -1,7 +1,7 @@
 var background_page = browser.extension.getBackgroundPage();
 
 function checkForm() {
-	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != ''){
+	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value != true){
         document.getElementById('ssubmit').disabled=false;
 		document.getElementById('mdownload').disabled=false;
 		document.getElementById('mupload').disabled=false;
@@ -27,6 +27,7 @@ function saveOptions(e) {
 		s_create: document.querySelector("#s_create").checked,
 		s_remove: document.querySelector("#s_remove").checked,
 		s_change: document.querySelector("#s_change").checked,
+		s_type: document.querySelector('input[name="stype"]:checked').value,
 	});
 	
 	var xhr = new XMLHttpRequest();
@@ -72,6 +73,8 @@ function restoreOptions() {
 		document.querySelector("#s_create").checked = result.s_create || false;
 		document.querySelector("#s_remove").checked = result.s_remove || false;
 		document.querySelector("#s_change").checked = result.s_change || false;
+		
+		document.querySelector('input[name="stype"][value="'+ result.s_type +'"]').checked=true;
 
 		checkForm();
 		
@@ -115,15 +118,25 @@ function manualImport() {
 			document.getElementById('impYes').onclick = function(e) {
 				background_page.removeAllMarks();
 				browser.storage.local.set({last_s: 1});
-				background_page.getDAVMarks();
-				modal.style.display = "none";
+				if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
+					background_page.getDAVMarks();
+					modal.style.display = "none";
+				}
+				else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
+					background_page.getAllPHPMarks();
+					modal.style.display = "none";
+				}
 			};
-			
 			document.getElementById('impNo').onclick = function(e) {
-				background_page.getDAVMarks();
-				modal.style.display = "none";
+				if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
+					background_page.getDAVMarks();
+					modal.style.display = "none";
+				}
+				else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
+					background_page.getAllPHPMarks();
+					modal.style.display = "none";
+				}
 			};
-			
 			document.getElementById('impCancel').onclick = function(e) {
 				modal.style.display = "none";
 			};
@@ -131,7 +144,12 @@ function manualImport() {
 		else {
 			browser.storage.local.set({last_s: 1});
 			document.querySelector("#s_startup").removeAttribute("disabled");
-			background_page.getDAVMarks();
+			if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
+				background_page.getDAVMarks();
+			}
+			else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
+				background_page.getAllPHPMarks();
+			}
 		}
 	}
 }
@@ -139,12 +157,19 @@ function manualImport() {
 function manualRemove() {
 	if(confirm("When you continue, all your current bookmarks are removed. Are you sure?")) {
 		background_page.removeAllMarks();
+		browser.storage.local.set({last_s: 1});
 	}
 }
 
 function manualExport() {
-	var gettingTree = browser.bookmarks.getTree();
-	background_page.saveMarks();
+	if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
+		background_page.saveAllMarks();
+	}
+	else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
+		var background_page = browser.extension.getBackgroundPage();
+		console.log(background_page);
+		background_page.exportPHPMarks();
+	}
 }
 
 function syncWarning() {
@@ -167,3 +192,10 @@ document.getElementById("wdurl").addEventListener("keyup", checkForm);
 document.getElementById("user").addEventListener("keyup", checkForm);
 document.getElementById("password").addEventListener("keyup", checkForm);
 document.getElementById("s_startup").addEventListener("input", syncWarning);
+
+document.getElementById("wdav").addEventListener("input", checkForm);
+document.getElementById("php").addEventListener("input", checkForm);
+document.getElementById("s_startup").addEventListener("input", checkForm);
+document.getElementById("s_create").addEventListener("input", checkForm);
+document.getElementById("s_change").addEventListener("input", checkForm);
+document.getElementById("s_remove").addEventListener("input", checkForm);

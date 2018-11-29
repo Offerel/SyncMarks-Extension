@@ -7,10 +7,21 @@
   <body>
     <form>
 	<fieldset id="webdav_set" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
-	<legend>WebDAV</legend>
+	<legend>Server</legend>
 		<table style="border-collapse: separate; border-spacing: 0; width: 100%">
 			<tr>
-				<td style="white-space:nowrap; width:100px"><label for="wdurl">WebDAV URL:&nbsp;</label></td>
+				<td style="white-space:nowrap; width:100px">
+					Server type:
+				</td>
+				<td>
+					<label for="wdav">WebDAV</label>
+					<input type="radio" id="wdav" name="stype" value="WebDAV" checked>					
+					<label for="php">PHP</label>
+					<input type="radio" id="php" name="stype" value="PHP">
+				</td>
+			</tr>
+			<tr>
+				<td style="white-space:nowrap; width:100px"><label for="wdurl">Server URL:&nbsp;</label></td>
 				<td><input type="text" id="wdurl" style="display:table-cell; width:100%" placeholder="https://servername.com/your/davfolder" /></td>
 			</tr>
 			<tr>
