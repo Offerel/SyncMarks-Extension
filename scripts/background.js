@@ -15,9 +15,11 @@ function init() {
 	getting.then( (option) => {
 		let start = option.s_startup || false;
 		if( start === true && s_type.indexOf('PHP') == -1) {
+			console.log("Initiate WebDAV startup sync");
 			getDAVMarks();
 		}
 		else if(start === true && s_type.indexOf('PHP') == 0) {
+			console.log("Initiate PHP startup sync");
 			getPHPMarks();
 		}
 	});
@@ -260,21 +262,26 @@ function getPHPMarks() {
 		browser.browserAction.setTitle({title: "PHPMarks: " + date.toLocaleDateString(navigator.language,doptions)});
 		if( xhr.status != 200 ) {
 			notify('error','There was a error retrieving the bookmarks from the server. The status response is: ' + xhr.status);
+			console.log('There was a error retrieving the bookmarks from the server. The status response is: ' + xhr.status);
 		}
 		else {
 			let PHPMarks = JSON.parse(xhr.responseText);
 			if(PHPMarks.includes('New client registered')) {
 				notify('info','This browser seems to be a new client for the server. The client is now registered at the server. No bookmarks imported. You can import them naually.');
+				console.log('This browser seems to be a new client for the server. The client is now registered at the server. No bookmarks imported. You can import them naually.');
 			}
 			else if(PHPMarks.includes('No bookmarks added')) {
 				console.log("Couldn't found new added or moved bookmarks since the last sync.");
 			}
 			else {
+				console.log(new Date().toLocaleString() + " - Got "+PHPMarks.length+" changes from server, sending them to add function");
+				console.log("Got "+PHPMarks.length+" changes from server, sending them to add function");
 				addPHPMarks(PHPMarks);
-				notify('info',PHPMarks.length + " Bookmarks added, changed or removed in startup sync.");
+				notify('info','Got '+PHPMarks.length+" Bookmark changes from server.");
 			}		
 		}
 	}
+	console.log("sending params to server (client,type,action): "+s_uuid+", firefox, startup");
 	xhr.send(params);
 }
 
@@ -309,6 +316,7 @@ function getAllPHPMarks() {
 function addPHPMarks(bArray) {
 	bArray.forEach(function(bookmark) {
 		if(bookmark.bmAction == 1 && bookmark.bmURL != '') {
+			console.log("Try to remove bookmark "+bookmark.bmURL);
 			browser.bookmarks.search({url: bookmark.bmURL}).then(function(removeItems) {
 				removeItems.forEach(function(removeBookmark) {
 					if(removeBookmark.dateAdded == bookmark.bmAdded) {
@@ -323,6 +331,7 @@ function addPHPMarks(bArray) {
 		}
 		else {
 			if(!bookmark.fdID.endsWith('___')) {
+				console.log("Changed bookmark is in userfolder");
 				browser.bookmarks.search({title: bookmark.fdName}).then(function(folderItems) {
 					folderItems.forEach(function(folder) {
 						if(folder.index == bookmark.fdIndex) {
@@ -349,6 +358,7 @@ function addPHPMarks(bArray) {
 				}, onRejected);
 			}
 			else {
+				console.log("Changed bookmark is in systemfolder");
 				if(bookmark.bmURL != '') {
 					browser.bookmarks.search({url: bookmark.bmURL}).then(function(bookmarkItems) {
 						if (bookmarkItems.length) {

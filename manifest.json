@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "DAVMarks",
-	"version": "1.10.2",
+	"version": "1.10.3",
 	"description": "Export/Import/Sync Firefox bookmarks to WebDAV or PHP.",
 	"icons": {
 		"48": "icons/bookmark.png"
