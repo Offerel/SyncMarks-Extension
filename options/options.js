@@ -183,6 +183,16 @@ function syncWarning() {
 	}
 }
 
+function getLog() {
+	if(this.checked) {
+		document.getElementById("logarea").style.display = "block";
+		document.getElementById("logarea").value = background_page.loglines;
+	}
+	else {
+		document.getElementById("logarea").style.display = "none";
+	}
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.getElementById("mdownload").addEventListener("click", manualImport);
@@ -199,3 +209,5 @@ document.getElementById("s_startup").addEventListener("input", checkForm);
 document.getElementById("s_create").addEventListener("input", checkForm);
 document.getElementById("s_change").addEventListener("input", checkForm);
 document.getElementById("s_remove").addEventListener("input", checkForm);
+
+document.getElementById("mdebug").addEventListener("change", getLog);
