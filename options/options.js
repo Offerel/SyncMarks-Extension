@@ -211,3 +211,12 @@ document.getElementById("s_change").addEventListener("input", checkForm);
 document.getElementById("s_remove").addEventListener("input", checkForm);
 
 document.getElementById("mdebug").addEventListener("change", getLog);
+
+window.addEventListener('load', function () {
+	if(background_page.debug) {
+		console.log(background_page.debug);
+		document.getElementById("mdebug").checked = true;
+		document.getElementById("logarea").style.display = "block";
+		document.getElementById("logarea").value = background_page.loglines;
+	}
+}, false);
