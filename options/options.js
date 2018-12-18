@@ -174,7 +174,7 @@ function manualExport() {
 
 function syncWarning() {
 	if(document.getElementById("s_startup").checked) {
-		if(confirm("Warning: If you use \"Firefox Sync\" and activate the option \"Browser startup\", it is possible that bookmarks you get duplicates, even if the bookmarks are validated during import. Should this option still be activated?")) {
+		if(confirm("Warning: If you use \"Firefox Sync\" and activate the option \"Browser startup\", it is possible that you get duplicates, even if the bookmarks are validated during import. Should this option still be activated?")) {
 			document.getElementById("s_startup").checked = true;
 		}
 		else {
@@ -191,6 +191,12 @@ function getLog() {
 	else {
 		document.getElementById("logarea").style.display = "none";
 	}
+}
+
+function checkCheckbox() {
+	document.getElementById("mdebug").checked = true;
+	document.getElementById("logarea").style.display = "block";
+	document.getElementById("logarea").value = background_page.loglines;
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
@@ -214,7 +220,6 @@ document.getElementById("mdebug").addEventListener("change", getLog);
 
 window.addEventListener('load', function () {
 	if(background_page.debug) {
-		console.log(background_page.debug);
 		document.getElementById("mdebug").checked = true;
 		document.getElementById("logarea").style.display = "block";
 		document.getElementById("logarea").value = background_page.loglines;

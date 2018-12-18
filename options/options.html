@@ -6,79 +6,80 @@
   </head>
   <body>
     <form>
-	<fieldset id="webdav_set" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
-	<legend>Server</legend>
-		<table style="border-collapse: separate; border-spacing: 0; width: 100%">
-			<tr>
-				<td style="white-space:nowrap; width:100px">
-					Server type:
-				</td>
-				<td>
-					<label for="wdav">WebDAV</label>
-					<input type="radio" id="wdav" name="stype" value="WebDAV" checked>					
-					<label for="php">PHP</label>
-					<input type="radio" id="php" name="stype" value="PHP">
-				</td>
-			</tr>
-			<tr>
-				<td style="white-space:nowrap; width:100px"><label for="wdurl">Server URL:&nbsp;</label></td>
-				<td><input type="text" id="wdurl" style="display:table-cell; width:100%" placeholder="https://servername.com/your/davfolder" /></td>
-			</tr>
-			<tr>
-				<td colspan=2>
-				<table style="border-collapse: separate; border-spacing: 0; width: 100%">
-					<tr>
-						<td style="white-space:nowrap; width:100px"><label for="user" >Username:&nbsp;</label></td>
-						<td><input type="text" id="user" style="width:100%" placeholder="username"></td>
-						<td style="white-space:nowrap; width:10px"><label for="password" >Password:&nbsp;</label></td>
-						<td><input type="password" id="password" style="width:100%" placeholder="password"></td>
-					</tr>
-				</table>
-				</td>
-			</tr>
-		</table>
-	</fieldset>
-	<div id="wmessage" style="background: transparent; padding: 3px; margin: 2px;">&nbsp;</div>
-	<fieldset id="common" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
-	<legend>Automatic:</legend>
-		<table style="border-collapse: separate; border-spacing: 0; width: 100%">
-			<tr>
-				<td><label style="white-space:nowrap;">Browser startup:&nbsp;<input id="s_startup" type="checkbox" disabled title="You can enable this after 'Import' or 'Remove'"></label></td>
-				<td><label style="white-space:nowrap;">Bookmark create:&nbsp;<input id="s_create" type="checkbox"></label></td>
-				<td><label style="white-space:nowrap;">Bookmark change:&nbsp;<input id="s_change" type="checkbox"></label></td>
-				<td><label style="white-space:nowrap;">Bookmark remove:&nbsp;<input id="s_remove" type="checkbox"></label></td>
-				<td><label style="white-space:nowrap;">Debug:&nbsp;<input id="mdebug" type="checkbox"></label></td>
-			</tr>
-		</table>
-		<textarea id='logarea'></textarea>
-	</fieldset>
-	<div style="width: 100%; display: flex;">
-		<div id="smessage" style="width: 100%;">&nbsp;</div>
-		<div style="margin-right: 5px"><button id="ssubmit" type="submit" class="browser-style" disabled>Save</button></div>
-	</div>
-    </form>
-	<fieldset id="manual" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
-	<legend>Manual:</legend>
-		<table style="border-collapse: separate; border-spacing: 0; width: 100%">
-			<tr>
-				<td style="text-align: center;"><button id="mremove" type="button" class="browser-style" disabled>Remove<span class="tooltiptext">This removes all your current bookmarks!</span></button></td>
-				<td style="text-align: center;"><button id="mdownload" type="button" class="browser-style" disabled>Import<span class="tooltiptext">Add all bookmarks newer than the last sync to your existing bookmarks.</span></button></td>
-				<td style="text-align: center;"><button id="mupload" type="button" class="browser-style" disabled>Export<span class="tooltiptext">Export all bookmarks to the server.</span></button></td>
-			</tr>
-		</table>
-	</fieldset>
-
-	<div id="importConfirm" class="modal">
-		<div class="modal-content">
-			<span class="close">&times;</span>
-			<p id="impMessage"></p>
-			<span style="display:flex; justify-content: space-around;">
-			<button id="impYes" type="button" class="browser-style">Yes</button>
-			<button id="impNo" type="button" class="browser-style">No</button>
-			<button id="impCancel" type="button" class="browser-style">Cancel</button>
-			</span>
+		<fieldset id="webdav_set" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
+		<legend>Server Data</legend>
+			<table style="border-collapse: separate; border-spacing: 0; width: 100%">
+				<tr>
+					<td style="white-space:nowrap; width:100px">
+						Server type:
+					</td>
+					<td>
+						<label for="wdav">WebDAV</label>
+						<input type="radio" id="wdav" name="stype" value="WebDAV" checked>					
+						<label for="php">PHP</label>
+						<input type="radio" id="php" name="stype" value="PHP">
+						<label style="white-space:nowrap; float: right;">Show Log:&nbsp;<input id="mdebug" type="checkbox"></label>
+					</td>
+				</tr>
+				<tr>
+					<td style="white-space:nowrap; width:100px"><label for="wdurl">Server URL:&nbsp;</label></td>
+					<td><input type="text" id="wdurl" style="display:table-cell; width:100%" placeholder="https://servername.com/your/davfolder" /></td>
+				</tr>
+				<tr>
+					<td colspan=2>
+					<table style="border-collapse: separate; border-spacing: 0; width: 100%">
+						<tr>
+							<td style="white-space:nowrap; width:100px"><label for="user" >Username:&nbsp;</label></td>
+							<td><input type="text" id="user" style="width:100%" placeholder="username"></td>
+							<td style="white-space:nowrap; width:10px"><label for="password" >Password:&nbsp;</label></td>
+							<td><input type="password" id="password" style="width:100%" placeholder="password"></td>
+						</tr>
+					</table>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<div id="wmessage" style="background: transparent; padding: 3px; margin: 2px;">&nbsp;</div>
+		<fieldset id="common" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
+		<legend>Sync Options:</legend>
+			<table style="border-collapse: separate; border-spacing: 0; width: 100%">
+				<tr>
+					<td><label style="white-space:nowrap;">Browser startup:&nbsp;<input id="s_startup" type="checkbox" disabled title="You can enable this after 'Import' or 'Remove'"></label></td>
+					<td><label style="white-space:nowrap;">Bookmark create:&nbsp;<input id="s_create" type="checkbox"></label></td>
+					<td><label style="white-space:nowrap;">Bookmark change:&nbsp;<input id="s_change" type="checkbox"></label></td>
+					<td><label style="white-space:nowrap;">Bookmark remove:&nbsp;<input id="s_remove" type="checkbox"></label></td>
+				</tr>
+			</table>
+			
+		</fieldset>
+		<div style="width: 100%; display: flex;">
+			<div id="smessage" style="width: 100%;">&nbsp;</div>
 		</div>
-	</div>
-    <script src="options.js"></script>
+		<fieldset id="manual" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
+		<legend>Manual Actions:</legend>
+			<table style="border-collapse: separate; border-spacing: 0; width: 100%">
+				<tr>
+					<td style="text-align: center;"><button id="mremove" type="button" class="browser-style" disabled>Remove<span class="tooltiptext">This removes all your current bookmarks!</span></button></td>
+					<td style="text-align: center;"><button id="mdownload" type="button" class="browser-style" disabled>Import<span class="tooltiptext">Add all bookmarks newer than the last sync to your existing bookmarks.</span></button></td>
+					<td style="text-align: center;"><button id="mupload" type="button" class="browser-style" disabled>Export<span class="tooltiptext">Export all bookmarks to the server.</span></button></td>
+					<td style="text-align: center;"><button id="ssubmit" type="submit" class="browser-style" disabled>Save</button></td>
+				</tr>
+			</table>
+			
+		</fieldset>
+		<textarea id='logarea'></textarea>
+		<div id="importConfirm" class="modal">
+			<div class="modal-content">
+				<span class="close">&times;</span>
+				<p id="impMessage"></p>
+				<span style="display:flex; justify-content: space-around;">
+				<button id="impYes" type="button" class="browser-style">Yes</button>
+				<button id="impNo" type="button" class="browser-style">No</button>
+				<button id="impCancel" type="button" class="browser-style">Cancel</button>
+				</span>
+			</div>
+		</div>
+    </form>
+    <script src="./options.js"></script>
   </body>
 </html>

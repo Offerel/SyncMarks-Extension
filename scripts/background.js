@@ -21,6 +21,7 @@ function logit(message) {
 
 function init() {
 	let getting = browser.storage.local.get();
+	browser.storage.local.set({last_message: ""});
 	getting.then( (option) => {
 		let start = option.s_startup || false;
 		if( start === true && s_type.indexOf('PHP') == -1) {
@@ -41,10 +42,9 @@ function notificationSettings(id) {
 	else if(id == 'console' || id == 'error') {
 		debug = true;
 		browser.runtime.openOptionsPage().then(function() {
-		//	debug = false;
+			// something
 		}, onError);
 	}
-	//debug = false;
 }
 
 function openSettings() {
@@ -340,7 +340,10 @@ function getPHPMarks() {
 				message = "Got "+PHPMarks.length+" Bookmark changes from server.";
 				loglines = logit(message+" Sending them now to add function");
 				addPHPMarks(PHPMarks);
-				notify('console',message);
+				//notify('console',message);
+				browser.storage.local.set({
+					last_message: message,
+				});
 			}		
 		}
 	}

@@ -1,6 +1,9 @@
-.browser-style {
-    position: relative;
-    display: inline-block;
+body{
+	box-sizing: border-box;
+}
+body, button, input, textarea {
+  font-family: Segoe UI, sans-serif;
+  font-size: 15px;
 }
 .browser-style .tooltiptext {
     visibility: hidden;
@@ -68,4 +71,6 @@
 	height: 100px;
 	white-space: pre;
 	display: none;
+	font-family: consolas, courier;
+	font-size: 0.9em;
 }

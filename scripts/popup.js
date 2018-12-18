@@ -1,5 +1,12 @@
 var background_page = browser.extension.getBackgroundPage();
 
+window.onload = function() {
+	browser.storage.local.get().then( (option) => {
+		let last_message = option.last_message || "No startup sync done yet.";
+		document.getElementById("popupMessage").innerHTML = last_message;
+	});
+};
+
 function manualRemove() {
 	if(confirm("All current bookmarks are removed. Are you sure?")) {
 		background_page.removeAllMarks();

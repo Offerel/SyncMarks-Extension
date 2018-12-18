@@ -35,8 +35,9 @@
 #popup-content {
 	min-width: 120px;
 }
-html {
-	max-height: 100px;
+#popupMessage {
+	font: menu;
+	padding: 0 10px;
 }
 body {
 	margin: 0;
