@@ -334,13 +334,16 @@ function getPHPMarks() {
 				loglines = logit('Info: '+message);
 			}
 			else if(PHPMarks.includes('No bookmarks added')) {
-				loglines = logit("Info: Couldn't found new added or moved bookmarks since the last sync.");
+				message = "0 added, moved, deleted bookmarks in last sync.";
+				loglines = logit("Info: "+message);
+				browser.storage.local.set({
+					last_message: message,
+				});
 			}
 			else {
 				message = "Got "+PHPMarks.length+" Bookmark changes from server.";
 				loglines = logit(message+" Sending them now to add function");
 				addPHPMarks(PHPMarks);
-				//notify('console',message);
 				browser.storage.local.set({
 					last_message: message,
 				});
