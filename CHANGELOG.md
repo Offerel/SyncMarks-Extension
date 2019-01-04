@@ -1,6 +1,40 @@
 ChangeLog
 =========
 
+v1.12.0 (2019-01-04)
+-------------------------
+* added translation german
+* rename to SyncMarks
+
+
+v1.11.3 (2018-12-27)
+-------------------------
+* changed Popup text
+* fixed typo
+
+
+v1.11.0 (2018-12-18)
+-------------------------
+* Redesign of options page
+* moved startup sync message to popup
+
+
+v1.10.6 (2018-12-02)
+-------------------------
+* changed automatic logging
+
+
+v1.10.5 (2018-12-05)
+-------------------------
+* added logging function in options page
+
+
+v1.10.3 (2018-12-04)
+-------------------------
+* fix for startup sync
+* more detailed console messages
+
+
 v1.10.2 (2018-11-29)
 -------------------------
 * Revert the change from 1.10.1

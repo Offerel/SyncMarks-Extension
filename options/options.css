@@ -35,6 +35,13 @@ body, button, input, textarea {
     visibility: visible;
     opacity: 1;
 }
+#ssubmit:not(:disabled) {
+	background-color: #163EFF;
+	color: #FFFFFF;
+}
+#ssubmit:hover:not(:disabled) {
+	background-color: blue;
+}
 .modal {
     display: none;
     position: fixed;

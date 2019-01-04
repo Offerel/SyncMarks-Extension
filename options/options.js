@@ -19,7 +19,7 @@ function saveOptions(e) {
 	e.preventDefault();
 	
 	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
-		document.getElementById('smessage').innerHTML = "It looks like you haven't used the add-on yet. You can now import any bookmarks saved on the server with <b>\"Import\"</b>. If you have already created bookmarks in your browser, it might be a good idea to delete them with <b>\"Remove\"</b>.";
+		document.getElementById("smessage").textContent = browser.i18n.getMessage("optionsNotUsed");
 	}
 	
 	browser.storage.local.set({
@@ -40,13 +40,13 @@ function saveOptions(e) {
 
 			
 			
-			case 404: 	message.textContent = 'Login failed: Please check the WebDAV URL. It should be in a form like https://servername/folder';
+			case 404: 	message.textContent = browser.i18n.getMessage("optionsErrorURL");
 						message.style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
 						break;
-			case 401:	message.textContent = 'Login failed: Please check username and password';
+			case 401:	message.textContent = browser.i18n.getMessage("optionsErrorUser");
 						message.style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
 						break;
-			case 200:	message.textContent = 'Login successfully. Options saved';
+			case 200:	message.textContent = browser.i18n.getMessage("optionsSuccessLogin");
 						message.style.cssText = "background: #98FB98; padding: 3px; margin: 2px;";
 						browser.storage.local.set({
 							wdurl: document.querySelector("#wdurl").value,
@@ -54,7 +54,7 @@ function saveOptions(e) {
 							password: document.querySelector("#password").value,
 						});
 						break;
-			default:	message.textContent = 'Login failed: Status = ' + xhr.status;
+			default:	message.textContent = browser.i18n.getMessage("optionsErrorLogin") + xhr.status;
 						message.style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
 						break;
 		}
@@ -113,7 +113,7 @@ function manualImport() {
 				modal.style.display = "none";
 			}
 			
-			impMessage.textContent = 'You have ' + count + ' bookmarks saved in your library. Would you like to remove them before you import new bookmarks?';
+			impMessage.textContent = browser.i18n.getMessage("optionsBeforeImport", count);
 			
 			document.getElementById('impYes').onclick = function(e) {
 				background_page.removeAllMarks();
@@ -155,7 +155,7 @@ function manualImport() {
 }
 
 function manualRemove() {
-	if(confirm("When you continue, all your current bookmarks are removed. Are you sure?")) {
+	if(confirm(browser.i18n.getMessage("optionsInfoRemove"))) {
 		background_page.removeAllMarks();
 		browser.storage.local.set({last_s: 1});
 	}
@@ -169,17 +169,6 @@ function manualExport() {
 		var background_page = browser.extension.getBackgroundPage();
 		console.log(background_page);
 		background_page.exportPHPMarks();
-	}
-}
-
-function syncWarning() {
-	if(document.getElementById("s_startup").checked) {
-		if(confirm("Warning: If you use \"Firefox Sync\" and activate the option \"Browser startup\", it is possible that you get duplicates, even if the bookmarks are validated during import. Should this option still be activated?")) {
-			document.getElementById("s_startup").checked = true;
-		}
-		else {
-			document.getElementById("s_startup").checked = false;
-		}
 	}
 }
 
@@ -199,26 +188,47 @@ function checkCheckbox() {
 	document.getElementById("logarea").value = background_page.loglines;
 }
 
+function localizeHtmlPage() {
+    var objects = document.getElementsByTagName('html');
+    for (var j = 0; j < objects.length; j++)
+    {
+        var obj = objects[j];
+
+        var valStrH = obj.innerHTML.toString();
+        var valNewH = valStrH.replace(/__MSG_(\w+)__/g, function(match, v1)
+        {
+            return v1 ? browser.i18n.getMessage(v1) : "";
+        });
+
+        if(valNewH != valStrH)
+        {
+            obj.innerHTML = valNewH;
+        }
+    }
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
-document.querySelector("form").addEventListener("submit", saveOptions);
-document.getElementById("mdownload").addEventListener("click", manualImport);
-document.getElementById("mupload").addEventListener("click", manualExport);
-document.getElementById("mremove").addEventListener("click", manualRemove);
-document.getElementById("wdurl").addEventListener("keyup", checkForm);
-document.getElementById("user").addEventListener("keyup", checkForm);
-document.getElementById("password").addEventListener("keyup", checkForm);
-document.getElementById("s_startup").addEventListener("input", syncWarning);
-
-document.getElementById("wdav").addEventListener("input", checkForm);
-document.getElementById("php").addEventListener("input", checkForm);
-document.getElementById("s_startup").addEventListener("input", checkForm);
-document.getElementById("s_create").addEventListener("input", checkForm);
-document.getElementById("s_change").addEventListener("input", checkForm);
-document.getElementById("s_remove").addEventListener("input", checkForm);
-
-document.getElementById("mdebug").addEventListener("change", getLog);
 
 window.addEventListener('load', function () {
+	localizeHtmlPage();
+	
+	document.querySelector("form").addEventListener("submit", saveOptions);
+	document.getElementById("mdownload").addEventListener("click", manualImport);
+	document.getElementById("mupload").addEventListener("click", manualExport);
+	document.getElementById("mremove").addEventListener("click", manualRemove);
+	document.getElementById("wdurl").addEventListener("keyup", checkForm);
+	document.getElementById("user").addEventListener("keyup", checkForm);
+	document.getElementById("password").addEventListener("keyup", checkForm);
+
+	document.getElementById("wdav").addEventListener("input", checkForm);
+	document.getElementById("php").addEventListener("input", checkForm);
+	document.getElementById("s_startup").addEventListener("input", checkForm);
+	document.getElementById("s_create").addEventListener("input", checkForm);
+	document.getElementById("s_change").addEventListener("input", checkForm);
+	document.getElementById("s_remove").addEventListener("input", checkForm);
+
+	document.getElementById("mdebug").addEventListener("change", getLog);
+	
 	if(background_page.debug) {
 		document.getElementById("mdebug").checked = true;
 		document.getElementById("logarea").style.display = "block";

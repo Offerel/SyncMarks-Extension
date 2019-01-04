@@ -1,15 +1,16 @@
 {
 	"manifest_version": 2,
-	"name": "DAVMarks",
-	"version": "1.11.3",
-	"description": "Export/Import/Sync Firefox bookmarks to WebDAV or PHP.",
+	"name": "__MSG_extensionName__",
+	"description": "__MSG_extensionDescription__",
+	"version": "1.12.0",
+	"default_locale": "en",
 	"icons": {
 		"48": "icons/bookmark.png"
 	},
 	"homepage_url": "https://github.com/Offerel/davmarks",
 	"applications": {
 		"gecko": {
-			"id": "davmarks@example.org",
+			"id": "syncmarks@offerel.org",
 			"strict_min_version": "57.0"
 		}
 	},
@@ -18,7 +19,7 @@
 	},
 	"browser_action": {
 		"default_icon": "icons/bookmark.png",
-		"default_title": "DAVMarks",
+		"default_title": "__MSG_extensionName__",
 		"default_popup": "scripts/popup.html"
 	},
 	"options_ui": {

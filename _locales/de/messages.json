@@ -1,0 +1,262 @@
+{
+  "extensionName": {
+    "message": "SyncMarks",
+    "description": "Name der Erweiterung."
+  },
+
+  "extensionDescription": {
+    "message": "Export/Import/Sync von Lesezeichen zu WebDAV oder PHP.",
+    "description": "Beschreibung der Erweiterung."
+  },
+  
+  "optionsServerData": {
+    "message": "Daten des Servers",
+    "description": "Server Data."
+  },
+  
+  "optionsServerType": {
+    "message": "Server Art",
+    "description": "Server type."
+  },
+  
+  "optionsShowLog": {
+    "message": "Zeige Logfile an",
+    "description": "Show Logfile."
+  },
+  
+  "optionsServerURL": {
+    "message": "Server URL",
+    "description": "Server URL."
+  },
+  
+  "optionsUsername": {
+    "message": "Benutzer",
+    "description": "Username."
+  },
+  
+   "optionsUsernameHint": {
+    "message": "Benutzername",
+    "description": "Username."
+  },
+  
+  "optionsPassword": {
+    "message": "Passwort",
+    "description": "Password."
+  },
+  
+  "optionsPasswordHint": {
+    "message": "Passwort",
+    "description": "Password."
+  },
+  
+  "optionsSyncOptions": {
+    "message": "Optionen",
+    "description": "Sync Options."
+  },
+  
+   "optionsStartup": {
+    "message": "Browserstart",
+    "description": "Browser startup."
+  },
+  
+  "optionsStartupHint": {
+    "message": "Bitte zuerst 'Importieren' oder bestehende Lesezeichen 'Löschen'",
+    "description": "Browser startup hint."
+  },
+  
+  "optionsCreate": {
+    "message": "Erstellen",
+    "description": "Bookmark create."
+  },
+  
+  "optionsChange": {
+    "message": "Ändern",
+    "description": "Bookmark change."
+  },
+  
+  "optionsRemove": {
+    "message": "Entfernen",
+    "description": "Bookmark remove."
+  },
+  
+  "optionsManualActions": {
+    "message": "Manuelle Funktionen",
+    "description": "Manual Actions."
+  },
+  
+  "optionsBTNRemove": {
+    "message": "Löschen",
+    "description": "Remove Button."
+  },
+  
+  "optionsBTNRemoveHint": {
+    "message": "Alle Lesezeichen werden gelöscht!",
+    "description": "Remove Button Hint."
+  },
+  
+  "optionsBTNImport": {
+    "message": "Importieren",
+    "description": "Import Button."
+  },
+  
+  "optionsBTNImportHint": {
+    "message": "Füge alle Lesezeichen, die neuer sind als die letzte Synchronisation, zu deinen bestehenden Lesezeichen hinzu.",
+    "description": "Import Button Hint."
+  },
+  
+  "optionsBTNExport": {
+    "message": "Exportieren",
+    "description": "Export Button."
+  },
+  
+  "optionsBTNExportHint": {
+    "message": "Exportiert alle Lesezeichen zum Server.",
+    "description": "Export Button Hint."
+  },
+  
+  "optionsBTNSave": {
+    "message": "Speichern",
+    "description": "Save Button."
+  },
+  
+  "optionsBTNYes": {
+    "message": "Ja",
+    "description": "Yes Button."
+  },
+  
+  "optionsBTNNo": {
+    "message": "Nein",
+    "description": "No Button."
+  },
+  
+  "optionsBTNCancel": {
+    "message": "Abbrechen",
+    "description": "Cancel Button."
+  },
+  
+  "optionsNotUsed": {
+    "message": "Es sieht so aus, als hättest du das AddOn noch nie benutzt. Du kannst nun alle auf dem Server gespeicherten Lesezeichen mit \"Importieren\" importieren. Wenn du bereits Lesezeichen in deinem Browser erstellt hast, ist es eventuell eine gute Idee, diese vorher mit \"Löschen\" zu löschen.",
+    "description": "Not used hint."
+  },
+  
+  "optionsErrorURL": {
+    "message": "Login Fehler: Bitte prüfe den URL. Dieser sollte im Format https://servername/folder sein.",
+    "description": "Login failed, wrong URL."
+  },
+  
+  "optionsErrorUser": {
+    "message": "Login Fehler: Bitte prüfe Benutzer und Passwort.",
+    "description": "Login failed, wrong User."
+  },
+  
+  "optionsSuccessLogin": {
+    "message": "Login erfolgreich. Optionen gespeichert.",
+    "description": "Login failed, wrong User."
+  },
+  
+  "optionsErrorLogin": {
+    "message": "Login Fehler: Status: ",
+    "description": "Login failed, unknown state."
+  },
+  
+  "optionsBeforeImport": {
+    "message": "Du hast $COUNT$ Lesezeichen in der Bibliothek. Sollen diese vor dem Import gelöscht werden?",
+    "description": "Message before importing.",
+	"placeholders": {
+      "count" : {
+        "content" : "$1",
+        "example" : "543"
+      }
+    }
+  },
+  
+  "optionsInfoRemove": {
+    "message": "Wenn du fortfährst, werden alle deine aktuellen Lesezeichen entfernt. Bist du sicher?",
+    "description": "Login failed, unknown state."
+  },
+  
+  "popupBTNOptions": {
+    "message": "Optionen",
+    "description": "Options Button."
+  },
+  
+  "popupNoSync": {
+    "message": "Bisher wurde kein Sync beim Browserstart durchgeführt.",
+    "description": "No startup sync done yet.."
+  },
+  
+  "popupImportConfirm": {
+	"message": "Die Lesezeichen werden nun vom Server übernommen. Bist du sicher?",
+    "description": "ImportConfirm"
+  },
+  
+  "errorGetBookmarks": {
+    "message": "Es gab einen Fehler beim Abrufen der Lesezeichen vom Server. Der Antwortcode vom Server lautet: ",
+    "description": "http Fehler beim Abrufen der Lesezeichen."
+  },
+  
+  "errorSaveBookmarks": {
+    "message": "Es gab einen Fehler beim Speichern aller Lesezeichen. Die Rückmeldung lautet: ",
+    "description": "http error beim Speichern der Lesezeichen."
+  },
+  
+  "errorSaveSingleBookmarks": {
+    "message": "Es gab einen Fehler beim Speichern des Lesezeichens auf dem PHP Server. Die Rückmeldung lautet: ",
+    "description": "http error when saving single bookmark."
+  },
+  
+  "errorExportBookmarks": {
+    "message": "Es gab einen Fehler beim Export der Lesezeichen, bitte überprüfe das Logfile.",
+    "description": "Fehler beim exportieren der Lesezeichen."
+  },
+  
+  "errorImportBookmark": {
+    "message": "Es gab einen Fehler beim Import des Lesezeichens: ",
+    "description": "Error when import bookmark."
+  },
+  
+  "errorRemoveBookmark": {
+    "message": "Es gab einen Fehler beim Entfernen des Lesezeichens mit PHP. Die Statusrückmeldung lautet: ",
+    "description": "Fehler beim Entfernen des Lesezeichens mit PHP."
+  },
+  
+  "errorMoveBookmark": {
+    "message": "Es gab einen Fehler beim Verschieben des Lesezeichens auf dem PHP-Server. Die Rückmeldung lautet: ",
+    "description": "Fehler beim Verschieben des Lesezeichens."
+  },
+  
+  "successExportBookmarks": {
+    "message": "Export erfolgreich.",
+    "description": "Alle Lesezeichen erfolgreich exportiert."
+  },
+    
+  "successImportBookmarks": {
+    "message": " Lesezeichen/Ordner importiert.",
+    "description": "Count bookmarks imported."
+  },
+  
+  "internalError": {
+    "message": "Ein interner Fehler ist aufgetreten. Die Meldung lautet: ",
+    "description": "Interner Fehler."
+  },
+  
+  "infoNewClient": {
+    "message": "Dieser Browser scheint ein neuer Client für den Server zu sein. Dieser Client ist nun auf dem Server registriert. Es wurden bisher keine Lesezeichen importiert. Sie diese nun manuell importieren.",
+    "description": "New Client, unknown to the server."
+  },
+  
+  "infoNoChange": {
+    "message": "Keine Lesezeichen hinzugefügt, verschoben oder gelöscht bei der letzten Synchronisation.",
+    "description": "Meldung, wenn sich auf dem Server keine Daten verändert haben."
+  },
+  
+  "infoChanges": {
+    "message": " Änderungen auf dem Server seit dem letzten Sync.",
+    "description": "Message if no data has changed on the server."
+  },
+  
+  "infoEmptyConfig": {
+    "message": "Es wurden keine Konfigurationsdaten gefunden. Vielleicht ist dies eine Neuinstallation, bitte konfiguriere die Optionen vor der ersten Verwendung.",
+    "description": "Message if extension is not configured yet."
+  }
+}

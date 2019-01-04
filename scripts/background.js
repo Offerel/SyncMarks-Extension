@@ -59,7 +59,7 @@ function checkSettings() {
 function notify(notid, message) {
 	browser.notifications.create(notid, {
 		"type": "basic",
-		"title": "DAVMarks",
+		"title": browser.i18n.getMessage("extensionName"),
 		"iconUrl": "icons/bookmark.png",
 		"message": message
 	});
@@ -120,19 +120,19 @@ function exportPHPMarks() {
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
-				message = "There was some error saving all bookmarks to PHP. The status response is: "+ xhr.status;
+				message = browser.i18n.getMessage("errorSaveBookmarks") + xhr.status;
 				notify('error',message);
 				loglines = logit("Error: "+message);
 			}
 			else {
 				let response = JSON.parse(xhr.responseText);
 				if(response == 1) {
-					message = "Export successfully";
+					message = browser.i18n.getMessage("successExportBookmarks");
 					notify('info',message);
 					loglines = logit("Info: "+message);
 				}
 				else {
-					message = "There was a problem exporting the bookmarks, please check the console";
+					message = browser.i18n.getMessage("errorExportBookmarks");
 					notify('error',message);
 					loglines = logit("Error: "+message);
 				}
@@ -145,7 +145,7 @@ function exportPHPMarks() {
 	let datems = Date.now();
 	let date = new Date(datems);
 	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
-	browser.browserAction.setTitle({title: "PHPMarks: " + date.toLocaleDateString(undefined,doptions)});
+	browser.browserAction.setTitle({title: browser.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 	browser.storage.local.set({
 		last_s: datems,
 	});
@@ -162,11 +162,11 @@ function saveAllMarks() {
 		last_s: datems,
 	});
 	
-	browser.browserAction.setTitle({title: "DAVMarks: " + date.toLocaleDateString(undefined,doptions)});
+	browser.browserAction.setTitle({title: browser.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
 function onRejected(error) {
-	message = "An internal error is occured. The message was: "+ error;
+	message = browser.i18n.getMessage("internalError") + error;
 	notify('error', message);
 	loglines = logit("Error: "+message);
 }
@@ -182,7 +182,7 @@ function delMark(id, bookmark) {
 	xhr.withCredentials = true;
 	xhr.onload = function () {
 		if( xhr.status < 200 || xhr.status > 226) {
-			message = "There was some error removing the bookmark via PHP. The status response is: "+ xhr.status;
+			message = browser.i18n.getMessage("errorRemoveBookmark") + xhr.status;
 			notify('error',message);
 			loglines = logit('Error: '+message);
 		}
@@ -204,7 +204,7 @@ function delMark(id, bookmark) {
 		last_s: datems,
 	});
 	
-	browser.browserAction.setTitle({title: "PHPMarks: " + date.toLocaleDateString(undefined,doptions)});
+	browser.browserAction.setTitle({title: browser.i18n.getMessage("errorRemoveBookmark") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
 function moveMark(id, bookmark) {
@@ -219,7 +219,7 @@ function moveMark(id, bookmark) {
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
-				message = "There was some error moving the bookmark at the PHP server. The status response is: " + xhr.status;
+				message = browser.i18n.getMessage("errorMoveBookmark") + xhr.status;
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			}
@@ -242,7 +242,7 @@ function moveMark(id, bookmark) {
 		last_s: datems,
 	});
 	
-	browser.browserAction.setTitle({title: "PHPMarks: " + date.toLocaleDateString(undefined,doptions)});
+	browser.browserAction.setTitle({title: browser.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
 function sendMark(bookmark) {
@@ -257,7 +257,7 @@ function sendMark(bookmark) {
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
-				message = "There was a error saving the bookmark to PHP. The status response is: " + xhr.status;
+				message = browser.i18n.getMessage("errorSaveSingleBookmarks")  + xhr.status;
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			}
@@ -280,7 +280,7 @@ function sendMark(bookmark) {
 		last_s: datems,
 	});
 	
-	browser.browserAction.setTitle({title: "PHPMarks: " + date.toLocaleDateString(undefined,doptions)});
+	browser.browserAction.setTitle({title: browser.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
 function saveDAVMarks(bookmarkItems) {
@@ -295,7 +295,7 @@ function saveDAVMarks(bookmarkItems) {
 	
 	xhr.onload = function () {
 		if( xhr.status < 200 || xhr.status > 226) {
-			message = "There was some error saving the bookmarks. The status response is: " + xhr.status;
+			message = browser.i18n.getMessage("errorSaveBookmarks") + xhr.status;
 			notify('error',message);
 			loglines = logit("Info: "+message);
 			browser.bookmarks.onRemoved.addListener(onRemovedCheck);
@@ -320,28 +320,28 @@ function getPHPMarks() {
 		let datems = Date.now();
 		let date = new Date(datems);
 		let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
-		browser.browserAction.setTitle({title: "PHPMarks: " + date.toLocaleDateString(undefined,doptions)});
+		browser.browserAction.setTitle({title: browser.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 		if( xhr.status != 200 ) {
-			message = "There was a error retrieving the bookmarks from the server. The status response is: " + xhr.status;
+			message = browser.i18n.getMessage("errorGetBookmarks") + xhr.status;
 			notify('error',message);
 			loglines = logit('Info: '+message);
 		}
 		else {
 			let PHPMarks = JSON.parse(xhr.responseText);
 			if(PHPMarks.includes('New client registered')) {
-				message = "This browser seems to be a new client for the server. The client is now registered at the server. No bookmarks are imported. You can import them manually.";
+				message = browser.i18n.getMessage("infoNewClient");
 				notify('info',message);
 				loglines = logit('Info: '+message);
 			}
 			else if(PHPMarks.includes('No bookmarks added')) {
-				message = "0 added, moved, deleted bookmarks in last sync.";
+				message = browser.i18n.getMessage("infoNoChange");
 				loglines = logit("Info: "+message);
 				browser.storage.local.set({
 					last_message: message,
 				});
 			}
 			else {
-				message = "Got "+PHPMarks.length+" Bookmark changes from server.";
+				message = PHPMarks.length + browser.i18n.getMessage("infoChanges");
 				loglines = logit(message+" Sending them now to add function");
 				addPHPMarks(PHPMarks);
 				browser.storage.local.set({
@@ -367,7 +367,7 @@ function getAllPHPMarks() {
 		let date = new Date(datems);
 		let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
 		if( xhr.status != 200 ) {
-			message = "There was a error retrieving the bookmarks from the server. The status response is: "+ xhr.status;
+			message = browser.i18n.getMessage("errorGetBookmarks") + xhr.status;
 			notify('error',message);
 			loglines = logit('Error: '+message);
 		}
@@ -383,7 +383,7 @@ function getAllPHPMarks() {
 				loglines = logit("Error: Error when retrieving bookmarks from server for import");
 			}
 		}
-		browser.browserAction.setTitle({title: "PHPMarks: " + date.toLocaleDateString(undefined,doptions)});
+		browser.browserAction.setTitle({title: browser.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 		}
 	loglines = logit('Info: Sending import request to server. Client: '+s_uuid);
 	xhr.send(params);
@@ -470,7 +470,7 @@ function getDAVMarks() {
 	
 	xhr.onload = function () {		
 		if( xhr.status != 200 ) {
-			message = 'There was a error retrieving the bookmarks from the WebDAV server. The status response is: ' + xhr.status;
+			message = browser.i18n.getMessage("errorGetBookmarks") + xhr.status;
 			notify('error',message);
 			loglines = logit('Error: '+message);
 		}
@@ -559,7 +559,7 @@ function importMarks(parsedMarks, index=0) {
 		++count;
 
 		if (typeof parsedMarks[index+1] == 'undefined') {
-			message = 'Imported ' + count + ' bookmarks/folders.';
+			message = count + browser.i18n.getMessage("successImportBookmarks");
 			notify('info',message);
 			loglines = logit('Info: ' + message + ' Re-adding the listeners now');
 			browser.bookmarks.onCreated.addListener(onCreatedCheck);
@@ -571,7 +571,7 @@ function importMarks(parsedMarks, index=0) {
 			importMarks(parsedMarks, ++index);
 		}
 	}, function(err) {
-		message = 'There was a error importing the bookmark \"' + bmtitle + ' (' + bmurl + ')\"';
+		message = browser.i18n.getMessage("errorImportBookmark") + '\"' + bmtitle + ' (' + bmurl + ')\"';
 		notify('error', message);
 		loglines = logit('Error: ' + message);
 	});
@@ -626,7 +626,7 @@ function addAllMarks(parsedMarks, index=1) {
 			
 		}
 		else {
-			message = 'Imported ' + count + ' bookmarks/folders';
+			message = count + browser.i18n.getMessage("successImportBookmarks");
 			notify('info',message);
 			loglines = logit('Info: '+message);
 			browser.bookmarks.onCreated.addListener(onCreatedCheck);
@@ -638,10 +638,10 @@ function addAllMarks(parsedMarks, index=1) {
 			browser.storage.local.set({
 				last_s: datems,
 			});
-			browser.browserAction.setTitle({title: "DAVMarks: " + date.toLocaleDateString(undefined,doptions)});
+			browser.browserAction.setTitle({title: browser.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 		}
 	}, function(err) {
-		message = 'There was a error importing the bookmark \"' + bmtitle + ' (' + bmurl + ')\".';
+		message = browser.i18n.getMessage("errorImportBookmark") +  '\"' + bmtitle + ' (' + bmurl + ')\".';
 		notify('error', message);
 		loglines = logit('Error: '+message);
 	});
@@ -674,7 +674,7 @@ function onGot(item) {
 	}
 	
 	if(davurl.length <= 0 || user.length <= 0 || pw.length <= 0 || s_uuid.length <= 0) {
-		message = 'Configuration is empty. Maybe thats a new installation, please configure the options before use.';
+		message = browser.i18n.getMessage("infoEmptyConfig");
 		notify('setting', message);
 		loglines = logit('Info: '+message);
 	}
