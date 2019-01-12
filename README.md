@@ -1,5 +1,5 @@
 # SyncMarks (Firefox)
-This is a Webextension for Mozilla Firefox to share your bookmarks across WebDAV Shares. You can simply install the AddOn via Mozillas [AMO](https://addons.mozilla.org/addon/davmarks/) site. There is also a [Chrome version](https://github.com/Offerel/firefox_davmarks/tree/chrome_n) available. The Chrome version is experimental at this time, i couldnt test it, since i didnt use Chrome.
+This is a Webextension for Mozilla Firefox to share your bookmarks across WebDAV Shares. You can simply install the AddOn via Mozillas [AMO](https://addons.mozilla.org/addon/davmarks/) site. There is also a [Chrome version](https://github.com/Offerel/firefox_syncmarks/tree/chrome_n) available. The Chrome version is experimental at this time, i couldnt test it, since i didnt use Chrome.
 
 You can use this plugin to export, import and sync your bookmarks to a WebDAV share of your choice or my [PHP Backend](https://github.com/Offerel/SyncMarks).
 
