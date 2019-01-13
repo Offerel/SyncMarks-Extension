@@ -1,6 +1,13 @@
 ChangeLog
 =========
 
+v1.13.0 (2019-01-13)
+-------------------------
+* Migration to Google Chrome
+* Fix accessing options and export from popup
+* Updating readme
+
+
 v1.12.0 (2019-01-04)
 -------------------------
 * added translation german
