@@ -1,0 +1,262 @@
+{
+  "extensionName": {
+    "message": "SyncMarks",
+    "description": "Name of the extension."
+  },
+
+  "extensionDescription": {
+    "message": "导出/导入/同步书签到PHP或者WebDav.",
+    "description": "Description of the extension."
+  },
+  
+  "optionsServerData": {
+    "message": "服务器信息",
+    "description": "Server Data."
+  },
+  
+  "optionsServerType": {
+    "message": "服务器类型",
+    "description": "Server type."
+  },
+  
+  "optionsShowLog": {
+    "message": "显示日志",
+    "description": "Show Logfile."
+  },
+  
+  "optionsServerURL": {
+    "message": "服务器URL(路径为文件夹路径，最后必须以/结尾)",
+    "description": "Show Logfile."
+  },
+  
+  "optionsUsername": {
+    "message": "用户名",
+    "description": "Username."
+  },
+  
+  "optionsUsernameHint": {
+    "message": "用户名",
+    "description": "Username."
+  },
+  
+  "optionsPassword": {
+    "message": "密码",
+    "description": "Password."
+  },
+  
+  "optionsPasswordHint": {
+    "message": "密码",
+    "description": "Password."
+  },
+  
+  "optionsSyncOptions": {
+    "message": "同步选项",
+    "description": "Sync Options."
+  },
+  
+  "optionsStartup": {
+    "message": "浏览器启动",
+    "description": "Browser startup."
+  },
+  
+  "optionsStartupHint": {
+    "message": "在导入或者删除之后启用",
+    "description": "Browser startup hint."
+  },
+  
+  "optionsCreate": {
+    "message": "书签创建",
+    "description": "Bookmark create."
+  },
+  
+  "optionsChange": {
+    "message": "书签修改",
+    "description": "Bookmark change."
+  },
+  
+  "optionsRemove": {
+    "message": "书签删除",
+    "description": "Bookmark remove."
+  },
+  
+  "optionsManualActions": {
+    "message": "手动操作",
+    "description": "Manual Actions."
+  },
+  
+  "optionsBTNRemove": {
+    "message": "删除",
+    "description": "Remove Button."
+  },
+  
+  "optionsBTNRemoveHint": {
+    "message": "这回删除你当前所有的标签!",
+    "description": "Remove Button Hint."
+  },
+  
+  "optionsBTNImport": {
+    "message": "导入",
+    "description": "Import Button."
+  },
+  
+  "optionsBTNImportHint": {
+    "message": "将所有比上一次同步更新的书签添加到现有书签中。",
+    "description": "Import Button Hint."
+  },
+  
+  "optionsBTNExport": {
+    "message": "导出",
+    "description": "Export Button."
+  },
+  
+  "optionsBTNExportHint": {
+    "message": "将所有书签导出到服务器。",
+    "description": "Export Button Hint."
+  },
+  
+  "optionsBTNSave": {
+    "message": "保存",
+    "description": "Save Button."
+  },
+  
+  "optionsBTNYes": {
+    "message": "确定",
+    "description": "Yes Button."
+  },
+  
+  "optionsBTNNo": {
+    "message": "否定",
+    "description": "No Button."
+  },
+  
+  "optionsBTNCancel": {
+    "message": "取消",
+    "description": "Cancel Button."
+  },
+  
+  "optionsNotUsed": {
+    "message": "看起来您还没有使用这个附加组件。您现在可以使用<导入 >导入保存在服务器上的任何书签。如果您已经在浏览器中创建了书签，那么使用<删除>删除书签可能是一个好主意。",
+    "description": "Not used hint."
+  },
+  
+  "optionsErrorURL": {
+    "message": "登录失败:请检查WebDAV URL。它的形式应该类似于https://servername/folder/",
+    "description": "Login failed, wrong URL."
+  },
+  
+  "optionsErrorUser": {
+    "message": "登录失败:请检查用户名和密码。",
+    "description": "Login failed, wrong User."
+  },
+  
+  "optionsSuccessLogin": {
+    "message": "登录成功。登录参数已保存。",
+    "description": "Login successfully."
+  },
+  
+  "optionsErrorLogin": {
+    "message": "登录失败:状态:",
+    "description": "Login failed, unknown state."
+  },
+  
+  "optionsBeforeImport": {
+    "message": "您的库中保存了$COUNT$书签。要在导入新书签之前删除它们吗?",
+    "description": "Message before importing.",
+	"placeholders": {
+      "count" : {
+        "content" : "$1",
+        "example" : "543"
+      }
+    }
+  },
+  
+  "optionsInfoRemove": {
+    "message": "当您继续时，将删除所有当前书签。你确定吗?",
+    "description": "Login failed, unknown state."
+  },
+  
+  "popupBTNOptions": {
+    "message": "选项",
+    "description": "Options Button."
+  },
+  
+  "popupNoSync": {
+    "message": "还没有启动同步。",
+    "description": "No startup sync done yet.."
+  },
+  
+  "popupImportConfirm": {
+    "message": "现在将书签保存到服务器上。你确定吗?",
+    "description": "ImportConfirm"
+  },
+
+  "errorGetBookmarks": {
+  "message": "从服务器检索书签时出错。状态响应为: ",
+    "description": "http error when retrieving bookmarks."
+  },
+  
+  "errorSaveBookmarks": {
+    "message": "保存所有书签时出错。状态响应为: ",
+    "description": "http error when saving bookmarks."
+  },
+  
+  "errorSaveSingleBookmarks": {
+    "message": "将书签保存到PHP时出错。状态响应为: ",
+    "description": "http error when saving single bookmark."
+  },
+  
+  "errorExportBookmarks": {
+    "message": "导出书签有问题，请检查控制台。",
+    "description": "Error when exporting bookmarks."
+  },
+  
+  "errorImportBookmark": {
+    "message": "导入书签时出错:",
+    "description": "Error when import bookmark."
+  },
+  
+  "errorRemoveBookmark": {
+    "message": "通过PHP删除书签时出错。状态响应为:",
+    "description": "Error removing bookmark with PHP."
+  },
+  
+  "errorMoveBookmark": {
+    "message": "在PHP服务器上移动书签时发生了一些错误。状态响应为: ",
+    "description": "Error moving bookmark with PHP."
+  },
+  
+  "successExportBookmarks": {
+    "message": "导出成功。",
+    "description": "All bookmarks exported."
+  },
+  
+  "successImportBookmarks": {
+    "message": "书签/目录已导入。",
+    "description": "Count bookmarks imported."
+  },
+  
+  "internalError": {
+    "message": "发生内部错误。错误信息: ",
+    "description": "Internal error on promise."
+  },
+  
+  "infoNewClient": {
+    "message": "这个浏览器似乎是一个新客户端。客户端现在在服务器上注册。不导入书签。您可以手动导入它们。",
+    "description": "New Client, unknown to the server."
+  },
+  
+  "infoNoChange": {
+    "message": "0 增加, 移动, 删除书签在最后一次同步。",
+    "description": "Message if no data has changed on the server."
+  },
+  
+  "infoChanges": {
+    "message": " 自上次同步以来服务器上的更改。",
+    "description": "Message if no data has changed on the server."
+  },
+  
+  "infoEmptyConfig": {
+    "message": "配置是空的。也许这是一个新的安装，请在使用前配置选项。",
+    "description": "Message if extension is not configured yet."
+  }
+}
