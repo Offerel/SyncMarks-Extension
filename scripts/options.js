@@ -1,4 +1,5 @@
-var background_page = chrome.extension.getBackgroundPage();
+var background_page = browser.extension.getBackgroundPage();
+const filename = "bookmarks.json";
 
 function checkForm() {
 	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value != true){
@@ -19,10 +20,10 @@ function saveOptions(e) {
 	e.preventDefault();
 	
 	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
-		document.getElementById("smessage").textContent = chrome.i18n.getMessage("optionsNotUsed");
+		document.getElementById("smessage").textContent = browser.i18n.getMessage("optionsNotUsed");
 	}
-	
-	chrome.storage.local.set({
+
+    browser.storage.local.set({
 		s_startup: document.querySelector("#s_startup").checked,
 		s_create: document.querySelector("#s_create").checked,
 		s_remove: document.querySelector("#s_remove").checked,
@@ -31,7 +32,7 @@ function saveOptions(e) {
 	});
 	
 	var xhr = new XMLHttpRequest();
-	xhr.open("GET", document.querySelector("#wdurl").value, true);
+	xhr.open("GET", document.querySelector("#wdurl").value + filename, true);
 	xhr.withCredentials = true;
 	xhr.setRequestHeader("Authorization", 'Basic ' + btoa(document.querySelector("#user").value + ":" + document.querySelector("#password").value));
 	let message = document.getElementById('wmessage');
@@ -40,21 +41,21 @@ function saveOptions(e) {
 
 			
 			
-			case 404: 	message.textContent = chrome.i18n.getMessage("optionsErrorURL");
+			case 404: 	message.textContent = browser.i18n.getMessage("optionsErrorURL");
 						message.style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
 						break;
-			case 401:	message.textContent = chrome.i18n.getMessage("optionsErrorUser");
+			case 401:	message.textContent = browser.i18n.getMessage("optionsErrorUser");
 						message.style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
 						break;
-			case 200:	message.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
+			case 200:	message.textContent = browser.i18n.getMessage("optionsSuccessLogin");
 						message.style.cssText = "background: #98FB98; padding: 3px; margin: 2px;";
-						chrome.storage.local.set({
+						browser.storage.local.set({
 							wdurl: document.querySelector("#wdurl").value,
 							user: document.querySelector("#user").value,
 							password: document.querySelector("#password").value,
 						});
 						break;
-			default:	message.textContent = chrome.i18n.getMessage("optionsErrorLogin") + xhr.status;
+			default:	message.textContent = browser.i18n.getMessage("optionsErrorLogin") + xhr.status;
 						message.style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
 						break;
 		}
@@ -89,7 +90,7 @@ function restoreOptions() {
 		console.log('Error: ${error}');
 	}
 	*/
-	chrome.storage.local.get(null, function(options) {
+	browser.storage.local.get(null, function(options) {
 		document.querySelector("#wdurl").value = options['wdurl'] || "";
 		document.querySelector("#user").value = options['user'] || "";
 		document.querySelector("#password").value = options['password'] || "";
@@ -111,7 +112,7 @@ function restoreOptions() {
 }
 
 function manualImport() {
-	var bookmarks = chrome.bookmarks.search({});
+	var bookmarks = browser.bookmarks.search({});
 	bookmarks.then(doImport, background_page.onRejected);
 	
 	function doImport(bookmarks) {
@@ -131,11 +132,11 @@ function manualImport() {
 				modal.style.display = "none";
 			}
 			
-			impMessage.textContent = chrome.i18n.getMessage("optionsBeforeImport", count);
+			impMessage.textContent = browser.i18n.getMessage("optionsBeforeImport", count);
 			
 			document.getElementById('impYes').onclick = function(e) {
 				background_page.removeAllMarks();
-				chrome.storage.local.set({last_s: 1});
+                browser.storage.local.set({last_s: 1});
 				if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
 					background_page.getDAVMarks();
 					modal.style.display = "none";
@@ -160,7 +161,7 @@ function manualImport() {
 			};
 		}
 		else {
-			chrome.storage.local.set({last_s: 1});
+            browser.storage.local.set({last_s: 1});
 			document.querySelector("#s_startup").removeAttribute("disabled");
 			if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
 				background_page.getDAVMarks();
@@ -173,14 +174,14 @@ function manualImport() {
 }
 
 function manualRemove() {
-	if(confirm(chrome.i18n.getMessage("optionsInfoRemove"))) {
+	if(confirm(browser.i18n.getMessage("optionsInfoRemove"))) {
 		background_page.removeAllMarks();
-		chrome.storage.local.set({last_s: 1});
+        browser.storage.local.set({last_s: 1});
 	}
 }
 
 function manualExport() {
-	var background_page = chrome.extension.getBackgroundPage();
+	var background_page = browser.extension.getBackgroundPage();
 
 	if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
 		background_page.saveAllMarks();
@@ -215,7 +216,7 @@ function localizeHtmlPage() {
         var valStrH = obj.innerHTML.toString();
         var valNewH = valStrH.replace(/__MSG_(\w+)__/g, function(match, v1)
         {
-            return v1 ? chrome.i18n.getMessage(v1) : "";
+            return v1 ? browser.i18n.getMessage(v1) : "";
         });
 
         if(valNewH != valStrH)
