@@ -7,7 +7,7 @@
 	"icons": {
 		"48": "icons/bookmark.png"
 	},
-	"homepage_url": "https://github.com/Wszl/davmarks",
+	"homepage_url": "https://github.com/Offerel/davmarks",
 	"applications": {
 		"gecko": {
 			"id": "davmarks@example.org",
