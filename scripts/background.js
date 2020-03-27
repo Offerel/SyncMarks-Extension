@@ -133,8 +133,8 @@ function exportPHPMarks() {
 				}
 				else {
 					message = browser.i18n.getMessage("errorExportBookmarks");
-					notify('error',message);
-					loglines = logit("Error: "+message);
+					notify('error',message + ": " + response);
+					loglines = logit("Error: "+ message + " " + response);
 				}
 			}
 		}
@@ -184,14 +184,19 @@ function delMark(id, bookmark) {
 		if( xhr.status < 200 || xhr.status > 226) {
 			message = browser.i18n.getMessage("errorRemoveBookmark") + xhr.status;
 			notify('error',message);
+			browser.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + browser.i18n.getMessage("errorRemoveBookmark")});
 			loglines = logit('Error: '+message);
 		}
 		else {
 			let response = JSON.parse(xhr.responseText);
-			if(response == 1)
+			if(response == 1) {
 					loglines = logit("Info: Bookmark removed at the server");
-				else
+					browser.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": Bookmark removed."});
+			}
+				else {
 					loglines = logit("Error: Bookmark not removed at the server, please check the server logfile");
+					browser.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + browser.i18n.getMessage("errorRemoveBookmark")});
+				}
 		}
 	}
 	loglines = logit("Info: Sending remove request to server. URL: "+bookmark.node.url+", Client: "+s_uuid);
@@ -203,8 +208,6 @@ function delMark(id, bookmark) {
 	browser.storage.local.set({
 		last_s: datems,
 	});
-	
-	browser.browserAction.setTitle({title: browser.i18n.getMessage("errorRemoveBookmark") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
 function moveMark(id, bookmark) {

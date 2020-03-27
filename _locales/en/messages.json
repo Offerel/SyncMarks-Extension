@@ -206,7 +206,7 @@
   },
   
   "errorExportBookmarks": {
-    "message": "There was a problem exporting the bookmarks, please check the console.",
+    "message": "There was a problem exporting the bookmarks.",
     "description": "Error when exporting bookmarks."
   },
   
@@ -216,7 +216,7 @@
   },
   
   "errorRemoveBookmark": {
-    "message": "There was some error removing the bookmark via PHP. The status response is: ",
+    "message": "There was some error removing the bookmark.",
     "description": "Error removing bookmark with PHP."
   },
   

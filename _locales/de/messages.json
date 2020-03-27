@@ -206,7 +206,7 @@
   },
   
   "errorExportBookmarks": {
-    "message": "Es gab einen Fehler beim Export der Lesezeichen, bitte überprüfe das Logfile.",
+    "message": "Es gab einen Fehler beim Export der Lesezeichen.",
     "description": "Fehler beim exportieren der Lesezeichen."
   },
   
@@ -216,7 +216,7 @@
   },
   
   "errorRemoveBookmark": {
-    "message": "Es gab einen Fehler beim Entfernen des Lesezeichens mit PHP. Die Statusrückmeldung lautet: ",
+    "message": "Es gab einen Fehler beim Entfernen des Lesezeichens.",
     "description": "Fehler beim Entfernen des Lesezeichens mit PHP."
   },
   

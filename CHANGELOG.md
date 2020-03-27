@@ -1,5 +1,12 @@
 ChangeLog
 =========
+v1.13.2 (2020-03-27)
+-------------------------
+* Replace wrong error message when remove successfully bookmark on server.
+
+v1.13.1 (2020-03-24)
+-------------------------
+* Change by returncode from export
 
 v1.13.0 (2019-01-13)
 -------------------------
