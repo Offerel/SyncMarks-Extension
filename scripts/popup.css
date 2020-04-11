@@ -13,6 +13,9 @@
 .popupButton:hover {
 	background-color: #f2f2f2;
 }
+.popupButton:hover:disabled {
+	background-color: unset;
+}
 .popupButton:active {
 	position: relative;
 	top: 1px;

@@ -4,6 +4,14 @@ window.onload = function() {
 	localizeHtmlPage();
 	browser.storage.local.get().then( (option) => {
 		let last_message = option.last_message || browser.i18n.getMessage("popupNoSync");
+		if(option.s_uuid.length < 1) {
+			last_message = "No configuration found. Please save options first.";
+		}
+		else {
+			document.getElementById("export").disabled = false;
+			document.getElementById("import").disabled = false;
+			document.getElementById("remove").disabled = false;
+		}
 		document.getElementById("popupMessage").appendChild(document.createTextNode(last_message));
 	});
 	
