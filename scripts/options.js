@@ -37,9 +37,6 @@ function saveOptions(e) {
 	let message = document.getElementById('wmessage');
 	xhr.onload = function () {
 		switch(xhr.status) {
-
-			
-			
 			case 404: 	message.textContent = chrome.i18n.getMessage("optionsErrorURL");
 						message.style.cssText = "background: #ff7d52; padding: 3px; margin: 2px;";
 						break;
@@ -64,31 +61,6 @@ function saveOptions(e) {
 }
 
 function restoreOptions() {
-	/*
-	function setCurrentChoice(result) {
-		document.querySelector("#wdurl").value = result.wdurl || "";
-		document.querySelector("#user").value = result.user || "";
-		document.querySelector("#password").value = result.password || "";
-		
-		document.querySelector("#s_startup").checked = result.s_startup || false;
-		document.querySelector("#s_create").checked = result.s_create || false;
-		document.querySelector("#s_remove").checked = result.s_remove || false;
-		document.querySelector("#s_change").checked = result.s_change || false;
-		
-		//document.querySelector('input[name="stype"][value="'+ result.s_type +'"]').checked=true;
-
-		checkForm();
-		
-		last_sync = result.last_s || 0;
-		if(last_sync.toString().length > 0) {
-			document.querySelector("#s_startup").removeAttribute("disabled");
-		}
-	}
-
-	function onError(error) {
-		console.log('Error: ${error}');
-	}
-	*/
 	chrome.storage.local.get(null, function(options) {
 		document.querySelector("#wdurl").value = options['wdurl'] || "";
 		document.querySelector("#user").value = options['user'] || "";
@@ -244,13 +216,5 @@ window.addEventListener('load', function () {
 	document.getElementById("s_create").addEventListener("input", checkForm, {passive: true});
 	document.getElementById("s_change").addEventListener("input", checkForm, {passive: true});
 	document.getElementById("s_remove").addEventListener("input", checkForm, {passive: true});
-
 	document.getElementById("mdebug").addEventListener("change", getLog, {passive: true});
-/*
-	if(background_page.debug) {
-		document.getElementById("mdebug").checked = true;
-		document.getElementById("logarea").style.display = "block";
-		document.getElementById("logarea").value = background_page.loglines;
-	}
-*/
 }, {passive: true});

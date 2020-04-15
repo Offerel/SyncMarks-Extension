@@ -1,10 +1,10 @@
-var background_page = browser.extension.getBackgroundPage();
+var background_page = chrome.extension.getBackgroundPage();
 
 window.onload = function() {
 	localizeHtmlPage();
-	browser.storage.local.get().then( (option) => {
-		let last_message = option.last_message || browser.i18n.getMessage("popupNoSync");
-		if(option.s_uuid.length < 1) {
+	chrome.storage.local.get(null, function(options) {
+		let last_message = options.last_message || chrome.i18n.getMessage("popupNoSync");
+		if(options.s_uuid.length < 1) {
 			last_message = "No configuration found. Please save options first.";
 		}
 		else {
@@ -14,7 +14,6 @@ window.onload = function() {
 		}
 		document.getElementById("popupMessage").appendChild(document.createTextNode(last_message));
 	});
-	
 	document.getElementById("export").addEventListener("click", manualExport);
 	document.getElementById("import").addEventListener("click", manualImport);
 	document.getElementById("remove").addEventListener("click", manualRemove);
@@ -30,7 +29,7 @@ function localizeHtmlPage() {
         var valStrH = obj.innerHTML.toString();
         var valNewH = valStrH.replace(/__MSG_(\w+)__/g, function(match, v1)
         {
-            return v1 ? browser.i18n.getMessage(v1) : "";
+            return v1 ? chrome.i18n.getMessage(v1) : "";
         });
 
         if(valNewH != valStrH)
@@ -41,14 +40,14 @@ function localizeHtmlPage() {
 }
 
 function manualRemove() {
-	if(confirm(browser.i18n.getMessage("optionsBTNRemoveHint"))) {
+	if(confirm(chrome.i18n.getMessage("optionsBTNRemoveHint"))) {
 		background_page.removeAllMarks();
-		browser.storage.local.set({last_s: 1});
+		chrome.storage.local.set({last_s: 1});
 	}
 }
 
 function manualImport() {
-	if(confirm(browser.i18n.getMessage("popupImportConfirm"))) {
+	if(confirm(chrome.i18n.getMessage("popupImportConfirm"))) {
 		background_page.checkSettings();
 		
 		if(background_page.s_type == 'PHP') {
