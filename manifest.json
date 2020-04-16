@@ -2,13 +2,13 @@
 	"manifest_version": 2,
 	"name": "__MSG_extensionName__",
 	"description": "__MSG_extensionDescription__",
-	"version": "1.13.2",
+	"version": "1.14.0",
 	"default_locale": "en",
 	"icons": {
 		"48": "icons/bookmark.png"
 	},
 	"homepage_url": "https://github.com/Offerel/davmarks",
-	"applications": {
+	"browser_specific_settings": {
 		"gecko": {
 			"id": "davmarks@example.org",
 			"strict_min_version": "57.0"
@@ -23,8 +23,7 @@
 		"default_popup": "scripts/popup.html"
 	},
 	"options_ui": {
-		"page": "scripts/options.html",
-		"browser_style": true
+		"page": "scripts/options.html"
 	},
 	"permissions": [
 		"notifications",
