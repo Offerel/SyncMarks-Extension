@@ -8,12 +8,7 @@
 		"48": "icons/bookmark.png"
 	},
 	"homepage_url": "https://github.com/Offerel/davmarks",
-	"browser_specific_settings": {
-		"gecko": {
-			"id": "davmarks@example.org",
-			"strict_min_version": "57.0"
-		}
-	},
+
 	"background": {
 		"scripts": ["scripts/background.js"]
 	},

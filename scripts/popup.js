@@ -4,7 +4,7 @@ window.onload = function() {
 	localizeHtmlPage();
 	chrome.storage.local.get(null, function(options) {
 		let last_message = options.last_message || chrome.i18n.getMessage("popupNoSync");
-		if(options.s_uuid.length < 1) {
+		if(undefined !== options['s_uuid']) {
 			last_message = "No configuration found. Please save options first.";
 		}
 		else {
@@ -48,8 +48,6 @@ function manualRemove() {
 
 function manualImport() {
 	if(confirm(chrome.i18n.getMessage("popupImportConfirm"))) {
-		background_page.checkSettings();
-		
 		if(background_page.s_type == 'PHP') {
 			background_page.getAllPHPMarks();
 		}
@@ -60,8 +58,6 @@ function manualImport() {
 }
 
 function manualExport() {
-	background_page.checkSettings();
-
 	if(background_page.s_type == 'PHP') {
 		background_page.exportPHPMarks();
 	}

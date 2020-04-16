@@ -2,6 +2,7 @@ const filename = "bookmarks.json";
 var dictOldIDsToNewIDs = { "-1": "-1" };
 var loglines = '';
 var debug = false;
+const abrowser = (/Firefox/.test(navigator.userAgent)) ? "firefox" : "chrome";
 
 init();
 chrome.browserAction.onClicked.addListener(openSettings);
@@ -125,7 +126,7 @@ function exportPHPMarks() {
 			else {
 				var s_uuid = options['s_uuid'];
 			}
-			let cdata = "client="+s_uuid+"&ctype=firefox&caction=import&bookmark="+bookmarks;
+			let cdata = "client="+s_uuid+"&ctype="+abrowser+"&caction=import&bookmark="+bookmarks;
 			let xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
 			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
@@ -204,7 +205,7 @@ function delMark(id, bookmark) {
 		else {
 			var s_uuid = options['s_uuid'];
 		}
-		let cdata = "client="+s_uuid+"&ctype=firefox&caction=delmark&bookmark="+jsonMark;
+		let cdata = "client="+s_uuid+"&ctype="+abrowser+"&caction=delmark&bookmark="+jsonMark;
 		var xhr = new XMLHttpRequest();
 		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
@@ -252,7 +253,7 @@ function moveMark(id, bookmark) {
 				}
 				
 				let jsonMark = encodeURIComponent(JSON.stringify({ "id": id, "index": bookmark.index, "folderIndex": folder[0]['index'],"folder": bookmark.parentId,"nfolder": folder[0]['title'],"url":bmark[0].url }));
-				let cdata = "client="+s_uuid+"&ctype=firefox&caction=movemark&bookmark="+jsonMark;
+				let cdata = "client="+s_uuid+"&ctype="+abrowser+"&caction=movemark&bookmark="+jsonMark;
 				var xhr = new XMLHttpRequest();
 				xhr.open("POST", options['wdurl'], true);
 				xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
@@ -313,7 +314,7 @@ function sendMark(bookmark) {
 				var s_uuid = options['s_uuid'];
 			}
 
-			let cdata = "client="+s_uuid+"&ctype=firefox&caction=addmark&bookmark="+jsonMark;
+			let cdata = "client="+s_uuid+"&ctype="+abrowser+"&caction=addmark&bookmark="+jsonMark;
 
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
@@ -382,7 +383,7 @@ function getPHPMarks() {
 			var s_uuid = options['s_uuid'];
 		}
 		let xhr = new XMLHttpRequest();
-		let params = 'client='+s_uuid+'&ctype=firefox&caction=startup';
+		let params = 'client='+s_uuid+'&ctype='+abrowser+'&caction=startup';
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
@@ -418,7 +419,7 @@ function getPHPMarks() {
 				}		
 			}
 		}
-		loglines = logit("Info: Sending parameters to server (client,type,action): "+s_uuid+", firefox, startup");
+		loglines = logit("Info: Sending parameters to server (client,type,action): "+s_uuid+", "+abrowser+", startup");
 		xhr.send(params);
 	});
 }
@@ -426,7 +427,7 @@ function getPHPMarks() {
 function getAllPHPMarks() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
-		let params = 'client='+s_uuid+'&ctype=firefox&caction=export';
+		let params = 'client='+s_uuid+'&ctype='+abrowser+'&caction=export';
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
