@@ -22,7 +22,6 @@ function logit(message) {
 function init() {
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, function(options) {
-		//let start = options.s_startup || false;
 		var s_startup = options['s_startup'] || false;
 		var s_type = options['s_type'] || "";
 

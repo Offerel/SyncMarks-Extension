@@ -1,5 +1,19 @@
 ChangeLog
 =========
+v1.14.2 (2020-04-18)
+-------------------------
+* Fix for config check
+  
+v1.14.1 (2020-04-16)
+-------------------------
+* Better return-code when exporting bookmarks from browser
+* Dynamic browser detect
+  
+v1.14.0 (2020-04-16)
+-------------------------
+* Re-added Chrome support
+* Initial disable buttons in popup
+  
 v1.13.2 (2020-03-27)
 -------------------------
 * Replace wrong error message when remove successfully bookmark on server.

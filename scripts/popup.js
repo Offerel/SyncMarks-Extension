@@ -4,8 +4,8 @@ window.onload = function() {
 	localizeHtmlPage();
 	chrome.storage.local.get(null, function(options) {
 		let last_message = options.last_message || chrome.i18n.getMessage("popupNoSync");
-		if(undefined !== options['s_uuid']) {
-			last_message = "No configuration found. Please save options first.";
+		if(options['s_uuid'] === undefined) {
+			last_message = "No configuration found.";
 		}
 		else {
 			document.getElementById("export").disabled = false;
@@ -34,7 +34,7 @@ function localizeHtmlPage() {
 
         if(valNewH != valStrH)
         {
-            obj.innerHTML = valNewH;
+			obj.innerHTML = valNewH;
         }
     }
 }
