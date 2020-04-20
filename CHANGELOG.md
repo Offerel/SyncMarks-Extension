@@ -1,5 +1,9 @@
 ChangeLog
 =========
+v1.14.3 (2020-04-20)
+-------------------------
+* Fix for warning in options page
+  
 v1.14.2 (2020-04-18)
 -------------------------
 * Fix for config check

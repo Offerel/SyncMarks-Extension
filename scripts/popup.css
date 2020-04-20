@@ -37,10 +37,13 @@
 }
 #popup-content {
 	min-width: 120px;
+	max-width: 200px;
+	padding-bottom: 10px;
 }
 #popupMessage {
 	font: menu;
-	padding: 0 10px;
+	padding: 10px;
+	background: ghostwhite;
 }
 body {
 	margin: 0;

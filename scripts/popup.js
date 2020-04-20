@@ -21,7 +21,7 @@ window.onload = function() {
 };
 
 function localizeHtmlPage() {
-    var objects = document.getElementsByTagName('html');
+    var objects = document.getElementsByTagName('button');
     for (var j = 0; j < objects.length; j++)
     {
         var obj = objects[j];
@@ -34,7 +34,7 @@ function localizeHtmlPage() {
 
         if(valNewH != valStrH)
         {
-			obj.innerHTML = valNewH;
+			obj.innerText = valNewH;
         }
     }
 }
