@@ -11,6 +11,91 @@ chrome.bookmarks.onMoved.addListener(onMovedCheck);
 chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 chrome.bookmarks.onChanged.addListener(onChangedCheck);
 chrome.notifications.onClicked.addListener(notificationSettings);
+chrome.contextMenus.onClicked.addListener(function(itemData) {
+	if(itemData.menuItemId == "ssendpage") {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			var url = tabs[0].url
+			chrome.storage.local.get(null, function(options) {
+				if(!("s_uuid" in options)) {
+					var s_uuid = uuidv4();
+					chrome.storage.local.set({s_uuid: s_uuid});
+				}
+				else {
+					var s_uuid = options['s_uuid'];
+				}
+				
+				let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url);
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", options['wdurl'], true);
+				xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+				xhr.withCredentials = true;
+				xhr.onload = function () {
+					if( xhr.status < 200 || xhr.status > 226) {
+						message = chrome.i18n.getMessage("sendLinkNot");
+						notify('error',message);
+						loglines = logit('Error: '+message);
+					}
+					else {
+						loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
+					}
+				}
+				loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes")+", Client: "+s_uuid);
+				xhr.send(cdata);
+			})
+		});
+	}
+
+	if(itemData.menuItemId == "ssendlink") {
+		var url = itemData.linkUrl
+		chrome.storage.local.get(null, function(options) {
+			if(!("s_uuid" in options)) {
+				var s_uuid = uuidv4();
+				chrome.storage.local.set({s_uuid: s_uuid});
+			}
+			else {
+				var s_uuid = options['s_uuid'];
+			}
+			
+			let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url);
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", options['wdurl'], true);
+			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xhr.withCredentials = true;
+			xhr.onload = function () {
+				if( xhr.status < 200 || xhr.status > 226) {
+					message = chrome.i18n.getMessage("sendLinkNot");
+					notify('error',message);
+					loglines = logit('Error: '+message);
+				}
+				else {
+					loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
+				}
+			}
+			loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes")+", Client: "+s_uuid);
+			xhr.send(cdata);
+		})
+	}
+});
+
+chrome.storage.local.get(null, function(options) {
+	if(options['s_type'] == "PHP") {
+		chrome.contextMenus.create({
+			title: chrome.i18n.getMessage("sendPage"),
+			type: "normal",
+			contexts: ["page"],
+			id: "ssendpage"
+		});
+		
+		chrome.contextMenus.create({
+			title: chrome.i18n.getMessage("sendLink"),
+			type: "normal",
+			contexts: ["link"],
+			id: "ssendlink"
+		});
+	}
+})
 
 function logit(message) {
 	var options = { day: '2-digit', year: 'numeric', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };

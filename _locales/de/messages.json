@@ -258,5 +258,25 @@
   "infoEmptyConfig": {
     "message": "Es wurden keine Konfigurationsdaten gefunden. Vielleicht ist dies eine Neuinstallation, bitte konfiguriere die Optionen vor der ersten Verwendung.",
     "description": "Message if extension is not configured yet."
+  },
+  
+  "sendPage": {
+    "message": "Seite senden",
+    "description": ""
+  },
+  
+  "sendLink": {
+    "message": "Link senden",
+    "description": ""
+  },
+  
+  "sendLinkNot": {
+    "message": "Link konnte nicht versendet werden.",
+    "description": ""
+  },
+  
+  "sendLinkYes": {
+    "message": "Link erfolgreich versendet.",
+    "description": ""
   }
 }

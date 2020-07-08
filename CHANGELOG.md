@@ -1,5 +1,9 @@
 ChangeLog
 =========
+v1.15.0 (2020-07-08)
+-------------------------
+* Added function to push page and link to PHP backend
+  
 v1.14.3 (2020-04-20)
 -------------------------
 * Fix for warning in options page

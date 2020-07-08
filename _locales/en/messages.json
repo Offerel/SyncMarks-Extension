@@ -258,5 +258,25 @@
   "infoEmptyConfig": {
     "message": "Configuration is empty. Maybe thats a new installation, please configure the options before use.",
     "description": "Message if extension is not configured yet."
+  },
+  
+  "sendPage": {
+    "message": "Send page",
+    "description": ""
+  },
+  
+  "sendLink": {
+    "message": "Send Link",
+    "description": ""
+  },
+  
+  "sendLinkNot": {
+    "message": "Link could not be send.",
+    "description": ""
+  },
+  
+  "sendLinkYes": {
+    "message": "Link successfully send.",
+    "description": ""
   }
 }
