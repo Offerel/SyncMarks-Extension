@@ -28,7 +28,7 @@
 					<table style="border-collapse: separate; border-spacing: 0; width: 100%">
 						<tr>
 							<td style="white-space:nowrap; width:80px"><label for="user" ><span>__MSG_optionsUsername__:</span>&nbsp;</label></td>
-							<td><input type="text" id="user" style="width:100%" placeholder="Username"></td>
+							<td><input type="text" id="user" style="width:100%" placeholder="Username"><input type="hidden" id="s_uuid"></td>
 							<td style="white-space:nowrap; width:10px"><label for="password" >&nbsp;<span>__MSG_optionsPassword__:</span>&nbsp;</label></td>
 							<td><input type="password" id="password" style="width:100%" placeholder="Password"></td>
 						</tr>
@@ -41,6 +41,9 @@
 		<fieldset id="common" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
 		<legend><span>__MSG_optionsSyncOptions__:</span>&nbsp;</legend> 
 			<table style="border-collapse: separate; border-spacing: 0; width: 100%">
+				<tr id="clientn" class="clienth">
+					<td colspan="4"><label><span>Client Name</span>&nbsp;<input type="text" id="cname" placeholder="" style="display:table-cell; width:100%"></label></td>
+				</tr>
 				<tr>
 					<td><label style="white-space:nowrap;"><span>__MSG_optionsStartup__:</span>&nbsp;<input id="s_startup" type="checkbox" disabled title="__MSG_optionsStartupHint__"></label></td>
 					<td><label style="white-space:nowrap;"><span>__MSG_optionsCreate__:</span>&nbsp;<input id="s_create" type="checkbox"></label></td>

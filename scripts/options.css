@@ -42,6 +42,12 @@ body, button, input, textarea {
 #ssubmit:hover:not(:disabled) {
 	background-color: blue;
 }
+#clientn {
+	visibility: collapse;
+}
+.clients {
+	visibility: visible !important;
+}
 .modal {
     display: none;
     position: fixed;

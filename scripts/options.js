@@ -1,4 +1,5 @@
 var background_page = chrome.extension.getBackgroundPage();
+const abrowser = (/Firefox/.test(navigator.userAgent)) ? "firefox" : "chrome";
 
 function checkForm() {
 	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value != true){
@@ -12,28 +13,34 @@ function checkForm() {
 		document.getElementById('mdownload').disabled=true;
 		document.getElementById('mupload').disabled=true;
 		document.getElementById('mremove').disabled=false;
-    }
+	}
+	
+	if(document.getElementById('php').checked)
+		document.getElementById('clientn').classList.add('clients');
+	else
+	document.getElementById('clientn').classList.remove('clients');
 }
 
 function saveOptions(e) {
 	e.preventDefault();
-	
 	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
 		document.getElementById("smessage").textContent = chrome.i18n.getMessage("optionsNotUsed");
 	}
-	
 	chrome.storage.local.set({
 		s_startup: document.querySelector("#s_startup").checked,
 		s_create: document.querySelector("#s_create").checked,
 		s_remove: document.querySelector("#s_remove").checked,
 		s_change: document.querySelector("#s_change").checked,
 		s_type: document.querySelector('input[name="stype"]:checked').value,
+		s_uuid: document.querySelector("#s_uuid").value,
 	});
-	
+	rName(document.querySelector("#cname").value);
+	let cdata = "client=" + document.querySelector("#s_uuid").value + "&caction=tl&t="+abrowser;
 	var xhr = new XMLHttpRequest();
-	xhr.open("GET", document.querySelector("#wdurl").value, true);
+	xhr.open("POST", document.querySelector("#wdurl").value, true);
 	xhr.withCredentials = true;
 	xhr.setRequestHeader("Authorization", 'Basic ' + btoa(document.querySelector("#user").value + ":" + document.querySelector("#password").value));
+	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	let message = document.getElementById('wmessage');
 	xhr.onload = function () {
 		switch(xhr.status) {
@@ -56,8 +63,49 @@ function saveOptions(e) {
 						break;
 		}
 	};
-	xhr.send();
-	
+	xhr.send(cdata);
+}
+
+function rName(name) {
+	chrome.storage.local.get(null, function(options) {
+		var xhr = new XMLHttpRequest();
+		let cdata = "cido="+options['s_uuid']+"&arename=1&nname="+name;
+		xhr.open("POST", options['wdurl'], true);
+		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				message = "Error set name of client."  + xhr.status;
+				notify('error',message);
+				loglines = logit('Error: '+message);
+			}
+		}
+		xhr.send(cdata);
+	});
+}
+
+function gName() {
+	chrome.storage.local.get(null, function(options) {
+		var xhr = new XMLHttpRequest();
+		let cdata = "cl="+options['s_uuid']+"&caction=gname";
+		xhr.open("POST", options['wdurl'], true);
+		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				message = "Error get name of client."  + xhr.status;
+				notify('error',message);
+				loglines = logit('Error: '+message);
+			} else {
+				var response = JSON.parse(xhr.responseText);
+			}
+			document.querySelector("#cname").value = response.cname;
+			document.querySelector("#cname").title = options['s_uuid'] + " (" + response.ctype + ")";
+		}
+		xhr.send(cdata);
+	});
 }
 
 function restoreOptions() {
@@ -65,6 +113,9 @@ function restoreOptions() {
 		document.querySelector("#wdurl").value = options['wdurl'] || "";
 		document.querySelector("#user").value = options['user'] || "";
 		document.querySelector("#password").value = options['password'] || "";
+		document.querySelector("#s_uuid").value = options['s_uuid'] || background_page.uuidv4();
+		gName();
+		document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").value;
 		document.querySelector("#s_startup").checked = options['s_startup'] || false;
 		document.querySelector("#s_create").checked = options['s_create'] || false;
 		document.querySelector("#s_remove").checked = options['s_remove'] || false;

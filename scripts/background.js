@@ -12,7 +12,8 @@ chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 chrome.bookmarks.onChanged.addListener(onChangedCheck);
 chrome.notifications.onClicked.addListener(notificationSettings);
 chrome.contextMenus.onClicked.addListener(function(itemData) {
-	if(itemData.menuItemId == "ssendpage") {
+	console.log(itemData);
+	if(itemData.menuItemId.includes("page_")) {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			var url = tabs[0].url
 			chrome.storage.local.get(null, function(options) {
@@ -23,8 +24,8 @@ chrome.contextMenus.onClicked.addListener(function(itemData) {
 				else {
 					var s_uuid = options['s_uuid'];
 				}
-				
-				let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url);
+				let tgid = itemData.menuItemId.substring(5);
+				let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url)+"&tg="+tgid;
 				var xhr = new XMLHttpRequest();
 				xhr.open("POST", options['wdurl'], true);
 				xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
@@ -46,7 +47,7 @@ chrome.contextMenus.onClicked.addListener(function(itemData) {
 		});
 	}
 
-	if(itemData.menuItemId == "ssendlink") {
+	if(itemData.menuItemId.includes("link_")) {
 		var url = itemData.linkUrl
 		chrome.storage.local.get(null, function(options) {
 			if(!("s_uuid" in options)) {
@@ -56,8 +57,8 @@ chrome.contextMenus.onClicked.addListener(function(itemData) {
 			else {
 				var s_uuid = options['s_uuid'];
 			}
-			
-			let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url);
+			let tgid = itemData.menuItemId.substring(5);
+			let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url)+"&tg="+tgid;
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
 			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
@@ -118,6 +119,84 @@ function init() {
 			loglines = logit("Info: Initiate PHP startup sync");
 			getPHPMarks();
 		}
+		else if(s_type.indexOf('PHP') == 0) {
+			loglines = logit("Info: Get list of clients.");
+			getClientList();
+			loglines = logit("Info: Get notifications for current client.");
+			getNotifications();
+		}
+	});
+}
+
+function getNotifications() {
+	chrome.storage.local.get(null, function(options) {
+		let xhr = new XMLHttpRequest();
+		xhr.open("GET", options['wdurl']+"?client="+options['s_uuid']+"&gurls=1", true);
+		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.withCredentials = true;
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				message = "Get list of notifications failed.";
+				notify('error',message);
+				loglines = logit('Error: '+message);
+			}
+			else {
+				if(xhr.responseText.length > 0) {
+					nData = JSON.parse(xhr.responseText);
+					nData.forEach(function(notification) {
+						let nnid = JSON.stringify({id:notification.nkey,url:notification.url})
+						notify(nnid, notification.url, notification.title);
+					});
+				}
+				loglines = logit("Info: List of notifications retrieved successfully.");
+			}
+		}
+		xhr.send();
+	});
+	
+}
+
+function getClientList() {
+	chrome.storage.local.get(null, function(options) {
+		if(!("s_uuid" in options)) {
+			var s_uuid = uuidv4();
+			chrome.storage.local.set({s_uuid: s_uuid});
+		}
+		else {
+			var s_uuid = options['s_uuid'];
+		}
+
+		let data = "client="+s_uuid+"&caction=getclients";
+		let xhr = new XMLHttpRequest();
+		xhr.open("POST", options['wdurl'], true);
+		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				message = "Get list of clients failed.";
+				notify('error',message);
+				loglines = logit('Error: '+message);
+			}
+			else {
+				cData = JSON.parse(xhr.responseText);
+				cData.unshift({id:'0',name:'All',type:'',date:''});
+				cData.forEach(function(client) {
+					chrome.contextMenus.create({
+						title: client.name,
+						parentId: "ssendpage",
+						id: 'page_' + client.id
+					});
+					chrome.contextMenus.create({
+						title: client.name,
+						parentId: "ssendlink",
+						id: 'link_' + client.id
+					});
+				});
+				loglines = logit("Info: List of clients retrieved successfully.");
+			}
+		}
+		xhr.send(data);
 	});
 }
 
@@ -125,17 +204,38 @@ function notificationSettings(id) {
 	if(id == 'console' || id == 'error' || id == 'setting') {
 		debug = true;
 		chrome.runtime.openOptionsPage();
+	} else {
+		let nd = JSON.parse(id);
+		chrome.tabs.create({url: nd.url});
+		dmNoti(nd.id);
 	}
+}
+
+function dmNoti(nkey) {
+	chrome.storage.local.get(null, function(options) {
+		let xhr = new XMLHttpRequest();
+		xhr.open("GET", options['wdurl']+"?client="+options['s_uuid']+"&durl="+nkey, true);
+		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.withCredentials = true;
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				message = "Dismiss notification "+nkey+".";
+				notify('error',message);
+				loglines = logit('Error: '+message);
+			}
+		}
+		xhr.send();
+	});
 }
 
 function openSettings() {
 	chrome.runtime.openOptionsPage();
 }
 
-function notify(notid, message) {
+function notify(notid, message, title=chrome.i18n.getMessage("extensionName"), url="") {
 	chrome.notifications.create(notid, {
 		"type": "basic",
-		"title": chrome.i18n.getMessage("extensionName"),
+		"title": title,
 		"iconUrl": "icons/bookmark.png",
 		"message": message
 	});
