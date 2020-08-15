@@ -48,21 +48,24 @@ function manualRemove() {
 
 function manualImport() {
 	if(confirm(chrome.i18n.getMessage("popupImportConfirm"))) {
-		if(background_page.s_type == 'PHP') {
-			background_page.getAllPHPMarks();
-		}
-		else if(background_page.s_type == 'WebDAV') {
-			background_page.getDAVMarks();
-		}
+		chrome.storage.local.get(null, function(options) {
+			if(options['s_type'] == 'PHP') {
+				console.log("test");
+				background_page.getAllPHPMarks();
+			} else if (options['s_type'] == 'WebDAV') {
+				background_page.getDAVMarks();
+			}
+		});
 	}
 }
 
 function manualExport() {
-	if(background_page.s_type == 'PHP') {
-		background_page.exportPHPMarks();
-	}
-	else if(background_page.s_type == 'WebDAV') {
-		background_page.saveAllMarks();
-	}
+	chrome.storage.local.get(null, function(options) {
+		if(options['s_type'] == 'PHP') {
+			background_page.exportPHPMarks();
+		} else if(options['s_type'] == 'WebDAV') {
+			background_page.saveAllMarks();
+		}
+	});
 }
 

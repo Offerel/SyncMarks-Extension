@@ -611,7 +611,7 @@ function getPHPMarks() {
 function getAllPHPMarks() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
-		let params = 'client='+s_uuid+'&ctype='+abrowser+'&caction=export';
+		let params = 'client='+options['s_uuid']+'&ctype='+abrowser+'&caction=export';
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
@@ -639,7 +639,7 @@ function getAllPHPMarks() {
 			}
 			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 			}
-		loglines = logit('Info: Sending import request to server. Client: '+s_uuid);
+		loglines = logit('Info: Sending import request to server. Client: '+options['s_uuid']);
 		xhr.send(params);
 	});
 }

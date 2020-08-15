@@ -118,7 +118,6 @@
     "message": "Speichern",
     "description": "Save Button."
   },
-  
   "optionsBTNYes": {
     "message": "Ja",
     "description": "Yes Button."
@@ -277,6 +276,11 @@
   
   "sendLinkYes": {
     "message": "Link erfolgreich versendet.",
+    "description": ""
+  },
+  
+  "openBackend": {
+    "message": "Öffne Backend",
     "description": ""
   }
 }
