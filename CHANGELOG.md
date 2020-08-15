@@ -1,5 +1,17 @@
 ChangeLog
 =========
+v1.16.1 (2020-08-15)
+-------------------------
+* Fix popup import function
+* Fix popup export function
+  
+v1.16.0 (2020-08-14)
+-------------------------
+* Send pages directly to specific clients
+* Receive pages as notifications
+* Rename client
+* Small fixes
+  
 v1.15.0 (2020-07-08)
 -------------------------
 * Added function to push page and link to PHP backend

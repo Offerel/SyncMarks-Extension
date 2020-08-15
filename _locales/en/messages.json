@@ -278,5 +278,10 @@
   "sendLinkYes": {
     "message": "Link successfully send.",
     "description": ""
+  },
+  
+  "openBackend": {
+    "message": "Open Backend",
+    "description": ""
   }
 }

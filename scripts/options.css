@@ -5,6 +5,13 @@ body, button, input, textarea {
   font-family: Segoe UI, sans-serif;
   font-size: 15px;
 }
+input, button {
+	border-radius: 4px;
+	border: 1px solid darkgray;
+}
+input:hover {
+	border-color: cornflowerblue;
+}
 .browser-style .tooltiptext {
     visibility: hidden;
     width: 200px;

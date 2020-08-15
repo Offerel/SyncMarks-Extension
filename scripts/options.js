@@ -111,6 +111,7 @@ function gName() {
 function restoreOptions() {
 	chrome.storage.local.get(null, function(options) {
 		document.querySelector("#wdurl").value = options['wdurl'] || "";
+		document.querySelector("#bend").href = options['wdurl'] || "";
 		document.querySelector("#user").value = options['user'] || "";
 		document.querySelector("#password").value = options['password'] || "";
 		document.querySelector("#s_uuid").value = options['s_uuid'] || background_page.uuidv4();
