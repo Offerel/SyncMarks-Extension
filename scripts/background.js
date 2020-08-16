@@ -114,12 +114,11 @@ function init() {
 		if( s_startup === true && s_type.indexOf('PHP') == -1) {
 			loglines = logit("Info: Initiate WebDAV startup sync");
 			getDAVMarks();
-		}
-		else if(s_startup === true && s_type.indexOf('PHP') == 0) {
-			loglines = logit("Info: Initiate PHP startup sync");
-			getPHPMarks();
-		}
-		else if(s_type.indexOf('PHP') == 0) {
+		} else if(s_type.indexOf('PHP') == 0) {
+			if(s_startup === true) {
+				loglines = logit("Info: Initiate PHP startup sync");
+				getPHPMarks();
+			}
 			loglines = logit("Info: Get list of clients.");
 			getClientList();
 			loglines = logit("Info: Get notifications for current client.");
