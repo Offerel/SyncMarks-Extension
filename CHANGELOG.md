@@ -1,5 +1,17 @@
 ChangeLog
 =========
+v1.16.4 (2020-08-30)
+-------------------------
+* Fix for Kiwi Browser on Android
+  
+v1.16.3 (2020-08-26)
+-------------------------
+* Fix for startup sync
+  
+v1.16.2 (2020-08-16)
+-------------------------
+* Fix for startup sync
+  
 v1.16.1 (2020-08-15)
 -------------------------
 * Fix popup import function

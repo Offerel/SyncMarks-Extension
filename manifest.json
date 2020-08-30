@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "__MSG_extensionName__",
 	"description": "__MSG_extensionDescription__",
-	"version": "1.16.3",
+	"version": "1.16.4",
 	"default_locale": "en",
 	"icons": {
 		"48": "icons/bookmark.png"
@@ -17,8 +17,9 @@
 		"default_popup": "scripts/popup.html"
 	},
 	"options_ui": {
-		"page": "scripts/options.html"
-	},	  
+		"page": "scripts/options.html",
+		"open_in_tab": true
+	},
 	"permissions": [
 		"notifications",
 		"tabs",
