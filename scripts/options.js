@@ -135,64 +135,16 @@ function restoreOptions() {
 }
 
 function manualImport() {
-	var bookmarks = chrome.bookmarks.search({});
-	bookmarks.then(doImport, background_page.onRejected);
-	
-	function doImport(bookmarks) {
-		let count = 0;
-		for (item of bookmarks) {
-			if(typeof item.url !== 'undefined' && item.url.startsWith("http"))
-				count++;
-		}
-		
-		if(count > 0) {
-			let modal = document.getElementById('importConfirm');
-			let impMessage = document.getElementById('impMessage');
-			var span = document.getElementsByClassName("close")[0];
-			
-			modal.style.display = "block";
-			span.onclick = function() {
-				modal.style.display = "none";
-			}
-			
-			impMessage.textContent = chrome.i18n.getMessage("optionsBeforeImport", count);
-			
-			document.getElementById('impYes').onclick = function(e) {
-				background_page.removeAllMarks();
-				chrome.storage.local.set({last_s: 1});
-				if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
-					background_page.getDAVMarks();
-					modal.style.display = "none";
-				}
-				else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
-					background_page.getAllPHPMarks();
-					modal.style.display = "none";
-				}
-			};
-			document.getElementById('impNo').onclick = function(e) {
-				if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
-					background_page.getDAVMarks();
-					modal.style.display = "none";
-				}
-				else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
-					background_page.getAllPHPMarks();
-					modal.style.display = "none";
-				}
-			};
-			document.getElementById('impCancel').onclick = function(e) {
-				modal.style.display = "none";
-			};
-		}
-		else {
-			chrome.storage.local.set({last_s: 1});
-			document.querySelector("#s_startup").removeAttribute("disabled");
-			if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
+	if(confirm(chrome.i18n.getMessage("optionsBeforeImport"))) {
+		background_page.removeAllMarks();
+		chrome.storage.local.get(null, function(options) {
+			if(options['s_type'] == 'PHP') {
+				background_page.getAllPHPMarks();
+			} else if (options['s_type'] == 'WebDAV') {
 				background_page.getDAVMarks();
 			}
-			else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
-				background_page.getAllPHPMarks();
-			}
-		}
+		});
+		chrome.storage.local.set({last_s: 1});
 	}
 }
 
@@ -249,6 +201,9 @@ document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
 
 window.addEventListener('load', function () {
 	localizeHtmlPage();
+	
+	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
+	
 	document.querySelector("form").addEventListener("submit", saveOptions);
 	document.getElementById("mdownload").addEventListener("click", manualImport, {passive: true});
 	document.getElementById("mupload").addEventListener("click", manualExport, {passive: true});

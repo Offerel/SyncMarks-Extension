@@ -160,14 +160,8 @@
   },
   
   "optionsBeforeImport": {
-    "message": "You have $COUNT$ bookmarks saved in your library. Would you like to remove them before you import new bookmarks?",
-    "description": "Message before importing.",
-	"placeholders": {
-      "count" : {
-        "content" : "$1",
-        "example" : "543"
-      }
-    }
+    "message": "You have bookmarks saved in your library. Would you like to remove them before you import new bookmarks?",
+    "description": "Message before importing."
   },
   
   "optionsInfoRemove": {

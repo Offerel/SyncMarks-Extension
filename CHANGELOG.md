@@ -1,5 +1,9 @@
 ChangeLog
 =========
+v1.16.5 (2020-08-30)
+-------------------------
+* Fix Import bookmarks from options page
+  
 v1.16.4 (2020-08-30)
 -------------------------
 * Fix for Kiwi Browser on Android

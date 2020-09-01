@@ -3,8 +3,10 @@
   <head>
     <meta charset="utf-8">
 	<link rel="stylesheet" href="options.css"/>
+	<title>SyncMarks - Options</title>
   </head>
   <body>
+	<h1><img src="../icons/bookmark.png" alt="SyncMarks" />SyncMarks <span id="version"></span></h1>
     <form>
 		<fieldset id="webdav_set" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
 		<legend><span>__MSG_optionsServerData__:</span>&nbsp;</legend>&nbsp;
@@ -45,10 +47,10 @@
 					<td colspan="4"><label><span>Client Name</span>&nbsp;<input type="text" id="cname" placeholder="" style="display:table-cell; width:100%"></label></td>
 				</tr>
 				<tr>
-					<td><label style="white-space:nowrap;"><span>__MSG_optionsStartup__:</span>&nbsp;<input id="s_startup" type="checkbox" disabled title="__MSG_optionsStartupHint__"></label></td>
-					<td><label style="white-space:nowrap;"><span>__MSG_optionsCreate__:</span>&nbsp;<input id="s_create" type="checkbox"></label></td>
-					<td><label style="white-space:nowrap;"><span>__MSG_optionsChange__:</span>&nbsp;<input id="s_change" type="checkbox"></label></td>
-					<td><label style="white-space:nowrap;"><span>__MSG_optionsRemove__:</span>&nbsp;<input id="s_remove" type="checkbox"></label></td>
+					<td><label class="switch"><input id="s_startup" type="checkbox" disabled title="__MSG_optionsStartupHint__"><span class="slider round"></span><span class="lbl">__MSG_optionsStartup__</span></label></td>
+					<td><label class="switch"><input id="s_create" type="checkbox"><span class="slider round"></span><span class="lbl">__MSG_optionsCreate__</span></label></td>
+					<td><label class="switch"><input id="s_change" type="checkbox"><span class="slider round"></span><span class="lbl">__MSG_optionsChange__</span></label></td>
+					<td><label class="switch"><input id="s_remove" type="checkbox"><span class="slider round"></span><span class="lbl">__MSG_optionsRemove__</span></label></td>
 				</tr>
 			</table>
 		</fieldset>

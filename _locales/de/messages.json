@@ -159,14 +159,8 @@
   },
   
   "optionsBeforeImport": {
-    "message": "Du hast $COUNT$ Lesezeichen in der Bibliothek. Sollen diese vor dem Import gelöscht werden?",
-    "description": "Message before importing.",
-	"placeholders": {
-      "count" : {
-        "content" : "$1",
-        "example" : "543"
-      }
-    }
+    "message": "Du hast Lesezeichen in der Bibliothek. Sollen diese vor dem Import gelöscht werden?",
+    "description": "Message before importing."
   },
   
   "optionsInfoRemove": {
