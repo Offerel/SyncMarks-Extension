@@ -4,7 +4,8 @@ v1.17.0 (2020-09-02)
 -------------------------
 * Fix Import bookmarks from options page
 * Re-create Options page to fit mobile
-* Remove buttons from popup
+* Remove buttons from popup window
+* Fixes for Kiwi browser
   
 v1.16.4 (2020-08-30)
 -------------------------

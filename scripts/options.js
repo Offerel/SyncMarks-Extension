@@ -225,8 +225,5 @@ window.addEventListener('load', function () {
 	document.getElementById("s_create").addEventListener("input", checkForm, {passive: true});
 	document.getElementById("s_change").addEventListener("input", checkForm, {passive: true});
 	document.getElementById("s_remove").addEventListener("input", checkForm, {passive: true});
-	//document.getElementById("mdebug").addEventListener("change", getLog, {passive: true});
-	document.querySelectorAll(".tab-button").forEach(function(e){
-		e.addEventListener("click", openTab);
-	});
+	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 }, {passive: true});

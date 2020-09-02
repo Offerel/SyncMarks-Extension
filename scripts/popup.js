@@ -28,16 +28,8 @@ window.onload = function() {
 		if(options['s_uuid'] === undefined) {
 			last_message = "No configuration found.";
 		}
-		else {
-			//document.getElementById("export").disabled = false;
-			//document.getElementById("import").disabled = false;
-			//document.getElementById("remove").disabled = false;
-		}
 		document.getElementById("popupMessage").appendChild(document.createTextNode(last_message));
 	});
-	//document.getElementById("export").addEventListener("click", manualExport);
-	//document.getElementById("import").addEventListener("click", function() {imodal.style.display = "block"}, {passive: true});
-	//document.getElementById("remove").addEventListener("click", function() {rmodal.style.display = "block"}, {passive: true});
 	document.getElementById("settings").addEventListener("click", background_page.openSettings);
 };
 
