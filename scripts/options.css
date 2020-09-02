@@ -117,8 +117,9 @@ input:hover {
 	position: absolute;
 }
 h1 img {
-    vertical-align: bottom;
-    margin-right: 10px;
+	vertical-align: bottom;
+	margin-right: 10px;
+	margin-bottom: -5px;
 }
 .switch {
     position: relative;
@@ -248,7 +249,7 @@ input:checked + .slider:before {
 	width: unset;
 	height: 25px;
 	background-color: transparent;
-	padding: 0 30px;
+	padding: 0 25px;
 }
 .tab-bar button:hover {
 	background-color: darkgrey;
@@ -263,4 +264,22 @@ h1 {
 }
 .otabs {
 	padding: 0 10px;
+}
+.server .toptionc {
+	display: block;
+	white-space: nowrap;
+	width: 100%;
+}
+.server .toptionc label {
+	text-align: right;
+	width: 95px;
+	display: block;
+	float: left;
+}
+.server .toptionc input {
+	display: flex;
+	width: calc(100% - 105px);
+}
+.server div {
+	margin: 6px 0;
 }

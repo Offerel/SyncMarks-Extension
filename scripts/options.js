@@ -200,13 +200,12 @@ function localizeHtmlPage() {
 document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
 
 function openTab(tabname) {
-	console.log(background_page.loglines);
 	var x = document.getElementsByClassName("otabs");
 	for (var i = 0; i < x.length; i++) {
 		x[i].style.display = "none";
 		if(tabname.target.innerText == 'Logfile') document.getElementById("logarea").value = background_page.loglines;
 	}
-	document.getElementById(tabname.target.innerText).style.display = "block";
+	document.getElementById(tabname.target.attributes['data-val'].value).style.display = "block";
   }
 
 window.addEventListener('load', function () {

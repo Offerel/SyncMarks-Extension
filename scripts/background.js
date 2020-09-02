@@ -309,8 +309,6 @@ function exportPHPMarks() {
 			else {
 				var s_uuid = options['s_uuid'];
 			}
-			//console.log(JSON.stringify(bookmarkItems));
-			//return false;
 			let cdata = "client="+s_uuid+"&ctype="+abrowser+"&caction=import&bookmark="+bookmarks;
 			let xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
