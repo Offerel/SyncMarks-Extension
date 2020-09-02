@@ -1,5 +1,8 @@
-body{
+body {
 	box-sizing: border-box;
+	background-color: #f9f9fb;
+	margin: 0;
+	padding: 0;
 }
 body, button, input, textarea {
   font-family: Segoe UI, sans-serif;
@@ -8,6 +11,18 @@ body, button, input, textarea {
 input, button {
 	border-radius: 4px;
 	border: 1px solid darkgray;
+}
+button {
+	border-color: transparent;
+	font-size: 14px;
+	letter-spacing: 0.5px;
+	min-height: 36px;
+	width: 100px;
+	margin: 5px;
+}
+button:hover {
+	background-color: blue;
+	color: white;
 }
 input:hover {
 	border-color: cornflowerblue;
@@ -86,11 +101,185 @@ input:hover {
     text-decoration: none;
     cursor: pointer;
 }
+.cframe {
+    width: calc(100% - 30px);
+    border: 0;
+    height: calc(100% - 150px);
+    position: absolute;
+}
 #logarea {
-	width: 100%;
-	height: 100px;
+	width: calc(100% - 30px);
 	white-space: pre;
-	display: none;
+	display: block;
 	font-family: consolas, courier;
 	font-size: 0.9em;
+	height: calc(100% - 145px);
+	position: absolute;
+}
+h1 img {
+	vertical-align: bottom;
+	margin-right: 10px;
+	margin-bottom: -5px;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 17px;
+    white-space: nowrap;
+    margin-top: 10px;
+}
+span.lbl {
+    padding-left: 30px;
+    margin-top: -1px;
+    position: absolute;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
+input:checked + .slider {
+    background-color: #2196F3;
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
+}
+.slider.round {
+    border-radius: 17px;
+}
+.slider.round:before {
+    border-radius: 50%;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+.modal button {
+	width: 45%;
+	margin-left: 10px;
+	margin-top: 20px;
+	font-weight: bold;
+}
+.modal button:hover {
+	background-color: blue;
+	color: white;
+}
+.modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+	max-width: 350px;
+}
+.close {
+    color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	position: relative;
+	margin-top: -25px;
+	margin-right: -10px;
+}
+.mtext {
+	padding-top: 10px;
+	position: relative;
+	display: block;
+}
+.close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.ocontainer {
+	display: block;
+	position: relative;
+	text-align: center;
+	width: 100%;
+}
+.btnc .toptionc {
+	display: contents;
+}
+.toptionc {
+	position: relative;
+	display: inline-flex;
+	width: 150px;
+}
+.tab-bar button {
+	border-radius: 0;
+	border: 0;
+	min-height: unset;
+	margin: 0;
+	width: unset;
+	height: 25px;
+	background-color: transparent;
+	padding: 0 25px;
+}
+.tab-bar button:hover {
+	background-color: darkgrey;
+}
+.tab-bar {
+	box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
+	margin-bottom: 10px;
+}
+h1 {
+	margin-top: 0;
+	padding: 5px 20px 0;
+}
+.otabs {
+	padding: 0 10px;
+}
+.server .toptionc {
+	display: block;
+	white-space: nowrap;
+	width: 100%;
+}
+.server .toptionc label {
+	text-align: right;
+	width: 95px;
+	display: block;
+	float: left;
+}
+.server .toptionc input {
+	display: flex;
+	width: calc(100% - 105px);
+}
+.server div {
+	margin: 6px 0;
 }

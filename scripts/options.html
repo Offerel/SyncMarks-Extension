@@ -1,87 +1,88 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-	<link rel="stylesheet" href="options.css"/>
-  </head>
-  <body>
-    <form>
-		<fieldset id="webdav_set" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
-		<legend><span>__MSG_optionsServerData__:</span>&nbsp;</legend>&nbsp;
-			<table style="border-collapse: separate; border-spacing: 0; width: 100%; min-width: 400px;">
-				<tr>
-					<td style="white-space:nowrap; width:80px"><span>__MSG_optionsServerType__:</span></td> 
-					<td>
-						<label for="wdav">WebDAV</label>
-						<input type="radio" id="wdav" name="stype" value="WebDAV" checked>					
-						<label for="php">PHP</label>
-						<input type="radio" id="php" name="stype" value="PHP">
-						<label style="white-space:nowrap; float: right;"><span>__MSG_optionsShowLog__:</span>&nbsp;<input id="mdebug" type="checkbox"></label>
-					</td>
-				</tr>
-				<tr>
-					<td style="white-space:nowrap; width:80px"><label for="wdurl"><span>__MSG_optionsServerURL__:</span>&nbsp;</label></td>
-					<td><input type="text" id="wdurl" style="display:table-cell; width:100%" placeholder="https://servername.com/your/davfolder" /></td>
-				</tr>
-				<tr>
-					<td colspan=2>
+	<head>
+    	<meta charset="utf-8">
+		<link rel="stylesheet" href="options.css"/>
+		<link rel="shortcut icon" type="image/png" href="../icons/bookmark.png">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+		<title>SyncMarks - Options</title>
+  	</head>
+	<body>
+		<div class="tab-bar w3-black">
+			<h1><img src="../icons/bookmark.png" alt="SyncMarks" />SyncMarks <span id="version"></span></h1>
+			<button class="w3-bar-item tab-button"><span data-val="options">__MSG_optionsSyncOptions__</span></button>
+			<button class="w3-bar-item tab-button"><span data-val="logfile">Logfile</span></button>
+			<button class="w3-bar-item tab-button"><span data-val="changelog">Changelog</span></button>
+		</div>
+		<div id="options" class="otabs">
+			<form>
+				<fieldset id="webdav_set" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
+				<legend><span>__MSG_optionsServerData__:</span>&nbsp;</legend>
+				<div class="ocontainer">
+					<div class="toptionc"><input type="radio" id="php" name="stype" value="PHP" checked><label for="php">PHP</label></div>
+					<div class="toptionc"><input type="radio" id="wdav" name="stype" value="WebDAV"><label for="wdav">WebDAV</label></div>
+				</div>
+				<div class="ocontainer server">
+					<div class="toptionc"><label for="wdurl"><span>__MSG_optionsServerURL__</span>:&nbsp;</label><input inputmode="url" type="url" id="wdurl" placeholder="https://servername.com/your/davfolder" /></div>
+					<div class="toptionc"><label for="user"><span>__MSG_optionsUsername__</span>:&nbsp;</label><input inputmode="email" type="email" id="user" placeholder="Username"><input type="hidden" id="s_uuid"></div>
+					<div class="toptionc"><label for="password" >&nbsp;<span>__MSG_optionsPassword__</span>:&nbsp;</label><input type="password" id="password" placeholder="Password"></div>
+				</div>
+				</fieldset>
+				<div id="wmessage" style="background: transparent; padding: 3px; margin: 2px;">&nbsp;</div>
+				<fieldset id="common" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
+				<legend><span>__MSG_optionsSyncOptions__:</span>&nbsp;</legend>
+
+					<div class="ocontainer server">
+						<div class="toptionc"><label>Client Name:&nbsp;</label><input type="text" id="cname" placeholder=""></div>
+					</div>
+					<div class="ocontainer">
+						<div class="toptionc"><label class="switch"><input id="s_startup" type="checkbox" disabled title="__MSG_optionsStartupHint__"><span class="slider round"></span><span class="lbl">__MSG_optionsStartup__</span></label></div>
+						<div class="toptionc"><label class="switch"><input id="s_create" type="checkbox"><span class="slider round"></span><span class="lbl">__MSG_optionsCreate__</span></label></div>
+						<div class="toptionc"><label class="switch"><input id="s_change" type="checkbox"><span class="slider round"></span><span class="lbl">__MSG_optionsChange__</span></label></div>
+						<div class="toptionc"><label class="switch"><input id="s_remove" type="checkbox"><span class="slider round"></span><span class="lbl">__MSG_optionsRemove__</span></label></div>
+					</div>
+				</fieldset>
+				<div style="width: 100%; display: flex;">
+					<div id="smessage" style="width: 100%;"></div>
+				</div>
+				<fieldset id="manual" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
+				<legend><span>__MSG_optionsManualActions__:</span></legend>
+				<div class="ocontainer btnc">
+					<div class="toptionc"><button id="mremove" type="button" class="browser-style" disabled><span>__MSG_optionsBTNRemove__</span><span class="tooltiptext">__MSG_optionsBTNRemoveHint__</span></button></div>
+					<div class="toptionc"><button id="mdownload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNImport__</span><span class="tooltiptext">__MSG_optionsBTNImportHint__</span></button></div>
+					<div class="toptionc"><button id="mupload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNExport__</span><span class="tooltiptext">__MSG_optionsBTNExportHint__</span></button></div>
+					<div class="toptionc"><button id="ssubmit" type="submit" class="browser-style" disabled><span>__MSG_optionsBTNSave__</span></button></div>
+				</div>
 					<table style="border-collapse: separate; border-spacing: 0; width: 100%">
 						<tr>
-							<td style="white-space:nowrap; width:80px"><label for="user" ><span>__MSG_optionsUsername__:</span>&nbsp;</label></td>
-							<td><input type="text" id="user" style="width:100%" placeholder="Username"><input type="hidden" id="s_uuid"></td>
-							<td style="white-space:nowrap; width:10px"><label for="password" >&nbsp;<span>__MSG_optionsPassword__:</span>&nbsp;</label></td>
-							<td><input type="password" id="password" style="width:100%" placeholder="Password"></td>
+							<td colspan="4"><a id="bend" href="#"><span>__MSG_openBackend__</span></a></td>
 						</tr>
 					</table>
-					</td>
-				</tr>
-			</table>
-		</fieldset>
-		<div id="wmessage" style="background: transparent; padding: 3px; margin: 2px;">&nbsp;</div>
-		<fieldset id="common" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
-		<legend><span>__MSG_optionsSyncOptions__:</span>&nbsp;</legend> 
-			<table style="border-collapse: separate; border-spacing: 0; width: 100%">
-				<tr id="clientn" class="clienth">
-					<td colspan="4"><label><span>Client Name</span>&nbsp;<input type="text" id="cname" placeholder="" style="display:table-cell; width:100%"></label></td>
-				</tr>
-				<tr>
-					<td><label style="white-space:nowrap;"><span>__MSG_optionsStartup__:</span>&nbsp;<input id="s_startup" type="checkbox" disabled title="__MSG_optionsStartupHint__"></label></td>
-					<td><label style="white-space:nowrap;"><span>__MSG_optionsCreate__:</span>&nbsp;<input id="s_create" type="checkbox"></label></td>
-					<td><label style="white-space:nowrap;"><span>__MSG_optionsChange__:</span>&nbsp;<input id="s_change" type="checkbox"></label></td>
-					<td><label style="white-space:nowrap;"><span>__MSG_optionsRemove__:</span>&nbsp;<input id="s_remove" type="checkbox"></label></td>
-				</tr>
-			</table>
-		</fieldset>
-		<div style="width: 100%; display: flex;">
-			<div id="smessage" style="width: 100%;"></div>
-		</div>
-		<fieldset id="manual" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
-		<legend><span>__MSG_optionsManualActions__:</span></legend> 
-			<table style="border-collapse: separate; border-spacing: 0; width: 100%">
-				<tr>
-					<td style="text-align: center;"><button id="mremove" type="button" class="browser-style" disabled><span>__MSG_optionsBTNRemove__</span><span class="tooltiptext">__MSG_optionsBTNRemoveHint__</span></button></td>
-					<td style="text-align: center;"><button id="mdownload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNImport__</span><span class="tooltiptext">__MSG_optionsBTNImportHint__</span></button></td>
-					<td style="text-align: center;"><button id="mupload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNExport__</span><span class="tooltiptext">__MSG_optionsBTNExportHint__</span></button></td>
-					<td style="text-align: center;"><button id="ssubmit" type="submit" class="browser-style" disabled><span>__MSG_optionsBTNSave__</span></button></td>
-				</tr>
-				<tr>
-					<td colspan="4"><a id="bend" href="#"><span>__MSG_openBackend__</span></a></td>
-				</tr>
-			</table>
-		</fieldset>
-		<textarea id='logarea'></textarea>
-		<div id="importConfirm" class="modal">
-			<div class="modal-content">
-				<span class="close">&times;</span>
-				<p id="impMessage"></p>
-				<span style="display:flex; justify-content: space-around;">
-				<button id="impYes" type="button" class="browser-style"><span>__MSG_optionsBTNYes__</span></button>
-				<button id="impNo" type="button" class="browser-style"><span>__MSG_optionsBTNNo__</span></button>
-				<button id="impCancel" type="button" class="browser-style"><span>__MSG_optionsBTNCancel__</span></button>
-				</span>
+				</fieldset>
+			<div id="impdialog" class="modal">
+				<div class="modal-content">
+					<span id="iclose" class="close">&times;</span>
+					<span class="mtext">__MSG_optionsBeforeImport__</span>
+					<button id="iyes"><span>__MSG_optionsBTNYes__</span></button>
+					<button id="ino"><span>__MSG_optionsBTNNo__</span></button>
+				</div>
 			</div>
+			<div id="rmdialog" class="modal">
+				<div class="modal-content">
+					<span id="rclose" class="close">&times;</span>
+					<span class="mtext">__MSG_optionsInfoRemove__</span>
+					<button id="ryes"><span>__MSG_optionsBTNYes__</span></button>
+					<button id="rno"><span>__MSG_optionsBTNNo__</span></button>
+				</div>
+			</div>
+			</form>
 		</div>
-    </form>
-    <script src="./options.js"></script>
-  </body>
+		<div id="logfile" class="otabs" style="display:none">
+			<textarea id='logarea'></textarea>
+		</div>
+		<div id="changelog" class="otabs" style="display:none">
+			<iframe class="cframe" src="../CHANGELOG.md"></iframe>
+		</div>
+    	<script src="./options.js"></script>
+  	</body>
 </html>

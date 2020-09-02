@@ -6,12 +6,24 @@
   </head>
 <body>
   <div id="popup-content">
-	<div id="popupMessage"></div>
-	<button id="import" class="popupButton" disabled>__MSG_optionsBTNImport__</button>
-  <button id="export" class="popupButton" disabled>__MSG_optionsBTNExport__</button>
-  <button id="remove" class="popupButton" disabled>__MSG_optionsBTNRemove__</button>
-	<button id="settings" class="popupButton">__MSG_popupBTNOptions__</button>
+    <div id="popupMessage"></div><button id="settings" class="popupButton">__MSG_popupBTNOptions__</button>
   </div>
-  <script src="popup.js"></script>
+  <div id="impdialog" class="modal">
+		<div class="modal-content">
+			<span id="iclose" class="close">&times;</span>
+			<span class="mtext">__MSG_optionsBeforeImport__</span>
+			<button id="iyes"><span>__MSG_optionsBTNYes__</span></button>
+			<button id="ino"><span>__MSG_optionsBTNNo__</span></button>
+		</div>
+	</div>
+	<div id="rmdialog" class="modal">
+		<div class="modal-content">
+			<span id="rclose" class="close">&times;</span>
+			<span class="mtext">__MSG_optionsInfoRemove__</span>
+			<button id="ryes"><span>__MSG_optionsBTNYes__</span></button>
+			<button id="rno"><span>__MSG_optionsBTNNo__</span></button>
+		</div>
+	</div>
+<script src="popup.js"></script>
 </body>
 </html>

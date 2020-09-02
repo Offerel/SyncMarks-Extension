@@ -1,6 +1,6 @@
 const filename = "bookmarks.json";
 var dictOldIDsToNewIDs = { "-1": "-1" };
-var loglines = '';
+const loglines = '';
 var debug = false;
 const abrowser = (/Firefox/.test(navigator.userAgent)) ? "firefox" : "chrome";
 
@@ -12,7 +12,6 @@ chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 chrome.bookmarks.onChanged.addListener(onChangedCheck);
 chrome.notifications.onClicked.addListener(notificationSettings);
 chrome.contextMenus.onClicked.addListener(function(itemData) {
-	console.log(itemData);
 	if(itemData.menuItemId.includes("page_")) {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			var url = tabs[0].url
@@ -181,13 +180,14 @@ function getClientList() {
 				cData = JSON.parse(xhr.responseText);
 				cData.unshift({id:'0',name:'All',type:'',date:''});
 				cData.forEach(function(client) {
+					var ctitle = client.name.length < 1 ? client.id : client.name;
 					chrome.contextMenus.create({
-						title: client.name,
+						title: ctitle,
 						parentId: "ssendpage",
 						id: 'page_' + client.id
 					});
 					chrome.contextMenus.create({
-						title: client.name,
+						title: ctitle,
 						parentId: "ssendlink",
 						id: 'link_' + client.id
 					});
@@ -627,6 +627,7 @@ function getAllPHPMarks() {
 			else {
 				let response = xhr.responseText;
 				if(response != "false") {
+					if(abrowser != 'firefox') response = c2cm(response);
 					let PHPMarks = JSON.parse(response);
 					count = 0;
 					loglines = logit('Info: Starting bookmark import from server');
@@ -641,6 +642,15 @@ function getAllPHPMarks() {
 		loglines = logit('Info: Sending import request to server. Client: '+options['s_uuid']);
 		xhr.send(params);
 	});
+}
+
+function c2cm(bookmarks) {
+	bookmarks = bookmarks.replace(/root________/g, '0');
+	bookmarks = bookmarks.replace(/toolbar_____/g, '1');
+	bookmarks = bookmarks.replace(/unfiled_____/g, '2');
+	bookmarks = bookmarks.replace(/mobile______/g, '3');
+	bookmarks = bookmarks.replace(/menu________/g, '4');
+	return bookmarks;
 }
 
 function addPHPMarks(bArray) {
@@ -780,52 +790,96 @@ function importMarks(parsedMarks, index=0) {
     let bmtype = parsedMarks[index].bmType;
     let bmurl = parsedMarks[index].bmURL;
 	let bmdate = parsedMarks[index].bmAdded;
-    let newParentId = (typeof bmparentId !== 'undefined' && bmparentId.substr(bmparentId.length - 2) == "__") ? bmparentId : dictOldIDsToNewIDs[bmparentId];
-	
-	if(bmparentId == "root________") {
-		importMarks(parsedMarks, ++index);
-		return false;
+
+	if(abrowser == 'firefox') {
+		var newParentId = (typeof bmparentId !== 'undefined' && bmparentId.substr(bmparentId.length - 2) == "__") ? bmparentId : dictOldIDsToNewIDs[bmparentId];
+		if(bmparentId == "root________") {
+			importMarks(parsedMarks, ++index);
+			return false;
+		}
+	} else {
+		var newParentId = (typeof bmparentId !== 'undefined' && bmparentId.length < 2) ? bmparentId : dictOldIDsToNewIDs[bmparentId];
+		if(bmparentId == "0") {
+			importMarks(parsedMarks, ++index);
+			return false;
+		}
 	}
+
 	loglines = logit('Info: Removing listeners');
 	chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 	chrome.bookmarks.onMoved.removeListener(onMovedCheck);
 	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 	chrome.bookmarks.onChanged.removeListener(onChangedCheck);
 
-	chrome.bookmarks.create(
-		(bmtype == "folder" ?
-			{
-				index: bmindex,
-				parentId: newParentId,
-				title: bmtitle,
-				type: bmtype
-			} :
-			{
-				index: bmindex,
-				parentId: newParentId,
-				title: bmtitle,
-				type: bmtype,
-				url: bmurl
-			}
-		),
-		function(node) {
-			let newID = bmid.substr(bmid.length - 2) == "__" ? bmid : node.id;
-			dictOldIDsToNewIDs[bmid] = newID;
-			++count;
-
-			if (typeof parsedMarks[index+1] == 'undefined') {
-				message = count + chrome.i18n.getMessage("successImportBookmarks");
-				notify('info',message);
-				loglines = logit('Info: ' + message + ' Re-adding the listeners now');
-				chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-				chrome.bookmarks.onMoved.addListener(onMovedCheck);
-				chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-				chrome.bookmarks.onChanged.addListener(onChangedCheck);
-			}
-			else {
-				importMarks(parsedMarks, ++index);
-			}
-	});
+	if(abrowser == 'firefox') {
+		chrome.bookmarks.create(
+			(bmtype == "folder" ?
+				{
+					index: bmindex,
+					parentId: newParentId,
+					title: bmtitle,
+					type: bmtype
+				} :
+				{
+					index: bmindex,
+					parentId: newParentId,
+					title: bmtitle,
+					type: bmtype,
+					url: bmurl
+				}
+			),
+			function(node) {
+				let newID = bmid.substr(bmid.length - 2) == "__" ? bmid : node.id;
+				dictOldIDsToNewIDs[bmid] = newID;
+				++count;
+	
+				if (typeof parsedMarks[index+1] == 'undefined') {
+					message = count + chrome.i18n.getMessage("successImportBookmarks");
+					notify('info',message);
+					loglines = logit('Info: ' + message + ' Re-adding the listeners now');
+					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+					chrome.bookmarks.onMoved.addListener(onMovedCheck);
+					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+					chrome.bookmarks.onChanged.addListener(onChangedCheck);
+				}
+				else {
+					importMarks(parsedMarks, ++index);
+				}
+		});
+	} else {
+		chrome.bookmarks.create(
+			(bmtype == "folder" ?
+				{
+					index: bmindex,
+					parentId: newParentId,
+					title: bmtitle
+				} :
+				{
+					index: bmindex,
+					parentId: newParentId,
+					title: bmtitle,
+					url: bmurl
+				}
+			),
+			function(node) {			
+				if (typeof node == "undefined") {
+					message = parsedMarks.length + chrome.i18n.getMessage("successImportBookmarks");
+					notify('info',message);
+					loglines = logit('Info: ' + message + ' Re-adding the listeners now');
+					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+					chrome.bookmarks.onMoved.addListener(onMovedCheck);
+					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+					chrome.bookmarks.onChanged.addListener(onChangedCheck);
+				}
+				else {
+					let newID = bmid.length < 2 ? bmid : node.id;
+					dictOldIDsToNewIDs[bmid] = newID;
+					importMarks(parsedMarks, ++index);
+				}
+		});
+	}
+	
+	
 }
 
 function addAllMarks(parsedMarks, index=1) {

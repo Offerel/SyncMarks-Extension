@@ -38,6 +38,7 @@
 #popup-content {
 	min-width: 120px;
 	max-width: 350px;
+	width: 350px;
 	padding-bottom: 10px;
 }
 #popupMessage {
@@ -48,4 +49,53 @@
 body {
 	margin: 0;
 	padding: 0;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+.modal button {
+	width: 45%;
+	margin-left: 10px;
+	margin-top: 20px;
+	font-weight: bold;
+}
+.modal button:hover {
+	background-color: blue;
+	color: white;
+}
+.modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+	max-width: 350px;
+}
+.close {
+    color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	position: relative;
+	margin-top: -25px;
+	margin-right: -10px;
+}
+.mtext {
+	padding-top: 10px;
+	position: relative;
+	display: block;
+}
+.close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }

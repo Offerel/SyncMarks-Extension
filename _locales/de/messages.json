@@ -159,18 +159,12 @@
   },
   
   "optionsBeforeImport": {
-    "message": "Du hast $COUNT$ Lesezeichen in der Bibliothek. Sollen diese vor dem Import gelöscht werden?",
-    "description": "Message before importing.",
-	"placeholders": {
-      "count" : {
-        "content" : "$1",
-        "example" : "543"
-      }
-    }
+    "message": "Vor dem Import werden alle Lesezeichen gelöscht. Danach werden die neuen Lesezeichen importiert.\n\nSollen die lokalen Lesezeichen vor dem Import gelöscht werden?",
+    "description": "Message before importing."
   },
   
   "optionsInfoRemove": {
-    "message": "Wenn du fortfährst, werden alle deine aktuellen Lesezeichen entfernt. Bist du sicher?",
+    "message": "Wenn du fortfährst, werden alle deine aktuellen Lesezeichen entfernt.\n\nSollen alle lokalen Lesezeichen gelöscht werden?",
     "description": "Login failed, unknown state."
   },
   
