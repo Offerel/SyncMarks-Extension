@@ -159,13 +159,13 @@
     "description": "Login failed, unknown state."
   },
   
-  "optionsBeforeImport": {
-    "message": "You have bookmarks saved in your library. Would you like to remove them before you import new bookmarks?",
+  "optionsBeforeImport": { 
+    "message": "All bookmarks are deleted before importing. Afterwards the new bookmarks are imported.\n\nShould the local bookmarks be deleted before the import?",
     "description": "Message before importing."
   },
   
   "optionsInfoRemove": {
-    "message": "When you continue, all your current bookmarks are removed. Are you sure?",
+    "message": "When you continue, all your current bookmarks are removed.\n\nAre you sure to delete all local bookmarks?",
     "description": "Login failed, unknown state."
   },
   

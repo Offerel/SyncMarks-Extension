@@ -199,11 +199,19 @@ function localizeHtmlPage() {
 
 document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
 
+function openTab(tabname) {
+	console.log(background_page.loglines);
+	var x = document.getElementsByClassName("otabs");
+	for (var i = 0; i < x.length; i++) {
+		x[i].style.display = "none";
+		if(tabname.target.innerText == 'Logfile') document.getElementById("logarea").value = background_page.loglines;
+	}
+	document.getElementById(tabname.target.innerText).style.display = "block";
+  }
+
 window.addEventListener('load', function () {
 	localizeHtmlPage();
-	
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
-	
 	document.querySelector("form").addEventListener("submit", saveOptions);
 	document.getElementById("mdownload").addEventListener("click", manualImport, {passive: true});
 	document.getElementById("mupload").addEventListener("click", manualExport, {passive: true});
@@ -217,5 +225,8 @@ window.addEventListener('load', function () {
 	document.getElementById("s_create").addEventListener("input", checkForm, {passive: true});
 	document.getElementById("s_change").addEventListener("input", checkForm, {passive: true});
 	document.getElementById("s_remove").addEventListener("input", checkForm, {passive: true});
-	document.getElementById("mdebug").addEventListener("change", getLog, {passive: true});
+	//document.getElementById("mdebug").addEventListener("change", getLog, {passive: true});
+	document.querySelectorAll(".tab-button").forEach(function(e){
+		e.addEventListener("click", openTab);
+	});
 }, {passive: true});
