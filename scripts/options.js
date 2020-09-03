@@ -135,7 +135,6 @@ function restoreOptions() {
 }
 
 function manualImport() {
-	if(confirm(chrome.i18n.getMessage("optionsBeforeImport"))) {
 		background_page.removeAllMarks();
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
@@ -144,15 +143,14 @@ function manualImport() {
 				background_page.getDAVMarks();
 			}
 		});
+		document.getElementById("impdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
-	}
 }
 
 function manualRemove() {
-	if(confirm(chrome.i18n.getMessage("optionsInfoRemove"))) {
 		background_page.removeAllMarks();
+		document.getElementById("rmdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
-	}
 }
 
 function manualExport() {
@@ -212,9 +210,16 @@ window.addEventListener('load', function () {
 	localizeHtmlPage();
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
 	document.querySelector("form").addEventListener("submit", saveOptions);
-	document.getElementById("mdownload").addEventListener("click", manualImport, {passive: true});
+	document.getElementById("iyes").addEventListener("click", manualImport, {passive: true});
+	document.getElementById("ryes").addEventListener("click", manualRemove, {passive: true});
+	document.getElementById("ino").addEventListener("click", function() { imodal.style.display = "none";}, {passive: true});
+	document.getElementById("rno").addEventListener("click", function() { rmodal.style.display = "none";}, {passive: true});
+	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";}, {passive: true});
+	document.getElementById("rclose").addEventListener("click", function() {rmodal.style.display = "none";}, {passive: true});
+	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"}, {passive: true});
+	document.getElementById("mremove").addEventListener("click", function() {rmodal.style.display = "block"}, {passive: true})
+
 	document.getElementById("mupload").addEventListener("click", manualExport, {passive: true});
-	document.getElementById("mremove").addEventListener("click", manualRemove, {passive: true});
 	document.getElementById("wdurl").addEventListener("keyup", checkForm, {passive: true});
 	document.getElementById("user").addEventListener("keyup", checkForm, {passive: true});
 	document.getElementById("password").addEventListener("keyup", checkForm, {passive: true});
@@ -225,4 +230,17 @@ window.addEventListener('load', function () {
 	document.getElementById("s_change").addEventListener("input", checkForm, {passive: true});
 	document.getElementById("s_remove").addEventListener("input", checkForm, {passive: true});
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
+
+	var imodal = document.getElementById("impdialog");
+	var rmodal = document.getElementById("rmdialog");
+
+	window.onclick = function(event) {
+		if (event.target == imodal) {
+			imodal.style.display = "none";
+		}
+
+		if (event.target == rmodal) {
+			rmodal.style.display = "none";
+		}
+	}
 }, {passive: true});

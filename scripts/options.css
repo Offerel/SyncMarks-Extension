@@ -10,7 +10,8 @@ body, button, input, textarea {
 }
 input, button {
 	border-radius: 4px;
-	border: 1px solid darkgray;
+    border: 1px solid darkgray;
+    outline: 0;
 }
 button {
 	border-color: transparent;

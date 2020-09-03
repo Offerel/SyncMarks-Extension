@@ -1,6 +1,6 @@
 const filename = "bookmarks.json";
 var dictOldIDsToNewIDs = { "-1": "-1" };
-const loglines = '';
+var loglines = '';
 var debug = false;
 const abrowser = (/Firefox/.test(navigator.userAgent)) ? "firefox" : "chrome";
 
