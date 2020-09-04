@@ -10,9 +10,9 @@
 	<body>
 		<div class="tab-bar w3-black">
 			<h1><img src="../icons/bookmark.png" alt="SyncMarks" />SyncMarks <span id="version"></span></h1>
-			<button class="w3-bar-item tab-button"><span data-val="options">__MSG_optionsSyncOptions__</span></button>
-			<button class="w3-bar-item tab-button"><span data-val="logfile">Logfile</span></button>
-			<button class="w3-bar-item tab-button"><span data-val="changelog">Changelog</span></button>
+			<button class="w3-bar-item tab-button" data-val="options"><span data-val="options">__MSG_optionsSyncOptions__</span></button>
+			<button class="w3-bar-item tab-button" data-val="logfile"><span data-val="logfile">Logfile</span></button>
+			<button class="w3-bar-item tab-button" data-val="changelog"><span data-val="changelog">Changelog</span></button>
 		</div>
 		<div id="options" class="otabs">
 			<form>
@@ -32,7 +32,7 @@
 				<fieldset id="common" style="border-left-style: none; border-right-style: none; border-bottom-style: none;">
 				<legend><span>__MSG_optionsSyncOptions__:</span>&nbsp;</legend>
 
-					<div class="ocontainer server">
+					<div id="clientn" class="ocontainer server">
 						<div class="toptionc"><label>Client Name:&nbsp;</label><input type="text" id="cname" placeholder=""></div>
 					</div>
 					<div class="ocontainer">

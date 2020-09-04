@@ -1,5 +1,13 @@
 ChangeLog
 =========
+v1.17.2 (2020-09-04)
+-------------------------
+* Chromium: Fix for startup sync
+
+v1.17.1 (2020-09-03)
+-------------------------
+* Fixed not appearing user conformations
+
 v1.17.0 (2020-09-02)
 -------------------------
 * Fix Import bookmarks from options page
