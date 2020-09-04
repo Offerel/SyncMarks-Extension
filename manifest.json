@@ -2,11 +2,7 @@
 	"manifest_version": 2,
 	"name": "__MSG_extensionName__",
 	"description": "__MSG_extensionDescription__",
-<<<<<<< HEAD
 	"version": "1.17.2",
-=======
-	"version": "1.17.1",
->>>>>>> c283f3ede215aef68d5b5864ab19439e39b66e91
 	"default_locale": "en",
 	"icons": {
 		"48": "icons/bookmark.png"
