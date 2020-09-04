@@ -277,7 +277,7 @@ function onChangedCheck(id, changeInfo) {
 			saveAllMarks();
 		}
 		else if(s_change === true && s_type.indexOf('PHP') == 0) {
-			console.log(id);
+			console.log('Bookmark with id ' + id + ' is changed. Since the old url isnt available, this info cant pe passed to the server.');
 		}
 	});
 }
@@ -583,7 +583,9 @@ function getPHPMarks() {
 				loglines = logit('Info: '+message);
 			}
 			else {
-				let PHPMarks = JSON.parse(xhr.responseText);
+				response = (xhr.responseText);
+				if(abrowser != 'firefox') response = c2cm(response);
+				let PHPMarks = JSON.parse(response);
 				if(PHPMarks.includes('New client registered')) {
 					message = chrome.i18n.getMessage("infoNewClient");
 					notify('info',message);
@@ -597,7 +599,7 @@ function getPHPMarks() {
 				else {
 					message = PHPMarks.length + chrome.i18n.getMessage("infoChanges");
 					loglines = logit(message+" Sending them now to add function");
-					addPHPMarks(PHPMarks);
+					abrowser == 'firefox' ? addPHPMarks(PHPMarks) : addPHPcMarks(PHPMarks);
 					chrome.storage.local.set({last_message: message});
 				}		
 			}
@@ -651,6 +653,77 @@ function c2cm(bookmarks) {
 	bookmarks = bookmarks.replace(/mobile______/g, '3');
 	bookmarks = bookmarks.replace(/menu________/g, '4');
 	return bookmarks;
+}
+
+function addPHPcMarks(bArray) {
+	bArray.forEach(function(bookmark) {
+		if(bookmark.bmAction == 1 && bookmark.bmURL != '') {
+			loglines = logit('Info: Try to remove bookmark '+bookmark.bmURL);
+			chrome.bookmarks.search({url: bookmark.bmURL}, function(removeItems) {
+				removeItems.forEach(function(removeBookmark) {
+					if(removeBookmark.dateAdded == bookmark.bmAdded) {
+						chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+						chrome.bookmarks.remove(removeBookmark.id, function(remove) {
+							loglines = logit('Info: Bookmark '+removeBookmark.url+' removed');
+							chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+						});
+					}
+				});
+			});
+		}
+		else {
+			if(bookmark.fdID.length > 1) {
+				loglines = logit('Info: Changed bookmark is in userfolder');
+				chrome.bookmarks.search({title: bookmark.fdName},function(folderItems) {
+					folderItems.forEach(function(folder) {
+						if(folder.index == bookmark.fdIndex) {
+							chrome.bookmarks.search({url: bookmark.bmURL},function(bookmarkItems) {
+								if (bookmarkItems.length) {
+									if (bookmark.fdName != bookmarkItems[0].parentId) {
+										chrome.bookmarks.onMoved.removeListener(onMovedCheck);
+										chrome.bookmarks.move(bookmarkItems[0].id, {parentId: folder.id}, function(move) {
+											loglines = logit('Info: '+move.url + " moved to folder " + folder.title);
+											chrome.bookmarks.onMoved.addListener(onMovedCheck);
+										});
+									}
+								} else {
+									chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+									chrome.bookmarks.create({parentId: folder.id, title: bookmark.bmTitle, url: bookmark.bmURL }, function() {
+										loglines = logit('Info: '+bookmark.bmURL + " added as new bookmark");
+										chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+									});
+								}
+							});
+							return false;
+						}
+					});
+				});
+			}
+			else {
+				loglines = logit('Info: Changed bookmark is in systemfolder');
+				if(bookmark.bmURL != '') {
+					loglines = logit('Info: Try to add bookmark '+bookmark.bmURL);
+					chrome.bookmarks.search({url: bookmark.bmURL}, function(bookmarkItems) {
+						if (bookmarkItems.length) {
+							if(bookmarkItems[0].parentId != bookmark.fdID) {
+								chrome.bookmarks.onMoved.removeListener(onMovedCheck);
+								chrome.bookmarks.move(bookmarkItems[0].id, {parentId: bookmark.fdID}, function(move) {
+									loglines = logit('Info: '+move.url + " moved to folder " + bookmark.fdName);
+									chrome.bookmarks.onMoved.addListener(onMovedCheck);
+								});
+							}
+						} else {
+							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+							chrome.bookmarks.create({parentId: bookmark.fdID, title: bookmark.bmTitle, url: bookmark.bmURL}, function() {
+								loglines = logit('Info: '+bookmark.bmURL + " added as new bookmark.");
+								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+							});
+						}
+					});
+				}
+			}
+		}
+	});
 }
 
 function addPHPMarks(bArray) {
@@ -785,11 +858,10 @@ function removeAllMarks() {
 function importMarks(parsedMarks, index=0) {
     let bmid = parsedMarks[index].bmID;
     let bmparentId = parsedMarks[index].bmParentID;
-    let bmindex = parseInt(parsedMarks[index].bmIndex,10);
+	let bmindex = parseInt(parsedMarks[index].bmIndex,10);
     let bmtitle = parsedMarks[index].bmTitle;
     let bmtype = parsedMarks[index].bmType;
     let bmurl = parsedMarks[index].bmURL;
-	let bmdate = parsedMarks[index].bmAdded;
 
 	if(abrowser == 'firefox') {
 		var newParentId = (typeof bmparentId !== 'undefined' && bmparentId.substr(bmparentId.length - 2) == "__") ? bmparentId : dictOldIDsToNewIDs[bmparentId];
@@ -855,14 +927,20 @@ function importMarks(parsedMarks, index=0) {
 					title: bmtitle
 				} :
 				{
-					index: bmindex,
 					parentId: newParentId,
 					title: bmtitle,
 					url: bmurl
 				}
 			),
-			function(node) {			
-				if (typeof node == "undefined") {
+			function(node) {
+				let alength = parsedMarks.length;
+				let nindex = index + 1;
+
+				if(nindex < alength) {
+					let newID = bmid.length < 2 ? bmid : node.id;
+					dictOldIDsToNewIDs[bmid] = newID;
+					importMarks(parsedMarks, nindex);
+				} else {
 					message = parsedMarks.length + chrome.i18n.getMessage("successImportBookmarks");
 					notify('info',message);
 					loglines = logit('Info: ' + message + ' Re-adding the listeners now');
@@ -870,11 +948,6 @@ function importMarks(parsedMarks, index=0) {
 					chrome.bookmarks.onMoved.addListener(onMovedCheck);
 					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 					chrome.bookmarks.onChanged.addListener(onChangedCheck);
-				}
-				else {
-					let newID = bmid.length < 2 ? bmid : node.id;
-					dictOldIDsToNewIDs[bmid] = newID;
-					importMarks(parsedMarks, ++index);
 				}
 		});
 	}
