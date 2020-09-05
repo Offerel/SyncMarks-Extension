@@ -21,7 +21,7 @@ button {
 	width: 100px;
 	margin: 5px;
 }
-button:hover {
+button:hover:not(:disabled) {
 	background-color: blue;
 	color: white;
 }
@@ -57,13 +57,6 @@ input:hover {
 .browser-style:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
-}
-#ssubmit:not(:disabled) {
-	background-color: #163EFF;
-	color: #FFFFFF;
-}
-#ssubmit:hover:not(:disabled) {
-	background-color: blue;
 }
 #clientn {
 	visibility: collapse;

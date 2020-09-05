@@ -212,6 +212,11 @@
     "message": "Es gab einen Fehler beim Entfernen des Lesezeichens.",
     "description": "Fehler beim Entfernen des Lesezeichens mit PHP."
   },
+
+  "errorEditBookmark": {
+    "message": "Es gab einen Fehler beim Ändern des Lesezeichens auf dem Server.",
+    "description": ""
+  },
   
   "errorMoveBookmark": {
     "message": "Es gab einen Fehler beim Verschieben des Lesezeichens auf dem PHP-Server. Die Rückmeldung lautet: ",

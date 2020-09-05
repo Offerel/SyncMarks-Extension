@@ -277,9 +277,50 @@ function onChangedCheck(id, changeInfo) {
 			saveAllMarks();
 		}
 		else if(s_change === true && s_type.indexOf('PHP') == 0) {
-			console.log('Bookmark with id ' + id + ' is changed. Since the old url isnt available, this info cant pe passed to the server.');
+			editMark(changeInfo);
 		}
 	});
+}
+
+function editMark(eData) {
+	let jsonMark = encodeURIComponent(JSON.stringify({ "url": eData.url,"title": eData.title }));
+	chrome.storage.local.get(null, function(options) {
+		var s_uuid = options['s_uuid'];
+		let cdata = "client="+s_uuid+"&ctype="+abrowser+"&caction=editmark&bookmark="+jsonMark;
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", options['wdurl'], true);
+		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				message = chrome.i18n.getMessage("errorEditBookmark") + xhr.status;
+				notify('error',message);
+				chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorEditBookmark")});
+				loglines = logit('Error: '+message);
+			}
+			else {
+				let response = JSON.parse(xhr.responseText);
+				if(response == 1) {
+						loglines = logit("Info: Bookmark edited successfully at the server");
+						chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": Bookmark edited."});
+				}
+					else {
+						message = "Error: Bookmark not edited at the server, please check the server logfile.";
+						loglines = logit(message);
+						notify('error',message);
+						chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorEditBookmark")});
+					}
+			}
+		}
+		loglines = logit("Info: Sending edit request to server. URL: "+ eData.url +", Client: "+s_uuid);
+		xhr.send(cdata);
+	})
+	
+	let datems = Date.now();
+	let date = new Date(datems);
+	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	chrome.storage.local.set({last_s: datems});
 }
 
 function onRemovedCheck(id, bookmark) {
