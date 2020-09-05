@@ -1,5 +1,9 @@
 ChangeLog
 =========
+v1.17.3 (2020-09-05)
+-------------------------
+* Fix for edit bookmarks
+  
 v1.17.2 (2020-09-04)
 -------------------------
 * Chromium: Fix for startup sync

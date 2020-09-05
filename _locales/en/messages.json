@@ -65,17 +65,17 @@
   },
   
   "optionsCreate": {
-    "message": "Bookmark create",
+    "message": "Create",
     "description": "Bookmark create."
   },
   
   "optionsChange": {
-    "message": "Bookmark change",
+    "message": "Change",
     "description": "Bookmark change."
   },
   
   "optionsRemove": {
-    "message": "Bookmark remove",
+    "message": "Remove",
     "description": "Bookmark remove."
   },
   
@@ -212,6 +212,11 @@
   "errorRemoveBookmark": {
     "message": "There was some error removing the bookmark.",
     "description": "Error removing bookmark with PHP."
+  },
+
+  "errorEditBookmark": {
+    "message": "There was some error editing the bookmark at the server.",
+    "description": ""
   },
   
   "errorMoveBookmark": {
