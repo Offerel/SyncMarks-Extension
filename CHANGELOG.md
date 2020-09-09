@@ -1,5 +1,9 @@
 ChangeLog
 =========
+v1.17.4 (2020-09-09)
+-------------------------
+* Browser detection at server level
+
 v1.17.3 (2020-09-05)
 -------------------------
 * Fix for edit bookmarks
