@@ -1,5 +1,4 @@
 var background_page = chrome.extension.getBackgroundPage();
-const abrowser = (/Firefox/.test(navigator.userAgent)) ? "firefox" : "chrome";
 
 function checkForm() {
 	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value != true){
@@ -35,7 +34,7 @@ function saveOptions(e) {
 		s_uuid: document.querySelector("#s_uuid").value,
 	});
 	rName(document.querySelector("#cname").value);
-	let cdata = "client=" + document.querySelector("#s_uuid").value + "&caction=tl&t="+abrowser;
+	let cdata = "client=" + document.querySelector("#s_uuid").value + "&caction=tl";
 	var xhr = new XMLHttpRequest();
 	xhr.open("POST", document.querySelector("#wdurl").value, true);
 	xhr.withCredentials = true;
