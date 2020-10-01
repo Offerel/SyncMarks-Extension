@@ -3,6 +3,8 @@ ChangeLog
 v1.17.5 (2020-10-01)
 -------------------------
 * Removed permissions
+* Removed popup
+* Added error handler for internal errors
 
 
 v1.17.4 (2020-09-09)
