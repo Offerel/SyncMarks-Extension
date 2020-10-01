@@ -7,6 +7,7 @@ v1.17.5 (2020-10-01)
 * Added error handler for internal errors
 * Shorten date format
 * Fixed compare statement
+* Fixed submit on options
 
 
 v1.17.4 (2020-09-09)

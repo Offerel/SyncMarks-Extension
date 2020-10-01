@@ -225,7 +225,7 @@ function openTab(tabname) {
 window.addEventListener('load', function () {
 	localizeHtmlPage();
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
-	document.querySelector("form").addEventListener("submit", saveOptions);
+	document.getElementById("ssubmit").addEventListener("click", saveOptions);
 	document.getElementById("iyes").addEventListener("click", manualImport, {passive: true});
 	document.getElementById("ryes").addEventListener("click", manualRemove, {passive: true});
 	document.getElementById("ino").addEventListener("click", function() { imodal.style.display = "none";}, {passive: true});
@@ -234,7 +234,6 @@ window.addEventListener('load', function () {
 	document.getElementById("rclose").addEventListener("click", function() {rmodal.style.display = "none";}, {passive: true});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"}, {passive: true});
 	document.getElementById("mremove").addEventListener("click", function() {rmodal.style.display = "block"}, {passive: true})
-
 	document.getElementById("mupload").addEventListener("click", manualExport, {passive: true});
 	document.getElementById("wdurl").addEventListener("keyup", checkForm, {passive: true});
 	document.getElementById("user").addEventListener("keyup", checkForm, {passive: true});
