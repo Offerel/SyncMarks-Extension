@@ -1,7 +1,7 @@
 var background_page = chrome.extension.getBackgroundPage();
 
 function checkForm() {
-	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value != true){
+	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
         document.getElementById('ssubmit').disabled=false;
 		document.getElementById('mdownload').disabled=false;
 		document.getElementById('mupload').disabled=false;
@@ -77,7 +77,7 @@ function rName(name) {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Error set name of client."  + xhr.status;
 				notify('error',message);
-				loglines = logit('Error: '+message);
+				background_page.loglines = background_page.logit('Error: '+message);
 			}
 		}
 		xhr.send(cdata);
@@ -96,7 +96,7 @@ function gName() {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Error get name of client."  + xhr.status;
 				notify('error',message);
-				loglines = logit('Error: '+message);
+				background_page.loglines =  background_page.logit('Error: '+message);
 			} else {
 				var response = JSON.parse(xhr.responseText);
 			}
@@ -134,6 +134,7 @@ function restoreOptions() {
 }
 
 function manualImport() {
+	try {
 		background_page.removeAllMarks();
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
@@ -142,24 +143,40 @@ function manualImport() {
 				background_page.getDAVMarks();
 			}
 		});
+	} catch(error) {
+		background_page.loglines = background_page.logit('Error: ' + error);
+	} finally {
 		document.getElementById("impdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
+	}
 }
 
 function manualRemove() {
-		background_page.removeAllMarks();
-		document.getElementById("rmdialog").style.display = "none";
-		chrome.storage.local.set({last_s: 1});
+		try {
+			background_page.removeAllMarks();
+		}
+		catch(error) {
+			background_page.loglines = background_page.logit('Error: ' + error);
+		}
+		finally {
+			document.getElementById("rmdialog").style.display = "none";
+			chrome.storage.local.set({last_s: 1});
+		}
 }
 
 function manualExport() {
 	var background_page = chrome.extension.getBackgroundPage();
-
-	if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
-		background_page.saveAllMarks();
-	}
-	else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
-		background_page.exportPHPMarks();
+	try {
+		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
+			background_page.saveAllMarks();
+		}
+		else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
+			background_page.exportPHPMarks();
+		}
+	} catch(error) {
+		background_page.loglines = background_page.logit('Error: ' + error);
+	} finally {
+		background_page.loglines = background_page.logit('Info: ' + 'Export finalized.');
 	}
 }
 

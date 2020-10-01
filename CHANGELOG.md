@@ -6,6 +6,7 @@ v1.17.5 (2020-10-01)
 * Removed popup
 * Added error handler for internal errors
 * Shorten date format
+* Fixed compare statement
 
 
 v1.17.4 (2020-09-09)
