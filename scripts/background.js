@@ -6,7 +6,11 @@ const abrowser = typeof InstallTrigger !== 'undefined';
 
 init();
 chrome.browserAction.onClicked.addListener(openSettings);
-chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+try {
+	chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+} catch(error) {
+	loglines = logit('Error: ' + error);
+}
 chrome.bookmarks.onMoved.addListener(onMovedCheck);
 chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 chrome.bookmarks.onChanged.addListener(onChangedCheck);
@@ -101,6 +105,7 @@ function logit(message) {
 	var options = { day: '2-digit', year: 'numeric', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
 	var mDate = new Date().toLocaleString(undefined, options);
 	logline = loglines+mDate+" - "+message+"\n";
+	if(message.toLowerCase().indexOf('err') >= 0) notify('error',message);
 	return logline;
 }
 
@@ -319,7 +324,7 @@ function editMark(eData) {
 	
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
 }
 
@@ -383,7 +388,7 @@ function exportPHPMarks() {
 	
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 	chrome.storage.local.set({last_s: datems});
 }
@@ -414,7 +419,7 @@ function saveAllMarks() {
 	});
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
@@ -460,7 +465,7 @@ function delMark(id, bookmark) {
 	
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
 }
 
@@ -505,7 +510,7 @@ function moveMark(id, bookmark) {
 	
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
@@ -566,7 +571,7 @@ function sendMark(bookmark) {
 	
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
 	
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
@@ -616,7 +621,7 @@ function getPHPMarks() {
 		xhr.onload = function () {
 			let datems = Date.now();
 			let date = new Date(datems);
-			let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
@@ -661,7 +666,7 @@ function getAllPHPMarks() {
 		xhr.onload = function () {
 			let datems = Date.now();
 			let date = new Date(datems);
-			let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
 				notify('error',message);
@@ -881,19 +886,22 @@ function parseMarks(DAVMarks, level=0) {
 
 function removeAllMarks() {
 	loglines = logit('Info: Try to remove all local bookmarks');
-	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-
-	chrome.bookmarks.getTree(function(tree) {
-		tree[0].children.forEach(function(mainfolder) {
-			mainfolder.children.forEach(function(userfolder) {
-				chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-				chrome.bookmarks.removeTree(userfolder.id);
+	try {
+		chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+		chrome.bookmarks.getTree(function(tree) {
+			tree[0].children.forEach(function(mainfolder) {
+				mainfolder.children.forEach(function(userfolder) {
+					chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+					chrome.bookmarks.removeTree(userfolder.id);
+				});
 			});
 		});
-	});
-
-	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-	chrome.storage.local.set({last_s: 1});
+		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+	} catch(error) {
+		loglines = logit('Error: ' + error);
+	} finally {
+		chrome.storage.local.set({last_s: 1});
+	}
 }
 
 function importMarks(parsedMarks, index=0) {
@@ -1053,19 +1061,14 @@ function addAllMarks(parsedMarks, index=1) {
 			
 			let datems = Date.now();
 			let date = new Date(datems);
-			let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 			chrome.storage.local.set({
 				last_s: datems,
 			});
 			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 		}
 	});
-}
 
-function onError(error) {
-	message = 'Error: ${error}';
-	notify('error', message);
-	loglines = logit(message);
 }
 
 function uuidv4() {
