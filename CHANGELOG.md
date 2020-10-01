@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.5 (2020-10-01)
+-------------------------
+* Removed permissions
+
+
 v1.17.4 (2020-09-09)
 -------------------------
 * Browser detection at server level
