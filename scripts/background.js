@@ -8,12 +8,13 @@ init();
 chrome.browserAction.onClicked.addListener(openSettings);
 try {
 	chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+	chrome.bookmarks.onMoved.addListener(onMovedCheck);
+	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+	chrome.bookmarks.onChanged.addListener(onChangedCheck);
 } catch(error) {
 	loglines = logit('Error: ' + error);
 }
-chrome.bookmarks.onMoved.addListener(onMovedCheck);
-chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-chrome.bookmarks.onChanged.addListener(onChangedCheck);
+
 chrome.notifications.onClicked.addListener(notificationSettings);
 chrome.contextMenus.onClicked.addListener(function(itemData) {
 	if(itemData.menuItemId.includes("page_")) {
@@ -141,17 +142,21 @@ function getNotifications() {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Get list of notifications failed.";
 				notify('error',message);
-				loglines = logit('Error: '+message);
+				loglines = logit('Error: ' + message);
 			}
 			else {
 				if(xhr.responseText.length > 0) {
-					nData = JSON.parse(xhr.responseText);
-					nData.forEach(function(notification) {
-						let nnid = JSON.stringify({id:notification.nkey,url:notification.url})
-						notify(nnid, notification.url, notification.title);
-					});
+					var nData = JSON.parse(xhr.responseText);
+					try {
+						nData.forEach(function(notification) {
+							let nnid = JSON.stringify({id:notification.nkey,url:notification.url})
+							notify(nnid, notification.url, notification.title);
+						});
+					} catch(error) {
+						loglines = logit('Error: ' + error);
+					}
+					loglines = logit("Info: List of " + nData.length + " notifications retrieved successfully.");
 				}
-				loglines = logit("Info: List of notifications retrieved successfully.");
 			}
 		}
 		xhr.send();
@@ -210,7 +215,11 @@ function notificationSettings(id) {
 		chrome.runtime.openOptionsPage();
 	} else {
 		let nd = JSON.parse(id);
-		chrome.tabs.create({url: nd.url});
+		try {
+			chrome.tabs.create({url: nd.url});
+		} catch(error) {
+			loglines = logit('Error: ' + error);
+		}
 		dmNoti(nd.id);
 	}
 }
@@ -237,12 +246,16 @@ function openSettings() {
 }
 
 function notify(notid, message, title=chrome.i18n.getMessage("extensionName"), url="") {
-	chrome.notifications.create(notid, {
-		"type": "basic",
-		"title": title,
-		"iconUrl": "icons/bookmark.png",
-		"message": message
-	});
+	try {
+		chrome.notifications.create(notid, {
+			"type": "basic",
+			"title": title,
+			"iconUrl": "icons/bookmark.png",
+			"message": message
+		});
+	} catch(error) {
+		loglines = logit('Error: ' + error);
+	}
 }
 
 function onCreatedCheck(id, bookmark) {
