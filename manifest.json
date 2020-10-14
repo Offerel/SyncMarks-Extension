@@ -7,7 +7,7 @@
 	"icons": {
 		"48": "icons/bookmark.png"
 	},
-	"homepage_url": "https://github.com/Offerel/davmarks",
+	"homepage_url": "https://github.com/Offerel/SyncMarks-Extension",
 	"background": {
 		"scripts": ["scripts/background.js"]
 	},
@@ -19,6 +19,12 @@
 		"page": "scripts/options.html",
 		"open_in_tab": true
 	},
+	"browser_specific_settings": {
+  "gecko": {
+    "id": "syncmarks@example",
+    "strict_min_version": "42.0"
+  }
+},
 	"permissions": [
 		"notifications",
 		"activeTab",

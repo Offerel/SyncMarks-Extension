@@ -149,7 +149,8 @@ function getNotifications() {
 					var nData = JSON.parse(xhr.responseText);
 					try {
 						nData.forEach(function(notification) {
-							let nnid = JSON.stringify({id:notification.nkey,url:notification.url})
+							let nnid = JSON.stringify({id:notification.nkey,url:notification.url});
+							loglines = logit('Info: Received page: <a href="' + notification.url + '">' + notification.url + '</a>');
 							notify(nnid, notification.url, notification.title);
 						});
 					} catch(error) {

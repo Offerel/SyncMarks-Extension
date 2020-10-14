@@ -102,13 +102,17 @@ input:hover {
     position: absolute;
 }
 #logarea {
-	width: calc(100% - 30px);
-	white-space: pre;
-	display: block;
-	font-family: consolas, courier;
-	font-size: 0.9em;
-	height: calc(100% - 145px);
-	position: absolute;
+    width: calc(100% - 32px);
+    white-space: pre;
+    display: block;
+    font-family: consolas, courier;
+    font-size: 0.9em;
+    height: calc(100% - 125px);
+    position: absolute;
+    background: white;
+    border: 1px solid gainsboro;
+    padding: 5px;
+    overflow: auto;
 }
 h1 img {
 	vertical-align: bottom;

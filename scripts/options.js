@@ -180,22 +180,6 @@ function manualExport() {
 	}
 }
 
-function getLog() {
-	if(this.checked) {
-		document.getElementById("logarea").style.display = "block";
-		document.getElementById("logarea").value = background_page.loglines;
-	}
-	else {
-		document.getElementById("logarea").style.display = "none";
-	}
-}
-
-function checkCheckbox() {
-	document.getElementById("mdebug").checked = true;
-	document.getElementById("logarea").style.display = "block";
-	document.getElementById("logarea").value = background_page.loglines;
-}
-
 function localizeHtmlPage() {
     var objects = document.getElementsByTagName('span');
     for (var j = 0; j < objects.length; j++) {
@@ -211,16 +195,26 @@ function localizeHtmlPage() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
 
 function openTab(tabname) {
 	var x = document.getElementsByClassName("otabs");
 	for (var i = 0; i < x.length; i++) {
 		x[i].style.display = "none";
-		if(tabname.target.innerText == 'Logfile') document.getElementById("logarea").value = background_page.loglines;
+		let larea = document.getElementById("logarea");
+		let log = document.createTextNode(background_page.loglines);
+
+		while (larea.firstChild) {
+			larea.removeChild(larea.firstChild);
+		}
+
+		if(tabname.target.innerText == 'Logfile') {
+			larea.insertAdjacentHTML("afterbegin",background_page.loglines);
+		}
 	}
 	document.getElementById(tabname.target.attributes['data-val'].value).style.display = "block";
-  }
+}
+
+document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
 
 window.addEventListener('load', function () {
 	localizeHtmlPage();

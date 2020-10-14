@@ -4,6 +4,7 @@ v1.17.5.4 (2020-10-09)
 -------------------------
 * Removed more permissions
 * Extended error handler for internal errors
+* Add urls from notifications to logfile
   
 
 v1.17.5 (2020-10-01)
