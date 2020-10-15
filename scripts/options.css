@@ -114,6 +114,13 @@ input:hover {
     padding: 5px;
     overflow: auto;
 }
+#logarea body {
+    white-space: pre;
+    font-family: consolas, courier;
+    font-size: 0.9em;
+    background: white;
+    padding: 0;
+}
 h1 img {
 	vertical-align: bottom;
 	margin-right: 10px;

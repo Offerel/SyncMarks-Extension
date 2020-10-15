@@ -195,20 +195,19 @@ function localizeHtmlPage() {
     }
 }
 
-
 function openTab(tabname) {
 	var x = document.getElementsByClassName("otabs");
 	for (var i = 0; i < x.length; i++) {
 		x[i].style.display = "none";
 		let larea = document.getElementById("logarea");
-		let log = document.createTextNode(background_page.loglines);
 
 		while (larea.firstChild) {
 			larea.removeChild(larea.firstChild);
 		}
 
 		if(tabname.target.innerText == 'Logfile') {
-			larea.insertAdjacentHTML("afterbegin",background_page.loglines);
+			var logp = new DOMParser().parseFromString(background_page.loglines, 'text/html').body;
+			larea.appendChild(logp);
 		}
 	}
 	document.getElementById(tabname.target.attributes['data-val'].value).style.display = "block";
