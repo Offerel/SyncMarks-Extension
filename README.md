@@ -13,26 +13,22 @@ The exported bookmarks are also be compatible with the corresponding [Roundcube 
 
 There are some permissions needed, so that DAVMarks can work properly.
 
-##### access your data for all sites
+##### Access your data for all https sites
 
-The WebDAV share can theoretically be located on any website. Since I don't know beforehand which one this can be, the AddOn needs the permission to store the data on any page. However, the data is only exchanged with the server specified in the settings.
+The WebDAV share or PHP backend can theoretically be located on any https url. Since I don't know beforehand which one this can be, the AddOn needs the permission to communicate with any https url. However, the data is only exchanged with the server specified in the settings.
 
-##### read and modify bookmarks
+##### Read and modify bookmarks
 
-Since you export and import all your bookmarks, the AddOn needs access to them.
+Since you export and import all your bookmarks, the AddOn needs access to them. Currently this API is supported on the desktop and on Kiwi on mobile. If the Mozilla implements this finally on mobile, it will work there to.
 
-##### access browser tabs
+##### Storage
 
-This is needed since you can open the settings panel from within the AddOn
+Here all the settings you specify are saved. This is only saved locally in your profile.
 
-##### storage
+##### Notifications
 
-Here all the settings you specify are saved.
+If the AddOn finds some problems or would like to tell you how many bookmarks are imported, this is done with a notification. To a bug in Firefox mobile, notifications will not be displayed on Android. It will work again, when bug is fixed in Fennec.
 
-##### notifications
+##### Context menus
 
-If the AddOn finds some problems or would like to tell you how many bookmarks are imported, this is done with a notification.
-
-##### webRequest
-
-The bookmarks are imported and exported with a webRequest. Only https connections other http-basic-authentications are supported.
+On desktop you can right click on a empty space at the page or on a link and cand push this link as notification  to another client. Since this API is not available on mobile, you cant use this feature there.
