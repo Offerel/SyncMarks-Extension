@@ -3,9 +3,10 @@ var dictOldIDsToNewIDs = { "-1": "-1" };
 var loglines = '';
 var debug = false;
 const abrowser = typeof InstallTrigger !== 'undefined';
+var clientL = [];
 
 init();
-chrome.browserAction.onClicked.addListener(openSettings);
+
 try {
 	chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 	chrome.bookmarks.onMoved.addListener(onMovedCheck);
@@ -101,6 +102,32 @@ chrome.storage.local.get(null, function(options) {
 		});
 	}
 })
+
+function sendTab(element) {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.storage.local.get(null, function(options) {
+			var cdata = "client=" + options['s_uuid'] + "&caction=getpurl&url=" + encodeURIComponent(tabs[0].url) + "&tg=" + element.target.id;
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", options['wdurl'], true);
+			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xhr.withCredentials = true;
+			xhr.onload = function () {
+				if( xhr.status < 200 || xhr.status > 226) {
+					var message = chrome.i18n.getMessage("sendLinkNot");
+					notify('error',message);
+					loglines = logit('Error: ' + message);
+				}
+				else {
+					loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes"));
+				}
+			}
+			loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options['s_uuid']);
+			xhr.send(cdata);
+			
+		});
+	});
+}
 
 function logit(message) {
 	var options = { day: '2-digit', year: 'numeric', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -203,6 +230,7 @@ function getClientList() {
 						id: 'link_' + client.id
 					});
 				});
+				clientL = cData;
 				loglines = logit("Info: List of clients retrieved successfully.");
 			}
 		}

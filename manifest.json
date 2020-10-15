@@ -13,18 +13,13 @@
 	},
 	"browser_action": {
 		"default_icon": "icons/bookmark.png",
-		"default_title": "__MSG_extensionName__"
+		"default_title": "__MSG_extensionName__",
+		"default_popup": "scripts/stargets.html"
 	},
 	"options_ui": {
 		"page": "scripts/options.html",
 		"open_in_tab": true
 	},
-	"browser_specific_settings": {
-  "gecko": {
-    "id": "syncmarks@example",
-    "strict_min_version": "42.0"
-  }
-},
 	"permissions": [
 		"notifications",
 		"activeTab",
