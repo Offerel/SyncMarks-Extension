@@ -194,15 +194,7 @@ function getNotifications() {
 
 function getClientList() {
 	chrome.storage.local.get(null, function(options) {
-		if(!("s_uuid" in options)) {
-			var s_uuid = uuidv4();
-			chrome.storage.local.set({s_uuid: s_uuid});
-		}
-		else {
-			var s_uuid = options['s_uuid'];
-		}
-
-		let data = "client="+s_uuid+"&caction=getclients";
+		let data = "client=" + options['s_uuid'] + "&caction=getclients";
 		let xhr = new XMLHttpRequest();
 		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
@@ -217,21 +209,27 @@ function getClientList() {
 			else {
 				cData = JSON.parse(xhr.responseText);
 				cData.unshift({id:'0',name:'All',type:'',date:''});
-				cData.forEach(function(client) {
-					var ctitle = client.name.length < 1 ? client.id : client.name;
-					chrome.contextMenus.create({
-						title: ctitle,
-						parentId: "ssendpage",
-						id: 'page_' + client.id
-					});
-					chrome.contextMenus.create({
-						title: ctitle,
-						parentId: "ssendlink",
-						id: 'link_' + client.id
-					});
-				});
+
 				clientL = cData;
 				loglines = logit("Info: List of clients retrieved successfully.");
+
+				try {
+					cData.forEach(function(client) {
+						var ctitle = client.name.length < 1 ? client.id : client.name;
+						chrome.contextMenus.create({
+							title: ctitle,
+							parentId: "ssendpage",
+							id: 'page_' + client.id
+						});
+						chrome.contextMenus.create({
+							title: ctitle,
+							parentId: "ssendlink",
+							id: 'link_' + client.id
+						});
+					});
+				} catch(error) {
+					loglines = logit('Error: ' + error);
+				}
 			}
 		}
 		xhr.send(data);

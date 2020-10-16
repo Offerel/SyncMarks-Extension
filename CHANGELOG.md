@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.5.5 (2020-10-16)
+-------------------------
+* Fixed building clientlist
+
+
 v1.17.5.4 (2020-10-09)
 -------------------------
 * Removed more permissions
