@@ -236,14 +236,18 @@ window.addEventListener('load', function () {
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
 	document.getElementById("ssubmit").addEventListener("click", saveOptions);
 	document.getElementById("iyes").addEventListener("click", manualImport, {passive: true});
+	document.getElementById("eyes").addEventListener("click", manualExport, {passive: true});
 	document.getElementById("ryes").addEventListener("click", manualRemove, {passive: true});
 	document.getElementById("ino").addEventListener("click", function() { imodal.style.display = "none";}, {passive: true});
 	document.getElementById("rno").addEventListener("click", function() { rmodal.style.display = "none";}, {passive: true});
+	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";}, {passive: true});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";}, {passive: true});
 	document.getElementById("rclose").addEventListener("click", function() {rmodal.style.display = "none";}, {passive: true});
+	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";}, {passive: true});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"}, {passive: true});
 	document.getElementById("mremove").addEventListener("click", function() {rmodal.style.display = "block"}, {passive: true})
-	document.getElementById("mupload").addEventListener("click", manualExport, {passive: true});
+	//document.getElementById("mupload").addEventListener("click", manualExport, {passive: true});
+	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"}, {passive: true});
 	document.getElementById("wdurl").addEventListener("keyup", checkForm, {passive: true});
 	document.getElementById("user").addEventListener("keyup", checkForm, {passive: true});
 	document.getElementById("password").addEventListener("keyup", checkForm, {passive: true});
@@ -258,6 +262,7 @@ window.addEventListener('load', function () {
 
 	var imodal = document.getElementById("impdialog");
 	var rmodal = document.getElementById("rmdialog");
+	var emodal = document.getElementById("expdialog");
 
 	window.onclick = function(event) {
 		if (event.target == imodal) {
@@ -266,6 +271,10 @@ window.addEventListener('load', function () {
 
 		if (event.target == rmodal) {
 			rmodal.style.display = "none";
+		}
+
+		if (event.target == emodal) {
+			emodal.style.display = "none";
 		}
 	}
 }, {passive: true});

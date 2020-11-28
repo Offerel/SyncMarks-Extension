@@ -6,6 +6,7 @@ v1.17.6.0 (2020-11-28)
 * Added function to save logfile
 * Fixed WebDAV clientname issue
 * Fixed adding new bookmark in special cases
+* Added confirmation dialog for export
 
 
 v1.17.5.6 (2020-10-19)

@@ -160,8 +160,12 @@
   },
   
   "optionsBeforeImport": { 
-    "message": "All bookmarks are deleted before importing. Afterwards the new bookmarks are imported.\n\nShould the local bookmarks be deleted before the import?",
+    "message": "All local bookmarks are deleted before importing. Afterwards the new bookmarks are imported.\n\nShould the local bookmarks be deleted before the import?",
     "description": "Message before importing."
+  },
+  "optionsBeforeExport": { 
+    "message": "All bookmarks are deleted at the server before exporting. Afterwards the new bookmarks are exported to the server.\n\nShould the remote bookmarks be deleted before the export?",
+    "description": ""
   },
   
   "optionsInfoRemove": {

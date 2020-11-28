@@ -988,8 +988,7 @@ function importMarks(parsedMarks, index=0) {
 			return false;
 		}
 	}
-
-	loglines = logit('Info: Removing listeners');
+	console.log("test");
 	chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 	chrome.bookmarks.onMoved.removeListener(onMovedCheck);
 	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
