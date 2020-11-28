@@ -33,7 +33,11 @@ function saveOptions(e) {
 		s_type: document.querySelector('input[name="stype"]:checked').value,
 		s_uuid: document.querySelector("#s_uuid").value,
 	});
-	rName(document.querySelector("#cname").value);
+
+	if(document.querySelector('input[name="stype"]:checked').value = 'PHP') {
+		rName(document.querySelector("#cname").value);
+	}
+	
 	let cdata = "client=" + document.querySelector("#s_uuid").value + "&caction=tl";
 	var xhr = new XMLHttpRequest();
 	xhr.open("POST", document.querySelector("#wdurl").value, true);
@@ -114,15 +118,18 @@ function restoreOptions() {
 		document.querySelector("#user").value = options['user'] || "";
 		document.querySelector("#password").value = options['password'] || "";
 		document.querySelector("#s_uuid").value = options['s_uuid'] || background_page.uuidv4();
-		gName();
-		document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").value;
 		document.querySelector("#s_startup").checked = options['s_startup'] || false;
 		document.querySelector("#s_create").checked = options['s_create'] || false;
 		document.querySelector("#s_remove").checked = options['s_remove'] || false;
 		document.querySelector("#s_change").checked = options['s_change'] || false;
 
-		if("s_type" in options)
+		if("s_type" in options) {
 			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').checked = true;
+			if(options['s_type'] == 'PHP') {
+				gName();
+				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").value;
+			}
+		}
 
 		last_sync = options['last_sync'] || 0;
 		if(last_sync.toString().length > 0) {
@@ -144,7 +151,7 @@ function manualImport() {
 			}
 		});
 	} catch(error) {
-		background_page.loglines = background_page.logit('Error: ' + error);
+		background_page.loglines = background_page.logit(error);
 	} finally {
 		document.getElementById("impdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
@@ -156,7 +163,7 @@ function manualRemove() {
 			background_page.removeAllMarks();
 		}
 		catch(error) {
-			background_page.loglines = background_page.logit('Error: ' + error);
+			background_page.loglines = background_page.logit(error);
 		}
 		finally {
 			document.getElementById("rmdialog").style.display = "none";
@@ -174,9 +181,7 @@ function manualExport() {
 			background_page.exportPHPMarks();
 		}
 	} catch(error) {
-		background_page.loglines = background_page.logit('Error: ' + error);
-	} finally {
-		background_page.loglines = background_page.logit('Info: ' + 'Export finalized.');
+		background_page.loglines = background_page.logit(error);
 	}
 }
 
@@ -201,8 +206,8 @@ function openTab(tabname) {
 		x[i].style.display = "none";
 		let larea = document.getElementById("logarea");
 
-		while (larea.firstChild) {
-			larea.removeChild(larea.firstChild);
+		if(larea.childNodes.length > 1) {
+			larea.removeChild(larea.childNodes[1]); 
 		}
 
 		if(tabname.target.innerText == 'Logfile') {
@@ -211,6 +216,17 @@ function openTab(tabname) {
 		}
 	}
 	document.getElementById(tabname.target.attributes['data-val'].value).style.display = "block";
+}
+
+function saveLog() {
+	var logfile = 'SyncMarks ' + chrome.runtime.getManifest().version + '\n' + document.getElementById("logarea").innerText;
+	var element = document.createElement('a');
+	element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(logfile);
+	element.download = 'SyncMarks.log';
+	element.style.display = 'none';
+	document.body.appendChild(element);
+	element.click();
+	document.body.removeChild(element);
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
@@ -238,6 +254,7 @@ window.addEventListener('load', function () {
 	document.getElementById("s_change").addEventListener("input", checkForm, {passive: true});
 	document.getElementById("s_remove").addEventListener("input", checkForm, {passive: true});
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
+	//document.getElementById("logsave").addEventListener("click", saveLog);
 
 	var imodal = document.getElementById("impdialog");
 	var rmodal = document.getElementById("rmdialog");

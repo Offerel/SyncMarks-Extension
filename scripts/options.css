@@ -95,6 +95,20 @@ input:hover {
     text-decoration: none;
     cursor: pointer;
 }
+#logsave {
+	background-image: url(../icons/download.png);
+	width: 25px;
+	height: 25px;
+	position: absolute;
+	top: 10px;
+	z-index: 100;
+	right: 10px;
+	border-radius: 14px;
+	cursor: pointer;
+	background-repeat: no-repeat;
+	border: 2px solid black;
+	background-size: 25px;
+}
 .cframe {
     width: calc(100% - 30px);
     border: 0;

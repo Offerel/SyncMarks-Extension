@@ -1,5 +1,18 @@
 ChangeLog
 =========
+v1.17.6.0 (2020-11-28)
+-------------------------
+* Added Firefox Android Workarounds
+* Added function to save logfile
+* Fixed WebDAV clientname issue
+* Fixed adding new bookmark in special cases
+
+
+v1.17.5.6 (2020-10-19)
+-------------------------
+* Added Firefox Android Workarounds
+
+
 v1.17.5.5 (2020-10-16)
 -------------------------
 * Fixed building clientlist

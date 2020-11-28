@@ -1,8 +1,16 @@
 var background_page = chrome.extension.getBackgroundPage();
 
 document.addEventListener("DOMContentLoaded", lCLients, {passive: true});
-document.getElementById("settings").addEventListener("click", function() {
-    chrome.runtime.openOptionsPage();
+document.getElementById("settings").addEventListener("click", function() {  
+    var settingsurl = chrome.extension.getURL("scripts/options.html");
+    chrome.tabs.query({"url": settingsurl}, function(tabs) {
+        if(tabs.length == 0)
+            chrome.runtime.openOptionsPage();
+        else {
+            console.log("tab already open, reopen it");
+            chrome.tabs.update(this.id, { active: true });
+        }
+    });
 }, {passive: true});
 
 function lCLients() {
