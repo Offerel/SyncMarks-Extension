@@ -9,30 +9,28 @@ The bookmarks can be exported manually or optionally fully automatically. There 
 
 There are some permissions needed, so that SyncMarks can work properly.
 
-##### access your data for all sites
+##### Access your data for all https sites
 
-The WebDAV share can theoretically be located on any website. Since I don't know beforehand which one this can be, the AddOn needs the permission to store the data on any page. However, the data is only exchanged with the server specified in the settings.
+The WebDAV share or PHP backend can theoretically be located on any https url. Since I don't know beforehand which one this can be, the AddOn needs the permission to communicate with any https url. However, the data is only exchanged with the server specified in the settings.
 
-##### read and modify bookmarks
+##### Read and modify bookmarks
 
-Since you export and import all your bookmarks, the AddOn needs access to them.
+Since you export and import all your bookmarks, the AddOn needs access to them. Currently this API is supported on the desktop and on Kiwi on mobile. If the Mozilla implements this finally on mobile, it will work there to.
 
-##### access browser tabs
+##### Storage
 
-This is needed since you can open the settings panel from within the AddOn
+Here all the settings you specify are saved. This is only saved locally in your profile.
 
-##### storage
+##### Notifications
 
-Here all the settings you specify are saved.
+If the AddOn finds some problems or would like to tell you how many bookmarks are imported, this is done with a notification. To a bug in Firefox mobile, notifications will not be displayed on Android. It will work again, when bug is fixed in Fennec.
 
-##### notifications
+##### Context menus
 
+On desktop you can right click on a empty space at the page or on a link and cand push this link as notification  to another client. Since this API is not available on mobile, you cant use this feature there.
+=======
 If the AddOn finds some problems or would like to tell you how many bookmarks are imported, this is done with a notification.
-
-##### webRequest
-
-The bookmarks are imported and exported with a webRequest. Only https connections other http-basic-authentications are supported.
-
+ 
 ### Current open bugs
 There are some open issue, where i must use currently a workaround or if no workaround is possible, we have to wait for a upstream fix in Fennec project. THis is a list of a issues im aware as of now:
 * Bookmark API isn't supported on Android. There is hope, that this will be supported in the upcoming future, but currently it's unsupported at least on Android. In Kiwi Browser its working as expected. You can follow the bug at https://bugzilla.mozilla.org/show_bug.cgi?id=1625231
@@ -40,4 +38,3 @@ There are some open issue, where i must use currently a workaround or if no work
 * ~~Notifications are completely broken in Fennec Android. As a workaround, i have added pushed urls also the logfile. You can follow the bug report at https://github.com/mozilla-mobile/fenix/issues/14993~~ Fixed at least in current Nightly
 * activeTabs permission does not include url propertie on Fennec Android. As a workaround i have re-added the tabs permission, to get the url of an active tab. You can follow this bug at https://github.com/mozilla-mobile/fenix/issues/14093
 * The settings will not opened correctly in Fennec Android. So the settings page will be opened sometimes invisible in a tab in the background, some other times it will opened multiple times. You can follow the bugreport at https://github.com/mozilla-mobile/fenix/issues/15742
-

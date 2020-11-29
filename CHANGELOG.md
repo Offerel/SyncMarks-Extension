@@ -1,5 +1,42 @@
 ChangeLog
 =========
+v1.17.6.0 (2020-11-29)
+-------------------------
+* Added Firefox Android Workarounds
+* Added function to save logfile
+* Fixed WebDAV clientname issue
+* Fixed adding new bookmark in special cases
+* Added confirmation dialog for export
+
+
+v1.17.5.6 (2020-10-19)
+-------------------------
+* Added Firefox Android Workarounds
+
+
+v1.17.5.5 (2020-10-16)
+-------------------------
+* Fixed building clientlist
+
+
+v1.17.5.4 (2020-10-09)
+-------------------------
+* Removed more permissions
+* Extended error handler for internal errors
+* Add urls from notifications to logfile
+* Re-Added popup for push page
+  
+
+v1.17.5 (2020-10-01)
+-------------------------
+* Removed permissions
+* Removed popup
+* Added error handler for internal errors
+* Shorten date format
+* Fixed compare statement
+* Fixed submit on options
+
+
 v1.17.4 (2020-09-09)
 -------------------------
 * Browser detection at server level

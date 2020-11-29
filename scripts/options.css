@@ -95,6 +95,20 @@ input:hover {
     text-decoration: none;
     cursor: pointer;
 }
+#logsave {
+	background-image: url(../icons/download.png);
+	width: 25px;
+	height: 25px;
+	position: absolute;
+	top: 10px;
+	z-index: 100;
+	right: 10px;
+	border-radius: 14px;
+	cursor: pointer;
+	background-repeat: no-repeat;
+	border: 2px solid black;
+	background-size: 25px;
+}
 .cframe {
     width: calc(100% - 30px);
     border: 0;
@@ -102,13 +116,24 @@ input:hover {
     position: absolute;
 }
 #logarea {
-	width: calc(100% - 30px);
-	white-space: pre;
-	display: block;
-	font-family: consolas, courier;
-	font-size: 0.9em;
-	height: calc(100% - 145px);
-	position: absolute;
+    width: calc(100% - 32px);
+    white-space: pre;
+    display: block;
+    font-family: consolas, courier;
+    font-size: 0.9em;
+    height: calc(100% - 125px);
+    position: absolute;
+    background: white;
+    border: 1px solid gainsboro;
+    padding: 5px;
+    overflow: auto;
+}
+#logarea body {
+    white-space: pre;
+    font-family: consolas, courier;
+    font-size: 0.9em;
+    background: white;
+    padding: 0;
 }
 h1 img {
 	vertical-align: bottom;
@@ -247,6 +272,10 @@ input:checked + .slider:before {
 }
 .tab-bar button:hover {
 	background-color: darkgrey;
+}
+.abutton {
+	background-color: DimGray !important;
+	color: white;
 }
 .tab-bar {
 	box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;

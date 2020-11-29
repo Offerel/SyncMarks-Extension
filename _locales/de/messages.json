@@ -159,8 +159,12 @@
   },
   
   "optionsBeforeImport": {
-    "message": "Vor dem Import werden alle Lesezeichen gelöscht. Danach werden die neuen Lesezeichen importiert.\n\nSollen die lokalen Lesezeichen vor dem Import gelöscht werden?",
+    "message": "Vor dem Import werden alle lokalen Lesezeichen gelöscht. Danach werden die neuen Lesezeichen importiert.\n\nSollen die lokalen Lesezeichen vor dem Import gelöscht werden?",
     "description": "Message before importing."
+  },
+  "optionsBeforeExport": {
+    "message": "Vor dem Export werden alle Lesezeichen auf dem Server gelöscht. Danach werden die neuen Lesezeichen zum Server eportiert.\n\nSollen die Lesezeichen vor dem Export auf dem Server gelöscht werden?",
+    "description": ""
   },
   
   "optionsInfoRemove": {

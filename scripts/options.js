@@ -1,7 +1,7 @@
 var background_page = chrome.extension.getBackgroundPage();
 
 function checkForm() {
-	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value != true){
+	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
         document.getElementById('ssubmit').disabled=false;
 		document.getElementById('mdownload').disabled=false;
 		document.getElementById('mupload').disabled=false;
@@ -33,7 +33,11 @@ function saveOptions(e) {
 		s_type: document.querySelector('input[name="stype"]:checked').value,
 		s_uuid: document.querySelector("#s_uuid").value,
 	});
-	rName(document.querySelector("#cname").value);
+
+	if(document.querySelector('input[name="stype"]:checked').value = 'PHP') {
+		rName(document.querySelector("#cname").value);
+	}
+	
 	let cdata = "client=" + document.querySelector("#s_uuid").value + "&caction=tl";
 	var xhr = new XMLHttpRequest();
 	xhr.open("POST", document.querySelector("#wdurl").value, true);
@@ -77,7 +81,7 @@ function rName(name) {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Error set name of client."  + xhr.status;
 				notify('error',message);
-				loglines = logit('Error: '+message);
+				background_page.loglines = background_page.logit('Error: '+message);
 			}
 		}
 		xhr.send(cdata);
@@ -96,7 +100,7 @@ function gName() {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Error get name of client."  + xhr.status;
 				notify('error',message);
-				loglines = logit('Error: '+message);
+				background_page.loglines =  background_page.logit('Error: '+message);
 			} else {
 				var response = JSON.parse(xhr.responseText);
 			}
@@ -114,15 +118,18 @@ function restoreOptions() {
 		document.querySelector("#user").value = options['user'] || "";
 		document.querySelector("#password").value = options['password'] || "";
 		document.querySelector("#s_uuid").value = options['s_uuid'] || background_page.uuidv4();
-		gName();
-		document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").value;
 		document.querySelector("#s_startup").checked = options['s_startup'] || false;
 		document.querySelector("#s_create").checked = options['s_create'] || false;
 		document.querySelector("#s_remove").checked = options['s_remove'] || false;
 		document.querySelector("#s_change").checked = options['s_change'] || false;
 
-		if("s_type" in options)
+		if("s_type" in options) {
 			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').checked = true;
+			if(options['s_type'] == 'PHP') {
+				gName();
+				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").value;
+			}
+		}
 
 		last_sync = options['last_sync'] || 0;
 		if(last_sync.toString().length > 0) {
@@ -134,6 +141,7 @@ function restoreOptions() {
 }
 
 function manualImport() {
+	try {
 		background_page.removeAllMarks();
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
@@ -142,41 +150,39 @@ function manualImport() {
 				background_page.getDAVMarks();
 			}
 		});
+	} catch(error) {
+		background_page.loglines = background_page.logit(error);
+	} finally {
 		document.getElementById("impdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
+	}
 }
 
 function manualRemove() {
-		background_page.removeAllMarks();
-		document.getElementById("rmdialog").style.display = "none";
-		chrome.storage.local.set({last_s: 1});
+		try {
+			background_page.removeAllMarks();
+		}
+		catch(error) {
+			background_page.loglines = background_page.logit(error);
+		}
+		finally {
+			document.getElementById("rmdialog").style.display = "none";
+			chrome.storage.local.set({last_s: 1});
+		}
 }
 
 function manualExport() {
 	var background_page = chrome.extension.getBackgroundPage();
-
-	if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
-		background_page.saveAllMarks();
+	try {
+		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
+			background_page.saveAllMarks();
+		}
+		else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
+			background_page.exportPHPMarks();
+		}
+	} catch(error) {
+		background_page.loglines = background_page.logit(error);
 	}
-	else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
-		background_page.exportPHPMarks();
-	}
-}
-
-function getLog() {
-	if(this.checked) {
-		document.getElementById("logarea").style.display = "block";
-		document.getElementById("logarea").value = background_page.loglines;
-	}
-	else {
-		document.getElementById("logarea").style.display = "none";
-	}
-}
-
-function checkCheckbox() {
-	document.getElementById("mdebug").checked = true;
-	document.getElementById("logarea").style.display = "block";
-	document.getElementById("logarea").value = background_page.loglines;
 }
 
 function localizeHtmlPage() {
@@ -194,31 +200,58 @@ function localizeHtmlPage() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
-
 function openTab(tabname) {
 	var x = document.getElementsByClassName("otabs");
 	for (var i = 0; i < x.length; i++) {
 		x[i].style.display = "none";
-		if(tabname.target.innerText == 'Logfile') document.getElementById("logarea").value = background_page.loglines;
+		let larea = document.getElementById("logarea");
+
+		if(larea.childNodes.length > 1) {
+			larea.removeChild(larea.childNodes[1]); 
+		}
+
+		if(tabname.target.innerText == 'Logfile') {
+			var logp = new DOMParser().parseFromString(background_page.loglines, 'text/html').body;
+			larea.appendChild(logp);
+		}
 	}
 	document.getElementById(tabname.target.attributes['data-val'].value).style.display = "block";
-  }
+	document.querySelectorAll('.tab-button').forEach(function(e) {
+		e.classList.remove("abutton");
+	});
+	document.querySelector('button[data-val="'+ tabname.target.attributes['data-val'].value +'"]').classList.add("abutton");
+	
+}
+
+function saveLog() {
+	var logfile = 'SyncMarks ' + chrome.runtime.getManifest().version + '\n' + document.getElementById("logarea").innerText;
+	var element = document.createElement('a');
+	element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(logfile);
+	element.download = 'SyncMarks.log';
+	element.style.display = 'none';
+	document.body.appendChild(element);
+	element.click();
+	document.body.removeChild(element);
+}
+
+document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
 
 window.addEventListener('load', function () {
 	localizeHtmlPage();
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
-	document.querySelector("form").addEventListener("submit", saveOptions);
+	document.getElementById("ssubmit").addEventListener("click", saveOptions);
 	document.getElementById("iyes").addEventListener("click", manualImport, {passive: true});
+	document.getElementById("eyes").addEventListener("click", manualExport, {passive: true});
 	document.getElementById("ryes").addEventListener("click", manualRemove, {passive: true});
 	document.getElementById("ino").addEventListener("click", function() { imodal.style.display = "none";}, {passive: true});
 	document.getElementById("rno").addEventListener("click", function() { rmodal.style.display = "none";}, {passive: true});
+	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";}, {passive: true});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";}, {passive: true});
 	document.getElementById("rclose").addEventListener("click", function() {rmodal.style.display = "none";}, {passive: true});
+	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";}, {passive: true});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"}, {passive: true});
 	document.getElementById("mremove").addEventListener("click", function() {rmodal.style.display = "block"}, {passive: true})
-
-	document.getElementById("mupload").addEventListener("click", manualExport, {passive: true});
+	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"}, {passive: true});
 	document.getElementById("wdurl").addEventListener("keyup", checkForm, {passive: true});
 	document.getElementById("user").addEventListener("keyup", checkForm, {passive: true});
 	document.getElementById("password").addEventListener("keyup", checkForm, {passive: true});
@@ -229,9 +262,11 @@ window.addEventListener('load', function () {
 	document.getElementById("s_change").addEventListener("input", checkForm, {passive: true});
 	document.getElementById("s_remove").addEventListener("input", checkForm, {passive: true});
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
+	//document.getElementById("logsave").addEventListener("click", saveLog);
 
 	var imodal = document.getElementById("impdialog");
 	var rmodal = document.getElementById("rmdialog");
+	var emodal = document.getElementById("expdialog");
 
 	window.onclick = function(event) {
 		if (event.target == imodal) {
@@ -240,6 +275,10 @@ window.addEventListener('load', function () {
 
 		if (event.target == rmodal) {
 			rmodal.style.display = "none";
+		}
+
+		if (event.target == emodal) {
+			emodal.style.display = "none";
 		}
 	}
 }, {passive: true});

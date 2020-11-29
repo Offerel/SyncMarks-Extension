@@ -3,18 +3,59 @@ var dictOldIDsToNewIDs = { "-1": "-1" };
 var loglines = '';
 var debug = false;
 const abrowser = typeof InstallTrigger !== 'undefined';
+var clientL = [];
 
 init();
-chrome.browserAction.onClicked.addListener(openSettings);
-chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-chrome.bookmarks.onMoved.addListener(onMovedCheck);
-chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-chrome.bookmarks.onChanged.addListener(onChangedCheck);
+
+try {
+	chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+	chrome.bookmarks.onMoved.addListener(onMovedCheck);
+	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+	chrome.bookmarks.onChanged.addListener(onChangedCheck);
+} catch(error) {
+	loglines = logit(error);
+}
+
 chrome.notifications.onClicked.addListener(notificationSettings);
-chrome.contextMenus.onClicked.addListener(function(itemData) {
-	if(itemData.menuItemId.includes("page_")) {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			var url = tabs[0].url
+
+try {
+	chrome.contextMenus.onClicked.addListener(function(itemData) {
+		if(itemData.menuItemId.includes("page_")) {
+			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+				var url = tabs[0].url
+				chrome.storage.local.get(null, function(options) {
+					if(!("s_uuid" in options)) {
+						var s_uuid = uuidv4();
+						chrome.storage.local.set({s_uuid: s_uuid});
+					}
+					else {
+						var s_uuid = options['s_uuid'];
+					}
+					let tgid = itemData.menuItemId.substring(5);
+					let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url)+"&tg="+tgid;
+					var xhr = new XMLHttpRequest();
+					xhr.open("POST", options['wdurl'], true);
+					xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+					xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+					xhr.withCredentials = true;
+					xhr.onload = function () {
+						if( xhr.status < 200 || xhr.status > 226) {
+							message = chrome.i18n.getMessage("sendLinkNot");
+							notify('error',message);
+							loglines = logit('Error: '+message);
+						}
+						else {
+							loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
+						}
+					}
+					loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes")+", Client: "+s_uuid);
+					xhr.send(cdata);
+				})
+			});
+		}
+
+		if(itemData.menuItemId.includes("link_")) {
+			var url = itemData.linkUrl
 			chrome.storage.local.get(null, function(options) {
 				if(!("s_uuid" in options)) {
 					var s_uuid = uuidv4();
@@ -43,44 +84,14 @@ chrome.contextMenus.onClicked.addListener(function(itemData) {
 				loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes")+", Client: "+s_uuid);
 				xhr.send(cdata);
 			})
-		});
-	}
-
-	if(itemData.menuItemId.includes("link_")) {
-		var url = itemData.linkUrl
-		chrome.storage.local.get(null, function(options) {
-			if(!("s_uuid" in options)) {
-				var s_uuid = uuidv4();
-				chrome.storage.local.set({s_uuid: s_uuid});
-			}
-			else {
-				var s_uuid = options['s_uuid'];
-			}
-			let tgid = itemData.menuItemId.substring(5);
-			let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url)+"&tg="+tgid;
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			xhr.withCredentials = true;
-			xhr.onload = function () {
-				if( xhr.status < 200 || xhr.status > 226) {
-					message = chrome.i18n.getMessage("sendLinkNot");
-					notify('error',message);
-					loglines = logit('Error: '+message);
-				}
-				else {
-					loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
-				}
-			}
-			loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes")+", Client: "+s_uuid);
-			xhr.send(cdata);
-		})
-	}
-});
-
+		}
+	});
+} catch(error) {
+	loglines = logit(error);
+}
 chrome.storage.local.get(null, function(options) {
 	if(options['s_type'] == "PHP") {
+		try{
 		chrome.contextMenus.create({
 			title: chrome.i18n.getMessage("sendPage"),
 			type: "normal",
@@ -94,13 +105,45 @@ chrome.storage.local.get(null, function(options) {
 			contexts: ["link"],
 			id: "ssendlink"
 		});
+		} catch(error) {
+			loglines = logit(error);
+		}
 	}
 })
 
+function sendTab(element) {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.storage.local.get(null, function(options) {
+			var cdata = "client=" + options['s_uuid'] + "&caction=getpurl&url=" + encodeURIComponent(tabs[0].url) + "&tg=" + element.target.id;
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", options['wdurl'], true);
+			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xhr.withCredentials = true;
+			xhr.onload = function () {
+				if( xhr.status < 200 || xhr.status > 226) {
+					var message = chrome.i18n.getMessage("sendLinkNot");
+					notify('error',message);
+					loglines = logit('Error: ' + message);
+				}
+				else {
+					loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes"));
+				}
+			}
+			loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options['s_uuid']);
+			xhr.send(cdata);
+			
+		});
+	});
+}
+
 function logit(message) {
-	var options = { day: '2-digit', year: 'numeric', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-	var mDate = new Date().toLocaleString(undefined, options);
-	logline = loglines+mDate+" - "+message+"\n";
+	//var options = { day: '2-digit', year: 'numeric', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+	//var mDate = new Date().toLocaleString(undefined, options);
+	var ndate = new Date();
+	logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
+	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0) 
+		notify('error',message);
 	return logline;
 }
 
@@ -136,17 +179,22 @@ function getNotifications() {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Get list of notifications failed.";
 				notify('error',message);
-				loglines = logit('Error: '+message);
+				loglines = logit('Error: ' + message);
 			}
 			else {
 				if(xhr.responseText.length > 0) {
-					nData = JSON.parse(xhr.responseText);
-					nData.forEach(function(notification) {
-						let nnid = JSON.stringify({id:notification.nkey,url:notification.url})
-						notify(nnid, notification.url, notification.title);
-					});
+					var nData = JSON.parse(xhr.responseText);
+					try {
+						nData.forEach(function(notification) {
+							let nnid = JSON.stringify({id:notification.nkey,url:notification.url});
+							loglines = logit('Info: Received page: <a href="' + notification.url + '">' + notification.url + '</a>');
+							notify(nnid, notification.url, notification.title);
+						});
+					} catch(error) {
+						loglines = logit(error);
+					}
+					loglines = logit("Info: List of " + nData.length + " notifications retrieved successfully.");
 				}
-				loglines = logit("Info: List of notifications retrieved successfully.");
 			}
 		}
 		xhr.send();
@@ -156,15 +204,7 @@ function getNotifications() {
 
 function getClientList() {
 	chrome.storage.local.get(null, function(options) {
-		if(!("s_uuid" in options)) {
-			var s_uuid = uuidv4();
-			chrome.storage.local.set({s_uuid: s_uuid});
-		}
-		else {
-			var s_uuid = options['s_uuid'];
-		}
-
-		let data = "client="+s_uuid+"&caction=getclients";
+		let data = "client=" + options['s_uuid'] + "&caction=getclients";
 		let xhr = new XMLHttpRequest();
 		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
@@ -179,20 +219,27 @@ function getClientList() {
 			else {
 				cData = JSON.parse(xhr.responseText);
 				cData.unshift({id:'0',name:'All',type:'',date:''});
-				cData.forEach(function(client) {
-					var ctitle = client.name.length < 1 ? client.id : client.name;
-					chrome.contextMenus.create({
-						title: ctitle,
-						parentId: "ssendpage",
-						id: 'page_' + client.id
+
+				clientL = cData;
+				loglines = logit("Info: List of " + cData.length + " clients retrieved successfully.");
+
+				try {
+					cData.forEach(function(client) {
+						var ctitle = client.name.length < 1 ? client.id : client.name;
+						chrome.contextMenus.create({
+							title: ctitle,
+							parentId: "ssendpage",
+							id: 'page_' + client.id
+						});
+						chrome.contextMenus.create({
+							title: ctitle,
+							parentId: "ssendlink",
+							id: 'link_' + client.id
+						});
 					});
-					chrome.contextMenus.create({
-						title: ctitle,
-						parentId: "ssendlink",
-						id: 'link_' + client.id
-					});
-				});
-				loglines = logit("Info: List of clients retrieved successfully.");
+				} catch(error) {
+					loglines = logit(error);
+				}
 			}
 		}
 		xhr.send(data);
@@ -200,12 +247,17 @@ function getClientList() {
 }
 
 function notificationSettings(id) {
+	console.log("clicked");
 	if(id == 'console' || id == 'error' || id == 'setting') {
 		debug = true;
 		chrome.runtime.openOptionsPage();
 	} else {
 		let nd = JSON.parse(id);
-		chrome.tabs.create({url: nd.url});
+		try {
+			chrome.tabs.create({url: nd.url});
+		} catch(error) {
+			loglines = logit(error);
+		}
 		dmNoti(nd.id);
 	}
 }
@@ -232,12 +284,16 @@ function openSettings() {
 }
 
 function notify(notid, message, title=chrome.i18n.getMessage("extensionName"), url="") {
-	chrome.notifications.create(notid, {
-		"type": "basic",
-		"title": title,
-		"iconUrl": "icons/bookmark.png",
-		"message": message
-	});
+	try {
+		chrome.notifications.create(notid, {
+			"type": "basic",
+			"title": title,
+			"iconUrl": "icons/bookmark.png",
+			"message": message
+		});
+	} catch(error) {
+		loglines = logit(error);
+	}
 }
 
 function onCreatedCheck(id, bookmark) {
@@ -319,7 +375,7 @@ function editMark(eData) {
 	
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
 }
 
@@ -339,7 +395,7 @@ function onRemovedCheck(id, bookmark) {
 }
 
 function exportPHPMarks() {
-	loglines = logit("Info: Requesting all local bookmarks for export");
+	loglines = logit("Info: Exporting bookmarks to server");
 	chrome.bookmarks.getTree(function(bookmarkItems) {
 		let bookmarks = encodeURIComponent(JSON.stringify(bookmarkItems));
 		chrome.storage.local.get(null, function(options) {
@@ -350,10 +406,10 @@ function exportPHPMarks() {
 			else {
 				var s_uuid = options['s_uuid'];
 			}
-			let cdata = "client="+s_uuid+"&caction=import&bookmark="+bookmarks;
+			let cdata = 'client='+s_uuid+'&caction=import&bookmark='+bookmarks;
 			let xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['user'] + ':' + options['password']));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -383,7 +439,7 @@ function exportPHPMarks() {
 	
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 	chrome.storage.local.set({last_s: datems});
 }
@@ -414,7 +470,7 @@ function saveAllMarks() {
 	});
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
@@ -460,7 +516,7 @@ function delMark(id, bookmark) {
 	
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
 }
 
@@ -505,7 +561,7 @@ function moveMark(id, bookmark) {
 	
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
@@ -566,7 +622,7 @@ function sendMark(bookmark) {
 	
 	let datems = Date.now();
 	let date = new Date(datems);
-	let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
 	
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
@@ -616,7 +672,7 @@ function getPHPMarks() {
 		xhr.onload = function () {
 			let datems = Date.now();
 			let date = new Date(datems);
-			let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
@@ -639,13 +695,13 @@ function getPHPMarks() {
 				}
 				else {
 					message = PHPMarks.length + chrome.i18n.getMessage("infoChanges");
-					loglines = logit(message+" Sending them now to add function");
+					loglines = logit(message);
 					abrowser == true ? addPHPMarks(PHPMarks) : addPHPcMarks(PHPMarks);
 					chrome.storage.local.set({last_message: message});
 				}		
 			}
 		}
-		loglines = logit("Info: Sending parameters to server (client, action): "+s_uuid+", startup");
+		loglines = logit("Info: Initiate startup sync");
 		xhr.send(params);
 	});
 }
@@ -661,7 +717,7 @@ function getAllPHPMarks() {
 		xhr.onload = function () {
 			let datems = Date.now();
 			let date = new Date(datems);
-			let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
 				notify('error',message);
@@ -714,7 +770,7 @@ function addPHPcMarks(bArray) {
 		}
 		else {
 			if(bookmark.fdID.length > 1) {
-				loglines = logit('Info: Changed bookmark is in userfolder');
+				loglines = logit('Info: Changed bookmark '+bookmark.bmURL+' in userfolder');
 				chrome.bookmarks.search({title: bookmark.fdName},function(folderItems) {
 					folderItems.forEach(function(folder) {
 						if(folder.index == bookmark.fdIndex) {
@@ -736,12 +792,18 @@ function addPHPcMarks(bArray) {
 								}
 							});
 							return false;
+						} else {
+							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+							chrome.bookmarks.create({parentId: folder.id, title: bookmark.bmTitle, url: bookmark.bmURL }, function() {
+								loglines = logit('Info: '+bookmark.bmURL+" added as new bookmark");
+								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+							});
 						}
 					});
 				});
 			}
 			else {
-				loglines = logit('Info: Changed bookmark is in systemfolder');
+				loglines = logit('Info: Changed bookmark '+bookmark.bmURL+' in systemfolder');
 				if(bookmark.bmURL != '') {
 					loglines = logit('Info: Try to add bookmark '+bookmark.bmURL);
 					chrome.bookmarks.search({url: bookmark.bmURL}, function(bookmarkItems) {
@@ -785,7 +847,7 @@ function addPHPMarks(bArray) {
 		}
 		else {
 			if(!bookmark.fdID.endsWith('___')) {
-				loglines = logit('Info: Changed bookmark is in userfolder');
+				loglines = logit('Info: Changed bookmark '+bookmark.bmURL+' in userfolder');
 				chrome.bookmarks.search({title: bookmark.fdName},function(folderItems) {
 					folderItems.forEach(function(folder) {
 						if(folder.index == bookmark.fdIndex) {
@@ -807,12 +869,18 @@ function addPHPMarks(bArray) {
 								}
 							});
 							return false;
+						} else {
+							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+							chrome.bookmarks.create({type: bookmark.bmType, parentId: folder.id, title: bookmark.bmTitle, url: bookmark.bmURL }, function() {
+								loglines = logit('Info: '+bookmark.bmURL+" added as new bookmark");
+								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+							});
 						}
 					});
 				});
 			}
 			else {
-				loglines = logit('Info: Changed bookmark is in systemfolder');
+				loglines = logit('Info: Changed bookmark '+bookmark.bmURL+' is in systemfolder');
 				if(bookmark.bmURL != '') {
 					loglines = logit('Info: Try to add bookmark '+bookmark.bmURL);
 					chrome.bookmarks.search({url: bookmark.bmURL}, function(bookmarkItems) {
@@ -881,19 +949,22 @@ function parseMarks(DAVMarks, level=0) {
 
 function removeAllMarks() {
 	loglines = logit('Info: Try to remove all local bookmarks');
-	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-
-	chrome.bookmarks.getTree(function(tree) {
-		tree[0].children.forEach(function(mainfolder) {
-			mainfolder.children.forEach(function(userfolder) {
-				chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-				chrome.bookmarks.removeTree(userfolder.id);
+	try {
+		chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+		chrome.bookmarks.getTree(function(tree) {
+			tree[0].children.forEach(function(mainfolder) {
+				mainfolder.children.forEach(function(userfolder) {
+					chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+					chrome.bookmarks.removeTree(userfolder.id);
+				});
 			});
 		});
-	});
-
-	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-	chrome.storage.local.set({last_s: 1});
+		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+	} catch(error) {
+		loglines = logit(error);
+	} finally {
+		chrome.storage.local.set({last_s: 1});
+	}
 }
 
 function importMarks(parsedMarks, index=0) {
@@ -917,8 +988,7 @@ function importMarks(parsedMarks, index=0) {
 			return false;
 		}
 	}
-
-	loglines = logit('Info: Removing listeners');
+	console.log("test");
 	chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 	chrome.bookmarks.onMoved.removeListener(onMovedCheck);
 	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
@@ -1053,19 +1123,14 @@ function addAllMarks(parsedMarks, index=1) {
 			
 			let datems = Date.now();
 			let date = new Date(datems);
-			let doptions = { weekday: 'long',  hour: '2-digit', minute: '2-digit' };
+			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 			chrome.storage.local.set({
 				last_s: datems,
 			});
 			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 		}
 	});
-}
 
-function onError(error) {
-	message = 'Error: ${error}';
-	notify('error', message);
-	loglines = logit(message);
 }
 
 function uuidv4() {

@@ -2,19 +2,19 @@
 	"manifest_version": 2,
 	"name": "__MSG_extensionName__",
 	"description": "__MSG_extensionDescription__",
-	"version": "1.17.4",
+	"version": "1.17.6.0",
 	"default_locale": "en",
 	"icons": {
 		"48": "icons/bookmark.png"
 	},
-	"homepage_url": "https://github.com/Offerel/davmarks",
+	"homepage_url": "https://github.com/Offerel/SyncMarks-Extension",
 	"background": {
 		"scripts": ["scripts/background.js"]
 	},
 	"browser_action": {
 		"default_icon": "icons/bookmark.png",
 		"default_title": "__MSG_extensionName__",
-		"default_popup": "scripts/popup.html"
+		"default_popup": "scripts/stargets.html"
 	},
 	"options_ui": {
 		"page": "scripts/options.html",
@@ -22,11 +22,11 @@
 	},
 	"permissions": [
 		"notifications",
+		"activeTab",
 		"tabs",
 		"storage",
 		"bookmarks",
-		"*://*/*",
-		"webRequest",
+		"https://*/*",
 		"contextMenus"
 		]
 }
