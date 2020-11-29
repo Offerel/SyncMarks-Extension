@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.6.1 (2020-11-29)
+-------------------------
+* Changed loading of changelog tab
+
+
 v1.17.6.0 (2020-11-29)
 -------------------------
 * Added Firefox Android Workarounds

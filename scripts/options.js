@@ -220,7 +220,17 @@ function openTab(tabname) {
 		e.classList.remove("abutton");
 	});
 	document.querySelector('button[data-val="'+ tabname.target.attributes['data-val'].value +'"]').classList.add("abutton");
-	
+
+	var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", "../CHANGELOG.md", false);
+    rawFile.onreadystatechange = function () {
+		if(rawFile.readyState === 4) {
+			if(rawFile.status === 200 || rawFile.status == 0) {
+				document.getElementById("changelog").innerText = rawFile.responseText;
+			}
+		}
+	}
+    rawFile.send(null);
 }
 
 function saveLog() {
