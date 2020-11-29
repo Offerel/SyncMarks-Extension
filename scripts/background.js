@@ -395,7 +395,7 @@ function onRemovedCheck(id, bookmark) {
 }
 
 function exportPHPMarks() {
-	loglines = logit("Info: Requesting all local bookmarks for export");
+	loglines = logit("Info: Exporting bookmarks to server");
 	chrome.bookmarks.getTree(function(bookmarkItems) {
 		let bookmarks = encodeURIComponent(JSON.stringify(bookmarkItems));
 		chrome.storage.local.get(null, function(options) {
@@ -406,10 +406,10 @@ function exportPHPMarks() {
 			else {
 				var s_uuid = options['s_uuid'];
 			}
-			let cdata = "client="+s_uuid+"&caction=import&bookmark="+bookmarks;
+			let cdata = 'client='+s_uuid+'&caction=import&bookmark='+bookmarks;
 			let xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['user'] + ':' + options['password']));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {

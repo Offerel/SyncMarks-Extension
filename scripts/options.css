@@ -273,6 +273,10 @@ input:checked + .slider:before {
 .tab-bar button:hover {
 	background-color: darkgrey;
 }
+.abutton {
+	background-color: DimGray !important;
+	color: white;
+}
 .tab-bar {
 	box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
 	margin-bottom: 10px;

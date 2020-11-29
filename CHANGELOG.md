@@ -1,6 +1,6 @@
 ChangeLog
 =========
-v1.17.6.0 (2020-11-28)
+v1.17.6.0 (2020-11-29)
 -------------------------
 * Added Firefox Android Workarounds
 * Added function to save logfile

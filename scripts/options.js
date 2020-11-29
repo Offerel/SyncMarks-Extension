@@ -216,6 +216,11 @@ function openTab(tabname) {
 		}
 	}
 	document.getElementById(tabname.target.attributes['data-val'].value).style.display = "block";
+	document.querySelectorAll('.tab-button').forEach(function(e) {
+		e.classList.remove("abutton");
+	});
+	document.querySelector('button[data-val="'+ tabname.target.attributes['data-val'].value +'"]').classList.add("abutton");
+	
 }
 
 function saveLog() {
@@ -246,7 +251,6 @@ window.addEventListener('load', function () {
 	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";}, {passive: true});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"}, {passive: true});
 	document.getElementById("mremove").addEventListener("click", function() {rmodal.style.display = "block"}, {passive: true})
-	//document.getElementById("mupload").addEventListener("click", manualExport, {passive: true});
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"}, {passive: true});
 	document.getElementById("wdurl").addEventListener("keyup", checkForm, {passive: true});
 	document.getElementById("user").addEventListener("keyup", checkForm, {passive: true});
