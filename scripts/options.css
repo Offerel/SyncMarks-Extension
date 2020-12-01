@@ -109,6 +109,22 @@ input:hover {
 	border: 2px solid black;
 	background-size: 25px;
 }
+#logclear {
+	background-image: url(../icons/delete.png);
+	border: 2px solid black;
+	width: 25px;
+	height: 25px;
+	position: absolute;
+	top: 10px;
+	z-index: 100;
+	right: 45px;
+	border-radius: 14px;
+	cursor: pointer;
+	background-repeat: no-repeat;
+	background-size: 19px;
+	background-position-x: 3px;
+	background-position-y: 2px;
+}
 .cframe {
     width: calc(100% - 30px);
     border: 0;

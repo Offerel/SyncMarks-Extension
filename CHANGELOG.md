@@ -1,9 +1,10 @@
 ChangeLog
 =========
-v1.17.6.1 (2020-11-29)
+v1.17.6.2 (2020-12-01)
 -------------------------
 * Changed loading of changelog tab
 * Fixed adding new folder
+* Added function to clear log
 
 
 v1.17.6.0 (2020-11-29)
