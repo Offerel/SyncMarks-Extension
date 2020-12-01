@@ -247,7 +247,6 @@ function getClientList() {
 }
 
 function notificationSettings(id) {
-	console.log("clicked");
 	if(id == 'console' || id == 'error' || id == 'setting') {
 		debug = true;
 		chrome.runtime.openOptionsPage();
@@ -333,50 +332,52 @@ function onChangedCheck(id, changeInfo) {
 			saveAllMarks();
 		}
 		else if(s_change === true && s_type.indexOf('PHP') == 0) {
-			editMark(changeInfo);
+			editMark(changeInfo,id);
 		}
 	});
 }
 
-function editMark(eData) {
-	let jsonMark = encodeURIComponent(JSON.stringify({ "url": eData.url,"title": eData.title }));
-	chrome.storage.local.get(null, function(options) {
-		var s_uuid = options['s_uuid'];
-		let cdata = "client="+s_uuid+"&caction=editmark&bookmark="+jsonMark;
-		var xhr = new XMLHttpRequest();
-		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.withCredentials = true;
-		xhr.onload = function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				message = chrome.i18n.getMessage("errorEditBookmark") + xhr.status;
-				notify('error',message);
-				chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorEditBookmark")});
-				loglines = logit('Error: '+message);
-			}
-			else {
-				let response = JSON.parse(xhr.responseText);
-				if(response == 1) {
-						loglines = logit("Info: Bookmark edited successfully at the server");
-						chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": Bookmark edited."});
+function editMark(eData,id) {
+	chrome.bookmarks.get(id, function(bmark) {
+		let jsonMark = encodeURIComponent(JSON.stringify({ "url": eData.url,"title": eData.title,"parentId": bmark[0].parentId,"index": bmark[0].index }));
+		chrome.storage.local.get(null, function(options) {
+			var s_uuid = options['s_uuid'];
+			let cdata = "client="+s_uuid+"&caction=editmark&bookmark="+jsonMark;
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", options['wdurl'], true);
+			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xhr.withCredentials = true;
+			xhr.onload = function () {
+				if( xhr.status < 200 || xhr.status > 226) {
+					message = chrome.i18n.getMessage("errorEditBookmark") + xhr.status;
+					notify('error',message);
+					chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorEditBookmark")});
+					loglines = logit('Error: '+message);
 				}
-					else {
-						message = "Error: Bookmark not edited at the server, please check the server logfile.";
-						loglines = logit(message);
-						notify('error',message);
-						chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorEditBookmark")});
+				else {
+					let response = JSON.parse(xhr.responseText);
+					if(response == 1) {
+							loglines = logit("Info: Bookmark edited successfully at the server");
+							chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": Bookmark edited."});
 					}
+						else {
+							message = "Error: Bookmark not edited at the server, please check the server logfile.";
+							loglines = logit(message);
+							notify('error',message);
+							chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorEditBookmark")});
+						}
+				}
 			}
-		}
-		loglines = logit("Info: Sending edit request to server. URL: "+ eData.url +", Client: "+s_uuid);
-		xhr.send(cdata);
-	})
-	
-	let datems = Date.now();
-	let date = new Date(datems);
-	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-	chrome.storage.local.set({last_s: datems});
+			loglines = logit("Info: Sending edit request to server. URL: "+ eData.url +", Client: "+s_uuid);
+			xhr.send(cdata);
+		})
+		
+		let datems = Date.now();
+		let date = new Date(datems);
+		let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
+		chrome.storage.local.set({last_s: datems});
+	});
 }
 
 function onRemovedCheck(id, bookmark) {
@@ -988,7 +989,6 @@ function importMarks(parsedMarks, index=0) {
 			return false;
 		}
 	}
-	console.log("test");
 	chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 	chrome.bookmarks.onMoved.removeListener(onMovedCheck);
 	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
