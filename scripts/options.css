@@ -260,6 +260,16 @@ input:checked + .slider:before {
 	display: inline-flex;
 	width: 150px;
 }
+#changelog {
+	overflow: auto;
+	position: absolute;
+	right: 0px;
+	left: 0px;
+	top: 95px;
+	bottom: 0px;
+	padding: 5px 30px;
+	font-family: Consolas, Courier, Monospace;
+}
 .tab-bar button {
 	border-radius: 0;
 	border: 0;
