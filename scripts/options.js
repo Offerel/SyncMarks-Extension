@@ -220,17 +220,6 @@ function openTab(tabname) {
 		e.classList.remove("abutton");
 	});
 	document.querySelector('button[data-val="'+ tabname.target.attributes['data-val'].value +'"]').classList.add("abutton");
-
-	var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", "../CHANGELOG.md", false);
-    rawFile.onreadystatechange = function () {
-		if(rawFile.readyState === 4) {
-			if(rawFile.status === 200 || rawFile.status == 0) {
-				document.getElementById("changelog").innerText = rawFile.responseText;
-			}
-		}
-	}
-    rawFile.send(null);
 }
 
 function saveLog() {
@@ -247,6 +236,17 @@ function saveLog() {
 document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
 
 window.addEventListener('load', function () {
+	var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", "../CHANGELOG.md", false);
+    rawFile.onreadystatechange = function () {
+		if(rawFile.readyState === 4) {
+			if(rawFile.status === 200 || rawFile.status == 0) {
+				document.getElementById("changelog").innerText = rawFile.responseText;
+			}
+		}
+	}
+    rawFile.send(null);
+
 	localizeHtmlPage();
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
 	document.getElementById("ssubmit").addEventListener("click", saveOptions);
