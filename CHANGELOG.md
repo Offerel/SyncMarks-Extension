@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.6.3 (2020-12-04)
+-------------------------
+* Fixed folder detection
+
+
 v1.17.6.2 (2020-12-01)
 -------------------------
 * Changed loading of changelog tab

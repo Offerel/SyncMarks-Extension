@@ -881,8 +881,8 @@ function addPHPMarks(bArray) {
 				});
 			}
 			else {
-				loglines = logit('Info: Changed bookmark '+bookmark.bmURL+' is in systemfolder');
-				if(bookmark.bmURL != '') {
+				
+				if(bookmark.bmURL.length > 0) {
 					loglines = logit('Info: Try to add bookmark '+bookmark.bmURL);
 					chrome.bookmarks.search({url: bookmark.bmURL}, function(bookmarkItems) {
 						if (bookmarkItems.length) {
