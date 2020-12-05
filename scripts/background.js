@@ -433,7 +433,7 @@ function exportPHPMarks() {
 					}
 				}
 			}
-			loglines = logit("Info: Sending export of local bookmarks for client "+s_uuid);
+			loglines = logit("Info: Sending export of local bookmarks to server");
 			xhr.send(cdata);
 		})
 	});
@@ -511,7 +511,7 @@ function delMark(id, bookmark) {
 					}
 			}
 		}
-		loglines = logit("Info: Sending remove request to server. URL: "+bookmark.node.url+", Client: "+s_uuid);
+		loglines = logit("Info: Sending remove request to server: <a href='"+bookmark.node.url+"'>"+bookmark.node.url+"</a>");
 		xhr.send(cdata);
 	})
 	
@@ -551,10 +551,10 @@ function moveMark(id, bookmark) {
 						if(response == 1)
 								loglines = logit("Info: Bookmark moved successfully at the server");
 							else
-								loglines = logit("Error: Bookmark not moved at the server, response from server is: " + response);
+								loglines = logit("Error: Bookmark not moved at the server, response from server is: "+response);
 					}
 				}
-				loglines = logit("Info: Sending move request to server. Bookmark ID: "+id+", Client: "+s_uuid);
+				loglines = logit("Info: Sending move request to server. Bookmark ID: "+id);
 				xhr.send(cdata);
 			});
 		});
@@ -613,10 +613,10 @@ function sendMark(bookmark) {
 					if(response == 1)
 							loglines = logit("Info: Bookmark added successfully at the server");
 						else
-							loglines = logit("Error: Bookmark not added at the server, please check the server logfile");
+							loglines = logit("Error: Bookmark not added at the server. Response: "+response);
 				}
 			}
-			loglines = logit("Info: Sending add request to server. URL: "+bookmark.url+", Client: "+s_uuid);
+			loglines = logit("Info: Sending add request to server. <a href='"+bookmark.url+"'>"+bookmark.url+"</a>");
 			xhr.send(cdata);
 		});
 	});
@@ -756,13 +756,13 @@ function c2cm(bookmarks) {
 function addPHPcMarks(bArray) {
 	bArray.forEach(function(bookmark) {
 		if(bookmark.bmAction == 1 && bookmark.bmURL != '') {
-			loglines = logit('Info: Try to remove bookmark '+bookmark.bmURL);
+			loglines = logit("Info: Try to remove bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a>");
 			chrome.bookmarks.search({url: bookmark.bmURL}, function(removeItems) {
 				removeItems.forEach(function(removeBookmark) {
 					if(removeBookmark.dateAdded == bookmark.bmAdded) {
 						chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 						chrome.bookmarks.remove(removeBookmark.id, function(remove) {
-							loglines = logit('Info: Bookmark '+removeBookmark.url+' removed');
+							loglines = logit('Info: Bookmark removed');
 							chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 						});
 					}
@@ -771,7 +771,7 @@ function addPHPcMarks(bArray) {
 		}
 		else {
 			if(bookmark.fdID.length > 1) {
-				loglines = logit('Info: Changed bookmark '+bookmark.bmURL+' in userfolder');
+				loglines = logit("Info: Changed bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> in userfolder");
 				chrome.bookmarks.search({title: bookmark.fdName},function(folderItems) {
 					folderItems.forEach(function(folder) {
 						if(folder.index == bookmark.fdIndex) {
@@ -780,14 +780,14 @@ function addPHPcMarks(bArray) {
 									if (bookmark.fdName != bookmarkItems[0].parentId) {
 										chrome.bookmarks.onMoved.removeListener(onMovedCheck);
 										chrome.bookmarks.move(bookmarkItems[0].id, {parentId: folder.id}, function(move) {
-											loglines = logit('Info: '+move.url + " moved to folder " + folder.title);
+											loglines = logit("Info: <a href='"+move.url+"'>"+move.url+"</a> moved to folder " + folder.title);
 											chrome.bookmarks.onMoved.addListener(onMovedCheck);
 										});
 									}
 								} else {
 									chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 									chrome.bookmarks.create({parentId: folder.id, title: bookmark.bmTitle, url: bookmark.bmURL }, function() {
-										loglines = logit('Info: '+bookmark.bmURL + " added as new bookmark");
+										loglines = logit("Info: <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> added as new bookmark");
 										chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 									});
 								}
@@ -796,7 +796,7 @@ function addPHPcMarks(bArray) {
 						} else {
 							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 							chrome.bookmarks.create({parentId: folder.id, title: bookmark.bmTitle, url: bookmark.bmURL }, function() {
-								loglines = logit('Info: '+bookmark.bmURL+" added as new bookmark");
+								loglines = logit("Info: <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> added as new bookmark");
 								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 							});
 						}
@@ -804,7 +804,7 @@ function addPHPcMarks(bArray) {
 				});
 			}
 			else {
-				loglines = logit('Info: Changed bookmark '+bookmark.bmURL+' in systemfolder');
+				loglines = logit("Info: Changed bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> in systemfolder");
 				if(bookmark.bmURL != '') {
 					loglines = logit('Info: Try to add bookmark '+bookmark.bmURL);
 					chrome.bookmarks.search({url: bookmark.bmURL}, function(bookmarkItems) {
@@ -812,14 +812,14 @@ function addPHPcMarks(bArray) {
 							if(bookmarkItems[0].parentId != bookmark.fdID) {
 								chrome.bookmarks.onMoved.removeListener(onMovedCheck);
 								chrome.bookmarks.move(bookmarkItems[0].id, {parentId: bookmark.fdID}, function(move) {
-									loglines = logit('Info: '+move.url + " moved to folder " + bookmark.fdName);
+									loglines = logit("Info: <a href='"+move.url+"'>"+move.url+"</a> moved to folder " + bookmark.fdName);
 									chrome.bookmarks.onMoved.addListener(onMovedCheck);
 								});
 							}
 						} else {
 							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 							chrome.bookmarks.create({parentId: bookmark.fdID, title: bookmark.bmTitle, url: bookmark.bmURL}, function() {
-								loglines = logit('Info: '+bookmark.bmURL + " added as new bookmark.");
+								loglines = logit("Info: <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> added as new bookmark.");
 								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 							});
 						}
@@ -833,13 +833,13 @@ function addPHPcMarks(bArray) {
 function addPHPMarks(bArray) {
 	bArray.forEach(function(bookmark) {
 		if(bookmark.bmAction == 1 && bookmark.bmURL != '') {
-			loglines = logit('Info: Try to remove bookmark '+bookmark.bmURL);
+			loglines = logit("Info: Try to remove bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a>");
 			chrome.bookmarks.search({url: bookmark.bmURL}, function(removeItems) {
 				removeItems.forEach(function(removeBookmark) {
 					if(removeBookmark.dateAdded == bookmark.bmAdded) {
 						chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 						chrome.bookmarks.remove(removeBookmark.id, function(remove) {
-							loglines = logit('Info: Bookmark '+removeBookmark.url+' removed');
+							loglines = logit("Info: Bookmark <a href='"+removeBookmark.url+"'>"+removeBookmark.url+"</a> removed");
 							chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 						});
 					}
@@ -848,7 +848,7 @@ function addPHPMarks(bArray) {
 		}
 		else {
 			if(!bookmark.fdID.endsWith('___')) {
-				loglines = logit('Info: Changed bookmark '+bookmark.bmURL+' in userfolder');
+				loglines = logit("Info: Changed bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> in userfolder");
 				chrome.bookmarks.search({title: bookmark.fdName},function(folderItems) {
 					folderItems.forEach(function(folder) {
 						if(folder.index == bookmark.fdIndex) {
@@ -857,14 +857,14 @@ function addPHPMarks(bArray) {
 									if (bookmark.fdName != bookmarkItems[0].parentId) {
 										chrome.bookmarks.onMoved.removeListener(onMovedCheck);
 										chrome.bookmarks.move(bookmarkItems[0].id, {parentId: folder.id}, function(move) {
-											loglines = logit('Info: '+move.url + " moved to folder " + folder.title);
+											loglines = logit("Info: <a href='"+move.url+"'>"+move.url+"</a> moved to folder " + folder.title);
 											chrome.bookmarks.onMoved.addListener(onMovedCheck);
 										});
 									}
 								} else {
 									chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 									chrome.bookmarks.create({type: bookmark.bmType, parentId: folder.id, title: bookmark.bmTitle, url: bookmark.bmURL }, function() {
-										loglines = logit('Info: '+bookmark.bmURL + " added as new bookmark");
+										loglines = logit("Info: <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> added as new bookmark");
 										chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 									});
 								}
@@ -873,7 +873,7 @@ function addPHPMarks(bArray) {
 						} else {
 							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 							chrome.bookmarks.create({type: bookmark.bmType, parentId: folder.id, title: bookmark.bmTitle, url: bookmark.bmURL }, function() {
-								loglines = logit('Info: '+bookmark.bmURL+" added as new bookmark");
+								loglines = logit("Info: <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> added as new bookmark");
 								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 							});
 						}
@@ -881,22 +881,21 @@ function addPHPMarks(bArray) {
 				});
 			}
 			else {
-				
-				if(bookmark.bmURL.length > 0) {
+				if(bookmark.bmURL.length != null) {
 					loglines = logit('Info: Try to add bookmark '+bookmark.bmURL);
 					chrome.bookmarks.search({url: bookmark.bmURL}, function(bookmarkItems) {
 						if (bookmarkItems.length) {
 							if(bookmarkItems[0].parentId != bookmark.fdID) {
 								chrome.bookmarks.onMoved.removeListener(onMovedCheck);
 								chrome.bookmarks.move(bookmarkItems[0].id, {parentId: bookmark.fdID}, function(move) {
-									loglines = logit('Info: '+move.url + " moved to folder " + bookmark.fdName);
+									loglines = logit("Info: <a href='"+move.url+"'>"+move.url+"</a> moved to folder " + bookmark.fdName);
 									chrome.bookmarks.onMoved.addListener(onMovedCheck);
 								});
 							}
 						} else {
 							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 							chrome.bookmarks.create({type: bookmark.bmType, parentId: bookmark.fdID, title: bookmark.bmTitle, url: bookmark.bmURL}, function() {
-								loglines = logit('Info: '+bookmark.bmURL + " added as new bookmark.");
+								loglines = logit("Info: <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> added as new bookmark.");
 								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 							});
 						}
