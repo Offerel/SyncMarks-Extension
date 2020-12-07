@@ -755,7 +755,7 @@ function c2cm(bookmarks) {
 
 function addPHPcMarks(bArray) {
 	bArray.forEach(function(bookmark) {
-		if(bookmark.bmAction == 1 && bookmark.bmURL != '') {
+		if(bookmark.bmAction == 1 && bookmark.bmURL != null) {
 			loglines = logit("Info: Try to remove bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a>");
 			chrome.bookmarks.search({url: bookmark.bmURL}, function(removeItems) {
 				removeItems.forEach(function(removeBookmark) {
@@ -805,7 +805,7 @@ function addPHPcMarks(bArray) {
 			}
 			else {
 				loglines = logit("Info: Changed bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> in systemfolder");
-				if(bookmark.bmURL != '') {
+				if(bookmark.bmURL != null) {
 					loglines = logit('Info: Try to add bookmark '+bookmark.bmURL);
 					chrome.bookmarks.search({url: bookmark.bmURL}, function(bookmarkItems) {
 						if (bookmarkItems.length) {
@@ -832,7 +832,7 @@ function addPHPcMarks(bArray) {
 
 function addPHPMarks(bArray) {
 	bArray.forEach(function(bookmark) {
-		if(bookmark.bmAction == 1 && bookmark.bmURL != '') {
+		if(bookmark.bmAction == 1 && bookmark.bmURL != null) {
 			loglines = logit("Info: Try to remove bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a>");
 			chrome.bookmarks.search({url: bookmark.bmURL}, function(removeItems) {
 				removeItems.forEach(function(removeBookmark) {
@@ -881,7 +881,7 @@ function addPHPMarks(bArray) {
 				});
 			}
 			else {
-				if(bookmark.bmURL.length != null) {
+				if(bookmark.bmURL != null) {
 					loglines = logit('Info: Try to add bookmark '+bookmark.bmURL);
 					chrome.bookmarks.search({url: bookmark.bmURL}, function(bookmarkItems) {
 						if (bookmarkItems.length) {
