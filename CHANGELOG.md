@@ -1,9 +1,21 @@
 ChangeLog
 =========
-v1.17.6.1 (2020-11-29)
+v1.17.6.5 (2020-12-08)
+-------------------------
+* Added some debug information to logfile
+* Fixed XML error
+
+
+v1.17.6.3 (2020-12-04)
+-------------------------
+* Fixed folder detection
+
+
+v1.17.6.2 (2020-12-01)
 -------------------------
 * Changed loading of changelog tab
 * Fixed adding new folder
+* Added function to clear log
 
 
 v1.17.6.0 (2020-11-29)

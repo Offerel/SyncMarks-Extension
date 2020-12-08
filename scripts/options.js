@@ -206,8 +206,8 @@ function openTab(tabname) {
 		x[i].style.display = "none";
 		let larea = document.getElementById("logarea");
 
-		if(larea.childNodes.length > 1) {
-			larea.removeChild(larea.childNodes[1]); 
+		if(larea.childNodes.length > 2) {
+			larea.removeChild(larea.childNodes[2]); 
 		}
 
 		if(tabname.target.innerText == 'Logfile') {
@@ -233,11 +233,24 @@ function saveLog() {
 	document.body.removeChild(element);
 }
 
+function clearLog() {
+	background_page.loglines = '';
+	let larea = document.getElementById("logarea");
+	if(larea.childNodes.length > 2) {
+		larea.removeChild(larea.childNodes[2]); 
+	}
+	if(tabname.target.innerText == 'Logfile') {
+		var logp = new DOMParser().parseFromString(background_page.loglines, 'text/html').body;
+		larea.appendChild(logp);
+	}
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
 
 window.addEventListener('load', function () {
 	var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", "../CHANGELOG.md", false);
+	rawFile.open("GET", "../CHANGELOG.md", true);
+	rawFile.responseType = "text";
     rawFile.onreadystatechange = function () {
 		if(rawFile.readyState === 4) {
 			if(rawFile.status === 200 || rawFile.status == 0) {
@@ -272,7 +285,9 @@ window.addEventListener('load', function () {
 	document.getElementById("s_change").addEventListener("input", checkForm, {passive: true});
 	document.getElementById("s_remove").addEventListener("input", checkForm, {passive: true});
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
-	//document.getElementById("logsave").addEventListener("click", saveLog);
+
+	document.getElementById("logsave").addEventListener("click", saveLog);
+	document.getElementById("logclear").addEventListener("click", clearLog);
 
 	var imodal = document.getElementById("impdialog");
 	var rmodal = document.getElementById("rmdialog");
