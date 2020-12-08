@@ -1,5 +1,11 @@
 ChangeLog
 =========
+v1.17.6.5 (2020-12-08)
+-------------------------
+* Added some debug information to logfile
+* Fixed XML error
+
+
 v1.17.6.3 (2020-12-04)
 -------------------------
 * Fixed folder detection

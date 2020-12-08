@@ -249,7 +249,8 @@ document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
 
 window.addEventListener('load', function () {
 	var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", "../CHANGELOG.md", false);
+	rawFile.open("GET", "../CHANGELOG.md", true);
+	rawFile.responseType = "text";
     rawFile.onreadystatechange = function () {
 		if(rawFile.readyState === 4) {
 			if(rawFile.status === 200 || rawFile.status == 0) {

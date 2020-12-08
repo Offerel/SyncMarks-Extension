@@ -138,8 +138,6 @@ function sendTab(element) {
 }
 
 function logit(message) {
-	//var options = { day: '2-digit', year: 'numeric', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-	//var mDate = new Date().toLocaleString(undefined, options);
 	var ndate = new Date();
 	logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0) 
@@ -148,6 +146,11 @@ function logit(message) {
 }
 
 function init() {
+	loglines = logit("Info: AddOn version: "+chrome.runtime.getManifest().version);
+	chrome.runtime.getPlatformInfo(function(info){
+		loglines = logit("Info: Current architecture: "+info.arch+" | Current OS: "+info.os);
+	});
+	loglines = logit("Info: "+navigator.userAgent);
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, function(options) {
 		var s_startup = options['s_startup'] || false;
@@ -179,7 +182,7 @@ function getNotifications() {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Get list of notifications failed.";
 				notify('error',message);
-				loglines = logit('Error: ' + message);
+				loglines = logit('Error: '+message);
 			}
 			else {
 				if(xhr.responseText.length > 0) {
@@ -739,7 +742,7 @@ function getAllPHPMarks() {
 			}
 			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 			}
-		loglines = logit('Info: Sending import request to server. Client: '+options['s_uuid']);
+		loglines = logit('Info: Sending import request to server');
 		xhr.send(params);
 	});
 }
@@ -755,14 +758,13 @@ function c2cm(bookmarks) {
 
 function addPHPcMarks(bArray) {
 	bArray.forEach(function(bookmark) {
-		if(bookmark.bmAction == 1 && bookmark.bmURL != null) {
+		if(bookmark.bmAction == 1 && bookmark.bmURL.length > 0) {
 			loglines = logit("Info: Try to remove bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a>");
 			chrome.bookmarks.search({url: bookmark.bmURL}, function(removeItems) {
 				removeItems.forEach(function(removeBookmark) {
 					if(removeBookmark.dateAdded == bookmark.bmAdded) {
 						chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 						chrome.bookmarks.remove(removeBookmark.id, function(remove) {
-							loglines = logit('Info: Bookmark removed');
 							chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 						});
 					}
@@ -804,9 +806,8 @@ function addPHPcMarks(bArray) {
 				});
 			}
 			else {
-				loglines = logit("Info: Changed bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a> in systemfolder");
 				if(bookmark.bmURL != null) {
-					loglines = logit('Info: Try to add bookmark '+bookmark.bmURL);
+					loglines = logit("Info: Try to add bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a>");
 					chrome.bookmarks.search({url: bookmark.bmURL}, function(bookmarkItems) {
 						if (bookmarkItems.length) {
 							if(bookmarkItems[0].parentId != bookmark.fdID) {
