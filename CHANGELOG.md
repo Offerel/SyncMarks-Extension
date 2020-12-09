@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.6.6 (2020-12-09)
+-------------------------
+* Fixed XHR response
+
+
 v1.17.6.5 (2020-12-08)
 -------------------------
 * Added some debug information to logfile

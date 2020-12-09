@@ -185,7 +185,7 @@ function getNotifications() {
 				loglines = logit('Error: '+message);
 			}
 			else {
-				if(xhr.responseText.length > 0) {
+				if(xhr.responseText.length > 2) {
 					var nData = JSON.parse(xhr.responseText);
 					try {
 						nData.forEach(function(notification) {
