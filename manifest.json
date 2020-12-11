@@ -20,12 +20,6 @@
 		"page": "scripts/options.html",
 		"open_in_tab": true
 	},
-	"browser_specific_settings": {
-		"gecko": {
-			"strict_min_version": "65.0",
-			"id": "syncmarks@offerel.com"
-		}
-	},
 	"permissions": [
 		"notifications",
 		"activeTab",
