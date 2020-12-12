@@ -616,7 +616,7 @@ function sendMark(bookmark) {
 					if(response == 1)
 							loglines = logit("Info: Bookmark added successfully at the server");
 						else
-							loglines = logit("Error: Bookmark not added at the server. Response: "+response);
+							loglines = logit("Error: "+response);
 				}
 			}
 			loglines = logit("Info: Sending add request to server. <a href='"+bookmark.url+"'>"+bookmark.url+"</a>");
