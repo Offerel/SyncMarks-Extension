@@ -831,8 +831,52 @@ function addPHPcMarks(bArray) {
 	});
 }
 
-function addPHPMarks(bArray) {
-	bArray.forEach(function(bookmark) {
+function createBookmarkAsync(parms) {
+	return new Promise(function(fulfill, reject) {
+		chrome.bookmarks.create(parms, fulfill);
+	});
+}
+
+async function addPHPMarks(bArray) {
+	var bArrayT = bArray;
+	for (let index = 0; index < bArray.length; index++) {
+		switch(bArrayT[index].bmAction) {
+			case 1:	
+					chrome.bookmarks.search({url: bArrayT[index].bmURL}, function(removeItems) {
+						removeItems.forEach(function(removeBookmark) {
+							if(removeBookmark.dateAdded == bArrayT[index].bmAdded) {
+								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+								chrome.bookmarks.remove(removeBookmark.id, function(remove) {
+									chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+								});
+							}
+						});
+					});
+					break;
+			case 2: 
+					console.log("Move "+bArrayT[index].bmTitle);
+					chrome.bookmarks.search({url: bArrayT[index].bmURL},function(bookmarkItems) {
+						if (bookmarkItems.length) {
+							if (bArrayT[index].fdName != bookmarkItems[0].parentId) {
+								chrome.bookmarks.onMoved.removeListener(onMovedCheck);
+								chrome.bookmarks.move(bookmarkItems[0].id, {parentId: bArrayT[index].fdID}, function(move) {
+									chrome.bookmarks.onMoved.addListener(onMovedCheck);
+								});
+							}
+						}
+					});
+					break;
+			default: 
+					let bmtype = bArrayT[index].bmURL != null ? "bookmark" : "folder";
+					chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+					let newId = (await createBookmarkAsync({type: bmtype, parentId: bArrayT[index].fdID, title: bArrayT[index].bmTitle, url: bArrayT[index].bmURL})).id;
+					for (let tIndex=0; tIndex < bArrayT.length; tIndex++) {
+						if(bArrayT[tIndex].fdID == bArrayT[index].bmID) bArrayT[tIndex].fdID = newId;
+					}
+					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+		}
+	}
+		/*
 		if(bookmark.bmAction == 1 && bookmark.bmURL != null) {
 			loglines = logit("Info: Try to remove bookmark <a href='"+bookmark.bmURL+"'>"+bookmark.bmURL+"</a>");
 			chrome.bookmarks.search({url: bookmark.bmURL}, function(removeItems) {
@@ -904,7 +948,7 @@ function addPHPMarks(bArray) {
 				}
 			}
 		}
-	});
+	}); */
 }
 
 function getDAVMarks() {
