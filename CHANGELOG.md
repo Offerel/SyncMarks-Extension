@@ -1,5 +1,16 @@
 ChangeLog
 =========
+v1.17.6.9 (2020-12-18)
+-------------------------
+* Fix for Firefox 84
+* Fix for Chromium toolbar button
+
+
+v1.17.6.8 (2020-12-16)
+-------------------------
+* Fixed startup subfolder support
+
+
 v1.17.6.7 (2020-12-12)
 -------------------------
 * Fixed another XHR response

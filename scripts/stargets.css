@@ -7,6 +7,7 @@ body {
     margin: 0 auto;
     padding: 0;
     overflow: hidden;
+    min-width: 200px;
 }
 #header {
 	height: 20px;
