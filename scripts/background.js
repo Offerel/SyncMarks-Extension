@@ -4,6 +4,7 @@ var loglines = '';
 var debug = false;
 const abrowser = typeof InstallTrigger !== 'undefined';
 var clientL = [];
+var oMarks = [];
 
 init();
 
@@ -145,7 +146,22 @@ function logit(message) {
 	return logline;
 }
 
+function get_oMarks() {
+    chrome.bookmarks.getTree(function(results) { oMarks = results; });
+}
+
+function findByID(oMarks, id) {
+    if(oMarks === null || typeof oMarks === "undefined") return null;
+    for (var i = 0; i < oMarks.length; i++) {
+        if(oMarks[i].id === id) return oMarks[i];
+        var child = findByID(oMarks[i].children, id);
+        if(child !== null) return child;
+    }
+    return null;
+}
+
 function init() {
+	get_oMarks();
 	loglines = logit("Info: AddOn version: "+chrome.runtime.getManifest().version);
 	chrome.runtime.getPlatformInfo(function(info){
 		loglines = logit("Info: Current architecture: "+info.arch+" | Current OS: "+info.os);
@@ -299,6 +315,7 @@ function notify(notid, message, title=chrome.i18n.getMessage("extensionName"), u
 }
 
 function onCreatedCheck(id, bookmark) {
+	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
 		var s_create = options['s_create'] || false;
 		var s_type = options['s_type'] || "";
@@ -313,6 +330,7 @@ function onCreatedCheck(id, bookmark) {
 }
 
 function onMovedCheck(id, bookmark) {
+	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
 		var s_change = options['s_change'] || false;
 		var s_type = options['s_type'] || "";
@@ -327,6 +345,7 @@ function onMovedCheck(id, bookmark) {
 }
 
 function onChangedCheck(id, changeInfo) {
+	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
 		var s_change = options['s_change'] || false;
 		var s_type = options['s_type'] || "";
@@ -394,6 +413,7 @@ function onRemovedCheck(id, bookmark) {
 		}
 		else if(s_remove === true  && s_type.indexOf('PHP') == 0) {
 			delMark(id, bookmark);
+			get_oMarks();
 		}
 	});
 }
@@ -480,7 +500,8 @@ function saveAllMarks() {
 }
 
 function delMark(id, bookmark) {
-	let jsonMark = encodeURIComponent(JSON.stringify({ "url": bookmark.node.url,"folder": bookmark.node.parentId,"index": bookmark.node.index,"type": bookmark.node.type,"id": id }));
+	var oldMark = findByID(oMarks, id);
+	var jsonMark = encodeURIComponent(JSON.stringify({ "url": bookmark.node.url,"folder": bookmark.node.parentId,"index": bookmark.node.index,"type": bookmark.node.type,"id": id,"title": oldMark.title }));
 	chrome.storage.local.get(null, function(options) {
 		if(!("s_uuid" in options)) {
 			var s_uuid = uuidv4();

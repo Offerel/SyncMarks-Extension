@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.6.10 (2020-12-21)
+-------------------------
+* Added function to identify removed bookmarks
+
+
 v1.17.6.9 (2020-12-18)
 -------------------------
 * Fix for Firefox 84
