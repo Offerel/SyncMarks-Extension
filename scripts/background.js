@@ -28,8 +28,7 @@ try {
 					if(!("s_uuid" in options)) {
 						var s_uuid = uuidv4();
 						chrome.storage.local.set({s_uuid: s_uuid});
-					}
-					else {
+					} else {
 						var s_uuid = options['s_uuid'];
 					}
 					let tgid = itemData.menuItemId.substring(5);
@@ -44,8 +43,7 @@ try {
 							message = chrome.i18n.getMessage("sendLinkNot");
 							notify('error',message);
 							loglines = logit('Error: '+message);
-						}
-						else {
+						} else {
 							loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
 						}
 					}
@@ -61,8 +59,7 @@ try {
 				if(!("s_uuid" in options)) {
 					var s_uuid = uuidv4();
 					chrome.storage.local.set({s_uuid: s_uuid});
-				}
-				else {
+				} else {
 					var s_uuid = options['s_uuid'];
 				}
 				let tgid = itemData.menuItemId.substring(5);
@@ -77,8 +74,7 @@ try {
 						message = chrome.i18n.getMessage("sendLinkNot");
 						notify('error',message);
 						loglines = logit('Error: '+message);
-					}
-					else {
+					} else {
 						loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
 					}
 				}
@@ -703,8 +699,7 @@ function getPHPMarks() {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
 				notify('error',message);
 				loglines = logit('Info: '+message);
-			}
-			else {
+			} else {
 				response = (xhr.responseText);
 				if(abrowser == false) response = c2cm(response);
 				let PHPMarks = JSON.parse(response);
@@ -712,13 +707,11 @@ function getPHPMarks() {
 					message = chrome.i18n.getMessage("infoNewClient");
 					notify('info',message);
 					loglines = logit('Info: '+message);
-				}
-				else if(PHPMarks.includes('No bookmarks added')) {
+				} else if(PHPMarks.includes('No bookmarks added')) {
 					message = chrome.i18n.getMessage("infoNoChange");
 					loglines = logit("Info: "+message);
 					chrome.storage.local.set({last_message: message});
-				}
-				else {
+				} else {
 					message = PHPMarks.length + chrome.i18n.getMessage("infoChanges");
 					loglines = logit(message);
 					abrowser ? addPHPMarks(PHPMarks) : addPHPcMarks(PHPMarks);
@@ -865,7 +858,7 @@ async function addPHPMarks(bArray) {
 	var bArrayT = bArray;
 	for (let bIndex = 0; bIndex < bArray.length; bIndex++) {
 		switch(bArrayT[bIndex].bmAction) {
-			case 1:	
+			case "1":	
 					if(bArrayT[bIndex].bmURL != null) {
 						chrome.bookmarks.search({url: bArrayT[bIndex].bmURL}, function(removeItems) {
 							removeItems.forEach(function(removeBookmark) {
@@ -896,7 +889,7 @@ async function addPHPMarks(bArray) {
 						});
 					}
 					break;
-			case 2: 
+			case "2": 
 					chrome.bookmarks.search({url: bArrayT[bIndex].bmURL},function(bookmarkItems) {
 						if (bookmarkItems.length) {
 							if (bArrayT[bIndex].fdName != bookmarkItems[0].parentId) {

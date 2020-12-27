@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.6.11 (2020-12-27)
+-------------------------
+* Fixed return value
+
+
 v1.17.6.10 (2020-12-21)
 -------------------------
 * Added function to identify removed bookmarks
