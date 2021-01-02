@@ -187,8 +187,10 @@ function init() {
 function getNotifications() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
-		xhr.open("GET", options['wdurl']+"?client="+options['s_uuid']+"&gurls=1", true);
+		let data = "client=" + options['s_uuid'] + "&caction=gurls";
+		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
@@ -212,9 +214,8 @@ function getNotifications() {
 				}
 			}
 		}
-		xhr.send();
+		xhr.send(data);
 	});
-	
 }
 
 function getClientList() {
@@ -279,7 +280,8 @@ function notificationSettings(id) {
 function dmNoti(nkey) {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
-		xhr.open("GET", options['wdurl']+"?client="+options['s_uuid']+"&durl="+nkey, true);
+		let data = "client=" + options['s_uuid'] + "&caction=durl&durl="+nkey;
+		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
 		xhr.withCredentials = true;
 		xhr.onload = function () {
@@ -289,7 +291,7 @@ function dmNoti(nkey) {
 				loglines = logit('Error: '+message);
 			}
 		}
-		xhr.send();
+		xhr.send(data);
 	});
 }
 
