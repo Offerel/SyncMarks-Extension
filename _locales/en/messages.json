@@ -90,7 +90,7 @@
   },
   
   "optionsBTNRemoveHint": {
-    "message": "This removes all your current bookmarks!",
+    "message": "This removes all your local bookmarks!",
     "description": "Remove Button Hint."
   },
   

@@ -72,7 +72,7 @@ function saveOptions(e) {
 function rName(name) {
 	chrome.storage.local.get(null, function(options) {
 		var xhr = new XMLHttpRequest();
-		let cdata = "cido="+options['s_uuid']+"&arename=1&nname="+name;
+		let cdata = "cido="+options['s_uuid']+"&caction=arename&nname="+name;
 		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

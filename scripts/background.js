@@ -4,6 +4,7 @@ var loglines = '';
 var debug = false;
 const abrowser = typeof InstallTrigger !== 'undefined';
 var clientL = [];
+var oMarks = [];
 
 init();
 
@@ -27,8 +28,7 @@ try {
 					if(!("s_uuid" in options)) {
 						var s_uuid = uuidv4();
 						chrome.storage.local.set({s_uuid: s_uuid});
-					}
-					else {
+					} else {
 						var s_uuid = options['s_uuid'];
 					}
 					let tgid = itemData.menuItemId.substring(5);
@@ -43,8 +43,7 @@ try {
 							message = chrome.i18n.getMessage("sendLinkNot");
 							notify('error',message);
 							loglines = logit('Error: '+message);
-						}
-						else {
+						} else {
 							loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
 						}
 					}
@@ -60,8 +59,7 @@ try {
 				if(!("s_uuid" in options)) {
 					var s_uuid = uuidv4();
 					chrome.storage.local.set({s_uuid: s_uuid});
-				}
-				else {
+				} else {
 					var s_uuid = options['s_uuid'];
 				}
 				let tgid = itemData.menuItemId.substring(5);
@@ -76,8 +74,7 @@ try {
 						message = chrome.i18n.getMessage("sendLinkNot");
 						notify('error',message);
 						loglines = logit('Error: '+message);
-					}
-					else {
+					} else {
 						loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
 					}
 				}
@@ -145,7 +142,22 @@ function logit(message) {
 	return logline;
 }
 
+function get_oMarks() {
+    chrome.bookmarks.getTree(function(results) { oMarks = results; });
+}
+
+function findByID(oMarks, id) {
+    if(oMarks === null || typeof oMarks === "undefined") return null;
+    for (var i = 0; i < oMarks.length; i++) {
+        if(oMarks[i].id === id) return oMarks[i];
+        var child = findByID(oMarks[i].children, id);
+        if(child !== null) return child;
+    }
+    return null;
+}
+
 function init() {
+	get_oMarks();
 	loglines = logit("Info: AddOn version: "+chrome.runtime.getManifest().version);
 	chrome.runtime.getPlatformInfo(function(info){
 		loglines = logit("Info: Current architecture: "+info.arch+" | Current OS: "+info.os);
@@ -175,16 +187,17 @@ function init() {
 function getNotifications() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
-		xhr.open("GET", options['wdurl']+"?client="+options['s_uuid']+"&gurls=1", true);
+		let data = "client=" + options['s_uuid'] + "&caction=gurls";
+		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Get list of notifications failed.";
 				notify('error',message);
 				loglines = logit('Error: '+message);
-			}
-			else {
+			} else {
 				if(xhr.responseText.length > 2) {
 					var nData = JSON.parse(xhr.responseText);
 					try {
@@ -200,9 +213,8 @@ function getNotifications() {
 				}
 			}
 		}
-		xhr.send();
+		xhr.send(data);
 	});
-	
 }
 
 function getClientList() {
@@ -267,8 +279,10 @@ function notificationSettings(id) {
 function dmNoti(nkey) {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
-		xhr.open("GET", options['wdurl']+"?client="+options['s_uuid']+"&durl="+nkey, true);
+		let data = "client=" + options['s_uuid'] + "&caction=durl&durl="+nkey;
+		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
@@ -277,7 +291,7 @@ function dmNoti(nkey) {
 				loglines = logit('Error: '+message);
 			}
 		}
-		xhr.send();
+		xhr.send(data);
 	});
 }
 
@@ -299,6 +313,7 @@ function notify(notid, message, title=chrome.i18n.getMessage("extensionName"), u
 }
 
 function onCreatedCheck(id, bookmark) {
+	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
 		var s_create = options['s_create'] || false;
 		var s_type = options['s_type'] || "";
@@ -313,6 +328,7 @@ function onCreatedCheck(id, bookmark) {
 }
 
 function onMovedCheck(id, bookmark) {
+	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
 		var s_change = options['s_change'] || false;
 		var s_type = options['s_type'] || "";
@@ -327,6 +343,7 @@ function onMovedCheck(id, bookmark) {
 }
 
 function onChangedCheck(id, changeInfo) {
+	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
 		var s_change = options['s_change'] || false;
 		var s_type = options['s_type'] || "";
@@ -394,6 +411,7 @@ function onRemovedCheck(id, bookmark) {
 		}
 		else if(s_remove === true  && s_type.indexOf('PHP') == 0) {
 			delMark(id, bookmark);
+			get_oMarks();
 		}
 	});
 }
@@ -480,7 +498,8 @@ function saveAllMarks() {
 }
 
 function delMark(id, bookmark) {
-	let jsonMark = encodeURIComponent(JSON.stringify({ "url": bookmark.node.url,"folder": bookmark.node.parentId,"index": bookmark.node.index,"type": bookmark.node.type,"id": id }));
+	var oldMark = findByID(oMarks, id);
+	var jsonMark = encodeURIComponent(JSON.stringify({ "url": bookmark.node.url,"folder": bookmark.node.parentId,"index": bookmark.node.index,"type": bookmark.node.type,"id": id,"title": oldMark.title }));
 	chrome.storage.local.get(null, function(options) {
 		if(!("s_uuid" in options)) {
 			var s_uuid = uuidv4();
@@ -682,8 +701,7 @@ function getPHPMarks() {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
 				notify('error',message);
 				loglines = logit('Info: '+message);
-			}
-			else {
+			} else {
 				response = (xhr.responseText);
 				if(abrowser == false) response = c2cm(response);
 				let PHPMarks = JSON.parse(response);
@@ -691,13 +709,11 @@ function getPHPMarks() {
 					message = chrome.i18n.getMessage("infoNewClient");
 					notify('info',message);
 					loglines = logit('Info: '+message);
-				}
-				else if(PHPMarks.includes('No bookmarks added')) {
+				} else if(PHPMarks.includes('No bookmarks added')) {
 					message = chrome.i18n.getMessage("infoNoChange");
 					loglines = logit("Info: "+message);
 					chrome.storage.local.set({last_message: message});
-				}
-				else {
+				} else {
 					message = PHPMarks.length + chrome.i18n.getMessage("infoChanges");
 					loglines = logit(message);
 					abrowser ? addPHPMarks(PHPMarks) : addPHPcMarks(PHPMarks);
@@ -844,7 +860,7 @@ async function addPHPMarks(bArray) {
 	var bArrayT = bArray;
 	for (let bIndex = 0; bIndex < bArray.length; bIndex++) {
 		switch(bArrayT[bIndex].bmAction) {
-			case 1:	
+			case "1":	
 					if(bArrayT[bIndex].bmURL != null) {
 						chrome.bookmarks.search({url: bArrayT[bIndex].bmURL}, function(removeItems) {
 							removeItems.forEach(function(removeBookmark) {
@@ -875,7 +891,7 @@ async function addPHPMarks(bArray) {
 						});
 					}
 					break;
-			case 2: 
+			case "2": 
 					chrome.bookmarks.search({url: bArrayT[bIndex].bmURL},function(bookmarkItems) {
 						if (bookmarkItems.length) {
 							if (bArrayT[bIndex].fdName != bookmarkItems[0].parentId) {
