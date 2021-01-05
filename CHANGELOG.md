@@ -1,5 +1,11 @@
 ChangeLog
 =========
+v1.17.7.1 (2021-01-05)
+-------------------------
+* Fix for push request
+* Fix for not saving client name
+
+
 v1.17.7 (2021-01-01)
 -------------------------
 * Changed POST requests

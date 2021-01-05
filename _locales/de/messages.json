@@ -90,7 +90,7 @@
   },
   
   "optionsBTNRemoveHint": {
-    "message": "Alle Lesezeichen werden gelöscht!",
+    "message": "Alle lokalen Lesezeichen werden gelöscht!",
     "description": "Remove Button Hint."
   },
   

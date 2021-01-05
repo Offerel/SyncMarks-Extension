@@ -197,8 +197,7 @@ function getNotifications() {
 				message = "Get list of notifications failed.";
 				notify('error',message);
 				loglines = logit('Error: '+message);
-			}
-			else {
+			} else {
 				if(xhr.responseText.length > 2) {
 					var nData = JSON.parse(xhr.responseText);
 					try {
@@ -283,6 +282,7 @@ function dmNoti(nkey) {
 		let data = "client=" + options['s_uuid'] + "&caction=durl&durl="+nkey;
 		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {

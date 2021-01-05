@@ -38,9 +38,8 @@ input:hover {
     border-radius: 6px;
     position: absolute;
     z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
+    bottom: 105%;
+    margin-left: -140px;
     opacity: 0;
     transition: opacity 0.3s;
 }
