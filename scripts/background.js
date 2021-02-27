@@ -143,7 +143,11 @@ function logit(message) {
 }
 
 function get_oMarks() {
-    chrome.bookmarks.getTree(function(results) { oMarks = results; });
+	try {
+		chrome.bookmarks.getTree(function(results) { oMarks = results; });
+	} catch(e) {
+		console.log(e);
+	}
 }
 
 function findByID(oMarks, id) {
@@ -157,12 +161,13 @@ function findByID(oMarks, id) {
 }
 
 function init() {
-	get_oMarks();
 	loglines = logit("Info: AddOn version: "+chrome.runtime.getManifest().version);
+	loglines = logit("Info: "+navigator.userAgent);
+	get_oMarks();
 	chrome.runtime.getPlatformInfo(function(info){
 		loglines = logit("Info: Current architecture: "+info.arch+" | Current OS: "+info.os);
 	});
-	loglines = logit("Info: "+navigator.userAgent);
+	
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, function(options) {
 		var s_startup = options['s_startup'] || false;
@@ -905,6 +910,7 @@ async function addPHPMarks(bArray) {
 					break;
 			default: 
 					var newId = "";
+					chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 					if(!bArrayT[bIndex].fdID.endsWith('_____')) {
 						chrome.bookmarks.search({title: bArrayT[bIndex].fdName}, async function(pFolder) {
 							if(pFolder.length == 1 && pFolder[0].type == 'folder') {

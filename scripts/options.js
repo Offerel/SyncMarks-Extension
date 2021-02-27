@@ -140,9 +140,10 @@ function restoreOptions() {
 	});
 }
 
-function manualImport() {
+function manualImport(e) {
+	e.preventDefault();
+	background_page.removeAllMarks();
 	try {
-		background_page.removeAllMarks();
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
 				background_page.getAllPHPMarks();
@@ -158,20 +159,22 @@ function manualImport() {
 	}
 }
 
-function manualRemove() {
-		try {
-			background_page.removeAllMarks();
-		}
-		catch(error) {
-			background_page.loglines = background_page.logit(error);
-		}
-		finally {
-			document.getElementById("rmdialog").style.display = "none";
-			chrome.storage.local.set({last_s: 1});
-		}
+function manualRemove(e) {
+	e.preventDefault();
+	try {
+		background_page.removeAllMarks();
+	}
+	catch(error) {
+		background_page.loglines = background_page.logit(error);
+	}
+	finally {
+		document.getElementById("rmdialog").style.display = "none";
+		chrome.storage.local.set({last_s: 1});
+	}
 }
 
-function manualExport() {
+function manualExport(e) {
+	e.preventDefault();
 	var background_page = chrome.extension.getBackgroundPage();
 	try {
 		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
@@ -245,7 +248,7 @@ function clearLog() {
 	}
 }
 
-document.addEventListener("DOMContentLoaded", restoreOptions, {passive: true});
+document.addEventListener("DOMContentLoaded", restoreOptions);
 
 window.addEventListener('load', function () {
 	var rawFile = new XMLHttpRequest();
@@ -263,27 +266,27 @@ window.addEventListener('load', function () {
 	localizeHtmlPage();
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
 	document.getElementById("ssubmit").addEventListener("click", saveOptions);
-	document.getElementById("iyes").addEventListener("click", manualImport, {passive: true});
-	document.getElementById("eyes").addEventListener("click", manualExport, {passive: true});
-	document.getElementById("ryes").addEventListener("click", manualRemove, {passive: true});
-	document.getElementById("ino").addEventListener("click", function() { imodal.style.display = "none";}, {passive: true});
-	document.getElementById("rno").addEventListener("click", function() { rmodal.style.display = "none";}, {passive: true});
-	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";}, {passive: true});
-	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";}, {passive: true});
-	document.getElementById("rclose").addEventListener("click", function() {rmodal.style.display = "none";}, {passive: true});
-	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";}, {passive: true});
-	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"}, {passive: true});
-	document.getElementById("mremove").addEventListener("click", function() {rmodal.style.display = "block"}, {passive: true})
-	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"}, {passive: true});
-	document.getElementById("wdurl").addEventListener("keyup", checkForm, {passive: true});
-	document.getElementById("user").addEventListener("keyup", checkForm, {passive: true});
-	document.getElementById("password").addEventListener("keyup", checkForm, {passive: true});
-	document.getElementById("wdav").addEventListener("input", checkForm, {passive: true});
-	document.getElementById("php").addEventListener("input", checkForm, {passive: true});
-	document.getElementById("s_startup").addEventListener("input", checkForm, {passive: true});
-	document.getElementById("s_create").addEventListener("input", checkForm, {passive: true});
-	document.getElementById("s_change").addEventListener("input", checkForm, {passive: true});
-	document.getElementById("s_remove").addEventListener("input", checkForm, {passive: true});
+	document.getElementById("iyes").addEventListener("click", manualImport);
+	document.getElementById("eyes").addEventListener("click", manualExport);
+	document.getElementById("ryes").addEventListener("click", manualRemove);
+	document.getElementById("ino").addEventListener("click", function() { imodal.style.display = "none";});
+	document.getElementById("rno").addEventListener("click", function() { rmodal.style.display = "none";});
+	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
+	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";});
+	document.getElementById("rclose").addEventListener("click", function() {rmodal.style.display = "none";});
+	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";});
+	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
+	document.getElementById("mremove").addEventListener("click", function() {rmodal.style.display = "block"})
+	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
+	document.getElementById("wdurl").addEventListener("keyup", checkForm);
+	document.getElementById("user").addEventListener("keyup", checkForm);
+	document.getElementById("password").addEventListener("keyup", checkForm);
+	document.getElementById("wdav").addEventListener("input", checkForm);
+	document.getElementById("php").addEventListener("input", checkForm);
+	document.getElementById("s_startup").addEventListener("input", checkForm);
+	document.getElementById("s_create").addEventListener("input", checkForm);
+	document.getElementById("s_change").addEventListener("input", checkForm);
+	document.getElementById("s_remove").addEventListener("input", checkForm);
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 
 	document.getElementById("logsave").addEventListener("click", saveLog);
@@ -306,4 +309,4 @@ window.addEventListener('load', function () {
 			emodal.style.display = "none";
 		}
 	}
-}, {passive: true});
+});
