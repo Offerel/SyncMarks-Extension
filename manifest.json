@@ -16,12 +16,6 @@
 		"default_title": "__MSG_extensionName__",
 		"default_popup": "scripts/stargets.html"
 	},
-	"browser_specific_settings": {
-		"gecko": {
-			"strict_min_version": "65.0",
-			"id": "syncmarks@offerel.com"
-		}
-	},
 	"options_ui": {
 		"page": "scripts/options.html",
 		"open_in_tab": true
