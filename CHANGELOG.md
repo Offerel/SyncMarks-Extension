@@ -1,5 +1,19 @@
 ChangeLog
 =========
+v1.17.7.3 (2021-02-27)
+-------------------------
+* Removed activeTabs permission
+
+
+v1.17.7.2 (2021-02-27)
+-------------------------
+* Fix for push request
+* Fix for not saving client name
+* Fix for Import
+* Fix for send/receive notifications
+* Removed tabs permission again
+
+
 v1.17.7.1 (2021-01-05)
 -------------------------
 * Fix for push request
