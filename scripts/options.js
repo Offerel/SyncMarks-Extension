@@ -185,6 +185,9 @@ function manualExport(e) {
 		}
 	} catch(error) {
 		background_page.loglines = background_page.logit(error);
+	} finally {
+		document.getElementById("expdialog").style.display = "none";
+		chrome.storage.local.set({last_s: 1});
 	}
 }
 

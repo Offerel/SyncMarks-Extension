@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "__MSG_extensionName__",
 	"description": "__MSG_extensionDescription__",
-	"version": "1.17.7.3",
+	"version": "1.17.8",
 	"default_locale": "en",
 	"icons": {
 		"48": "icons/bookmark.png"
@@ -24,7 +24,7 @@
 		"notifications",
 		"storage",
 		"bookmarks",
-		"https://*/*",
-		"contextMenus"
+		"contextMenus",
+		"https://*/*"
 		]
 }
