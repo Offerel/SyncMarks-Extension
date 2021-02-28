@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.8 (2021-02-28)
+-------------------------
+* Fixed closing export dialog
+
+
 v1.17.7.3 (2021-02-27)
 -------------------------
 * Removed activeTabs permission
