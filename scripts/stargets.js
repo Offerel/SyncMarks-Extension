@@ -2,7 +2,7 @@ var background_page = chrome.extension.getBackgroundPage();
 
 document.addEventListener("DOMContentLoaded", lCLients, {passive: true});
 
-document.getElementById('settings').addEventListener('click', function() {  
+document.getElementById('settings').addEventListener('click', function() {
 	var settingsurl = chrome.extension.getURL('scripts/options.html');
 	chrome.tabs.query({'url': settingsurl}, function(tabs) {
 		if(tabs.length == 0) {

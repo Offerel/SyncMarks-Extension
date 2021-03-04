@@ -22,9 +22,9 @@
 	},
 	"permissions": [
 		"bookmarks",
+		"https://*/*",
 		"storage",
 		"notifications",
-		"contextMenus",
-		"https://*/*"
+		"contextMenus"
 		]
 }
