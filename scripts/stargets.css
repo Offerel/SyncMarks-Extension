@@ -1,53 +1,240 @@
 body {
-    background-color: #f0f0f0;
-    color: #555;
-    cursor: default;
-    font-family: Arial, sans-serif !important;
-    font-size: 75%;
-    margin: 0 auto;
-    padding: 0;
-    overflow: hidden;
-    min-width: 200px;
+	color: #555;
+	font-family: Arial, sans-serif !important;
+	padding: 0;
+	overflow: hidden;
 }
-#header {
-	height: 20px;
-	font-size: 14px;
+#bbar {
 	font-weight: bold;
-	padding: 5px 10px;
 	background: ghostwhite;
-	border-bottom: 1px solid lightgray;
-	box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.25);
+	border-top: 1px solid lightgray;
+	box-shadow: 0px -3px 10px -1px rgba(0,0,0,0.25);
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: 0;
+	line-height: 50px;
+	padding: 0;
 }
-#settings {
-	background-image: url(../icons/settings.png);
+#bbar > li {
+	width: 33%;
+	list-style: none;
+	display: block;
+	float: left;
+	text-align: center;
+}
+#bbar > li:hover {
+	background-color: dodgerblue;
+}
+h3 {
+    padding: 0 7px;
+}
+#bookmarks {
+	display: block;
+	position: absolute;
+	background-color: #EEF3FA;
+	white-space: nowrap;
+	padding: 4px;
+	font-family: Segoe UI;
+	overflow-x: hidden;
+	overflow-y: auto;
+	top: 0;
+	right: 0;
+	bottom: 31px;
+	left: 0;
+}
+#bookmarks ol.tree {
+    padding: 0 0 0 20px;
+	width: 90%
+}
+#bookmarks > li.file {
+    margin-left: 29px !important;
+}
+#bookmarks li {
+    position: relative;
+    margin-left: 5px;
+    list-style: none;
+}
+#bookmarks li.file {
+	margin-left: 0px !important;
+}
+#bookmarks li.file a {
+	background-size: 35px;
+	color: #555;
+	padding-left: 40px;
+	text-decoration: none;
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 1.2em;
+	line-height: 2em;
 	background-repeat: no-repeat;
-	background-size: 100%;
-	width: 24px;
-	height: 24px;
-    float: right;
+	background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Cdefs/%3E%3Cpath fill="%23dff0fe" d="M39 20c0 10.578-8.618 19-19 19C9.619 39 1 30.578 1 20S9.422 1 20 1s19 8.422 19 19z"/%3E%3Cpath fill="%2398ccfd" d="M27.124 26.951c.432.215.864.215 1.081.647.647.649.647 1.728.864 2.376.215.864.432 1.727.864 2.591.216 1.081.648 2.16.864 3.023.141-.11.306-.213.463-.318C35.927 31.822 39 26.302 39 20c0-5.597-2.373-10.575-6.161-14.037-.459-.151-.93-.165-1.396.042-.648.217-1.079 1.081-1.511 1.512L28.637 9.46c-.217.216-.432.648-.217.864 0 .216.217.216.432.216.432.217.649.217 1.081.432.216 0 .432.217.216.432 0 0 0 .217-.216.217-1.081 1.08-2.159 1.943-3.239 3.022-.216.216-.432.648-.432.864 0 .216.216.216.216.432 0 .217-.216.217-.432.432-.432.217-.864.432-1.08.649-.216.432 0 1.08-.216 1.511-.216 1.079-.865 1.943-1.297 3.023-.432.647-.647 1.295-1.078 1.943 0 .864-.217 1.511.215 2.159 1.08 1.51 3.022.646 4.534 1.295zM26.725 2.21A19.204 19.204 0 0020 1c-.391 0-.776.019-1.161.041-.27.419-.485.832-.566 1.078-.216 1.079.648.864 1.511 1.079 0 0 .216 1.727.216 1.943.216 1.081-.432 1.727-.432 2.807 0 .648 0 1.727.432 2.159h.216c.216 0 .432-.216.864-.432.648-.432 1.296-1.079 1.943-1.511.649-.432 1.296-1.079 1.728-1.511.648-.432 1.079-1.295 1.295-1.944.216-.432.956-1.704.739-2.351-.016-.035-.039-.095-.06-.148zM1.432 20.902c.648 1.295 1.943 2.592 3.239 3.454.864.648 2.591.648 3.454 1.727.648.865.432 1.943.432 3.023 0 1.295.864 2.375 1.295 3.453.216.649.432 1.512.648 2.16 0 .216.216 1.511.216 1.727.069.035.126.114.177.212a18.914 18.914 0 003.657 1.524c.016.001.037-.012.053-.008.216 0 1.08-1.296 1.08-1.512.648-.648 1.079-1.511 1.727-1.943.432-.216.864-.432 1.295-.865.432-.432.648-1.295.864-1.943.216-.431.432-1.294.216-1.942-.137-.41-.216-.648-.648-.864-1.295-.432-2.591-.432-3.67-1.512-.216-.432-.216-.864-.432-1.295-.432-.432-1.511-.648-2.159-.864H8.557c-.648-.216-1.079-1.08-1.511-1.727 0-.216 0-.649-.432-.649-.432-.215-.864.217-1.295 0-.216-.215-.216-.432-.216-.647 0-.649.432-1.296.864-1.728.647-.43 1.295.217 1.942.217.216 0 .216 0 .432.216.648.216.864 1.079.864 1.728v.432c0 .216.216.216.432.216.216-1.079.216-2.16.432-3.239 0-1.295 1.295-2.592 2.375-3.023.432-.215.648.217 1.079 0 1.295-.432 4.534-1.727 3.886-3.453-.432-1.512-1.727-3.022-3.454-2.807-.432.217-.648.432-1.079.649-.648.432-1.943 1.727-2.591 1.727-1.079-.216-1.079-1.727-.864-2.376.216-.864 2.159-3.669 3.454-3.238l.864.864c.432.216 1.08.216 1.727.216.216 0 .432 0 .648-.216.216-.216.216-.216.216-.432 0-.648-.648-1.296-1.079-1.728a4.677 4.677 0 00-1.727-1.078c-1.38-.415-4.295.076-6.672.878C3.24 9.685 1 14.553 1 20c0 .091.009.18.01.271.154.218.302.431.422.631z"/%3E%3Cpath fill="%234788c7" d="M20 2c10.093 0 18 7.907 18 18 0 9.925-8.075 18-18 18S2 29.925 2 20C2 9.907 9.907 2 20 2m0-1C9.422 1 1 9.422 1 20s8.619 19 19 19c10.382 0 19-8.422 19-19S30.578 1 20 1z"/%3E%3C/svg%3E');
+	background-color: #EEF3FA9C;
+	background-blend-mode: overlay;
+}
+#bookmarks li input {
+    position: absolute;
+    left: 0;
+    margin-left: 0;
+    opacity: 0;
+    z-index: 2;
     cursor: pointer;
+    height: 1em;
+    width: 1em;
+    top: 0;
+}
+#bookmarks li input + ol {
+    background: transparent;
+    margin: -.938em 0 0 -44px;
+    height: 1em;
+    text-overflow: ellipsis;
+}
+#bookmarks li input + ol > li {
+    display: none;
+    margin-left: -14px !important;
+	padding-left: 1px;
+}
+#bookmarks li label {
+	cursor: pointer;
+	display: block;
+	font-size: 1.5em;
+	line-height: 1.6em;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	background-size: 50px;
+	background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Cpath fill="%23dbb065" d="M2.5 71.5v-63h21.293l6 6H77.5v57z"/%3E%3Cpath fill="%23967a44" d="M23.586 9l5.707 5.707.293.293H77v56H3V9h20.586M24 8H2v64h76V14H30l-6-6z"/%3E%3Cpath fill="%23f5ce85" d="M2.5 71.5v-53h21.651l6-4H77.5v57z"/%3E%3Cpath fill="%23967a44" d="M77 15v56H3V19h21.303l.252-.168L30.303 15H77m1-1H30l-6 4H2v54h76V14z"/%3E%3C/svg%3E');
+	background-repeat: no-repeat;
+}
+#bookmarks :not(.mainFolder) label {
+	position: unset;
+	top: unset;
+	width: max-content;
+	z-index: unset;
+	left: unset;
+	background-color: unset;
+	height: unset;
+	border-bottom: unset;
+	padding: 0px 5px 2px 45px;
+	margin-left: 10px;
+	border-radius: 3px;
+}
+#bookmarks :not(.mainFolder) ol {
+	position: unset;
+	top: unset;
+	z-index: unset;
+	margin-bottom: unset !important;
+}
+#bookmarks li input:checked + ol {
+	background: transparent;
+  	margin: -1.5em 0 0 -44px;
+	padding: 1.563em 0 0 70px;
+	height: auto;
+}
+#bookmarks li input:checked + ol > li {
+	display: block;
+	margin: 0;
+}
+#bookmarks li input:checked + ol > li:last-child {
+    margin: 0 0 .063em;
+}
+#sharelist {
+	display: none;
+}
+#sharelist > li {
+	list-style: none;
 }
 #clist {
 	white-space: nowrap;
 	padding: 0;
-	font-size: 14px;
 	overflow: auto;
-	width: 100%;
+	z-index: 10;
+	position: absolute;
+	background-color: gainsboro;
+	border-top-right-radius: 5px;
+	display: none;
+	bottom: 52px;
+	left: 0;
+	box-shadow: 5px -6px 10px -5px rgba(0,0,0,0.25);
+	max-width: 50%;
 }
 #clist li {
-    text-overflow: ellipsis;
-    list-style: none;
-    overflow: hidden;
-    padding: 5px 10px;
-    cursor: pointer;
+	text-overflow: ellipsis;
+	list-style: none;
+	overflow: hidden;
+	padding: 5px 10px;
+	cursor: pointer;
+	text-align: left;
+	color: #555;
 }
 #clist li:hover {
-    background: aliceblue;
+	background: dodgerblue;
+	color: white;
 }
 #clist li a {
     text-decoration: none;
     color: black;
 }
-h3 {
-    padding: 0 7px;
+#share > label {
+	cursor: pointer;
+}
+#bbar .menuitem {
+	cursor: pointer;
+}
+#bbar span {
+	background-repeat: no-repeat;
+	padding-left: 30px;
+	background-size: 25px;
+	font-size: 1.3em;
+}
+#fselect {
+	display: none;
+	z-index: 12;
+	position: absolute;
+	left: 5%;
+	bottom: 80px;
+	width: 90%;
+	background-color: white;
+	padding: 24px;
+	border: 1px solid #bbb;
+	border-radius: 4px;
+	box-sizing: border-box;
+	box-shadow: 1px 1px 4px rgba(0,0,0,.2);
+	margin: 0 auto;
+	padding-bottom: 15px;
+}
+#bfolders {
+	display: block;
+	width: 100%;
+	font-size: 1.2em;
+}
+#addBm {
+	background-color: #2196f3;
+	border: none;
+	text-transform: uppercase;
+	color: #fff;
+	font-weight: 501;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 6px 10px;
+	border-radius: 4px;
+	box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+	font-family: Roboto,"Segoe UI",BlinkMacSystemFont,system-ui;
+	/* line-height: 20px; */
+	outline: 0;
+	cursor: pointer;
+	display: block;
+	margin-top: 10px;
+	font-size: 1.2em;
+}
+#tshare {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='%23555' d='M18,16.08C17.24,16.08 16.56,16.38 16.04,16.85L8.91,12.7C8.96,12.47 9,12.24 9,12C9,11.76 8.96,11.53 8.91,11.3L15.96,7.19C16.5,7.69 17.21,8 18,8A3,3 0 0,0 21,5A3,3 0 0,0 18,2A3,3 0 0,0 15,5C15,5.24 15.04,5.47 15.09,5.7L8.04,9.81C7.5,9.31 6.79,9 6,9A3,3 0 0,0 3,12A3,3 0 0,0 6,15C6.79,15 7.5,14.69 8.04,14.19L15.16,18.34C15.11,18.55 15.08,18.77 15.08,19C15.08,20.61 16.39,21.91 18,21.91C19.61,21.91 20.92,20.61 20.92,19A2.92,2.92 0 0,0 18,16.08Z' /%3E%3C/svg%3E");
+}
+#tadd {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='%23555' d='M5.8 21L7.4 14L2 9.2L9.2 8.6L12 2L14.8 8.6L22 9.2L18.8 12H18C14.9 12 12.4 14.3 12 17.3L5.8 21M17 14V17H14V19H17V22H19V19H22V17H19V14H17Z' /%3E%3C/svg%3E");
+}
+#tsettings {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='%23555' d='M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z' /%3E%3C/svg%3E");
 }

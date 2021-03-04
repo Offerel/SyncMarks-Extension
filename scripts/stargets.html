@@ -8,11 +8,22 @@
 		<title>SyncMarks - Send page</title>
   	</head>
 	<body>
-		<div id="header">Send page to:
-			<div id="settings"></div>
+		<div id="bookmarks"></div>
+		<ul id="bbar">
+			<li class="menuitem" id="share">
+				<span id="tshare">Share</span>
+				<ul id="clist">
+				</ul>
+			</li>
+			<li class="menuitem" id="add"><span id="tadd">Add</span></li>
+			<li class="menuitem" id="settings"><span id="tsettings">Settings</span></li>
+		</ul>
+		<div id="fselect">
+			<span>Please select the folder where you want to add the bookmark</span><br />
+			<select id="bfolders" name="bfolders">
+			</select>
+			<button id="addBm">Add</button>
 		</div>
-        <div id="clist">
-		</div>
-    <script src="./stargets.js"></script>
+    	<script src="./stargets.js"></script>
     </body>
 </html>

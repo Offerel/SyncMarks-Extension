@@ -1,5 +1,12 @@
 ChangeLog
 =========
+v1.17.9 (2021-03-04)
+-------------------------
+- Testing optional_permissions
+- Using popup on Android for online bookmarks
+- Checking permissions
+
+
 v1.17.8 (2021-02-28)
 -------------------------
 * Fixed closing export dialog

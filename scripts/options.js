@@ -22,9 +22,36 @@ function checkForm() {
 
 function saveOptions(e) {
 	e.preventDefault();
+	/*
+	let hurl = new URL(document.querySelector("#wdurl").value);
+	chrome.permissions.request({
+		origins: [hurl.protocol+'//'+hurl.host+'/*']
+	}, function(granted){
+		if(granted) {
+			console.log("yep");
+			console.log(granted);
+
+			chrome.storage.local.set({
+				s_startup: document.querySelector("#s_startup").checked,
+				s_create: document.querySelector("#s_create").checked,
+				s_remove: document.querySelector("#s_remove").checked,
+				s_change: document.querySelector("#s_change").checked,
+				s_type: document.querySelector('input[name="stype"]:checked').value,
+				s_uuid: document.querySelector("#s_uuid").value,
+			});
+			
+		} else {
+			console.log("nö");
+			console.log(granted);
+		}
+	});
+
+	return false;
+	*/
 	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
 		document.getElementById("smessage").textContent = chrome.i18n.getMessage("optionsNotUsed");
 	}
+
 	chrome.storage.local.set({
 		s_startup: document.querySelector("#s_startup").checked,
 		s_create: document.querySelector("#s_create").checked,
