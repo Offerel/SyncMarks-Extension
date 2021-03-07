@@ -46,20 +46,29 @@ function saveOptions(e) {
 		switch(xhr.status) {
 			case 404: 	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL");
 						wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
+						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorURL"));
 						break;
 			case 401:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorUser");
 						wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
+						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorUser"));
 						break;
-			case 200:	wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
-						wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
-						chrome.storage.local.set({
-							wdurl: document.querySelector("#wdurl").value,
-							user: document.querySelector("#user").value,
-							password: document.querySelector("#password").value,
-						});
+			case 200:	if(xhr.responseText.indexOf('updated') == 7) {
+							wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
+							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
+							chrome.storage.local.set({
+								wdurl: document.querySelector("#wdurl").value,
+								user: document.querySelector("#user").value,
+								password: document.querySelector("#password").value,
+							});
+						} else {
+							wmessage.textContent = 'Warning: '+xhr.responseText;
+							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
+							console.warn('Syncmarks Warning: '+xhr.responseText);
+						}
 						break;
 			default:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorLogin") + xhr.status;
 						wmessage.style.cssText = "background-color: #ff7d52;";
+						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorLogin") + xhr.status);
 						break;
 		}
 		wmessage.className = "show";
@@ -115,11 +124,11 @@ function restoreOptions() {
 		document.querySelector("#wdurl").value = options['wdurl'] || "";
 		document.querySelector("#user").value = options['user'] || "";
 		document.querySelector("#password").value = options['password'] || "";
-		document.querySelector("#s_uuid").value = options['s_uuid'] || background_page.uuidv4();
-		document.querySelector("#s_startup").checked = options['s_startup'];
-		document.querySelector("#s_create").checked = options['s_create'];
-		document.querySelector("#s_remove").checked = options['s_remove'];
-		document.querySelector("#s_change").checked = options['s_change'];
+		document.querySelector("#s_uuid").value = (options['s_uuid'] == undefined) ?  background_page.uuidv4():options['s_uuid'];
+		document.querySelector("#s_startup").checked = (options['s_startup'] == undefined) ? true:options['s_startup'];
+		document.querySelector("#s_create").checked = (options['s_create'] == undefined) ? true:options['s_create'];
+		document.querySelector("#s_change").checked = (options['s_change'] == undefined) ? true:options['s_change'];
+		document.querySelector("#s_remove").checked = (options['s_remove'] == undefined) ? true:options['s_remove'];
 
 		if("s_type" in options) {
 			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').checked = true;
