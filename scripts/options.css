@@ -95,34 +95,10 @@ input:hover {
     cursor: pointer;
 }
 #logsave {
-	background-image: url(../icons/download.png);
-	width: 25px;
-	height: 25px;
-	position: absolute;
-	top: 10px;
-	z-index: 100;
-	right: 10px;
-	border-radius: 14px;
-	cursor: pointer;
-	background-repeat: no-repeat;
-	border: 2px solid black;
-	background-size: 25px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z' /%3E%3C/svg%3E");
 }
 #logclear {
-	background-image: url(../icons/delete.png);
-	border: 2px solid black;
-	width: 25px;
-	height: 25px;
-	position: absolute;
-	top: 10px;
-	z-index: 100;
-	right: 45px;
-	border-radius: 14px;
-	cursor: pointer;
-	background-repeat: no-repeat;
-	background-size: 19px;
-	background-position-x: 3px;
-	background-position-y: 2px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z' /%3E%3C/svg%3E");
 }
 .cframe {
     width: calc(100% - 30px);
@@ -131,24 +107,26 @@ input:hover {
     position: absolute;
 }
 #logarea {
-    width: calc(100% - 32px);
-    white-space: pre;
-    display: block;
-    font-family: consolas, courier;
-    font-size: 0.9em;
-    height: calc(100% - 125px);
-    position: absolute;
-    background: white;
-    border: 1px solid gainsboro;
-    padding: 5px;
-    overflow: auto;
+	position: absolute;
+	background: white;
+	border: 1px solid gainsboro;
+	overflow: hidden;
+	bottom: 10px;
+	top: 105px;
+	max-width: 700px;
+	width: 100%;
 }
 #logarea body {
-    white-space: pre;
-    font-family: consolas, courier;
-    font-size: 0.9em;
-    background: white;
-    padding: 0;
+	white-space: pre;
+	font-family: consolas, courier;
+	font-size: 0.9em;
+	background: white;
+	padding: 10px;
+	overflow: auto;
+	width: 100%;
+	position: inherit;
+	top: 31px;
+	height: calc(100% - 31px);
 }
 h1 img {
 	vertical-align: bottom;
@@ -263,9 +241,8 @@ input:checked + .slider:before {
 }
 .ocontainer {
 	display: block;
-	position: relative;
 	text-align: center;
-	width: 100%;
+	padding: 10px;
 }
 .btnc .toptionc {
 	display: contents;
@@ -312,6 +289,10 @@ h1 {
 }
 .otabs {
 	padding: 0 10px;
+	max-width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
 }
 .server .toptionc {
 	display: block;
@@ -319,15 +300,122 @@ h1 {
 	width: 100%;
 }
 .server .toptionc label {
-	text-align: right;
-	width: 95px;
+	text-align: left;
 	display: block;
-	float: left;
+	font-size: 0.75em;
 }
 .server .toptionc input {
 	display: flex;
-	width: calc(100% - 105px);
+	width: 100%;
 }
 .server div {
 	margin: 6px 0;
+}
+.exp_content {
+	background-color: #f1f1f1;
+	transition: max-height 0.2s ease-out;
+	max-height: 0;
+	overflow: hidden;
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	margin-bottom: 10px;
+	border: 1px solid transparent;
+	border-top: 0;
+	margin-left: 10px;
+	width: calc(100% - 17px);
+}
+.exp_content.active {
+	border: 1px solid dodgerblue;
+	border-top: 0;
+}
+.collapsible {
+	text-align: left;
+	font-size: .8em;
+	letter-spacing: unset;
+	margin: unset;
+	min-height: unset;
+	width: calc(100% - 15px);
+	margin-left: 10px;
+}
+.collapsible::after {
+	content: '\002B';
+	float: right;
+}
+.collapsible.active::after {
+	content: "\2212";
+}
+.collapsible.active {
+	background-color: dodgerblue;
+	color: white;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.collapsible:hover {
+	background-color: dimgray !important;
+}
+#wmessage {
+	visibility: hidden;
+	min-width: 250px;
+	margin-left: -125px;
+	background-color: transparent;
+	color: #555;
+	text-align: center;
+	border-radius: 2px;
+	padding: 16px;
+	position: fixed;
+	z-index: 1;
+	left: 50%;
+	bottom: 30px;
+	border: 1px solid;
+	border-radius: 5px;
+	box-shadow: 0px 8px 6px -6px #888;
+}
+#wmessage.show {
+	visibility: visible;
+	-webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+	animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+@-webkit-keyframes fadein {
+	from {bottom: 0; opacity: 0;}
+	to {bottom: 30px; opacity: 1;}
+}
+@keyframes fadein {
+	from {bottom: 0; opacity: 0;}
+	to {bottom: 30px; opacity: 1;}
+}
+@-webkit-keyframes fadeout {
+	from {bottom: 30px; opacity: 1;}
+	to {bottom: 0; opacity: 0;}
+}
+@keyframes fadeout {
+	from {bottom: 30px; opacity: 1;}
+	to {bottom: 0; opacity: 0;}
+}
+#toolbar {
+	background: whitesmoke;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	height: 30px;
+	margin: 0;
+	padding: 0;
+	border-bottom: 1px solid gainsboro;
+}
+#toolbar li {
+	height: 30px;
+	cursor: pointer;
+	background-repeat: no-repeat;
+	background-size: 24px;
+	background-position: 5px;
+	padding: 0 10px 0 30px;
+	list-style: none;
+	float: left;
+	background-color: ghostwhite;
+	position: relative;
+	line-height: 30px;
+	border-right: 1px solid gainsboro;
+}
+#toolbar li:hover {
+	background-color: dodgerblue;
 }

@@ -8,22 +8,54 @@ var oMarks = [];
 
 init();
 
-try {
-	chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-	chrome.bookmarks.onMoved.addListener(onMovedCheck);
-	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-	chrome.bookmarks.onChanged.addListener(onChangedCheck);
-} catch(error) {
-	loglines = logit(error);
-}
+chrome.permissions.getAll(function(e) {
+	if(e.permissions.includes('bookmarks')) {
+		chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+		chrome.bookmarks.onMoved.addListener(onMovedCheck);
+		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+		chrome.bookmarks.onChanged.addListener(onChangedCheck);
+	}
+});
 
 chrome.notifications.onClicked.addListener(notificationSettings);
 
-try {
-	chrome.contextMenus.onClicked.addListener(function(itemData) {
-		if(itemData.menuItemId.includes("page_")) {
-			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-				var url = tabs[0].url
+chrome.permissions.getAll(function(e) {
+	if(e.permissions.includes('contextMenus')) {
+		chrome.contextMenus.onClicked.addListener(function(itemData) {
+			if(itemData.menuItemId.includes("page_")) {
+				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+					var url = tabs[0].url
+					chrome.storage.local.get(null, function(options) {
+						if(!("s_uuid" in options)) {
+							var s_uuid = uuidv4();
+							chrome.storage.local.set({s_uuid: s_uuid});
+						} else {
+							var s_uuid = options['s_uuid'];
+						}
+						let tgid = itemData.menuItemId.substring(5);
+						let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url)+"&tg="+tgid;
+						var xhr = new XMLHttpRequest();
+						xhr.open("POST", options['wdurl'], true);
+						xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+						xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+						xhr.withCredentials = true;
+						xhr.onload = function () {
+							if( xhr.status < 200 || xhr.status > 226) {
+								message = chrome.i18n.getMessage("sendLinkNot");
+								notify('error',message);
+								loglines = logit('Error: '+message);
+							} else {
+								loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
+							}
+						}
+						loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes")+", Client: "+s_uuid);
+						xhr.send(cdata);
+					})
+				});
+			}
+
+			if(itemData.menuItemId.includes("link_")) {
+				var url = itemData.linkUrl
 				chrome.storage.local.get(null, function(options) {
 					if(!("s_uuid" in options)) {
 						var s_uuid = uuidv4();
@@ -50,63 +82,36 @@ try {
 					loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes")+", Client: "+s_uuid);
 					xhr.send(cdata);
 				})
-			});
-		}
-
-		if(itemData.menuItemId.includes("link_")) {
-			var url = itemData.linkUrl
-			chrome.storage.local.get(null, function(options) {
-				if(!("s_uuid" in options)) {
-					var s_uuid = uuidv4();
-					chrome.storage.local.set({s_uuid: s_uuid});
-				} else {
-					var s_uuid = options['s_uuid'];
-				}
-				let tgid = itemData.menuItemId.substring(5);
-				let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url)+"&tg="+tgid;
-				var xhr = new XMLHttpRequest();
-				xhr.open("POST", options['wdurl'], true);
-				xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
-				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-				xhr.withCredentials = true;
-				xhr.onload = function () {
-					if( xhr.status < 200 || xhr.status > 226) {
-						message = chrome.i18n.getMessage("sendLinkNot");
-						notify('error',message);
-						loglines = logit('Error: '+message);
-					} else {
-						loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
-					}
-				}
-				loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes")+", Client: "+s_uuid);
-				xhr.send(cdata);
-			})
-		}
-	});
-} catch(error) {
-	loglines = logit(error);
-}
-chrome.storage.local.get(null, function(options) {
-	if(options['s_type'] == "PHP") {
-		try{
-		chrome.contextMenus.create({
-			title: chrome.i18n.getMessage("sendPage"),
-			type: "normal",
-			contexts: ["page"],
-			id: "ssendpage"
+			}
 		});
-		
-		chrome.contextMenus.create({
-			title: chrome.i18n.getMessage("sendLink"),
-			type: "normal",
-			contexts: ["link"],
-			id: "ssendlink"
-		});
-		} catch(error) {
-			loglines = logit(error);
-		}
 	}
-})
+});
+
+chrome.permissions.getAll(function(e) {
+	if(e.permissions.includes('contextMenus')) {
+		chrome.storage.local.get(null, function(options) {
+			if(options['s_type'] == "PHP") {
+				try{
+				chrome.contextMenus.create({
+					title: chrome.i18n.getMessage("sendPage"),
+					type: "normal",
+					contexts: ["page"],
+					id: "ssendpage"
+				});
+				
+				chrome.contextMenus.create({
+					title: chrome.i18n.getMessage("sendLink"),
+					type: "normal",
+					contexts: ["link"],
+					id: "ssendlink"
+				});
+				} catch(error) {
+					loglines = logit(error);
+				}
+			}
+		})
+	}
+});
 
 function sendTab(element) {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -139,15 +144,16 @@ function logit(message) {
 	logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0) 
 		notify('error',message);
+		//console.log(message);
 	return logline;
 }
 
 function get_oMarks() {
-	try {
-		chrome.bookmarks.getTree(function(results) { oMarks = results; });
-	} catch(e) {
-		console.log(e);
-	}
+	chrome.permissions.getAll(function(e) {
+		if(e.permissions.includes('bookmarks')) {
+			chrome.bookmarks.getTree(function(results) { oMarks = results; });
+		}
+	});
 }
 
 function findByID(oMarks, id) {
@@ -163,28 +169,29 @@ function findByID(oMarks, id) {
 function init() {
 	loglines = logit("Info: AddOn version: "+chrome.runtime.getManifest().version);
 	loglines = logit("Info: "+navigator.userAgent);
-	get_oMarks();
 	chrome.runtime.getPlatformInfo(function(info){
 		loglines = logit("Info: Current architecture: "+info.arch+" | Current OS: "+info.os);
 	});
-	
+	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, function(options) {
-		var s_startup = options['s_startup'] || false;
-		var s_type = options['s_type'] || "";
+		let s_startup = options['s_startup'] || false;
+		let s_type = options['s_type'] || "";
 
 		if( s_startup === true && s_type.indexOf('PHP') == -1) {
 			loglines = logit("Info: Initiate WebDAV startup sync");
-			getDAVMarks();
+			if(options['wdurl']) getDAVMarks();
 		} else if(s_type.indexOf('PHP') == 0) {
 			if(s_startup === true) {
 				loglines = logit("Info: Initiate PHP startup sync");
 				getPHPMarks();
 			}
-			loglines = logit("Info: Get list of clients.");
-			getClientList();
-			loglines = logit("Info: Get notifications for current client.");
-			getNotifications();
+			if(options['wdurl']) {
+				loglines = logit("Info: Get list of clients.");
+				getClientList();
+				loglines = logit("Info: Get notifications for current client.");
+				getNotifications();
+			}
 		}
 	});
 }
@@ -243,23 +250,23 @@ function getClientList() {
 				clientL = cData;
 				loglines = logit("Info: List of " + cData.length + " clients retrieved successfully.");
 
-				try {
-					cData.forEach(function(client) {
-						var ctitle = client.name.length < 1 ? client.id : client.name;
-						chrome.contextMenus.create({
-							title: ctitle,
-							parentId: "ssendpage",
-							id: 'page_' + client.id
+				chrome.permissions.getAll(function(e) {
+					if(e.permissions.includes('contextMenus')) {
+						cData.forEach(function(client) {
+							var ctitle = client.name ? client.name : client.id
+							chrome.contextMenus.create({
+								title: ctitle,
+								parentId: "ssendpage",
+								id: 'page_' + client.id
+							});
+							chrome.contextMenus.create({
+								title: ctitle,
+								parentId: "ssendlink",
+								id: 'link_' + client.id
+							});
 						});
-						chrome.contextMenus.create({
-							title: ctitle,
-							parentId: "ssendlink",
-							id: 'link_' + client.id
-						});
-					});
-				} catch(error) {
-					loglines = logit(error);
-				}
+					}
+				});
 			}
 		}
 		xhr.send(data);
