@@ -87,7 +87,6 @@ chrome.permissions.getAll(function(e) {
 	}
 });
 
-
 chrome.permissions.getAll(function(e) {
 	if(e.permissions.includes('contextMenus')) {
 		chrome.storage.local.get(null, function(options) {
@@ -254,7 +253,7 @@ function getClientList() {
 				chrome.permissions.getAll(function(e) {
 					if(e.permissions.includes('contextMenus')) {
 						cData.forEach(function(client) {
-							var ctitle = client.name.length < 1 ? client.id : client.name;
+							var ctitle = client.name ? client.name : client.id
 							chrome.contextMenus.create({
 								title: ctitle,
 								parentId: "ssendpage",
