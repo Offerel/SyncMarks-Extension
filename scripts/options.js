@@ -121,6 +121,12 @@ function gName() {
 
 function restoreOptions() {
 	chrome.storage.local.get(null, function(options) {
+		let wmessage = document.getElementById('wmessage');
+		if(options['wdurl'] == undefined) {
+			wmessage.textContent = chrome.i18n.getMessage("infoEmptyConfig");
+			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
+			wmessage.className = "show";
+		}
 		document.querySelector("#wdurl").value = options['wdurl'] || "";
 		document.querySelector("#user").value = options['user'] || "";
 		document.querySelector("#password").value = options['password'] || "";

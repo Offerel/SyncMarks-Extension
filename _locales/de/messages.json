@@ -258,7 +258,7 @@
   },
   
   "infoEmptyConfig": {
-    "message": "Es wurden keine Konfigurationsdaten gefunden. Vielleicht ist dies eine Neuinstallation, bitte konfiguriere die Optionen vor der ersten Verwendung.",
+    "message": "Es wurden keine Konfigurationsdaten gefunden. Vielleicht ist dies eine Neuinstallation, bitte konfiguriere die Optionen vor der ersten Verwendung. Anschließend können Lesezeichen Importiert oder Exportiert werden, um mit dem Server synchron zu sein.",
     "description": "Message if extension is not configured yet."
   },
   
