@@ -206,7 +206,7 @@ function getNotifications() {
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Get list of notifications failed.";
+				message = "Get list of notifications failed. State: "+xhr.status;
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			} else {
@@ -239,7 +239,7 @@ function getClientList() {
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Get list of clients failed.";
+				message = "Get list of clients failed. State: "+xhr.status;
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			}
@@ -712,7 +712,7 @@ function getPHPMarks() {
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
 				notify('error',message);
-				loglines = logit('Info: '+message);
+				loglines = logit('Error: '+message);
 			} else {
 				response = (xhr.responseText);
 				if(abrowser == false) response = c2cm(response);

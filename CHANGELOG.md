@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.10 (2021-03-14)
+-------------------------
+- Fixed notification on error
+
+
 v1.17.9 (2021-03-04)
 -------------------------
 - Added popup on Android for online bookmarks

@@ -29,17 +29,20 @@ function saveOptions(e) {
 		s_change: document.querySelector("#s_change").checked,
 		s_type: document.querySelector('input[name="stype"]:checked').value,
 		s_uuid: document.querySelector("#s_uuid").value,
+		wdurl: document.querySelector("#wdurl").value,
+		user: document.querySelector("#user").value,
+		password: document.querySelector("#password").value
 	});
 
 	if(document.querySelector('input[name="stype"]:checked').value = 'PHP') {
 		rName(document.querySelector("#cname").value);
 	}
 	
-	let cdata = "client=" + document.querySelector("#s_uuid").value + "&caction=tl";
+	let cdata = "client=" + document.getElementById('s_uuid').value + "&caction=tl";
 	var xhr = new XMLHttpRequest();
-	xhr.open("POST", document.querySelector("#wdurl").value, true);
+	xhr.open("POST", document.getElementById('wdurl').value, true);
 	xhr.withCredentials = true;
-	xhr.setRequestHeader("Authorization", 'Basic ' + btoa(document.querySelector("#user").value + ":" + document.querySelector("#password").value));
+	xhr.setRequestHeader('Authorization', 'Basic ' + btoa(document.getElementById('user').value + ':' + document.getElementById('password').value));
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	let wmessage = document.getElementById('wmessage');
 	xhr.onload = function () {
@@ -56,9 +59,9 @@ function saveOptions(e) {
 							wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
 							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
 							chrome.storage.local.set({
-								wdurl: document.querySelector("#wdurl").value,
-								user: document.querySelector("#user").value,
-								password: document.querySelector("#password").value,
+								wdurl: document.getElementById('wdurl').value,
+								user: document.getElementById('user').value,
+								password: document.getElementById('password').value
 							});
 						} else {
 							wmessage.textContent = 'Warning: '+xhr.responseText;
@@ -88,7 +91,7 @@ function rName(name) {
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Error set name of client."  + xhr.status;
-				notify('error',message);
+				background_page.notify('error',message);
 				background_page.loglines = background_page.logit('Error: '+message);
 			}
 		}
@@ -107,7 +110,7 @@ function gName() {
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Error get name of client."  + xhr.status;
-				notify('error',message);
+				background_page.notify('error',message);
 				background_page.loglines =  background_page.logit('Error: '+message);
 			} else {
 				var response = JSON.parse(xhr.responseText);
