@@ -3,6 +3,7 @@ ChangeLog
 v1.17.10 (2021-03-14)
 -------------------------
 - Fixed notification on error
+- Added Backup function to export/import config
 
 
 v1.17.9 (2021-03-04)

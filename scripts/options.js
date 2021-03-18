@@ -114,6 +114,7 @@ function gName() {
 				background_page.loglines =  background_page.logit('Error: '+message);
 			} else {
 				var response = JSON.parse(xhr.responseText);
+				
 			}
 			document.querySelector("#cname").value = response.cname;
 			document.querySelector("#cname").title = options['s_uuid'] + " (" + response.ctype + ")";
@@ -129,6 +130,7 @@ function restoreOptions() {
 			wmessage.textContent = chrome.i18n.getMessage("infoEmptyConfig");
 			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
 			wmessage.className = "show";
+			setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
 		}
 		document.querySelector("#wdurl").value = options['wdurl'] || "";
 		document.querySelector("#user").value = options['user'] || "";
@@ -154,6 +156,55 @@ function restoreOptions() {
 
 		checkForm();
 	});
+}
+
+function exportOptions() {
+	chrome.storage.local.get(null, function(options) {
+		let confJSON = JSON.stringify(options);
+		let dString = new Date().toISOString().slice(0,10);
+		var element = document.createElement('a');
+		element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(confJSON);
+		element.download = 'SyncMarks_Options_'+dString+'.json';
+		element.style.display = 'none';
+		document.body.appendChild(element);
+		element.click();
+		document.body.removeChild(element);
+	});
+}
+
+function importOptions() {
+	let file = document.getElementById("confinput").files[0];
+	let reader = new FileReader();
+	reader.addEventListener('load', function(e) {
+		let ioptions = JSON.parse(e.target.result);
+		chrome.storage.local.set({
+			s_startup: ioptions.s_startup,
+			s_create: ioptions.s_create,
+			s_remove: ioptions.s_remove,
+			s_change: ioptions.s_change,
+			s_type: ioptions.s_type,
+			s_uuid: ioptions.s_uuid,
+			wdurl: ioptions.wdurl,
+			user: ioptions.user,
+			password: ioptions.password
+		});
+
+		document.querySelector("#wdurl").value = ioptions.wdurl;
+		document.querySelector("#user").value = ioptions.user;
+		document.querySelector("#password").value = ioptions.password;
+		document.querySelector("#s_uuid").value = ioptions.s_uuid;
+		document.querySelector("#s_startup").checked = ioptions.s_startup;
+		document.querySelector("#s_create").checked = ioptions.s_create;
+		document.querySelector("#s_change").checked = ioptions.s_change;
+		document.querySelector("#s_remove").checked = ioptions.s_remove;
+
+		wmessage.textContent = chrome.i18n.getMessage("optionsSuccessImport");
+		wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
+		wmessage.className = "show";
+		setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
+	});
+	reader.readAsText(file);
+	document.getElementById("expimpdialog").style.display = "none";
 }
 
 function manualImport(e) {
@@ -282,9 +333,24 @@ window.addEventListener('load', function () {
 	}
     rawFile.send(null);
 
+	var imodal = document.getElementById("impdialog");
+	var rmodal = document.getElementById("rmdialog");
+	var emodal = document.getElementById("expdialog");
+	var comodal = document.getElementById("expimpdialog");
+
 	localizeHtmlPage();
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
 	document.getElementById("ssubmit").addEventListener("click", saveOptions);
+
+	document.getElementById("econf").addEventListener("click", function() {comodal.style.display = "block"});
+	document.getElementById("cclose").addEventListener("click", function() {comodal.style.display = "none";});
+	document.getElementById("cexp").addEventListener("click", exportOptions);
+	document.getElementById("cimp").addEventListener("click", function(e){
+		e.preventDefault();
+		document.getElementById("confinput").click();
+	});
+	document.getElementById("confinput").addEventListener('change', importOptions);
+
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
 	document.getElementById("ryes").addEventListener("click", manualRemove);
@@ -310,10 +376,6 @@ window.addEventListener('load', function () {
 
 	document.getElementById("logsave").addEventListener("click", saveLog);
 	document.getElementById("logclear").addEventListener("click", clearLog);
-
-	var imodal = document.getElementById("impdialog");
-	var rmodal = document.getElementById("rmdialog");
-	var emodal = document.getElementById("expdialog");
 
 	document.getElementById('ebutton').addEventListener('click', function(e) {
 		e.preventDefault();

@@ -203,6 +203,7 @@ function getNotifications() {
 		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
@@ -221,7 +222,7 @@ function getNotifications() {
 					} catch(error) {
 						loglines = logit(error);
 					}
-					loglines = logit("Info: List of " + nData.length + " notifications retrieved successfully.");
+					loglines = logit("Info: List of " + nData.length + " notifications retrieved successful.");
 				}
 			}
 		}
@@ -248,7 +249,7 @@ function getClientList() {
 				cData.unshift({id:'0',name:'All',type:'',date:''});
 
 				clientL = cData;
-				loglines = logit("Info: List of " + cData.length + " clients retrieved successfully.");
+				loglines = logit("Info: List of " + cData.length + " clients retrieved successful.");
 
 				chrome.permissions.getAll(function(e) {
 					if(e.permissions.includes('contextMenus')) {

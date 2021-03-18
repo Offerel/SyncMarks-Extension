@@ -13,6 +13,9 @@ input, button {
     border: 1px solid darkgray;
     outline: 0;
 }
+#confinput {
+	display: none;
+}
 button {
 	border-color: transparent;
 	font-size: 14px;
@@ -203,7 +206,7 @@ input:checked + .slider:before {
     background-color: rgba(0,0,0,0.4);
 }
 .modal button {
-	width: 45%;
+	width: 40%;
 	margin-left: 10px;
 	margin-top: 20px;
 	font-weight: bold;
@@ -219,6 +222,7 @@ input:checked + .slider:before {
 	border: 1px solid #888;
 	width: 80%;
 	max-width: 350px;
+	border-radius: 5px;
 }
 .close {
     color: #aaa;
@@ -286,13 +290,14 @@ input:checked + .slider:before {
 h1 {
 	margin-top: 0;
 	padding: 5px 20px 0;
+	font-size: 1.5em;
 }
 .otabs {
 	padding: 0 10px;
 	max-width: 700px;
 	margin-left: auto;
 	margin-right: auto;
-	width: 100%;
+	/* width: 100%; */
 }
 .server .toptionc {
 	display: block;
