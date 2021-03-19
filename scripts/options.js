@@ -23,15 +23,18 @@ function saveOptions(e) {
 	}
 
 	chrome.storage.local.set({
-		s_startup: document.querySelector("#s_startup").checked,
-		s_create: document.querySelector("#s_create").checked,
-		s_remove: document.querySelector("#s_remove").checked,
-		s_change: document.querySelector("#s_change").checked,
+		actions: {
+			startup:document.querySelector("#s_startup").checked,
+			create:document.querySelector("#s_create").checked,
+			change:document.querySelector("#s_change").checked,
+			remove:document.querySelector("#s_remove").checked
+		},
+
 		s_type: document.querySelector('input[name="stype"]:checked').value,
 		s_uuid: document.querySelector("#s_uuid").value,
 		wdurl: document.querySelector("#wdurl").value,
-		user: document.querySelector("#user").value,
-		password: document.querySelector("#password").value
+
+		creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 	});
 
 	if(document.querySelector('input[name="stype"]:checked').value = 'PHP') {
@@ -60,8 +63,7 @@ function saveOptions(e) {
 							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
 							chrome.storage.local.set({
 								wdurl: document.getElementById('wdurl').value,
-								user: document.getElementById('user').value,
-								password: document.getElementById('password').value
+								creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 							});
 						} else {
 							wmessage.textContent = 'Warning: '+xhr.responseText;
@@ -85,7 +87,7 @@ function rName(name) {
 		var xhr = new XMLHttpRequest();
 		let cdata = "cido="+options['s_uuid']+"&caction=arename&nname="+name;
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
@@ -104,7 +106,7 @@ function gName() {
 		var xhr = new XMLHttpRequest();
 		let cdata = "cl="+options['s_uuid']+"&caction=gname";
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
@@ -133,13 +135,15 @@ function restoreOptions() {
 			setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
 		}
 		document.querySelector("#wdurl").value = options['wdurl'] || "";
-		document.querySelector("#user").value = options['user'] || "";
-		document.querySelector("#password").value = options['password'] || "";
+		let creds = atob(options['creds']).split(':');
+		document.querySelector("#user").value = creds[0] || "";
+		document.querySelector("#password").value = creds[1] || "";
 		document.querySelector("#s_uuid").value = (options['s_uuid'] == undefined) ?  background_page.uuidv4():options['s_uuid'];
-		document.querySelector("#s_startup").checked = (options['s_startup'] == undefined) ? true:options['s_startup'];
-		document.querySelector("#s_create").checked = (options['s_create'] == undefined) ? true:options['s_create'];
-		document.querySelector("#s_change").checked = (options['s_change'] == undefined) ? true:options['s_change'];
-		document.querySelector("#s_remove").checked = (options['s_remove'] == undefined) ? true:options['s_remove'];
+
+		document.querySelector("#s_startup").checked = (options['actions']['startup'] == undefined) ? true:options['actions']['startup'];
+		document.querySelector("#s_create").checked = (options['actions']['create'] == undefined) ? true:options['actions']['create'];
+		document.querySelector("#s_change").checked = (options['actions']['change'] == undefined) ? true:options['actions']['change'];
+		document.querySelector("#s_remove").checked = (options['actions']['remove'] == undefined) ? true:options['actions']['remove'];
 
 		if("s_type" in options) {
 			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').checked = true;
@@ -178,25 +182,28 @@ function importOptions() {
 	reader.addEventListener('load', function(e) {
 		let ioptions = JSON.parse(e.target.result);
 		chrome.storage.local.set({
-			s_startup: ioptions.s_startup,
-			s_create: ioptions.s_create,
-			s_remove: ioptions.s_remove,
-			s_change: ioptions.s_change,
+			actions: {
+				startup:ioptions.actions.startup,
+				create:ioptions.actions.create,
+				change:ioptions.actions.change,
+				remove:ioptions.actions.remove
+			},
 			s_type: ioptions.s_type,
 			s_uuid: ioptions.s_uuid,
 			wdurl: ioptions.wdurl,
-			user: ioptions.user,
-			password: ioptions.password
+			creds: ioptions.creds,
 		});
 
+		let creds = atob(ioptions.creds).split(':');
+
 		document.querySelector("#wdurl").value = ioptions.wdurl;
-		document.querySelector("#user").value = ioptions.user;
-		document.querySelector("#password").value = ioptions.password;
+		document.querySelector("#user").value = creds[0];
+		document.querySelector("#password").value = creds[1];
 		document.querySelector("#s_uuid").value = ioptions.s_uuid;
-		document.querySelector("#s_startup").checked = ioptions.s_startup;
-		document.querySelector("#s_create").checked = ioptions.s_create;
-		document.querySelector("#s_change").checked = ioptions.s_change;
-		document.querySelector("#s_remove").checked = ioptions.s_remove;
+		document.querySelector("#s_startup").checked = ioptions.actions.startup;
+		document.querySelector("#s_create").checked = ioptions.actions.create;
+		document.querySelector("#s_change").checked = ioptions.actions.change;
+		document.querySelector("#s_remove").checked = ioptions.actions.remove;
 
 		wmessage.textContent = chrome.i18n.getMessage("optionsSuccessImport");
 		wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
