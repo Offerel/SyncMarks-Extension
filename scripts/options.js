@@ -17,6 +17,7 @@ function checkForm() {
 
 function saveOptions(e) {
 	e.preventDefault();
+	let wmessage = document.getElementById('wmessage');
 	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
 		document.getElementById("wmessage").textContent = chrome.i18n.getMessage("optionsNotUsed");
 		wmessage.style.cssText = "border-color: darkorange; background-color: gold;";
@@ -37,9 +38,7 @@ function saveOptions(e) {
 		creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 	});
 
-	if(document.querySelector('input[name="stype"]:checked').value = 'PHP') {
-		rName(document.querySelector("#cname").value);
-	}
+	
 	
 	let cdata = "client=" + document.getElementById('s_uuid').value + "&caction=tl";
 	var xhr = new XMLHttpRequest();
@@ -47,7 +46,7 @@ function saveOptions(e) {
 	xhr.withCredentials = true;
 	xhr.setRequestHeader('Authorization', 'Basic ' + btoa(document.getElementById('user').value + ':' + document.getElementById('password').value));
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	let wmessage = document.getElementById('wmessage');
+	
 	xhr.onload = function () {
 		switch(xhr.status) {
 			case 404: 	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL");
@@ -65,6 +64,9 @@ function saveOptions(e) {
 								wdurl: document.getElementById('wdurl').value,
 								creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 							});
+							if(document.querySelector('input[name="stype"]:checked').value = 'PHP') {
+								rName(document.querySelector("#cname").value);
+							}
 						} else {
 							wmessage.textContent = 'Warning: '+xhr.responseText;
 							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
@@ -135,15 +137,25 @@ function restoreOptions() {
 			setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
 		}
 		document.querySelector("#wdurl").value = options['wdurl'] || "";
-		let creds = atob(options['creds']).split(':');
-		document.querySelector("#user").value = creds[0] || "";
-		document.querySelector("#password").value = creds[1] || "";
-		document.querySelector("#s_uuid").value = (options['s_uuid'] == undefined) ?  background_page.uuidv4():options['s_uuid'];
+		if(options['creds'] !== undefined) {
+			let creds = atob(options['creds']).split(':');
+			document.querySelector("#user").value = creds[0] || "";
+			document.querySelector("#password").value = creds[1] || "";
+		}
 
-		document.querySelector("#s_startup").checked = (options['actions']['startup'] == undefined) ? true:options['actions']['startup'];
-		document.querySelector("#s_create").checked = (options['actions']['create'] == undefined) ? true:options['actions']['create'];
-		document.querySelector("#s_change").checked = (options['actions']['change'] == undefined) ? true:options['actions']['change'];
-		document.querySelector("#s_remove").checked = (options['actions']['remove'] == undefined) ? true:options['actions']['remove'];
+		if(options['s_uuid'] === undefined) {
+			let nuuid = background_page.uuidv4();
+			document.getElementById("s_uuid").value = nuuid;
+			document.getElementById("cname").placeholder = nuuid;
+		} else {
+			document.getElementById("s_uuid").value = options['s_uuid'];
+			document.getElementById("cname").placeholder = options['s_uuid'];
+		}
+
+		document.querySelector("#s_startup").checked = (options['actions'] == undefined) ? true:options['actions']['startup'];
+		document.querySelector("#s_create").checked = (options['actions'] == undefined) ? true:options['actions']['create'];
+		document.querySelector("#s_change").checked = (options['actions'] == undefined) ? true:options['actions']['change'];
+		document.querySelector("#s_remove").checked = (options['actions'] == undefined) ? true:options['actions']['remove'];
 
 		if("s_type" in options) {
 			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').checked = true;

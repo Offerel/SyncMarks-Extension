@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.11 (2021-03-20)
+-------------------------
+- moved info message defintion up
+- Import is only compatibel with WebApp
+
 v1.17.10 (2021-03-14)
 -------------------------
 - Fixed notification on error

@@ -144,7 +144,6 @@ function logit(message) {
 	logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0) 
 		notify('error',message);
-		//console.log(message);
 	return logline;
 }
 
@@ -175,6 +174,7 @@ function init() {
 	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, function(options) {
+		if(options['wdurl'] === undefined) return false;
 		let s_startup = options['actions']['startup'] || false;
 		let s_type = options['s_type'] || "";
 
@@ -742,7 +742,7 @@ function getPHPMarks() {
 function getAllPHPMarks() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
-		let params = 'client='+options['s_uuid']+'&caction=export';
+		let params = 'client='+options['s_uuid']+'&caction=export&type=json';
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
