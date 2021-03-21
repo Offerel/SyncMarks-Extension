@@ -17,31 +17,36 @@ function checkForm() {
 
 function saveOptions(e) {
 	e.preventDefault();
+	let wmessage = document.getElementById('wmessage');
 	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
 		document.getElementById("wmessage").textContent = chrome.i18n.getMessage("optionsNotUsed");
 		wmessage.style.cssText = "border-color: darkorange; background-color: gold;";
 	}
 
 	chrome.storage.local.set({
-		s_startup: document.querySelector("#s_startup").checked,
-		s_create: document.querySelector("#s_create").checked,
-		s_remove: document.querySelector("#s_remove").checked,
-		s_change: document.querySelector("#s_change").checked,
+		actions: {
+			startup:document.querySelector("#s_startup").checked,
+			create:document.querySelector("#s_create").checked,
+			change:document.querySelector("#s_change").checked,
+			remove:document.querySelector("#s_remove").checked
+		},
+
 		s_type: document.querySelector('input[name="stype"]:checked').value,
 		s_uuid: document.querySelector("#s_uuid").value,
+		wdurl: document.querySelector("#wdurl").value,
+
+		creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 	});
 
-	if(document.querySelector('input[name="stype"]:checked').value = 'PHP') {
-		rName(document.querySelector("#cname").value);
-	}
 	
-	let cdata = "client=" + document.querySelector("#s_uuid").value + "&caction=tl";
+	
+	let cdata = "client=" + document.getElementById('s_uuid').value + "&caction=tl";
 	var xhr = new XMLHttpRequest();
-	xhr.open("POST", document.querySelector("#wdurl").value, true);
+	xhr.open("POST", document.getElementById('wdurl').value, true);
 	xhr.withCredentials = true;
-	xhr.setRequestHeader("Authorization", 'Basic ' + btoa(document.querySelector("#user").value + ":" + document.querySelector("#password").value));
+	xhr.setRequestHeader('Authorization', 'Basic ' + btoa(document.getElementById('user').value + ':' + document.getElementById('password').value));
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	let wmessage = document.getElementById('wmessage');
+	
 	xhr.onload = function () {
 		switch(xhr.status) {
 			case 404: 	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL");
@@ -56,10 +61,12 @@ function saveOptions(e) {
 							wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
 							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
 							chrome.storage.local.set({
-								wdurl: document.querySelector("#wdurl").value,
-								user: document.querySelector("#user").value,
-								password: document.querySelector("#password").value,
+								wdurl: document.getElementById('wdurl').value,
+								creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 							});
+							if(document.querySelector('input[name="stype"]:checked').value = 'PHP') {
+								rName(document.querySelector("#cname").value);
+							}
 						} else {
 							wmessage.textContent = 'Warning: '+xhr.responseText;
 							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
@@ -82,13 +89,13 @@ function rName(name) {
 		var xhr = new XMLHttpRequest();
 		let cdata = "cido="+options['s_uuid']+"&caction=arename&nname="+name;
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Error set name of client."  + xhr.status;
-				notify('error',message);
+				background_page.notify('error',message);
 				background_page.loglines = background_page.logit('Error: '+message);
 			}
 		}
@@ -101,16 +108,17 @@ function gName() {
 		var xhr = new XMLHttpRequest();
 		let cdata = "cl="+options['s_uuid']+"&caction=gname";
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Error get name of client."  + xhr.status;
-				notify('error',message);
+				background_page.notify('error',message);
 				background_page.loglines =  background_page.logit('Error: '+message);
 			} else {
 				var response = JSON.parse(xhr.responseText);
+				
 			}
 			document.querySelector("#cname").value = response.cname;
 			document.querySelector("#cname").title = options['s_uuid'] + " (" + response.ctype + ")";
@@ -121,14 +129,33 @@ function gName() {
 
 function restoreOptions() {
 	chrome.storage.local.get(null, function(options) {
+		let wmessage = document.getElementById('wmessage');
+		if(options['wdurl'] == undefined) {
+			wmessage.textContent = chrome.i18n.getMessage("infoEmptyConfig");
+			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
+			wmessage.className = "show";
+			setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
+		}
 		document.querySelector("#wdurl").value = options['wdurl'] || "";
-		document.querySelector("#user").value = options['user'] || "";
-		document.querySelector("#password").value = options['password'] || "";
-		document.querySelector("#s_uuid").value = (options['s_uuid'] == undefined) ?  background_page.uuidv4():options['s_uuid'];
-		document.querySelector("#s_startup").checked = (options['s_startup'] == undefined) ? true:options['s_startup'];
-		document.querySelector("#s_create").checked = (options['s_create'] == undefined) ? true:options['s_create'];
-		document.querySelector("#s_change").checked = (options['s_change'] == undefined) ? true:options['s_change'];
-		document.querySelector("#s_remove").checked = (options['s_remove'] == undefined) ? true:options['s_remove'];
+		if(options['creds'] !== undefined) {
+			let creds = atob(options['creds']).split(':');
+			document.querySelector("#user").value = creds[0] || "";
+			document.querySelector("#password").value = creds[1] || "";
+		}
+
+		if(options['s_uuid'] === undefined) {
+			let nuuid = background_page.uuidv4();
+			document.getElementById("s_uuid").value = nuuid;
+			document.getElementById("cname").placeholder = nuuid;
+		} else {
+			document.getElementById("s_uuid").value = options['s_uuid'];
+			document.getElementById("cname").placeholder = options['s_uuid'];
+		}
+
+		document.querySelector("#s_startup").checked = (options['actions'] == undefined) ? true:options['actions']['startup'];
+		document.querySelector("#s_create").checked = (options['actions'] == undefined) ? true:options['actions']['create'];
+		document.querySelector("#s_change").checked = (options['actions'] == undefined) ? true:options['actions']['change'];
+		document.querySelector("#s_remove").checked = (options['actions'] == undefined) ? true:options['actions']['remove'];
 
 		if("s_type" in options) {
 			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').checked = true;
@@ -145,6 +172,60 @@ function restoreOptions() {
 
 		checkForm();
 	});
+}
+
+function exportOptions() {
+	chrome.storage.local.get(null, function(options) {
+		let confJSON = JSON.stringify(options);
+		let dString = new Date().toISOString().slice(0,10);
+		var element = document.createElement('a');
+		element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(confJSON);
+		element.download = 'SyncMarks_Options_'+dString+'.json';
+		element.style.display = 'none';
+		document.body.appendChild(element);
+		element.click();
+		document.body.removeChild(element);
+	});
+}
+
+function importOptions() {
+	let file = document.getElementById("confinput").files[0];
+	let reader = new FileReader();
+	reader.addEventListener('load', function(e) {
+		let ioptions = JSON.parse(e.target.result);
+		chrome.storage.local.set({
+			actions: {
+				startup:ioptions.actions.startup,
+				create:ioptions.actions.create,
+				change:ioptions.actions.change,
+				remove:ioptions.actions.remove
+			},
+			s_type: ioptions.s_type,
+			s_uuid: ioptions.s_uuid,
+			wdurl: ioptions.wdurl,
+			creds: ioptions.creds,
+		});
+
+		let creds = atob(ioptions.creds).split(':');
+
+		document.querySelector("#wdurl").value = ioptions.wdurl;
+		document.querySelector("#user").value = creds[0];
+		document.querySelector("#password").value = creds[1];
+		document.querySelector("#s_uuid").value = ioptions.s_uuid;
+		document.querySelector("#s_startup").checked = ioptions.actions.startup;
+		document.querySelector("#s_create").checked = ioptions.actions.create;
+		document.querySelector("#s_change").checked = ioptions.actions.change;
+		document.querySelector("#s_remove").checked = ioptions.actions.remove;
+
+		gName();
+
+		wmessage.textContent = chrome.i18n.getMessage("optionsSuccessImport");
+		wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
+		wmessage.className = "show";
+		setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
+	});
+	reader.readAsText(file);
+	document.getElementById("expimpdialog").style.display = "none";
 }
 
 function manualImport(e) {
@@ -273,9 +354,24 @@ window.addEventListener('load', function () {
 	}
     rawFile.send(null);
 
+	var imodal = document.getElementById("impdialog");
+	var rmodal = document.getElementById("rmdialog");
+	var emodal = document.getElementById("expdialog");
+	var comodal = document.getElementById("expimpdialog");
+
 	localizeHtmlPage();
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
 	document.getElementById("ssubmit").addEventListener("click", saveOptions);
+
+	document.getElementById("econf").addEventListener("click", function() {comodal.style.display = "block"});
+	document.getElementById("cclose").addEventListener("click", function() {comodal.style.display = "none";});
+	document.getElementById("cexp").addEventListener("click", exportOptions);
+	document.getElementById("cimp").addEventListener("click", function(e){
+		e.preventDefault();
+		document.getElementById("confinput").click();
+	});
+	document.getElementById("confinput").addEventListener('change', importOptions);
+
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
 	document.getElementById("ryes").addEventListener("click", manualRemove);
@@ -301,10 +397,6 @@ window.addEventListener('load', function () {
 
 	document.getElementById("logsave").addEventListener("click", saveLog);
 	document.getElementById("logclear").addEventListener("click", clearLog);
-
-	var imodal = document.getElementById("impdialog");
-	var rmodal = document.getElementById("rmdialog");
-	var emodal = document.getElementById("expdialog");
 
 	document.getElementById('ebutton').addEventListener('click', function(e) {
 		e.preventDefault();

@@ -103,32 +103,41 @@
     "message": "Add all bookmarks newer than the last sync to your existing bookmarks.",
     "description": "Import Button Hint."
   },
-  
+
   "optionsBTNExport": {
     "message": "Export",
     "description": "Export Button."
   },
-  
+
   "optionsBTNExportHint": {
     "message": "Export all bookmarks to the server.",
     "description": "Export Button Hint."
   },
-  
+
   "optionsBTNSave": {
     "message": "Save",
     "description": "Save Button."
   },
-  
+
+  "optionsBTNClear": {
+    "message": "Delete",
+    "description": ""
+  },
+  "optionsBTNAdvSet": {
+    "message": "Advanced Settings",
+    "description": ""
+  },
+
   "optionsBTNYes": {
     "message": "Yes",
     "description": "Yes Button."
   },
-  
+
   "optionsBTNNo": {
     "message": "No",
     "description": "No Button."
   },
-  
+
   "optionsBTNCancel": {
     "message": "Cancel",
     "description": "Cancel Button."
@@ -148,17 +157,26 @@
     "message": "Login failed: Please check username and password.",
     "description": "Login failed, wrong User."
   },
-  
+
   "optionsSuccessLogin": {
     "message": "Login successfully. Options saved.",
     "description": "Login successfully."
   },
-  
+
   "optionsErrorLogin": {
     "message": "Login failed: Status: ",
     "description": "Login failed, unknown state."
   },
+
+  "optionsBeforeCImpExp": {
+    "message": "Here you can export and import your current configuration. Please be aware, that this settings are saved unencrypted.",
+    "description": ""
+  },
   
+  "optionsSuccessImport": {
+    "message": "Import successfully. Options saved.",
+    "description": ""
+  },
   "optionsBeforeImport": { 
     "message": "All local bookmarks are deleted before importing. Afterwards the new bookmarks are imported.\n\nShould the local bookmarks be deleted before the import?",
     "description": "Message before importing."
@@ -167,12 +185,12 @@
     "message": "All bookmarks are deleted at the server before exporting. Afterwards the new bookmarks are exported to the server.\n\nShould the remote bookmarks be deleted before the export?",
     "description": ""
   },
-  
+
   "optionsInfoRemove": {
     "message": "When you continue, all your current bookmarks are removed.\n\nAre you sure to delete all local bookmarks?",
     "description": "Login failed, unknown state."
   },
-  
+
   "popupBTNOptions": {
     "message": "Options",
     "description": "Options Button."
@@ -259,7 +277,7 @@
   },
   
   "infoEmptyConfig": {
-    "message": "Configuration is empty. Maybe thats a new installation, please configure the options before use.",
+    "message": "Configuration is empty. Maybe thats a new installation, please configure the options before use. After that you can import or export bookmarks to be in sync with the server.",
     "description": "Message if extension is not configured yet."
   },
   

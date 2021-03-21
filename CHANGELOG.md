@@ -1,5 +1,17 @@
 ChangeLog
 =========
+v1.17.11 (2021-03-20)
+-------------------------
+- Fixed info message defintion up
+- Reworked import config file
+- Attention!!! => Import is only compatibel with WebApp > 1.4.2
+
+v1.17.10 (2021-03-14)
+-------------------------
+- Fixed notification on error
+- Added Backup function to export/import config
+
+
 v1.17.9 (2021-03-04)
 -------------------------
 - Added popup on Android for online bookmarks

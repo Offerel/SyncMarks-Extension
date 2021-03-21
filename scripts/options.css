@@ -13,6 +13,9 @@ input, button {
     border: 1px solid darkgray;
     outline: 0;
 }
+#confinput {
+	display: none;
+}
 button {
 	border-color: transparent;
 	font-size: 14px;
@@ -203,7 +206,7 @@ input:checked + .slider:before {
     background-color: rgba(0,0,0,0.4);
 }
 .modal button {
-	width: 45%;
+	width: 40%;
 	margin-left: 10px;
 	margin-top: 20px;
 	font-weight: bold;
@@ -219,6 +222,7 @@ input:checked + .slider:before {
 	border: 1px solid #888;
 	width: 80%;
 	max-width: 350px;
+	border-radius: 5px;
 }
 .close {
     color: #aaa;
@@ -286,13 +290,14 @@ input:checked + .slider:before {
 h1 {
 	margin-top: 0;
 	padding: 5px 20px 0;
+	font-size: 1.5em;
 }
 .otabs {
 	padding: 0 10px;
 	max-width: 700px;
 	margin-left: auto;
 	margin-right: auto;
-	width: 100%;
+	/* width: 100%; */
 }
 .server .toptionc {
 	display: block;
@@ -354,21 +359,22 @@ h1 {
 	background-color: dimgray !important;
 }
 #wmessage {
-	visibility: hidden;
-	min-width: 250px;
-	margin-left: -125px;
-	background-color: transparent;
-	color: #555;
-	text-align: center;
-	border-radius: 2px;
-	padding: 16px;
-	position: fixed;
-	z-index: 1;
-	left: 50%;
-	bottom: 30px;
-	border: 1px solid;
-	border-radius: 5px;
-	box-shadow: 0px 8px 6px -6px #888;
+    visibility: hidden;
+    min-width: 250px;
+    background-color: transparent;
+    color: #555;
+    text-align: center;
+    padding: 16px;
+    position: absolute;
+    z-index: 1;
+    bottom: 30px;
+    border: 1px solid;
+    border-radius: 5px;
+    box-shadow: 0px 8px 6px -6px #888;
+    max-width: 700px;
+    left: 50%;
+    margin: 0 auto;
+    transform: translate(-50%, -50%);
 }
 #wmessage.show {
 	visibility: visible;

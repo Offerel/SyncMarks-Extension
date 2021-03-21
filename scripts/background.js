@@ -36,7 +36,7 @@ chrome.permissions.getAll(function(e) {
 						let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url)+"&tg="+tgid;
 						var xhr = new XMLHttpRequest();
 						xhr.open("POST", options['wdurl'], true);
-						xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+						xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 						xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 						xhr.withCredentials = true;
 						xhr.onload = function () {
@@ -67,7 +67,7 @@ chrome.permissions.getAll(function(e) {
 					let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url)+"&tg="+tgid;
 					var xhr = new XMLHttpRequest();
 					xhr.open("POST", options['wdurl'], true);
-					xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+					xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 					xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 					xhr.withCredentials = true;
 					xhr.onload = function () {
@@ -119,7 +119,7 @@ function sendTab(element) {
 			var cdata = "client=" + options['s_uuid'] + "&caction=getpurl&url=" + encodeURIComponent(tabs[0].url) + "&tg=" + element.target.id;
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+			xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -144,7 +144,6 @@ function logit(message) {
 	logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0) 
 		notify('error',message);
-		//console.log(message);
 	return logline;
 }
 
@@ -175,7 +174,8 @@ function init() {
 	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, function(options) {
-		let s_startup = options['s_startup'] || false;
+		if(options['wdurl'] === undefined) return false;
+		let s_startup = options['actions']['startup'] || false;
 		let s_type = options['s_type'] || "";
 
 		if( s_startup === true && s_type.indexOf('PHP') == -1) {
@@ -201,12 +201,13 @@ function getNotifications() {
 		let xhr = new XMLHttpRequest();
 		let data = "client=" + options['s_uuid'] + "&caction=gurls";
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Get list of notifications failed.";
+				message = "Get list of notifications failed. State: "+xhr.status;
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			} else {
@@ -221,7 +222,7 @@ function getNotifications() {
 					} catch(error) {
 						loglines = logit(error);
 					}
-					loglines = logit("Info: List of " + nData.length + " notifications retrieved successfully.");
+					loglines = logit("Info: List of " + nData.length + " notifications retrieved successful.");
 				}
 			}
 		}
@@ -234,12 +235,12 @@ function getClientList() {
 		let data = "client=" + options['s_uuid'] + "&caction=getclients";
 		let xhr = new XMLHttpRequest();
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Get list of clients failed.";
+				message = "Get list of clients failed. State: "+xhr.status;
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			}
@@ -248,7 +249,7 @@ function getClientList() {
 				cData.unshift({id:'0',name:'All',type:'',date:''});
 
 				clientL = cData;
-				loglines = logit("Info: List of " + cData.length + " clients retrieved successfully.");
+				loglines = logit("Info: List of " + cData.length + " clients retrieved successful.");
 
 				chrome.permissions.getAll(function(e) {
 					if(e.permissions.includes('contextMenus')) {
@@ -293,7 +294,7 @@ function dmNoti(nkey) {
 		let xhr = new XMLHttpRequest();
 		let data = "client=" + options['s_uuid'] + "&caction=durl&durl="+nkey;
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
@@ -327,7 +328,7 @@ function notify(notid, message, title=chrome.i18n.getMessage("extensionName"), u
 function onCreatedCheck(id, bookmark) {
 	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
-		var s_create = options['s_create'] || false;
+		var s_create =options['actions']['create'] || false;
 		var s_type = options['s_type'] || "";
 
 		if(s_create === true && s_type.indexOf('PHP') == -1) {
@@ -342,7 +343,7 @@ function onCreatedCheck(id, bookmark) {
 function onMovedCheck(id, bookmark) {
 	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
-		var s_change = options['s_change'] || false;
+		var s_change = options['actions']['change'] || false;
 		var s_type = options['s_type'] || "";
 		
 		if(s_change === true && s_type.indexOf('PHP') == -1) {
@@ -357,7 +358,7 @@ function onMovedCheck(id, bookmark) {
 function onChangedCheck(id, changeInfo) {
 	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
-		var s_change = options['s_change'] || false;
+		var s_change = options['actions']['change'] || false;
 		var s_type = options['s_type'] || "";
 		
 		if(s_change === true && s_type.indexOf('PHP') == -1) {
@@ -377,7 +378,7 @@ function editMark(eData,id) {
 			let cdata = "client="+s_uuid+"&caction=editmark&bookmark="+jsonMark;
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+			xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -414,7 +415,7 @@ function editMark(eData,id) {
 
 function onRemovedCheck(id, bookmark) {
 	chrome.storage.local.get(null, function(options) {
-		var s_remove = options['s_remove'] || false;
+		var s_remove = options['actions']['remove'] || false;
 		var s_type = options['s_type'] || "";
 		
 		if(s_remove === true  && s_type.indexOf('PHP') == -1) {
@@ -443,7 +444,7 @@ function exportPHPMarks() {
 			let cdata = 'client='+s_uuid+'&caction=import&bookmark='+bookmarks;
 			let xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['user'] + ':' + options['password']));
+			xhr.setRequestHeader('Authorization', 'Basic ' + options['creds']);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -487,7 +488,7 @@ function saveAllMarks() {
 			xhr.open("PUT", options['wdurl'] + "/" + filename, true);
 			xhr.withCredentials = true;
 			xhr.setRequestHeader('X-Filename', filename);
-			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+			xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 			xhr.onload = function () {
 				if( xhr.status < 200 || xhr.status > 226) {
 					message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
@@ -523,7 +524,7 @@ function delMark(id, bookmark) {
 		let cdata = "client="+s_uuid+"&caction=delmark&bookmark="+jsonMark;
 		var xhr = new XMLHttpRequest();
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
@@ -571,7 +572,7 @@ function moveMark(id, bookmark) {
 				let cdata = "client="+s_uuid+"&caction=movemark&bookmark="+jsonMark;
 				var xhr = new XMLHttpRequest();
 				xhr.open("POST", options['wdurl'], true);
-				xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+				xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.withCredentials = true;
 				xhr.onload = function () {
@@ -633,7 +634,7 @@ function sendMark(bookmark) {
 
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+			xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -671,7 +672,7 @@ function saveDAVMarks(bookmarkItems) {
 		xhr.open("PUT", options['wdurl'] + "/" + filename, true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader('X-Filename', filename);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
@@ -701,7 +702,7 @@ function getPHPMarks() {
 		let params = 'client='+s_uuid+'&caction=startup';
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		
 		xhr.onload = function () {
@@ -712,7 +713,7 @@ function getPHPMarks() {
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
 				notify('error',message);
-				loglines = logit('Info: '+message);
+				loglines = logit('Error: '+message);
 			} else {
 				response = (xhr.responseText);
 				if(abrowser == false) response = c2cm(response);
@@ -741,10 +742,10 @@ function getPHPMarks() {
 function getAllPHPMarks() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
-		let params = 'client='+options['s_uuid']+'&caction=export';
+		let params = 'client='+options['s_uuid']+'&caction=export&type=json';
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.onload = function () {
 			let datems = Date.now();
@@ -953,7 +954,7 @@ function getDAVMarks() {
 		xhr.open('GET', options['wdurl'] + '/' + filename + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader('X-Filename', filename);
-		xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		
 		xhr.onload = function () {		
 			if( xhr.status != 200 ) {

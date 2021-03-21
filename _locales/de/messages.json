@@ -108,31 +108,41 @@
     "message": "Exportieren",
     "description": "Export Button."
   },
-  
+
   "optionsBTNExportHint": {
     "message": "Exportiert alle Lesezeichen zum Server.",
     "description": "Export Button Hint."
   },
-  
+
   "optionsBTNSave": {
     "message": "Speichern",
     "description": "Save Button."
+  },
+
+  "optionsBTNClear": {
+    "message": "Löschen",
+    "description": ""
+  },
+
+  "optionsBTNAdvSet": {
+    "message": "Erweiterte Einstellungen",
+    "description": ""
   },
   "optionsBTNYes": {
     "message": "Ja",
     "description": "Yes Button."
   },
-  
+
   "optionsBTNNo": {
     "message": "Nein",
     "description": "No Button."
   },
-  
+
   "optionsBTNCancel": {
     "message": "Abbrechen",
     "description": "Cancel Button."
   },
-  
+
   "optionsNotUsed": {
     "message": "Es sieht so aus, als hättest du das AddOn noch nie benutzt. Du kannst nun alle auf dem Server gespeicherten Lesezeichen mit \"Importieren\" importieren. Wenn du bereits Lesezeichen in deinem Browser erstellt hast, ist es eventuell eine gute Idee, diese vorher mit \"Löschen\" zu löschen.",
     "description": "Not used hint."
@@ -147,17 +157,24 @@
     "message": "Login Fehler: Bitte prüfe Benutzer und Passwort.",
     "description": "Login failed, wrong User."
   },
-  
+
   "optionsSuccessLogin": {
     "message": "Login erfolgreich. Optionen gespeichert.",
     "description": "Login failed, wrong User."
   },
-  
+
   "optionsErrorLogin": {
     "message": "Login Fehler: Status: ",
     "description": "Login failed, unknown state."
   },
-  
+  "optionsBeforeCImpExp": {
+    "message": "Hier kannst du deine bestehenden Optionen exportieren und importieren. Beachte bitte, das diese Informationen nicht verschlüsselt sind.",
+    "description": ""
+  },
+  "optionsSuccessImport": {
+    "message": "Import erfolgreich. Optionen gespeichert.",
+    "description": ""
+  },
   "optionsBeforeImport": {
     "message": "Vor dem Import werden alle lokalen Lesezeichen gelöscht. Danach werden die neuen Lesezeichen importiert.\n\nSollen die lokalen Lesezeichen vor dem Import gelöscht werden?",
     "description": "Message before importing."
@@ -166,17 +183,17 @@
     "message": "Vor dem Export werden alle Lesezeichen auf dem Server gelöscht. Danach werden die neuen Lesezeichen zum Server eportiert.\n\nSollen die Lesezeichen vor dem Export auf dem Server gelöscht werden?",
     "description": ""
   },
-  
+
   "optionsInfoRemove": {
     "message": "Wenn du fortfährst, werden alle deine aktuellen Lesezeichen entfernt.\n\nSollen alle lokalen Lesezeichen gelöscht werden?",
     "description": "Login failed, unknown state."
   },
-  
+
   "popupBTNOptions": {
     "message": "Optionen",
     "description": "Options Button."
   },
-  
+
   "popupNoSync": {
     "message": "Bisher wurde kein Sync beim Browserstart durchgeführt.",
     "description": "No startup sync done yet.."
@@ -258,7 +275,7 @@
   },
   
   "infoEmptyConfig": {
-    "message": "Es wurden keine Konfigurationsdaten gefunden. Vielleicht ist dies eine Neuinstallation, bitte konfiguriere die Optionen vor der ersten Verwendung.",
+    "message": "Es wurden keine Konfigurationsdaten gefunden. Vielleicht ist dies eine Neuinstallation, bitte konfiguriere die Optionen vor der ersten Verwendung. Anschließend können Lesezeichen Importiert oder Exportiert werden, um mit dem Server synchron zu sein.",
     "description": "Message if extension is not configured yet."
   },
   

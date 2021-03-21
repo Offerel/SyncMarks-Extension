@@ -26,7 +26,7 @@ document.getElementById('addBm').addEventListener('click', function(){
 			let xhr = new XMLHttpRequest();
 			let data = 'caction=madd&folder='+document.getElementById('bfolders').value+'&url='+encodeURIComponent(tabs[0].url);
 			xhr.open('POST', options['wdurl'], true);
-			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['user'] + ':' + options['password']));
+			xhr.setRequestHeader('Authorization', 'Basic ' + options['creds']);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -49,7 +49,7 @@ document.getElementById('bfolders').addEventListener('change', function(){
 			let xhr = new XMLHttpRequest();
 			let data = 'caction=madd&folder='+folder+'&url='+encodeURIComponent(tabs[0].url);
 			xhr.open('POST', options['wdurl'], true);
-			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['user'] + ':' + options['password']));
+			xhr.setRequestHeader('Authorization', 'Basic ' + options['creds']);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -83,19 +83,12 @@ function lCLients() {
 					window.close();
 				}
 			});
-			/*
-			let body = document.querySelector('body');
-			body.style = 'min-width: 250px; min-height: 100px';
-			document.getElementById('add').style = 'display: none !important';
-			document.getElementById('share').style = 'display: none !important';
-			document.getElementById('settings').style.width = '100%';
-			*/
 		} else{
 			let xhr = new XMLHttpRequest();
 			let data = "caction=maddon";
 			chrome.storage.local.get(null, function(options) {
 				xhr.open("POST", options['wdurl'], true);
-				xhr.setRequestHeader("Authorization", 'Basic ' + btoa(options['user'] + ":" + options['password']));
+				xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.withCredentials = true;
 				xhr.onload = function () {

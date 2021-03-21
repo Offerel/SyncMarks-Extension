@@ -20,9 +20,9 @@
 					<div class="toptionc"><label for="wdurl"><span>__MSG_optionsServerURL__</span>:</label><input inputmode="url" type="url" id="wdurl" placeholder="https://servername.com/syncmarks/" /></div>
 					<div class="toptionc" style="width: 50%;float: left;"><label for="user"><span>__MSG_optionsUsername__</span>:</label><input inputmode="email" type="email" id="user" placeholder="Username"><input type="hidden" id="s_uuid"></div>
 					<div class="toptionc" style="width: 47%;float: right;"><label for="password" ><span>__MSG_optionsPassword__</span>:</label><input type="password" id="password" placeholder="Password"></div>
-					<div class="toptionc" style="float: inline-end;"><label for="cname">Client Name:</label><input type="text" id="cname" placeholder=""></div>
+					<div class="toptionc" style="float: left;"><label for="cname">Client Name:</label><input type="text" id="cname" placeholder=""></div>
 				</div>
-				<button id="ebutton" class="collapsible">Advanced Settings</button>
+				<button id="ebutton" class="collapsible"><span>__MSG_optionsBTNAdvSet__</span></button>
 				<div id="exps" class="exp_content">
 					<div class="ocontainer">
 						<div class="toptionc"><input type="radio" id="php" name="stype" value="PHP" checked><label for="php">PHP</label></div>
@@ -40,8 +40,18 @@
 					<div class="toptionc"><button id="mdownload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNImport__</span><span class="tooltiptext">__MSG_optionsBTNImportHint__</span></button></div>
 					<div class="toptionc"><button id="mupload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNExport__</span><span class="tooltiptext">__MSG_optionsBTNExportHint__</span></button></div>
 					<div class="toptionc"><button id="ssubmit" type="submit" class="browser-style" disabled><span>__MSG_optionsBTNSave__</span></button></div>
+					<div class="toptionc"><button id="econf" type="button" class="browser-style"><span>Backup</span></button></div>
 				</div>
 				<div id="wmessage"></div>
+				<div id="expimpdialog" class="modal">
+					<div class="modal-content">
+						<span id="cclose" class="close">&times;</span>
+						<span class="mtext">__MSG_optionsBeforeCImpExp__</span>
+						<input type="file" id="confinput" accept="application/json" />
+						<button id="cexp"><span>__MSG_optionsBTNExport__</span></button>
+						<button id="cimp"><span>__MSG_optionsBTNImport__</span></button>
+					</div>
+				</div>
 				<div id="impdialog" class="modal">
 					<div class="modal-content">
 						<span id="iclose" class="close">&times;</span>
@@ -71,7 +81,7 @@
 		<div id="logfile" class="otabs" style="display:none">
 			<div id='logarea'>
 				<ul id="toolbar">
-					<li id="logsave">Save</li><li id="logclear">Clear</li>
+					<li id="logsave"><span>__MSG_optionsBTNSave__</span></li><li id="logclear"><span>__MSG_optionsBTNClear__</span></li>
 				</ul>
 			</div>
 		</div>
