@@ -2,8 +2,9 @@ ChangeLog
 =========
 v1.17.11 (2021-03-20)
 -------------------------
-- moved info message defintion up
-- Import is only compatibel with WebApp
+- Fixed info message defintion up
+- Reworked import config file
+- Attention!!! => Import is only compatibel with WebApp > 1.4.2
 
 v1.17.10 (2021-03-14)
 -------------------------
