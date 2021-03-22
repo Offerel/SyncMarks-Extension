@@ -38,14 +38,18 @@ function saveOptions(e) {
 		creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 	});
 
-	
-	
-	let cdata = "client=" + document.getElementById('s_uuid').value + "&caction=tl";
-	var xhr = new XMLHttpRequest();
+	let xhrl = new XMLHttpRequest();
+	let cdata = "caction=logout";
+	xhrl.open("POST", document.getElementById('wdurl').value, true);
+	xhrl.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	xhrl.send(cdata);
+
+	cdata = "client=" + document.getElementById('s_uuid').value + "&caction=tl";
+	let xhr = new XMLHttpRequest();
 	xhr.open("POST", document.getElementById('wdurl').value, true);
-	xhr.withCredentials = true;
 	xhr.setRequestHeader('Authorization', 'Basic ' + btoa(document.getElementById('user').value + ':' + document.getElementById('password').value));
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	xhr.withCredentials = true;
 	
 	xhr.onload = function () {
 		switch(xhr.status) {

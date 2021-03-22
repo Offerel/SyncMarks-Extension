@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.12 (2021-03-222)
+-------------------------
+- Close session before save new options
+
+
 v1.17.11 (2021-03-20)
 -------------------------
 - Fixed info message defintion up
