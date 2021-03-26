@@ -142,8 +142,9 @@ function sendTab(element) {
 function logit(message) {
 	var ndate = new Date();
 	logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
-	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0) 
+	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0)
 		notify('error',message);
+		//console.warn(message);
 	return logline;
 }
 
@@ -761,6 +762,7 @@ function getAllPHPMarks() {
 				if(response != "false") {
 					if(abrowser == false) response = c2cm(response);
 					let PHPMarks = JSON.parse(response);
+					console.log(PHPMarks);
 					count = 0;
 					loglines = logit('Info: Starting bookmark import from server');
 					importMarks(PHPMarks);
@@ -781,7 +783,7 @@ function c2cm(bookmarks) {
 	bookmarks = bookmarks.replace(/toolbar_____/g, '1');
 	bookmarks = bookmarks.replace(/unfiled_____/g, '2');
 	bookmarks = bookmarks.replace(/mobile______/g, '3');
-	bookmarks = bookmarks.replace(/menu________/g, '4');
+	bookmarks = bookmarks.replace(/menu________/g, '2'); // 4, not exist in chromium
 	return bookmarks;
 }
 
@@ -1025,7 +1027,7 @@ function importMarks(parsedMarks, index=0) {
 		}
 	} else {
 		var newParentId = (typeof bmparentId !== 'undefined' && bmparentId.length < 2) ? bmparentId : dictOldIDsToNewIDs[bmparentId];
-		if(bmparentId == "0") {
+		if(bmparentId == '0') {
 			importMarks(parsedMarks, ++index);
 			return false;
 		}
@@ -1071,6 +1073,8 @@ function importMarks(parsedMarks, index=0) {
 				}
 		});
 	} else {
+		console.warn(bmid);
+		if(bmid.length > 1 ) {
 		chrome.bookmarks.create(
 			(bmtype == "folder" ?
 				{
@@ -1101,7 +1105,9 @@ function importMarks(parsedMarks, index=0) {
 					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 					chrome.bookmarks.onChanged.addListener(onChangedCheck);
 				}
-		});
+			}
+		);
+		}
 	}
 	
 	

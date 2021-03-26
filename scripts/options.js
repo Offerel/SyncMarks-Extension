@@ -124,7 +124,7 @@ function gName() {
 				var response = JSON.parse(xhr.responseText);
 				
 			}
-			document.querySelector("#cname").value = response.cname;
+			document.querySelector("#cname").value = response.cname || '';
 			document.querySelector("#cname").title = options['s_uuid'] + " (" + response.ctype + ")";
 		}
 		xhr.send(cdata);
