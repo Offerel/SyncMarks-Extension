@@ -783,7 +783,7 @@ function c2cm(bookmarks) {
 	bookmarks = bookmarks.replace(/toolbar_____/g, '1');
 	bookmarks = bookmarks.replace(/unfiled_____/g, '2');
 	bookmarks = bookmarks.replace(/mobile______/g, '3');
-	bookmarks = bookmarks.replace(/menu________/g, '2');
+	bookmarks = bookmarks.replace(/menu________/g, '2'); // 4, not exist in chromium
 	return bookmarks;
 }
 

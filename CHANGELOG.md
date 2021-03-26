@@ -2,7 +2,7 @@ ChangeLog
 =========
 v1.17.13 (2021-03-26)
 -------------------------
-- Fixed import not existing menu________ in Chromium
+- Fixed import for not existing menu________ folder in Chromium
 
 
 v1.17.12 (2021-03-22)
