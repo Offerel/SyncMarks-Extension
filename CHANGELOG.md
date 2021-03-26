@@ -1,6 +1,11 @@
 ChangeLog
 =========
-v1.17.12 (2021-03-222)
+v1.17.13 (2021-03-26)
+-------------------------
+- Fixed import not existing menu________ in Chromium
+
+
+v1.17.12 (2021-03-22)
 -------------------------
 - Close session before save new options
 
