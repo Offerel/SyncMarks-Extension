@@ -144,7 +144,7 @@ function logit(message) {
 	logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0)
 		notify('error',message);
-		//console.warn(message);
+	//	console.warn(message);
 	return logline;
 }
 
@@ -188,7 +188,6 @@ function init() {
 				getPHPMarks();
 			}
 			if(options['wdurl']) {
-				loglines = logit("Info: Get list of clients.");
 				getClientList();
 				loglines = logit("Info: Get notifications for current client.");
 				getNotifications();
@@ -214,16 +213,18 @@ function getNotifications() {
 			} else {
 				if(xhr.responseText.length > 2) {
 					var nData = JSON.parse(xhr.responseText);
-					try {
-						nData.forEach(function(notification) {
-							let nnid = JSON.stringify({id:notification.nkey,url:notification.url});
-							loglines = logit('Info: Received page: <a href="' + notification.url + '">' + notification.url + '</a>');
-							notify(nnid, notification.url, notification.title);
-						});
-					} catch(error) {
-						loglines = logit(error);
+					if(Array.isArray(nData)) {
+						try {
+							nData.forEach(function(notification) {
+								let nnid = JSON.stringify({id:notification.nkey,url:notification.url});
+								loglines = logit('Info: Received page: <a href="' + notification.url + '">' + notification.url + '</a>');
+								notify(nnid, notification.url, notification.title);
+							});
+						} catch(error) {
+							loglines = logit(error);
+						}
+						loglines = logit("Info: List of " + nData.length + " notifications retrieved successful.");
 					}
-					loglines = logit("Info: List of " + nData.length + " notifications retrieved successful.");
 				}
 			}
 		}
@@ -232,6 +233,7 @@ function getNotifications() {
 }
 
 function getClientList() {
+	loglines = logit("Info: Get list of clients.");
 	chrome.storage.local.get(null, function(options) {
 		let data = "client=" + options['s_uuid'] + "&caction=getclients";
 		let xhr = new XMLHttpRequest();
@@ -244,8 +246,7 @@ function getClientList() {
 				message = "Get list of clients failed. State: "+xhr.status;
 				notify('error',message);
 				loglines = logit('Error: '+message);
-			}
-			else {
+			} else {
 				cData = JSON.parse(xhr.responseText);
 				cData.unshift({id:'0',name:'All',type:'',date:''});
 
@@ -1109,8 +1110,6 @@ function importMarks(parsedMarks, index=0) {
 		);
 		}
 	}
-	
-	
 }
 
 function addAllMarks(parsedMarks, index=1) {
