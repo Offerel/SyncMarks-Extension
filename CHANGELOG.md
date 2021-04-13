@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.14 (2021-04-13)
+-------------------------
+- Fixed retrieving of clients
+
+
 v1.17.13 (2021-03-26)
 -------------------------
 - Fixed import for not existing menu________ folder in Chromium

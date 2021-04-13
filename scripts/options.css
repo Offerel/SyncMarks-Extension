@@ -254,7 +254,7 @@ input:checked + .slider:before {
 .toptionc {
 	position: relative;
 	display: inline-flex;
-	width: 150px;
+	width: 149px;
 }
 #changelog {
 	overflow: auto;
