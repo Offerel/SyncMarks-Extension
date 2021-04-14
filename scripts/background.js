@@ -248,28 +248,37 @@ function getClientList() {
 				loglines = logit('Error: '+message);
 			} else {
 				cData = JSON.parse(xhr.responseText);
-				cData.unshift({id:'0',name:'All',type:'',date:''});
-
-				clientL = cData;
-				loglines = logit("Info: List of " + cData.length + " clients retrieved successful.");
-
-				chrome.permissions.getAll(function(e) {
-					if(e.permissions.includes('contextMenus')) {
-						cData.forEach(function(client) {
-							var ctitle = client.name ? client.name : client.id
-							chrome.contextMenus.create({
-								title: ctitle,
-								parentId: "ssendpage",
-								id: 'page_' + client.id
+				if(Object.prototype.toString.call(cData) === '[object Object]') {
+					let all = {'id':'0','name':'All','type':'','date':''};
+					[].unshift.call(cData, all);					
+					chrome.permissions.getAll(function(e) {
+						if(e.permissions.includes('contextMenus')) {
+							var cnt = 0;
+							Object.keys(cData).forEach(function(client){
+								var ctitle = cData[client].name ? cData[client].name:cData[client].id;
+								if(ctitle !== undefined) {
+									cnt++;
+									chrome.contextMenus.create({
+										title: ctitle,
+										parentId: "ssendpage",
+										id: 'page_' + cData[client].id
+									});
+									chrome.contextMenus.create({
+										title: ctitle,
+										parentId: "ssendlink",
+										id: 'link_' + cData[client].id
+									});
+								}
 							});
-							chrome.contextMenus.create({
-								title: ctitle,
-								parentId: "ssendlink",
-								id: 'link_' + client.id
-							});
-						});
-					}
-				});
+							cnt = cnt -1;
+							loglines = logit("Info: List of " + cnt + " clients retrieved successful.");
+						}
+					});
+					
+				} else {
+					//console.log(cData);
+					loglines = logit('Info: No clients received');
+				}
 			}
 		}
 		xhr.send(data);
