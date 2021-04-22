@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.16 (2021-04-22)
+-------------------------
+- Rebuilding context menus
+
+
 v1.17.15 (2021-04-14)
 -------------------------
 - Fixed retrieving of clients

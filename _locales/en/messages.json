@@ -282,7 +282,12 @@
   },
   
   "sendPage": {
-    "message": "Send page",
+    "message": "Send Page",
+    "description": ""
+  },
+
+  "sendTab": {
+    "message": "Send Tab",
     "description": ""
   },
   

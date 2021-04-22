@@ -283,6 +283,11 @@
     "message": "Seite senden",
     "description": ""
   },
+
+  "sendTab": {
+    "message": "Tab senden",
+    "description": ""
+  },
   
   "sendLink": {
     "message": "Link senden",

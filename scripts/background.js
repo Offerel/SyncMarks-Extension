@@ -22,66 +22,15 @@ chrome.notifications.onClicked.addListener(notificationSettings);
 chrome.permissions.getAll(function(e) {
 	if(e.permissions.includes('contextMenus')) {
 		chrome.contextMenus.onClicked.addListener(function(itemData) {
-			if(itemData.menuItemId.includes("page_")) {
+			if(itemData.menuItemId.includes("page_") || itemData.menuItemId.includes("tab_")) {
 				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-					var url = tabs[0].url
-					chrome.storage.local.get(null, function(options) {
-						if(!("s_uuid" in options)) {
-							var s_uuid = uuidv4();
-							chrome.storage.local.set({s_uuid: s_uuid});
-						} else {
-							var s_uuid = options['s_uuid'];
-						}
-						let tgid = itemData.menuItemId.substring(5);
-						let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url)+"&tg="+tgid;
-						var xhr = new XMLHttpRequest();
-						xhr.open("POST", options['wdurl'], true);
-						xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
-						xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-						xhr.withCredentials = true;
-						xhr.onload = function () {
-							if( xhr.status < 200 || xhr.status > 226) {
-								message = chrome.i18n.getMessage("sendLinkNot");
-								notify('error',message);
-								loglines = logit('Error: '+message);
-							} else {
-								loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
-							}
-						}
-						loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes")+", Client: "+s_uuid);
-						xhr.send(cdata);
-					})
+					let tabData = {target:{id:itemData.menuItemId.substring(5),url:tabs[0].url}};
+					sendTab(tabData);
 				});
 			}
-
 			if(itemData.menuItemId.includes("link_")) {
-				var url = itemData.linkUrl
-				chrome.storage.local.get(null, function(options) {
-					if(!("s_uuid" in options)) {
-						var s_uuid = uuidv4();
-						chrome.storage.local.set({s_uuid: s_uuid});
-					} else {
-						var s_uuid = options['s_uuid'];
-					}
-					let tgid = itemData.menuItemId.substring(5);
-					let cdata = "client="+s_uuid+"&caction=getpurl&url="+encodeURIComponent(url)+"&tg="+tgid;
-					var xhr = new XMLHttpRequest();
-					xhr.open("POST", options['wdurl'], true);
-					xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
-					xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-					xhr.withCredentials = true;
-					xhr.onload = function () {
-						if( xhr.status < 200 || xhr.status > 226) {
-							message = chrome.i18n.getMessage("sendLinkNot");
-							notify('error',message);
-							loglines = logit('Error: '+message);
-						} else {
-							loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes"));
-						}
-					}
-					loglines = logit("Info: "+chrome.i18n.getMessage("sendLinkYes")+", Client: "+s_uuid);
-					xhr.send(cdata);
-				})
+				let tabData = {target:{id:itemData.menuItemId.substring(5),url:itemData.linkUrl}};
+				sendTab(tabData);
 			}
 		});
 	}
@@ -92,19 +41,28 @@ chrome.permissions.getAll(function(e) {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == "PHP") {
 				try{
-				chrome.contextMenus.create({
-					title: chrome.i18n.getMessage("sendPage"),
-					type: "normal",
-					contexts: ["page"],
-					id: "ssendpage"
-				});
-				
-				chrome.contextMenus.create({
-					title: chrome.i18n.getMessage("sendLink"),
-					type: "normal",
-					contexts: ["link"],
-					id: "ssendlink"
-				});
+					chrome.contextMenus.create({
+						title: chrome.i18n.getMessage("sendPage"),
+						type: "normal",
+						contexts: ["page"],
+						id: "ssendpage"
+					});
+
+					chrome.contextMenus.create({
+						title: chrome.i18n.getMessage("sendLink"),
+						type: "normal",
+						contexts: ["link"],
+						id: "ssendlink"
+					});
+
+					try{
+						chrome.contextMenus.create({
+							title: chrome.i18n.getMessage("sendTab"),
+							type: "normal",
+							contexts: ["tab"],
+							id: "ssendtab"
+						});
+					} catch {}
 				} catch(error) {
 					loglines = logit(error);
 				}
@@ -116,7 +74,8 @@ chrome.permissions.getAll(function(e) {
 function sendTab(element) {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		chrome.storage.local.get(null, function(options) {
-			var cdata = "client=" + options['s_uuid'] + "&caction=getpurl&url=" + encodeURIComponent(tabs[0].url) + "&tg=" + element.target.id;
+			let url = (element.target.url) ? element.target.url:tabs[0].url;
+			var cdata = "client=" + options['s_uuid'] + "&caction=getpurl&url=" + encodeURIComponent(url) + "&tg=" + element.target.id;
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
 			xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
@@ -134,14 +93,13 @@ function sendTab(element) {
 			}
 			loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options['s_uuid']);
 			xhr.send(cdata);
-			
 		});
 	});
 }
 
 function logit(message) {
 	var ndate = new Date();
-	logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
+	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0)
 		notify('error',message);
 	//	console.warn(message);
@@ -248,37 +206,43 @@ function getClientList() {
 				loglines = logit('Error: '+message);
 			} else {
 				cData = JSON.parse(xhr.responseText);
-				if(Object.prototype.toString.call(cData) === '[object Object]') {
-					let all = {'id':'0','name':'All','type':'','date':''};
-					[].unshift.call(cData, all);					
-					chrome.permissions.getAll(function(e) {
-						if(e.permissions.includes('contextMenus')) {
-							var cnt = 0;
-							Object.keys(cData).forEach(function(client){
-								var ctitle = cData[client].name ? cData[client].name:cData[client].id;
-								if(ctitle !== undefined) {
-									cnt++;
+				chrome.permissions.getAll(function(e) {
+					if(e.permissions.includes('contextMenus')) {
+						if(Array.isArray(cData)) {
+							cData.forEach(function(client){
+								var ctitle = client.name ? client.name:client.id;
+								chrome.contextMenus.create({
+									title: ctitle,
+									type: "normal",
+									parentId: "ssendpage",
+									contexts: ["page"],
+									id: 'page_' + client.id
+								});
+								chrome.contextMenus.create({
+									title: ctitle,
+									type: "normal",
+									parentId: "ssendlink",
+									contexts: ["link"],
+									id: 'link_' + client.id
+								});
+
+								try{
 									chrome.contextMenus.create({
 										title: ctitle,
-										parentId: "ssendpage",
-										id: 'page_' + cData[client].id
+										type: "normal",
+										parentId: "ssendtab",
+										contexts: ["tab"],
+										id: 'tab_' + client.id
 									});
-									chrome.contextMenus.create({
-										title: ctitle,
-										parentId: "ssendlink",
-										id: 'link_' + cData[client].id
-									});
-								}
+								} catch {}
 							});
-							cnt = cnt -1;
+							let cnt = cData.length - 1;
 							loglines = logit("Info: List of " + cnt + " clients retrieved successful.");
+						} else {
+							console.info("No clients received");
 						}
-					});
-					
-				} else {
-					//console.log(cData);
-					loglines = logit('Info: No clients received');
-				}
+					}
+				});
 			}
 		}
 		xhr.send(data);
