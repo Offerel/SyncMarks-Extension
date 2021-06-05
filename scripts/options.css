@@ -3,6 +3,7 @@ body {
 	background-color: #f9f9fb;
 	margin: 0;
 	padding: 0;
+	overflow: hidden;
 }
 body, button, input, textarea {
   font-family: Segoe UI, sans-serif;
@@ -110,14 +111,14 @@ input:hover {
     position: absolute;
 }
 #logarea {
-	position: absolute;
 	background: white;
 	border: 1px solid gainsboro;
 	overflow: hidden;
-	bottom: 10px;
-	top: 105px;
 	max-width: 700px;
 	width: 100%;
+	margin-top: 30px;
+	position: initial;
+	height: 100%;
 }
 #logarea body {
 	white-space: pre;
@@ -128,8 +129,7 @@ input:hover {
 	overflow: auto;
 	width: 100%;
 	position: inherit;
-	top: 31px;
-	height: calc(100% - 31px);
+	height: calc(100% - 30px);
 }
 h1 img {
 	vertical-align: bottom;
@@ -268,16 +268,24 @@ input:checked + .slider:before {
 }
 .tab-bar button {
 	border-radius: 0;
-	border: 0;
-	min-height: unset;
 	margin: 0;
-	width: unset;
+	padding: 0;
+	display: block;
+	width: calc(100% / 3);
+	float: left;
+	min-height: unset;
 	height: 25px;
-	background-color: transparent;
-	padding: 0 25px;
 }
 .tab-bar button:hover {
 	background-color: darkgrey;
+}
+.tab-button > span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+	display: block;
+	padding: 0 3px;
 }
 .abutton {
 	background-color: DimGray !important;
@@ -291,13 +299,31 @@ h1 {
 	margin-top: 0;
 	padding: 5px 20px 0;
 	font-size: 1.5em;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	margin-bottom: 10px;
 }
+/*
 .otabs {
 	padding: 0 10px;
 	max-width: 700px;
 	margin-left: auto;
 	margin-right: auto;
-	/* width: 100%; */
+}
+*/
+.otabs {
+	padding: 0;
+	max-width: 700px;
+	width: 100%;
+	height: calc(100% - 84px);
+	position: absolute;
+	top: 84px;
+	z-index: 0;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
 }
 .server .toptionc {
 	display: block;
