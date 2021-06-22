@@ -1,30 +1,30 @@
 {
-	"manifest_version": 2,
-	"name": "__MSG_extensionName__",
-	"description": "__MSG_extensionDescription__",
-	"version": "1.17.17",
-	"default_locale": "en",
-	"icons": {
-		"48": "icons/bookmark.png"
-	},
-	"homepage_url": "https://github.com/Offerel/SyncMarks-Extension",
-	"background": {
-		"scripts": ["scripts/background.js"]
-	},
-	"browser_action": {
-		"default_icon": "icons/bookmark.png",
-		"default_title": "__MSG_extensionName__",
-		"default_popup": "scripts/stargets.html"
-	},
-	"options_ui": {
-		"page": "scripts/options.html",
-		"open_in_tab": true
-	},
-	"permissions": [
-		"bookmarks",
-		"https://*/*",
-		"storage",
-		"notifications",
-		"contextMenus"
-		]
+  "manifest_version": 2,
+  "name": "__MSG_extensionName__",
+  "description": "__MSG_extensionDescription__",
+  "version": "1.17.19",
+  "default_locale": "en",
+  "icons": {
+    "48": "icons/bookmark.png"
+  },
+  "homepage_url": "https://github.com/Offerel/SyncMarks-Extension",
+  "background": {
+    "scripts": ["scripts/background.js"]
+  },
+  "browser_action": {
+    "default_icon": "icons/bookmark.png",
+    "default_title": "__MSG_extensionName__",
+    "default_popup": "scripts/stargets.html"
+  },
+  "options_ui": {
+    "page": "scripts/options.html",
+    "open_in_tab": true
+  },
+  "permissions": [
+    "bookmarks",
+    "https://*/*",
+    "storage",
+    "notifications",
+    "contextMenus"
+  ]
 }
