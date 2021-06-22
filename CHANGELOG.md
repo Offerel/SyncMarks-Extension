@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.17.20 (2021-06-22)
+-------------------------
+- Fixed mobile share function
+
+
 v1.17.19 (2021-06-15)
 -------------------------
 - Open pushed tabs as new tab (without click the notification)

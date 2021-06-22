@@ -24,7 +24,7 @@ body {
 	float: left;
 	text-align: center;
 }
-#bbar > li:hover {
+#bbar > li:active {
 	background-color: dodgerblue;
 }
 h3 {
@@ -169,7 +169,7 @@ h3 {
 	text-align: left;
 	color: #555;
 }
-#clist li:hover {
+#clist li:active {
 	background: dodgerblue;
 	color: white;
 }

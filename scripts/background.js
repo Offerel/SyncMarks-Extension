@@ -261,6 +261,10 @@ function getClientList() {
 						} else {
 							console.info("No clients received");
 						}
+					} else {
+						cData.forEach(function(client){
+							clientL.push(client);
+						})
 					}
 				});
 			}

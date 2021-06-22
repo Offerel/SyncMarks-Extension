@@ -83,7 +83,7 @@ function lCLients() {
 					window.close();
 				}
 			});
-		} else{
+		} else {
 			let xhr = new XMLHttpRequest();
 			let data = "caction=maddon";
 			chrome.storage.local.get(null, function(options) {
