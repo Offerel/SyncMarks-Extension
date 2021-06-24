@@ -1,5 +1,25 @@
 ChangeLog
 =========
+v1.17.22 (2021-06-24)
+-------------------------
+- Another try to fix the share menu on Android
+
+
+v1.17.21 (2021-06-23)
+-------------------------
+- Another try to fix the share menu on Android
+
+
+v1.17.20 (2021-06-22)
+-------------------------
+- Fixed mobile share function
+
+
+v1.17.19 (2021-06-15)
+-------------------------
+- Open pushed tabs as new tab (without click the notification)
+
+
 v1.17.17 (2021-06-05)
 -------------------------
 - Fixing mobile CSS

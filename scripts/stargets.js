@@ -83,7 +83,7 @@ function lCLients() {
 					window.close();
 				}
 			});
-		} else{
+		} else {
 			let xhr = new XMLHttpRequest();
 			let data = "caction=maddon";
 			chrome.storage.local.get(null, function(options) {
@@ -120,16 +120,23 @@ function lCLients() {
 	});
 
     var clientl = document.getElementById("clist");
-    while (clientl.firstChild) {
+	
+	while (clientl.firstChild) {
         clientl.removeChild(clientl.firstChild);
     }
-    background_page.clientL.forEach(client => {
-        var cli = document.createElement("li");
-        cli.textContent = client.name;
-        cli.id = client.id;
-        clientl.appendChild(cli);
-    });
-
+	
+	chrome.storage.local.get(null, function(options) {
+		let clist = options.clist;
+		
+		clist.forEach(function(client){
+			let cli = document.createElement("li");
+			let ctitle = client.name ? client.name:client.id;
+			cli.textContent = ctitle;
+			cli.id = client.id;
+			clientl.appendChild(cli);
+		});
+	});
+	
     clientl.addEventListener("click", function(element) {
         background_page.sendTab(element);
         window.close();

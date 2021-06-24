@@ -147,7 +147,6 @@ function init() {
 			}
 			if(options['wdurl']) {
 				getClientList();
-				loglines = logit("Info: Get notifications for current client.");
 				getNotifications();
 			}
 		}
@@ -155,6 +154,7 @@ function init() {
 }
 
 function getNotifications() {
+	loglines = logit("Info: Get notifications for current client.");
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
 		let data = "client=" + options['s_uuid'] + "&caction=gurls";
@@ -174,9 +174,8 @@ function getNotifications() {
 					if(Array.isArray(nData)) {
 						try {
 							nData.forEach(function(notification) {
-								let nnid = JSON.stringify({id:notification.nkey,url:notification.url});
-								loglines = logit('Info: Received page: <a href="' + notification.url + '">' + notification.url + '</a>');
-								notify(nnid, notification.url, notification.title);
+								loglines = logit('Info: Received tab: <a href="' + notification.url + '">' + notification.url + '</a>');
+								openTab(notification.url,notification.nkey,notification.title);
 							});
 						} catch(error) {
 							loglines = logit(error);
@@ -187,6 +186,25 @@ function getNotifications() {
 			}
 		}
 		xhr.send(data);
+	});
+}
+
+function openTab(tURL,tID,tTitle) {
+	chrome.tabs.query({url:tURL}, function(tabInfo) {
+		var tIndex = 0;
+		
+		if(tabInfo.length < 1) {
+			chrome.tabs.create({url: tURL, active:false}, function(tab) {
+				if(tab.status != 'unloaded') dmNoti(tID);
+				tIndex = tab.index;
+			});
+		} else {
+			if(tabInfo[0].status != 'unloaded') dmNoti(tID);
+			tIndex = tabInfo[0].index;
+		}
+		
+		let nnid = JSON.stringify({id:tID,url:tURL});
+		notify(nnid, tURL, tTitle);
 	});
 }
 
@@ -206,6 +224,11 @@ function getClientList() {
 				loglines = logit('Error: '+message);
 			} else {
 				cData = JSON.parse(xhr.responseText);
+				
+				chrome.storage.local.set({
+					clist:cData
+				});		
+				
 				chrome.permissions.getAll(function(e) {
 					if(e.permissions.includes('contextMenus')) {
 						if(Array.isArray(cData)) {
@@ -256,11 +279,12 @@ function notificationSettings(id) {
 	} else {
 		let nd = JSON.parse(id);
 		try {
-			chrome.tabs.create({url: nd.url});
+			chrome.tabs.query({url:nd.url}, function(tabInfo) {
+				if(tabInfo.length > 0) chrome.tabs.highlight({tabs: tabInfo[0].index});
+			});
 		} catch(error) {
 			loglines = logit(error);
 		}
-		dmNoti(nd.id);
 	}
 }
 
@@ -287,7 +311,7 @@ function openSettings() {
 	chrome.runtime.openOptionsPage();
 }
 
-function notify(notid, message, title=chrome.i18n.getMessage("extensionName"), url="") {
+function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
 	try {
 		chrome.notifications.create(notid, {
 			"type": "basic",
@@ -736,7 +760,6 @@ function getAllPHPMarks() {
 				if(response != "false") {
 					if(abrowser == false) response = c2cm(response);
 					let PHPMarks = JSON.parse(response);
-					console.log(PHPMarks);
 					count = 0;
 					loglines = logit('Info: Starting bookmark import from server');
 					importMarks(PHPMarks);
