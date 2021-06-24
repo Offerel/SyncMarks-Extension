@@ -164,10 +164,11 @@ h3 {
 	text-overflow: ellipsis;
 	list-style: none;
 	overflow: hidden;
-	padding: 5px 10px;
+	padding: 10px;
 	cursor: pointer;
 	text-align: left;
 	color: #555;
+	line-height: normal;
 }
 #clist li:active {
 	background: dodgerblue;

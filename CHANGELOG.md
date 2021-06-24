@@ -1,5 +1,15 @@
 ChangeLog
 =========
+v1.17.22 (2021-06-24)
+-------------------------
+- Another try to fix the share menu on Android
+
+
+v1.17.21 (2021-06-23)
+-------------------------
+- Another try to fix the share menu on Android
+
+
 v1.17.20 (2021-06-22)
 -------------------------
 - Fixed mobile share function

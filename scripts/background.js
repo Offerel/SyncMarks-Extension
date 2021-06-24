@@ -174,9 +174,7 @@ function getNotifications() {
 					if(Array.isArray(nData)) {
 						try {
 							nData.forEach(function(notification) {
-								//let nnid = JSON.stringify({id:notification.nkey,url:notification.url});
 								loglines = logit('Info: Received tab: <a href="' + notification.url + '">' + notification.url + '</a>');
-								//notify(nnid, notification.url, notification.title);
 								openTab(notification.url,notification.nkey,notification.title);
 							});
 						} catch(error) {
@@ -226,6 +224,11 @@ function getClientList() {
 				loglines = logit('Error: '+message);
 			} else {
 				cData = JSON.parse(xhr.responseText);
+				
+				chrome.storage.local.set({
+					clist:cData
+				});		
+				
 				chrome.permissions.getAll(function(e) {
 					if(e.permissions.includes('contextMenus')) {
 						if(Array.isArray(cData)) {
@@ -261,10 +264,6 @@ function getClientList() {
 						} else {
 							console.info("No clients received");
 						}
-					} else {
-						cData.forEach(function(client){
-							clientL.push(client);
-						})
 					}
 				});
 			}
@@ -761,7 +760,6 @@ function getAllPHPMarks() {
 				if(response != "false") {
 					if(abrowser == false) response = c2cm(response);
 					let PHPMarks = JSON.parse(response);
-					console.log(PHPMarks);
 					count = 0;
 					loglines = logit('Info: Starting bookmark import from server');
 					importMarks(PHPMarks);
