@@ -3,7 +3,8 @@ var background_page = chrome.extension.getBackgroundPage();
 document.addEventListener("DOMContentLoaded", lCLients, {passive: true});
 
 document.getElementById('settings').addEventListener('click', function() {
-	var settingsurl = chrome.extension.getURL('scripts/options.html');
+	var settingsurl = chrome.runtime.getURL('scripts/options.html');
+	
 	chrome.tabs.query({'url': settingsurl}, function(tabs) {
 		if(tabs.length == 0) {
 			chrome.runtime.openOptionsPage();
@@ -73,7 +74,8 @@ function lCLients() {
 
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('bookmarks')) {
-			var settingsurl = chrome.extension.getURL('scripts/options.html');
+			var settingsurl = chrome.runtime.getURL('scripts/options.html');
+
 			chrome.tabs.query({'url': settingsurl}, function(tabs) {
 				if(tabs.length == 0) {
 					chrome.runtime.openOptionsPage();
