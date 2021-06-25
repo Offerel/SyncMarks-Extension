@@ -5,6 +5,7 @@ var debug = false;
 const abrowser = typeof InstallTrigger !== 'undefined';
 var clientL = [];
 var oMarks = [];
+var pTabs = [];
 
 init();
 
@@ -18,6 +19,8 @@ chrome.permissions.getAll(function(e) {
 });
 
 chrome.notifications.onClicked.addListener(notificationSettings);
+
+chrome.tabs.onActivated.addListener(onTabActivated)
 
 chrome.permissions.getAll(function(e) {
 	if(e.permissions.includes('contextMenus')) {
@@ -189,21 +192,31 @@ function getNotifications() {
 	});
 }
 
-function openTab(tURL,tID,tTitle) {
-	chrome.tabs.query({url:tURL}, function(tabInfo) {
-		var tIndex = 0;
-		
+function onTabActivated(tab){
+	pTabs.forEach(function(pTab, index){
+		if(pTab.tID == tab.tabId) {
+			dmNoti(pTab.nID);
+			pTabs.splice(index,1);
+		}
+	});
+}
+
+function pTabsSave(tID, nID) {
+	var tabInfo = {tID:tID,nID:Number(nID)};
+	pTabs.push(tabInfo);
+}
+
+function openTab(tURL,nID,tTitle) {	
+	chrome.tabs.query({url:tURL}, function(tabInfo) {		
 		if(tabInfo.length < 1) {
 			chrome.tabs.create({url: tURL, active:false}, function(tab) {
-				if(tab.status != 'unloaded') dmNoti(tID);
-				tIndex = tab.index;
+				pTabsSave(tab.id,nID);
 			});
 		} else {
-			if(tabInfo[0].status != 'unloaded') dmNoti(tID);
-			tIndex = tabInfo[0].index;
+			pTabsSave(tabInfo[0].id,nID);
 		}
-		
-		let nnid = JSON.stringify({id:tID,url:tURL});
+
+		let nnid = JSON.stringify({id:nID,url:tURL});
 		notify(nnid, tURL, tTitle);
 	});
 }
