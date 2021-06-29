@@ -1,8 +1,14 @@
 ChangeLog
 =========
+v1.17.24 (2021-06-29)
+-------------------------
+- Changed Save Credentials call
+
+
 v1.17.23 (2021-06-25)
 -------------------------
 - Mark pushed tab as read on tab access
+- Replaced getURL functions
 
 
 v1.17.22 (2021-06-24)

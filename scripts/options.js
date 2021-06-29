@@ -39,7 +39,7 @@ function saveOptions(e) {
 	});
 
 	let xhrl = new XMLHttpRequest();
-	let cdata = "caction=logout";
+	let cdata = "caction=logout&client="+document.getElementById('s_uuid').value;
 	xhrl.open("POST", document.getElementById('wdurl').value, true);
 	xhrl.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xhrl.send(cdata);
