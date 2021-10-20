@@ -201,19 +201,37 @@ function onTabActivated(tab){
 	});
 }
 
-function pTabsSave(tID, nID) {
+function pTabsLoad(tID, nID) {
 	var tabInfo = {tID:tID,nID:Number(nID)};
-	pTabs.push(tabInfo);
+	var pTabs = [];
+	chrome.storage.local.get(['pTabs'], function(result){
+		console.log(result.pTabs);
+		if(result.pTabs !== undefined) {
+			result.pTabs.forEach(function(e){
+				pTabs.push(e);
+			});
+		}
+		
+		pTabs.push(tabInfo);
+		pTabsSave(pTabs);
+	});
+}
+
+function pTabsSave(nTabs) {
+	console.log(nTabs);
+	chrome.storage.local.set({
+		pTabs:nTabs
+	});
 }
 
 function openTab(tURL,nID,tTitle) {	
 	chrome.tabs.query({url:tURL}, function(tabInfo) {		
 		if(tabInfo.length < 1) {
 			chrome.tabs.create({url: tURL, active:false}, function(tab) {
-				pTabsSave(tab.id,nID);
+				pTabsLoad(tab.id,nID);
 			});
 		} else {
-			pTabsSave(tabInfo[0].id,nID);
+			pTabsLoad(tabInfo[0].id,nID);
 		}
 
 		let nnid = JSON.stringify({id:nID,url:tURL});
@@ -1083,7 +1101,6 @@ function importMarks(parsedMarks, index=0) {
 				}
 		});
 	} else {
-		console.warn(bmid);
 		if(bmid.length > 1 ) {
 		chrome.bookmarks.create(
 			(bmtype == "folder" ?

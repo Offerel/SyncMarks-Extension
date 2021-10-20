@@ -1,8 +1,10 @@
 {
+  "author": "Offerel",
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
-  "version": "1.17.24",
+  "update_url": "https://raw.githubusercontent.com/Offerel/SyncMarks-Extension/master/gupdate.xml",
+  "version": "1.17.25",
   "default_locale": "en",
   "icons": {
     "48": "icons/bookmark.png"
@@ -20,11 +22,5 @@
     "page": "scripts/options.html",
     "open_in_tab": true
   },
-  "permissions": [
-    "bookmarks",
-    "https://*/*",
-    "storage",
-    "notifications",
-    "contextMenus"
-  ]
+  "permissions": ["bookmarks", "https://*/*", "storage", "notifications", "contextMenus"]
 }
