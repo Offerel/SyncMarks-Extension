@@ -95,28 +95,53 @@
   },
   
   "optionsBTNImport": {
-    "message": "Importieren",
+    "message": "Herunterladen",
     "description": "Import Button."
   },
   
   "optionsBTNImportHint": {
-    "message": "Füge alle Lesezeichen, die neuer sind als die letzte Synchronisation, zu deinen bestehenden Lesezeichen hinzu.",
+    "message": "Wiederherstellen vom Server, überschreiben der lokalen Lesezeichen.",
     "description": "Import Button Hint."
+  },
+
+  "optionsBTNSaveHint": {
+    "message": "Speichern der aktuellen Einstellungen",
+    "description": ""
+  },
+
+  "optionsBTNSettingsHint": {
+    "message": "Backup der Einstellungen",
+    "description": ""
   },
   
   "optionsBTNExport": {
-    "message": "Exportieren",
+    "message": "Hochladen",
     "description": "Export Button."
   },
 
   "optionsBTNExportHint": {
-    "message": "Exportiert alle Lesezeichen zum Server.",
+    "message": "Überschreiben aller Bookmarks auf dem Server.",
     "description": "Export Button Hint."
   },
 
   "optionsBTNSave": {
     "message": "Speichern",
     "description": "Save Button."
+  },
+
+  "optionsBTNSettings": {
+    "message": "Einstellungen",
+    "description": ""
+  },
+
+  "optionsBTNStore": {
+    "message": "Sichern",
+    "description": ""
+  },
+
+  "optionsBTNRestore": {
+    "message": "Wiederherstellen",
+    "description": ""
   },
 
   "optionsBTNClear": {
