@@ -95,28 +95,53 @@
   },
   
   "optionsBTNImport": {
-    "message": "Import",
+    "message": "Download",
     "description": "Import Button."
   },
   
   "optionsBTNImportHint": {
-    "message": "Add all bookmarks newer than the last sync to your existing bookmarks.",
+    "message": "Restore from server, overwrite local bookmarks.",
     "description": "Import Button Hint."
   },
 
+  "optionsBTNSaveHint": {
+    "message": "Save all actual settings",
+    "description": ""
+  },
+
+  "optionsBTNSettingsHint": {
+    "message": "Backup of settings",
+    "description": ""
+  },
+
   "optionsBTNExport": {
-    "message": "Export",
+    "message": "Upload",
     "description": "Export Button."
   },
 
   "optionsBTNExportHint": {
-    "message": "Export all bookmarks to the server.",
+    "message": "Overwrite all bookmarkson the server.",
     "description": "Export Button Hint."
   },
 
   "optionsBTNSave": {
     "message": "Save",
     "description": "Save Button."
+  },
+
+  "optionsBTNSettings": {
+    "message": "Settings",
+    "description": ""
+  },
+
+  "optionsBTNStore": {
+    "message": "Secure",
+    "description": ""
+  },
+
+  "optionsBTNRestore": {
+    "message": "Restore",
+    "description": ""
   },
 
   "optionsBTNClear": {
