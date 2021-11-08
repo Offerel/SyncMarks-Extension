@@ -31,6 +31,10 @@ button:hover:not(:disabled) {
 	background-color: blue;
 	color: white;
 }
+button:disabled {
+	cursor: no-drop;
+	pointer-events:none;
+}
 input:hover {
 	border-color: cornflowerblue;
 }
@@ -307,14 +311,6 @@ h1 {
 	overflow: hidden;
 	margin-bottom: 10px;
 }
-/*
-.otabs {
-	padding: 0 10px;
-	max-width: 700px;
-	margin-left: auto;
-	margin-right: auto;
-}
-*/
 .otabs {
 	padding: 0;
 	max-width: 700px;

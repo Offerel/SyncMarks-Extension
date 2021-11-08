@@ -1,5 +1,13 @@
 ChangeLog
 =========
+v1.17.27 (2021-11-08)
+-------------------------
+- Added sync info to requests
+- Added onInstall trigger
+- Fix get client name
+- Fix restore settings
+
+
 v1.17.26 (2021-11-02)
 -------------------------
 - Button fix
