@@ -96,7 +96,7 @@
   
   "optionsBTNImport": {
     "message": "Download",
-    "description": "Import Button."
+    "description": ""
   },
   
   "optionsBTNImportHint": {
@@ -116,7 +116,7 @@
 
   "optionsBTNExport": {
     "message": "Upload",
-    "description": "Export Button."
+    "description": ""
   },
 
   "optionsBTNExportHint": {
@@ -130,7 +130,7 @@
   },
 
   "optionsBTNSettings": {
-    "message": "Settings",
+    "message": "Backup",
     "description": ""
   },
 
@@ -194,12 +194,17 @@
   },
 
   "optionsBeforeCImpExp": {
-    "message": "Here you can export and import your current configuration. Please be aware, that this settings are saved unencrypted.",
+    "message": "Here you can store or restore your current settings.",
+    "description": ""
+  },
+  
+  "infoRestoreID": {
+    "message": "Do you want to restore the Client ID?",
     "description": ""
   },
   
   "optionsSuccessImport": {
-    "message": "Import successfully. Options saved.",
+    "message": "Import successfully.",
     "description": ""
   },
   "optionsBeforeImport": { 

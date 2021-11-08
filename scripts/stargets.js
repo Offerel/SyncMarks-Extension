@@ -127,14 +127,17 @@ function lCLients() {
 	
 	chrome.storage.local.get(null, function(options) {
 		let clist = options.clist;
+
+		if(typeof clist !== 'undefined') {
+			clist.forEach(function(client){
+				let cli = document.createElement("li");
+				let ctitle = client.name ? client.name:client.id;
+				cli.textContent = ctitle;
+				cli.id = client.id;
+				clientl.appendChild(cli);
+			});
+		}
 		
-		clist.forEach(function(client){
-			let cli = document.createElement("li");
-			let ctitle = client.name ? client.name:client.id;
-			cli.textContent = ctitle;
-			cli.id = client.id;
-			clientl.appendChild(cli);
-		});
 	});
 	
     clientl.addEventListener("click", function(element) {

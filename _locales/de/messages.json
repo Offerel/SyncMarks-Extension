@@ -95,8 +95,8 @@
   },
   
   "optionsBTNImport": {
-    "message": "Herunterladen",
-    "description": "Import Button."
+    "message": "Download",
+    "description": ""
   },
   
   "optionsBTNImportHint": {
@@ -115,8 +115,8 @@
   },
   
   "optionsBTNExport": {
-    "message": "Hochladen",
-    "description": "Export Button."
+    "message": "Upload",
+    "description": ""
   },
 
   "optionsBTNExportHint": {
@@ -130,7 +130,7 @@
   },
 
   "optionsBTNSettings": {
-    "message": "Einstellungen",
+    "message": "Backup",
     "description": ""
   },
 
@@ -193,11 +193,15 @@
     "description": "Login failed, unknown state."
   },
   "optionsBeforeCImpExp": {
-    "message": "Hier kannst du deine bestehenden Optionen exportieren und importieren. Beachte bitte, das diese Informationen nicht verschlüsselt sind.",
+    "message": "Hier kannst du deine bestehenden Einstellungen sichern oder wiederherstellen..",
+    "description": ""
+  },
+  "infoRestoreID": {
+    "message": "Soll die Client ID wiederhergestellt werden?",
     "description": ""
   },
   "optionsSuccessImport": {
-    "message": "Import erfolgreich. Optionen gespeichert.",
+    "message": "Import erfolgreich.",
     "description": ""
   },
   "optionsBeforeImport": {
