@@ -41,10 +41,25 @@ chrome.permissions.getAll(function(e) {
 	}
 });
 
+chrome.commands.onCommand.addListener((command) => {
+	bookmarkTab();
+});
+
 chrome.permissions.getAll(function(e) {
 	if(e.permissions.includes('contextMenus')) {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == "PHP") {
+				
+				if(options.actions.create === false) {
+					chrome.contextMenus.create({
+						title: 'Bookmark (Ctrl+B)',
+						type: "normal",
+						contexts: ["page"],
+						id: "smark",
+						onclick: bookmarkTab
+					});
+				}
+				
 				try{
 					chrome.contextMenus.create({
 						title: chrome.i18n.getMessage("sendPage"),
@@ -75,6 +90,28 @@ chrome.permissions.getAll(function(e) {
 		})
 	}
 });
+
+function bookmarkTab() {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.storage.local.get(null, function(options) {
+			if(options.actions.create === false) {
+				let url = encodeURIComponent(tabs[0].url);
+				var data = "link=" + url + "&title="+tabs[0].title+"&client=Android&push=false";
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", options['wdurl'] + "?" + data, true);
+				xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+				xhr.withCredentials = true;
+				xhr.onload = function () {
+					if( xhr.status < 200 || xhr.status > 226) {
+						notify('error',xhr.response);
+					} else
+						notify('error',xhr.response);
+				}
+				xhr.send();
+			}
+		});
+	});
+}
 
 function sendTab(element) {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
