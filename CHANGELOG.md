@@ -1,8 +1,9 @@
 ChangeLog
 =========
-v1.17.28 (2021-11-23)
+v1.18.0 (2021-11-24)
 -------------------------
 - Bookmark direct to server
+- Changed some requests
 
 
 v1.17.27 (2021-11-08)

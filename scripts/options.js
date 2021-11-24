@@ -6,8 +6,7 @@ function checkForm() {
 		document.getElementById('mdownload').disabled=false;
 		document.getElementById('mupload').disabled=false;
 		document.getElementById('mremove').disabled=false;
-    }
-	else{
+    } else{
         document.getElementById('ssubmit').disabled=true;
 		document.getElementById('mdownload').disabled=true;
 		document.getElementById('mupload').disabled=true;
@@ -91,7 +90,7 @@ function saveOptions(e) {
 function rName(name) {
 	chrome.storage.local.get(null, function(options) {
 		var xhr = new XMLHttpRequest();
-		let cdata = "cido="+options['s_uuid']+"&caction=arename&nname="+name;
+		let cdata = "client="+options['s_uuid']+"&caction=arename&nname="+name;
 		xhr.open("POST", options['wdurl'], true);
 		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -109,7 +108,7 @@ function rName(name) {
 
 function gName() {
 	var xhr = new XMLHttpRequest();
-	let cdata = "cl=" + document.getElementById("s_uuid").value + "&caction=gname";
+	let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=gname";
 	xhr.open("POST", document.getElementById("wdurl").value, true);
 	xhr.setRequestHeader('Authorization', 'Basic ' + btoa(document.getElementById('user').value + ':' + document.getElementById('password').value));
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

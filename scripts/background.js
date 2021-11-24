@@ -51,12 +51,17 @@ chrome.permissions.getAll(function(e) {
 			if(options['s_type'] == "PHP") {
 				
 				if(options.actions.create === false) {
-					chrome.contextMenus.create({
-						title: 'Bookmark (Ctrl+B)',
-						type: "normal",
-						contexts: ["page"],
-						id: "smark",
-						onclick: bookmarkTab
+					chrome.commands.getAll((commands) => {
+						for (let {name, shortcut} of commands) {
+							var s = (name === 'bookmark-tab') ? shortcut:'undef';
+						}
+						chrome.contextMenus.create({
+							title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
+							type: "normal",
+							contexts: ["page"],
+							id: "smark",
+							onclick: bookmarkTab
+						});
 					});
 				}
 				
@@ -104,8 +109,10 @@ function bookmarkTab() {
 				xhr.onload = function () {
 					if( xhr.status < 200 || xhr.status > 226) {
 						notify('error',xhr.response);
+						loglines = logit("Error: " + xhr.response);
 					} else
-						notify('error',xhr.response);
+						notify('info',xhr.response);
+						loglines = logit("Info: " + xhr.response);
 				}
 				xhr.send();
 			}
@@ -175,6 +182,18 @@ function init() {
 	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, function(options) {
+		if(options.actions.create === false) {
+			chrome.commands.getAll((commands) => {
+				for (let {name, shortcut} of commands) {
+					var s = (name === 'bookmark-tab') ? shortcut:'undef';
+				}
+				chrome.browserAction.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
+				chrome.browserAction.setPopup({popup: ''});
+				chrome.browserAction.onClicked.addListener(function() {
+					bookmarkTab();
+				});
+			});
+		}
 		if(options['wdurl'] === undefined) return false;
 		let s_startup = options['actions']['startup'] || false;
 		let s_type = options['s_type'] || "";

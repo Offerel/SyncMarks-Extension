@@ -73,67 +73,54 @@
     "message": "Change",
     "description": "Bookmark change."
   },
-  
   "optionsRemove": {
     "message": "Remove",
     "description": "Bookmark remove."
   },
-  
   "optionsManualActions": {
     "message": "Manual Actions",
     "description": "Manual Actions."
   },
-  
   "optionsBTNRemove": {
     "message": "Remove",
     "description": "Remove Button."
   },
-  
   "optionsBTNRemoveHint": {
     "message": "This removes all your local bookmarks!",
     "description": "Remove Button Hint."
   },
-  
   "optionsBTNImport": {
-    "message": "Download",
+    "message": "Import",
     "description": ""
   },
-  
   "optionsBTNImportHint": {
     "message": "Restore from server, overwrite local bookmarks.",
     "description": "Import Button Hint."
   },
-
   "optionsBTNSaveHint": {
     "message": "Save all actual settings",
     "description": ""
   },
-
   "optionsBTNSettingsHint": {
     "message": "Backup of settings",
     "description": ""
   },
-
   "optionsBTNExport": {
-    "message": "Upload",
+    "message": "Export",
     "description": ""
   },
-
   "optionsBTNExportHint": {
     "message": "Overwrite all bookmarkson the server.",
     "description": "Export Button Hint."
   },
-
   "optionsBTNSave": {
     "message": "Save",
     "description": "Save Button."
   },
-
   "optionsBTNSettings": {
     "message": "Backup",
     "description": ""
   },
-
   "optionsBTNStore": {
     "message": "Secure",
     "description": ""
@@ -285,59 +272,52 @@
     "message": " bookmarks/folders imported.",
     "description": "Count bookmarks imported."
   },
-  
   "internalError": {
     "message": "An internal error is occurred. The message was: ",
     "description": "Internal error on promise."
   },
-  
   "infoNewClient": {
     "message": "This browser seems to be a new client for the server. The client is now registered at the server. No bookmarks are imported. You can import them manually.",
     "description": "New Client, unknown to the server."
   },
-  
   "infoNoChange": {
     "message": "0 added, moved, deleted bookmarks in last sync.",
     "description": "Message if no data has changed on the server."
   },
-  
   "infoChanges": {
     "message": " changes on the server since the last sync.",
     "description": "Message if no data has changed on the server."
   },
-  
   "infoEmptyConfig": {
     "message": "Configuration is empty. Maybe thats a new installation, please configure the options before use. After that you can import or export bookmarks to be in sync with the server.",
     "description": "Message if extension is not configured yet."
   },
-  
   "sendPage": {
     "message": "Send Page",
     "description": ""
   },
-
   "sendTab": {
     "message": "Send Tab",
     "description": ""
   },
-  
   "sendLink": {
     "message": "Send Link",
     "description": ""
   },
-  
   "sendLinkNot": {
     "message": "Link could not be send.",
     "description": ""
   },
-  
   "sendLinkYes": {
     "message": "Link successfully send.",
     "description": ""
   },
-  
   "openBackend": {
     "message": "Open Backend",
+    "description": ""
+  },
+  "bookmarkTab": {
+    "message": "Bookmark to Backend",
     "description": ""
   }
 }

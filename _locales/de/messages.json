@@ -73,67 +73,54 @@
     "message": "Ändern",
     "description": "Bookmark change."
   },
-  
   "optionsRemove": {
     "message": "Entfernen",
     "description": "Bookmark remove."
   },
-  
   "optionsManualActions": {
     "message": "Manuelle Funktionen",
     "description": "Manual Actions."
   },
-  
   "optionsBTNRemove": {
     "message": "Löschen",
     "description": "Remove Button."
   },
-  
   "optionsBTNRemoveHint": {
     "message": "Alle lokalen Lesezeichen werden gelöscht!",
     "description": "Remove Button Hint."
   },
-  
   "optionsBTNImport": {
-    "message": "Download",
+    "message": "Import",
     "description": ""
   },
-  
   "optionsBTNImportHint": {
     "message": "Wiederherstellen vom Server, überschreiben der lokalen Lesezeichen.",
     "description": "Import Button Hint."
   },
-
   "optionsBTNSaveHint": {
     "message": "Speichern der aktuellen Einstellungen",
     "description": ""
   },
-
   "optionsBTNSettingsHint": {
     "message": "Backup der Einstellungen",
     "description": ""
   },
-  
   "optionsBTNExport": {
-    "message": "Upload",
+    "message": "Export",
     "description": ""
   },
-
   "optionsBTNExportHint": {
     "message": "Überschreiben aller Bookmarks auf dem Server.",
     "description": "Export Button Hint."
   },
-
   "optionsBTNSave": {
     "message": "Speichern",
     "description": "Save Button."
   },
-
   "optionsBTNSettings": {
     "message": "Backup",
     "description": ""
   },
-
   "optionsBTNStore": {
     "message": "Sichern",
     "description": ""
@@ -282,59 +269,52 @@
     "message": " Lesezeichen/Ordner importiert.",
     "description": "Count bookmarks imported."
   },
-  
   "internalError": {
     "message": "Ein interner Fehler ist aufgetreten. Die Meldung lautet: ",
     "description": "Interner Fehler."
   },
-  
   "infoNewClient": {
     "message": "Dieser Browser scheint ein neuer Client für den Server zu sein. Dieser Client ist nun auf dem Server registriert. Es wurden bisher keine Lesezeichen importiert. Sie diese nun manuell importieren.",
     "description": "New Client, unknown to the server."
   },
-  
   "infoNoChange": {
     "message": "Keine Lesezeichen hinzugefügt, verschoben oder gelöscht bei der letzten Synchronisation.",
     "description": "Meldung, wenn sich auf dem Server keine Daten verändert haben."
   },
-  
   "infoChanges": {
     "message": " Änderungen auf dem Server seit dem letzten Sync.",
     "description": "Message if no data has changed on the server."
   },
-  
   "infoEmptyConfig": {
     "message": "Es wurden keine Konfigurationsdaten gefunden. Vielleicht ist dies eine Neuinstallation, bitte konfiguriere die Optionen vor der ersten Verwendung. Anschließend können Lesezeichen Importiert oder Exportiert werden, um mit dem Server synchron zu sein.",
     "description": "Message if extension is not configured yet."
   },
-  
   "sendPage": {
     "message": "Seite senden",
     "description": ""
   },
-
   "sendTab": {
     "message": "Tab senden",
     "description": ""
   },
-  
   "sendLink": {
     "message": "Link senden",
     "description": ""
   },
-  
   "sendLinkNot": {
     "message": "Link konnte nicht versendet werden.",
     "description": ""
   },
-  
   "sendLinkYes": {
     "message": "Link erfolgreich versendet.",
     "description": ""
   },
-  
   "openBackend": {
     "message": "Öffne Backend",
+    "description": ""
+  },
+  "bookmarkTab": {
+    "message": "Bookmark zu Backend",
     "description": ""
   }
 }
