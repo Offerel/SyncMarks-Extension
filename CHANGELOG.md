@@ -1,5 +1,11 @@
 ChangeLog
 =========
+v1.18.0 (2021-11-24)
+-------------------------
+- Bookmark direct to server
+- Changed some requests
+
+
 v1.17.27 (2021-11-08)
 -------------------------
 - Added sync info to requests

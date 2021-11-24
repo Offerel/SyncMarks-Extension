@@ -73,8 +73,7 @@ function lCLients() {
 
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('bookmarks')) {
-			var settingsurl = chrome.extension.getURL('scripts/options.html');
-			chrome.tabs.query({'url': settingsurl}, function(tabs) {
+			chrome.tabs.query({'url': chrome.extension.getURL('scripts/options.html')}, function(tabs) {
 				if(tabs.length == 0) {
 					chrome.runtime.openOptionsPage();
 					window.close();
