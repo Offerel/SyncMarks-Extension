@@ -99,22 +99,35 @@ chrome.permissions.getAll(function(e) {
 function bookmarkTab() {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		chrome.storage.local.get(null, function(options) {
-			if(options.actions.create === false) {
-				let url = encodeURIComponent(tabs[0].url);
-				var data = "link=" + url + "&title="+tabs[0].title+"&client=Android&push=false";
+			if(options.actions.create === false) {				
+				let jsonMark = encodeURIComponent(JSON.stringify({ 
+					"id": Math.random().toString(24).substr(2, 12),
+					"url": tabs[0].url,
+					"title": tabs[0].title,
+					"type": 'bookmark',
+					"folder": (abrowser === true) ? 'unfiled_____':2,  
+					"nfolder": 'More Bookmarks',
+					"added": new Date().valueOf()
+				}));
+				
+				let data = "client=bookmarkTab&caction=addmark&bookmark=" + jsonMark + "&s=false";
+
 				var xhr = new XMLHttpRequest();
-				xhr.open("GET", options['wdurl'] + "?" + data, true);
+				xhr.open("POST", options['wdurl'], true);
 				xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.withCredentials = true;
 				xhr.onload = function () {
 					if( xhr.status < 200 || xhr.status > 226) {
-						notify('error',xhr.response);
+						notify('error', xhr.response);
 						loglines = logit("Error: " + xhr.response);
-					} else
-						notify('info',xhr.response);
-						loglines = logit("Info: " + xhr.response);
+					} else {
+						let response = (xhr.response == "1") ? "'"+tabs[0].title+"' added":JSON.parse(xhr.response);
+						notify('info', response);
+						loglines = logit("Info: " + response);
+					}
 				}
-				xhr.send();
+				xhr.send(data);
 			}
 		});
 	});
@@ -362,17 +375,28 @@ function getClientList() {
 }
 
 function notificationSettings(id) {
-	if(id == 'console' || id == 'error' || id == 'setting') {
+	let idType = id.substring(0, id.indexOf('_'))
+	let debugArr = ['console', 'error', 'setting'];
+
+	if(debugArr.includes(idType)) {
 		debug = true;
 		chrome.runtime.openOptionsPage();
 	} else {
-		let nd = JSON.parse(id);
+		let nd;
 		try {
-			chrome.tabs.query({url:nd.url}, function(tabInfo) {
-				if(tabInfo.length > 0) chrome.tabs.highlight({tabs: tabInfo[0].index});
-			});
-		} catch(error) {
-			loglines = logit(error);
+			nd = JSON.parse(id);
+		} catch (e) {
+			//
+		}
+
+		if (typeof nd !== 'undefined') {
+			try {
+				chrome.tabs.query({url:nd.url}, function(tabInfo) {
+					if(tabInfo.length > 0) chrome.tabs.highlight({tabs: tabInfo[0].index});
+				});
+			} catch(error) {
+				loglines = logit(error);
+			}
 		}
 	}
 }
@@ -407,6 +431,7 @@ function openSettings() {
 }
 
 function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
+	notid = notid + '_' + Date.now().toString();
 	try {
 		chrome.notifications.create(notid, {
 			"type": "basic",
@@ -719,8 +744,7 @@ function sendMark(bookmark) {
 			if(!("s_uuid" in options)) {
 				var s_uuid = uuidv4();
 				chrome.storage.local.set({s_uuid: s_uuid});
-			}
-			else {
+			} else {
 				var s_uuid = options['s_uuid'];
 			}
 

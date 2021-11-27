@@ -1,5 +1,11 @@
 ChangeLog
 =========
+v1.18.1 (2021-11-25)
+-------------------------
+- Fix bookmarkTab
+- Fix notifications
+
+
 v1.18.0 (2021-11-24)
 -------------------------
 - Bookmark direct to server
