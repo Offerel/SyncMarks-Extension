@@ -914,15 +914,16 @@ async function addPHPcMarks(bArray) {
 	for (let bIndex = 0; bIndex < bArray.length; bIndex++) {
 		switch(bArrayT[bIndex].bmAction) {
 			case 1:	
-					if(bArrayT[bIndex].bmURL != null) {
+				//var url = bArrayT[bIndex].bmURL;
+				loglines = logit('Info: Delete: ' + url);
+				if(url.startsWith("http")) {
+					if(url != null) {
 						chrome.bookmarks.search({url: bArrayT[bIndex].bmURL}, function(removeItems) {
 							removeItems.forEach(function(removeBookmark) {
-								if(removeBookmark.dateAdded == bArrayT[bIndex].bmAdded) {
-									chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-									chrome.bookmarks.remove(removeBookmark.id, function(removeB) {
-										chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-									});
-								}
+								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+								chrome.bookmarks.remove(removeBookmark.id, function(removeB) {
+									chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+								});
 							});
 						});
 					} else {
@@ -943,46 +944,49 @@ async function addPHPcMarks(bArray) {
 							}
 						});
 					}
-					break;
+				}
+				break;
 			case 2: 
-					chrome.bookmarks.search({url: bArrayT[bIndex].bmURL},function(bookmarkItems) {
-						if (bookmarkItems.length) {
-							if (bArrayT[bIndex].fdName != bookmarkItems[0].parentId) {
-								chrome.bookmarks.onMoved.removeListener(onMovedCheck);
-								chrome.bookmarks.move(bookmarkItems[0].id, {parentId: bArrayT[bIndex].fdID}, function(move) {
-									chrome.bookmarks.onMoved.addListener(onMovedCheck);
-								});
+				loglines = logit('Info: Move: ' + bArrayT[bIndex].bmURL);
+				chrome.bookmarks.search({url: bArrayT[bIndex].bmURL},function(bookmarkItems) {
+					if (bookmarkItems.length) {
+						if (bArrayT[bIndex].fdName != bookmarkItems[0].parentId) {
+							chrome.bookmarks.onMoved.removeListener(onMovedCheck);
+							chrome.bookmarks.move(bookmarkItems[0].id, {parentId: bArrayT[bIndex].fdID}, function(move) {
+								chrome.bookmarks.onMoved.addListener(onMovedCheck);
+							});
+						}
+					}
+				});
+				break;
+			default: 
+				loglines = logit('Info: Add: ' + bArrayT[bIndex].bmURL);
+				var newId = "";
+				if(!bArrayT[bIndex].fdID.length == 1) {
+					chrome.bookmarks.search({title: bArrayT[bIndex].fdName}, async function(pFolder) {
+						if(pFolder.length == 1 && pFolder[0].url != null) {
+							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+							newId = (await createBookmarkAsync({parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
+							chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+						} else if(pFolder.length > 1) {
+							for(pIndex = 0; pIndex < pFolder.length; pIndex++) {
+								if(pFolder[pIndex].index == bArrayT[bIndex].bmIndex) {
+									chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+									newId = (await createBookmarkAsync({parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
+									chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+								}
 							}
+						} else {
+							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+							newId = (await createBookmarkAsync({parentId: '2', title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
+							chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 						}
 					});
-					break;
-			default: 
-					var newId = "";
-					if(!bArrayT[bIndex].fdID.length == 1) {
-						chrome.bookmarks.search({title: bArrayT[bIndex].fdName}, async function(pFolder) {
-							if(pFolder.length == 1 && pFolder[0].url != null) {
-								chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-								newId = (await createBookmarkAsync({parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-							} else if(pFolder.length > 1) {
-								for(pIndex = 0; pIndex < pFolder.length; pIndex++) {
-									if(pFolder[pIndex].index == bArrayT[bIndex].bmIndex) {
-										chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-										newId = (await createBookmarkAsync({parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-										chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-									}
-								}
-							} else {
-								chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-								newId = (await createBookmarkAsync({parentId: '2', title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-							}
-						});
-					} else {
-						chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-						newId = (await createBookmarkAsync({parentId: bArrayT[bIndex].fdID, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-						chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-					}
+				} else {
+					chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+					newId = (await createBookmarkAsync({parentId: bArrayT[bIndex].fdID, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
+					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+				}
 		}
 	}
 }
@@ -991,16 +995,15 @@ async function addPHPMarks(bArray) {
 	var bArrayT = bArray;
 	for (let bIndex = 0; bIndex < bArray.length; bIndex++) {
 		switch(bArrayT[bIndex].bmAction) {
-			case "1":	
+			case "1":
+				var url = bArrayT[bIndex].bmURL;
+				loglines = logit('Info: Delete: ' + url);
+				if(url.startsWith("http")) {
 					if(bArrayT[bIndex].bmURL != null) {
-						chrome.bookmarks.search({url: bArrayT[bIndex].bmURL}, function(removeItems) {
+						chrome.bookmarks.search({url: url}, function(removeItems) {
 							removeItems.forEach(function(removeBookmark) {
-								if(removeBookmark.dateAdded == bArrayT[bIndex].bmAdded) {
-									chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-									chrome.bookmarks.remove(removeBookmark.id, function(removeB) {
-										chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-									});
-								}
+								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+								chrome.bookmarks.remove(removeBookmark.id, function(removeB) {chrome.bookmarks.onRemoved.addListener(onRemovedCheck);});
 							});
 						});
 					} else {
@@ -1021,47 +1024,50 @@ async function addPHPMarks(bArray) {
 							}
 						});
 					}
-					break;
+				}
+				break;
 			case "2": 
-					chrome.bookmarks.search({url: bArrayT[bIndex].bmURL},function(bookmarkItems) {
-						if (bookmarkItems.length) {
-							if (bArrayT[bIndex].fdName != bookmarkItems[0].parentId) {
-								chrome.bookmarks.onMoved.removeListener(onMovedCheck);
-								chrome.bookmarks.move(bookmarkItems[0].id, {parentId: bArrayT[bIndex].fdID}, function(move) {
-									chrome.bookmarks.onMoved.addListener(onMovedCheck);
-								});
+				loglines = logit('Info: Move: ' + bArrayT[bIndex].bmURL);
+				chrome.bookmarks.search({url: bArrayT[bIndex].bmURL},function(bookmarkItems) {
+					if (bookmarkItems.length) {
+						if (bArrayT[bIndex].fdName != bookmarkItems[0].parentId) {
+							chrome.bookmarks.onMoved.removeListener(onMovedCheck);
+							chrome.bookmarks.move(bookmarkItems[0].id, {parentId: bArrayT[bIndex].fdID}, function(move) {
+								chrome.bookmarks.onMoved.addListener(onMovedCheck);
+							});
+						}
+					}
+				});
+				break;
+			default: 
+				loglines = logit('Info: Add: ' + bArrayT[bIndex].bmURL);
+				var newId = "";
+				chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+				if(!bArrayT[bIndex].fdID.endsWith('_____')) {
+					chrome.bookmarks.search({title: bArrayT[bIndex].fdName}, async function(pFolder) {
+						if(pFolder.length == 1 && pFolder[0].type == 'folder') {
+							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+							newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
+							chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+						} else if(pFolder.length > 1) {
+							for(pIndex = 0; pIndex < pFolder.length; pIndex++) {
+								if(pFolder[pIndex].index == bArrayT[bIndex].bmIndex) {
+									chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+									newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
+									chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+								}
 							}
+						} else {
+							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+							newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: 'unfiled_____', title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
+							chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 						}
 					});
-					break;
-			default: 
-					var newId = "";
+				} else {
 					chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-					if(!bArrayT[bIndex].fdID.endsWith('_____')) {
-						chrome.bookmarks.search({title: bArrayT[bIndex].fdName}, async function(pFolder) {
-							if(pFolder.length == 1 && pFolder[0].type == 'folder') {
-								chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-								newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-							} else if(pFolder.length > 1) {
-								for(pIndex = 0; pIndex < pFolder.length; pIndex++) {
-									if(pFolder[pIndex].index == bArrayT[bIndex].bmIndex) {
-										chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-										newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-										chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-									}
-								}
-							} else {
-								chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-								newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: 'unfiled_____', title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-								chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-							}
-						});
-					} else {
-						chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-						newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: bArrayT[bIndex].fdID, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-						chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-					}
+					newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: bArrayT[bIndex].fdID, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
+					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+				}
 		}
 	}
 }
