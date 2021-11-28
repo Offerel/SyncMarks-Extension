@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.18.2 (2021-11-28)
+-------------------------
+- Try fo fix fo not remove bookmark on startup
+
+
 v1.18.1 (2021-11-25)
 -------------------------
 - Fix bookmarkTab
