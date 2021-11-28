@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.18.3 (2021-11-28)
+-------------------------
+- Re-Add timestamp for delete check
+
+
 v1.18.2 (2021-11-28)
 -------------------------
 - Try fo fix fo not remove bookmark on startup

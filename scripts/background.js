@@ -914,16 +914,18 @@ async function addPHPcMarks(bArray) {
 	for (let bIndex = 0; bIndex < bArray.length; bIndex++) {
 		switch(bArrayT[bIndex].bmAction) {
 			case 1:	
-				//var url = bArrayT[bIndex].bmURL;
+				var url = bArrayT[bIndex].bmURL;
 				loglines = logit('Info: Delete: ' + url);
 				if(url.startsWith("http")) {
 					if(url != null) {
 						chrome.bookmarks.search({url: bArrayT[bIndex].bmURL}, function(removeItems) {
 							removeItems.forEach(function(removeBookmark) {
-								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-								chrome.bookmarks.remove(removeBookmark.id, function(removeB) {
-									chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-								});
+								if(removeBookmark.dateAdded == bArrayT[bIndex].bmAdded) {
+									chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+									chrome.bookmarks.remove(removeBookmark.id, function(removeB) {
+										chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+									});
+								}
 							});
 						});
 					} else {
@@ -1002,8 +1004,10 @@ async function addPHPMarks(bArray) {
 					if(bArrayT[bIndex].bmURL != null) {
 						chrome.bookmarks.search({url: url}, function(removeItems) {
 							removeItems.forEach(function(removeBookmark) {
-								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-								chrome.bookmarks.remove(removeBookmark.id, function(removeB) {chrome.bookmarks.onRemoved.addListener(onRemovedCheck);});
+								if(removeBookmark.dateAdded == bArrayT[bIndex].bmAdded) {
+									chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+									chrome.bookmarks.remove(removeBookmark.id, function(removeB) {chrome.bookmarks.onRemoved.addListener(onRemovedCheck);});
+								}
 							});
 						});
 					} else {
