@@ -122,7 +122,7 @@
     "description": ""
   },
   "optionsBTNStore": {
-    "message": "Secure",
+    "message": "Store",
     "description": ""
   },
 
@@ -252,22 +252,18 @@
     "message": "There was some error removing the bookmark.",
     "description": "Error removing bookmark with PHP."
   },
-
   "errorEditBookmark": {
     "message": "There was some error editing the bookmark at the server.",
     "description": ""
   },
-  
   "errorMoveBookmark": {
     "message": "There was some error moving the bookmark at the PHP server. The status response is: ",
     "description": "Error moving bookmark with PHP."
   },
-  
   "successExportBookmarks": {
     "message": "Export successfully.",
     "description": "All bookmarks exported."
   },
-  
   "successImportBookmarks": {
     "message": " bookmarks/folders imported.",
     "description": "Count bookmarks imported."
