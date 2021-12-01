@@ -1,8 +1,9 @@
 ChangeLog
 =========
-v1.18.3 (2021-11-28)
+v1.18.3 (2021-12-01)
 -------------------------
-- Re-Add timestamp for delete check
+- Added option for bookmark on backend
+- Fix some translation
 
 
 v1.18.2 (2021-11-28)
@@ -14,6 +15,8 @@ v1.18.1 (2021-11-25)
 -------------------------
 - Fix bookmarkTab
 - Fix notifications
+- Bookmark direct to server
+- Changed some requests
 
 
 v1.18.0 (2021-11-24)

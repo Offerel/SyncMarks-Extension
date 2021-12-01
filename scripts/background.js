@@ -50,7 +50,7 @@ chrome.permissions.getAll(function(e) {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == "PHP") {
 				
-				if(options.actions.create === false) {
+				if(options.actions.crsrv === true) {
 					chrome.commands.getAll((commands) => {
 						for (let {name, shortcut} of commands) {
 							var s = (name === 'bookmark-tab') ? shortcut:'undef';
@@ -195,16 +195,18 @@ function init() {
 	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, function(options) {
-		if(options.actions.create === false) {
+		if(options.actions.crsrv === true) {
 			chrome.commands.getAll((commands) => {
 				for (let {name, shortcut} of commands) {
 					var s = (name === 'bookmark-tab') ? shortcut:'undef';
 				}
+
 				chrome.browserAction.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
 				chrome.browserAction.setPopup({popup: ''});
 				chrome.browserAction.onClicked.addListener(function() {
 					bookmarkTab();
 				});
+
 			});
 		}
 		if(options['wdurl'] === undefined) return false;
@@ -920,12 +922,12 @@ async function addPHPcMarks(bArray) {
 					if(url != null) {
 						chrome.bookmarks.search({url: bArrayT[bIndex].bmURL}, function(removeItems) {
 							removeItems.forEach(function(removeBookmark) {
-								if(removeBookmark.dateAdded == bArrayT[bIndex].bmAdded) {
+								//if(removeBookmark.dateAdded == bArrayT[bIndex].bmAdded) {
 									chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 									chrome.bookmarks.remove(removeBookmark.id, function(removeB) {
 										chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 									});
-								}
+								//}
 							});
 						});
 					} else {
@@ -1004,10 +1006,10 @@ async function addPHPMarks(bArray) {
 					if(bArrayT[bIndex].bmURL != null) {
 						chrome.bookmarks.search({url: url}, function(removeItems) {
 							removeItems.forEach(function(removeBookmark) {
-								if(removeBookmark.dateAdded == bArrayT[bIndex].bmAdded) {
+								//if(removeBookmark.dateAdded == bArrayT[bIndex].bmAdded) {
 									chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 									chrome.bookmarks.remove(removeBookmark.id, function(removeB) {chrome.bookmarks.onRemoved.addListener(onRemovedCheck);});
-								}
+								//}
 							});
 						});
 					} else {

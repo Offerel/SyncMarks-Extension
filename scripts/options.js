@@ -27,7 +27,8 @@ function saveOptions(e) {
 			startup:document.querySelector("#s_startup").checked,
 			create:document.querySelector("#s_create").checked,
 			change:document.querySelector("#s_change").checked,
-			remove:document.querySelector("#s_remove").checked
+			remove:document.querySelector("#s_remove").checked,
+			crsrv:document.querySelector("#b_action").checked
 		},
 
 		s_type: document.querySelector('input[name="stype"]:checked').value,
@@ -83,6 +84,7 @@ function saveOptions(e) {
 		}
 		wmessage.className = "show";
 		setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
+		chrome.runtime.reload();
 	};
 	xhr.send(cdata);
 }
@@ -122,8 +124,8 @@ function gName() {
 			var response = JSON.parse(xhr.responseText);
 		}
 
-		document.getElementById("cname").value = response.cname || '';
-		document.getElementById("cname").title = document.getElementById('s_uuid').value + " (" + response.ctype + ")";
+		document.getElementById("cname").value = (response) ? response.cname:'';
+		document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
 	}
 	xhr.send(cdata);
 }
@@ -157,6 +159,7 @@ function restoreOptions() {
 		document.querySelector("#s_create").checked = (options['actions'] == undefined) ? true:options['actions']['create'];
 		document.querySelector("#s_change").checked = (options['actions'] == undefined) ? true:options['actions']['change'];
 		document.querySelector("#s_remove").checked = (options['actions'] == undefined) ? true:options['actions']['remove'];
+		document.querySelector("#b_action").checked = (options['actions'] == undefined) ? false:options['actions']['crsrv'];
 
 		if("s_type" in options) {
 			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').checked = true;
@@ -226,6 +229,7 @@ function importOptions() {
 		document.querySelector("#s_create").checked = ioptions.actions.create;
 		document.querySelector("#s_change").checked = ioptions.actions.change;
 		document.querySelector("#s_remove").checked = ioptions.actions.remove;
+		document.querySelector("#b_action").checked = ioptions.actions.crsrv;
 
 		if(resCID) document.querySelector("#cname").placeholder = ioptions.s_uuid;
 
@@ -352,6 +356,15 @@ function clearLog() {
 	}
 }
 
+function cCreate() {
+	let crsrv = document.getElementById("b_action");
+	if(document.getElementById("s_create").checked) {
+		crsrv.checked = false;
+	} else {
+		crsrv.checked = true;
+	}
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 window.addEventListener('load', function () {
@@ -404,8 +417,10 @@ window.addEventListener('load', function () {
 	document.getElementById("php").addEventListener("input", checkForm);
 	document.getElementById("s_startup").addEventListener("input", checkForm);
 	document.getElementById("s_create").addEventListener("input", checkForm);
+	document.getElementById("s_create").addEventListener("input", cCreate);
 	document.getElementById("s_change").addEventListener("input", checkForm);
 	document.getElementById("s_remove").addEventListener("input", checkForm);
+
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 
 	document.getElementById("logsave").addEventListener("click", saveLog);
