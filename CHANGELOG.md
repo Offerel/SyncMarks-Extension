@@ -1,5 +1,11 @@
 ChangeLog
 =========
+v1.18.4 (2021-12-01)
+-------------------------
+- Fix hide notification
+- Changed default shortcut to STRG + Q
+  
+
 v1.18.3 (2021-12-01)
 -------------------------
 - Added option for bookmark on backend

@@ -34,7 +34,7 @@
   "commands": {
     "bookmark-tab": {
       "suggested_key": {
-        "default": "Ctrl+B"
+        "default": "Ctrl+Q"
       },
       "description": "__MSG_bookmarkTab__"
     }

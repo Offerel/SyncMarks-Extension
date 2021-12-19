@@ -221,6 +221,7 @@ function init() {
 				loglines = logit("Info: Initiate PHP startup sync");
 				getPHPMarks();
 			}
+
 			if(options['wdurl']) {
 				getClientList();
 				getNotifications();
@@ -272,13 +273,13 @@ function onTabActivated(tab){
 			pTabs.splice(index,1);
 		}
 	});
+	
 }
 
 function pTabsLoad(tID, nID) {
 	var tabInfo = {tID:tID,nID:Number(nID)};
-	var pTabs = [];
 	chrome.storage.local.get(['pTabs'], function(result){
-		console.log(result.pTabs);
+		pTabs.length = 0;
 		if(result.pTabs !== undefined) {
 			result.pTabs.forEach(function(e){
 				pTabs.push(e);
@@ -291,7 +292,6 @@ function pTabsLoad(tID, nID) {
 }
 
 function pTabsSave(nTabs) {
-	console.log(nTabs);
 	chrome.storage.local.set({
 		pTabs:nTabs
 	});
@@ -377,7 +377,7 @@ function getClientList() {
 }
 
 function notificationSettings(id) {
-	let idType = id.substring(0, id.indexOf('_'))
+	let idType = (id.indexOf('{"id":') === 0) ? 'url':id.substring(0, id.indexOf('_'));
 	let debugArr = ['console', 'error', 'setting'];
 
 	if(debugArr.includes(idType)) {
@@ -385,12 +385,13 @@ function notificationSettings(id) {
 		chrome.runtime.openOptionsPage();
 	} else {
 		let nd;
+
 		try {
-			nd = JSON.parse(id);
+			nd = JSON.parse(id.substring(0, id.indexOf('_')));
 		} catch (e) {
 			//
 		}
-
+		
 		if (typeof nd !== 'undefined') {
 			try {
 				chrome.tabs.query({url:nd.url}, function(tabInfo) {
@@ -434,6 +435,7 @@ function openSettings() {
 
 function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
 	notid = notid + '_' + Date.now().toString();
+
 	try {
 		chrome.notifications.create(notid, {
 			"type": "basic",
