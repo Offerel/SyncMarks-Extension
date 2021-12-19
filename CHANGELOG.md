@@ -3,7 +3,7 @@ ChangeLog
 v1.18.4 (2021-12-01)
 -------------------------
 - Fix hide notification
-- Changed shortcut to STRG + Q
+- Changed default shortcut to STRG + Q
   
 
 v1.18.3 (2021-12-01)
