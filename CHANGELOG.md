@@ -1,8 +1,15 @@
 ChangeLog
 =========
-v1.18.4 (2021-12-01)
+v1.18.6 (2022-01-12)
+-------------------------
+- Contextmenu refresh
+- Fixed init
+
+
+v1.18.5 (2021-12-01)
 -------------------------
 - Fix hide notification
+- Fix rename client
 - Changed default shortcut to STRG + Q
   
 

@@ -45,56 +45,59 @@ chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
 
-chrome.permissions.getAll(function(e) {
-	if(e.permissions.includes('contextMenus')) {
-		chrome.storage.local.get(null, function(options) {
-			if(options['s_type'] == "PHP") {
-				
-				if(options.actions.crsrv === true) {
-					chrome.commands.getAll((commands) => {
-						for (let {name, shortcut} of commands) {
-							var s = (name === 'bookmark-tab') ? shortcut:'undef';
-						}
-						chrome.contextMenus.create({
-							title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
-							type: "normal",
-							contexts: ["page"],
-							id: "smark",
-							onclick: bookmarkTab
+function ccMenus() {
+	chrome.permissions.getAll(function(e) {
+		if(e.permissions.includes('contextMenus')) {
+			chrome.contextMenus.removeAll();
+			chrome.storage.local.get(null, function(options) {
+				if(options['s_type'] == "PHP") {
+					
+					if(options.actions.crsrv === true) {
+						chrome.commands.getAll((commands) => {
+							for (let {name, shortcut} of commands) {
+								var s = (name === 'bookmark-tab') ? shortcut:'undef';
+							}
+							chrome.contextMenus.create({
+								title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
+								type: "normal",
+								contexts: ["page"],
+								id: "smark",
+								onclick: bookmarkTab
+							});
 						});
-					});
-				}
-				
-				try{
-					chrome.contextMenus.create({
-						title: chrome.i18n.getMessage("sendPage"),
-						type: "normal",
-						contexts: ["page"],
-						id: "ssendpage"
-					});
-
-					chrome.contextMenus.create({
-						title: chrome.i18n.getMessage("sendLink"),
-						type: "normal",
-						contexts: ["link"],
-						id: "ssendlink"
-					});
-
+					}
+					
 					try{
 						chrome.contextMenus.create({
-							title: chrome.i18n.getMessage("sendTab"),
+							title: chrome.i18n.getMessage("sendPage"),
 							type: "normal",
-							contexts: ["tab"],
-							id: "ssendtab"
+							contexts: ["page"],
+							id: "ssendpage"
 						});
-					} catch {}
-				} catch(error) {
-					loglines = logit(error);
+
+						chrome.contextMenus.create({
+							title: chrome.i18n.getMessage("sendLink"),
+							type: "normal",
+							contexts: ["link"],
+							id: "ssendlink"
+						});
+
+						try{
+							chrome.contextMenus.create({
+								title: chrome.i18n.getMessage("sendTab"),
+								type: "normal",
+								contexts: ["tab"],
+								id: "ssendtab"
+							});
+						} catch {}
+					} catch(error) {
+						loglines = logit(error);
+					}
 				}
-			}
-		})
-	}
-});
+			})
+		}
+	});
+}
 
 function bookmarkTab() {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -195,6 +198,7 @@ function init() {
 	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, function(options) {
+		if(options['wdurl'] === undefined) return false;
 		if(options.actions.crsrv === true) {
 			chrome.commands.getAll((commands) => {
 				for (let {name, shortcut} of commands) {
@@ -209,7 +213,7 @@ function init() {
 
 			});
 		}
-		if(options['wdurl'] === undefined) return false;
+		
 		let s_startup = options['actions']['startup'] || false;
 		let s_type = options['s_type'] || "";
 
@@ -223,6 +227,7 @@ function init() {
 			}
 
 			if(options['wdurl']) {
+				ccMenus();
 				getClientList();
 				getNotifications();
 			}

@@ -38,6 +38,7 @@ function saveOptions(e) {
 		creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 	});
 
+    let cname = document.querySelector("#cname").value;
 	let xhrl = new XMLHttpRequest();
 	let cdata = "caction=logout&client="+document.getElementById('s_uuid').value;
 	xhrl.open("POST", document.getElementById('wdurl').value, true);
@@ -69,7 +70,7 @@ function saveOptions(e) {
 								creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 							});
 							if(document.querySelector('input[name="stype"]:checked').value = 'PHP') {
-								rName(document.querySelector("#cname").value);
+								rName(cname);
 							}
 						} else {
 							wmessage.textContent = 'Warning: '+xhr.responseText;
@@ -84,7 +85,7 @@ function saveOptions(e) {
 		}
 		wmessage.className = "show";
 		setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
-		chrome.runtime.reload();
+		background_page.init();
 	};
 	xhr.send(cdata);
 }
