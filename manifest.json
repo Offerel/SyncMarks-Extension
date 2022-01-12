@@ -4,7 +4,7 @@
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
   "update_url": "https://raw.githubusercontent.com/Offerel/SyncMarks-Extension/master/gupdate.xml",
-  "version": "1.18.3",
+  "version": "1.18.6",
   "default_locale": "en",
   "icons": {
     "48": "icons/bookmark.png"
@@ -34,7 +34,7 @@
   "commands": {
     "bookmark-tab": {
       "suggested_key": {
-        "default": "Ctrl+B"
+        "default": "Ctrl+Q"
       },
       "description": "__MSG_bookmarkTab__"
     }

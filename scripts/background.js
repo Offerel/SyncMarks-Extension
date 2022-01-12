@@ -45,56 +45,59 @@ chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
 
-chrome.permissions.getAll(function(e) {
-	if(e.permissions.includes('contextMenus')) {
-		chrome.storage.local.get(null, function(options) {
-			if(options['s_type'] == "PHP") {
-				
-				if(options.actions.crsrv === true) {
-					chrome.commands.getAll((commands) => {
-						for (let {name, shortcut} of commands) {
-							var s = (name === 'bookmark-tab') ? shortcut:'undef';
-						}
-						chrome.contextMenus.create({
-							title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
-							type: "normal",
-							contexts: ["page"],
-							id: "smark",
-							onclick: bookmarkTab
+function ccMenus() {
+	chrome.permissions.getAll(function(e) {
+		if(e.permissions.includes('contextMenus')) {
+			chrome.contextMenus.removeAll();
+			chrome.storage.local.get(null, function(options) {
+				if(options['s_type'] == "PHP") {
+					
+					if(options.actions.crsrv === true) {
+						chrome.commands.getAll((commands) => {
+							for (let {name, shortcut} of commands) {
+								var s = (name === 'bookmark-tab') ? shortcut:'undef';
+							}
+							chrome.contextMenus.create({
+								title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
+								type: "normal",
+								contexts: ["page"],
+								id: "smark",
+								onclick: bookmarkTab
+							});
 						});
-					});
-				}
-				
-				try{
-					chrome.contextMenus.create({
-						title: chrome.i18n.getMessage("sendPage"),
-						type: "normal",
-						contexts: ["page"],
-						id: "ssendpage"
-					});
-
-					chrome.contextMenus.create({
-						title: chrome.i18n.getMessage("sendLink"),
-						type: "normal",
-						contexts: ["link"],
-						id: "ssendlink"
-					});
-
+					}
+					
 					try{
 						chrome.contextMenus.create({
-							title: chrome.i18n.getMessage("sendTab"),
+							title: chrome.i18n.getMessage("sendPage"),
 							type: "normal",
-							contexts: ["tab"],
-							id: "ssendtab"
+							contexts: ["page"],
+							id: "ssendpage"
 						});
-					} catch {}
-				} catch(error) {
-					loglines = logit(error);
+
+						chrome.contextMenus.create({
+							title: chrome.i18n.getMessage("sendLink"),
+							type: "normal",
+							contexts: ["link"],
+							id: "ssendlink"
+						});
+
+						try{
+							chrome.contextMenus.create({
+								title: chrome.i18n.getMessage("sendTab"),
+								type: "normal",
+								contexts: ["tab"],
+								id: "ssendtab"
+							});
+						} catch {}
+					} catch(error) {
+						loglines = logit(error);
+					}
 				}
-			}
-		})
-	}
-});
+			})
+		}
+	});
+}
 
 function bookmarkTab() {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -195,6 +198,7 @@ function init() {
 	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, function(options) {
+		if(options['wdurl'] === undefined) return false;
 		if(options.actions.crsrv === true) {
 			chrome.commands.getAll((commands) => {
 				for (let {name, shortcut} of commands) {
@@ -209,7 +213,7 @@ function init() {
 
 			});
 		}
-		if(options['wdurl'] === undefined) return false;
+		
 		let s_startup = options['actions']['startup'] || false;
 		let s_type = options['s_type'] || "";
 
@@ -221,7 +225,9 @@ function init() {
 				loglines = logit("Info: Initiate PHP startup sync");
 				getPHPMarks();
 			}
+
 			if(options['wdurl']) {
+				ccMenus();
 				getClientList();
 				getNotifications();
 			}
@@ -272,13 +278,13 @@ function onTabActivated(tab){
 			pTabs.splice(index,1);
 		}
 	});
+	
 }
 
 function pTabsLoad(tID, nID) {
 	var tabInfo = {tID:tID,nID:Number(nID)};
-	var pTabs = [];
 	chrome.storage.local.get(['pTabs'], function(result){
-		console.log(result.pTabs);
+		pTabs.length = 0;
 		if(result.pTabs !== undefined) {
 			result.pTabs.forEach(function(e){
 				pTabs.push(e);
@@ -291,7 +297,6 @@ function pTabsLoad(tID, nID) {
 }
 
 function pTabsSave(nTabs) {
-	console.log(nTabs);
 	chrome.storage.local.set({
 		pTabs:nTabs
 	});
@@ -377,7 +382,7 @@ function getClientList() {
 }
 
 function notificationSettings(id) {
-	let idType = id.substring(0, id.indexOf('_'))
+	let idType = (id.indexOf('{"id":') === 0) ? 'url':id.substring(0, id.indexOf('_'));
 	let debugArr = ['console', 'error', 'setting'];
 
 	if(debugArr.includes(idType)) {
@@ -385,12 +390,13 @@ function notificationSettings(id) {
 		chrome.runtime.openOptionsPage();
 	} else {
 		let nd;
+
 		try {
-			nd = JSON.parse(id);
+			nd = JSON.parse(id.substring(0, id.indexOf('_')));
 		} catch (e) {
 			//
 		}
-
+		
 		if (typeof nd !== 'undefined') {
 			try {
 				chrome.tabs.query({url:nd.url}, function(tabInfo) {
@@ -434,6 +440,7 @@ function openSettings() {
 
 function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
 	notid = notid + '_' + Date.now().toString();
+
 	try {
 		chrome.notifications.create(notid, {
 			"type": "basic",
