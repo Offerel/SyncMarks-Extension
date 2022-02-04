@@ -223,6 +223,7 @@ function init() {
 		} else if(s_type.indexOf('PHP') == 0) {
 			if(s_startup === true) {
 				loglines = logit("Info: Initiate PHP startup sync");
+				checkFullSync();
 				getPHPMarks();
 			}
 
@@ -434,10 +435,11 @@ function dmNoti(nkey) {
 	});
 }
 
+/*
 function openSettings() {
 	chrome.runtime.openOptionsPage();
 }
-
+*/
 function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
 	notid = notid + '_' + Date.now().toString();
 
@@ -864,6 +866,48 @@ function getPHPMarks() {
 		loglines = logit("Info: Initiate startup sync");
 		xhr.send(params);
 	});
+}
+
+function checkFullSync() {
+	chrome.storage.local.get(null, function(options) {
+		let xhr = new XMLHttpRequest();
+		let params = 'client=' + options['s_uuid'] + '&caction=cfsync';
+		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
+		xhr.withCredentials = true;
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				let message = 'FullSync Check failed';
+				notify('error', message);
+				loglines = logit('Error: '+message);
+			} else {
+				let FullSync = JSON.parse(xhr.responseText);
+				if(FullSync['fs'] === '1') 
+					doFullSync();
+				else
+					loglines = logit("Info: FullSync check negative");
+			}
+		}
+		loglines = logit("Info: Start FullSync check");
+		xhr.send(params);
+	});
+}
+
+function doFullSync() {
+	loglines = logit("Info: Export on other client detected. FullSync started.");
+	try {
+		chrome.storage.local.get(null, function(options) {
+			if(options['s_type'] == 'PHP') {
+				removeAllMarks()
+				getAllPHPMarks();
+			}
+		});
+	} catch(error) {
+		loglines = logit(error);
+	} finally {
+		chrome.storage.local.set({last_s: 1});
+	}
 }
 
 function getAllPHPMarks() {

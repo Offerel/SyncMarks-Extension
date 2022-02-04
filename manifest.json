@@ -9,7 +9,7 @@
   "icons": {
     "48": "icons/bookmark.png"
   },
-  "homepage_url": "https://github.com/Offerel/SyncMarks-Extension",
+  "homepage_url": "https://codeberg.org/Offerel/SyncMarks-Extension",
   "background": {
     "scripts": [
       "scripts/background.js"

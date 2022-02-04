@@ -1,9 +1,10 @@
 ChangeLog
 =========
-v1.18.6 (2022-01-12)
+v1.18.6 (2022-02-04)
 -------------------------
 - Contextmenu refresh
 - Fixed init
+- Added startup pre-request (in case other client made export)
 
 
 v1.18.5 (2021-12-01)
