@@ -223,6 +223,7 @@ function init() {
 		} else if(s_type.indexOf('PHP') == 0) {
 			if(s_startup === true) {
 				loglines = logit("Info: Initiate PHP startup sync");
+				checkFullSync();
 				getPHPMarks();
 			}
 
@@ -412,7 +413,24 @@ function notificationSettings(id) {
 function onInstalled(details){
 	if(details.reason == 'install') {
 		chrome.runtime.openOptionsPage();
+		checkCommandShortcuts();
 	}
+}
+
+function checkCommandShortcuts() {
+	chrome.commands.getAll((commands) => {
+		let missingShortcuts = [];
+
+	for (let {name, shortcut} of commands) {
+		if (shortcut === '') {
+			missingShortcuts.push(name);
+		}
+	}
+
+    if (missingShortcuts.length > 0) {
+		notify('error', "Default Shortcuts for Extension (Ctrl+Q) could not be set. Please check your settings, if they are blocked by another extension. You can set your own Shortcut in Browser settings.");
+    }
+  });
 }
 
 function dmNoti(nkey) {
@@ -432,10 +450,6 @@ function dmNoti(nkey) {
 		}
 		xhr.send(data);
 	});
-}
-
-function openSettings() {
-	chrome.runtime.openOptionsPage();
 }
 
 function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
@@ -512,7 +526,7 @@ function editMark(eData,id) {
 			xhr.onload = function () {
 				if( xhr.status < 200 || xhr.status > 226) {
 					message = chrome.i18n.getMessage("errorEditBookmark") + xhr.status;
-					notify('error',message);
+					notify('error', message);
 					chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorEditBookmark")});
 					loglines = logit('Error: '+message);
 				}
@@ -866,6 +880,48 @@ function getPHPMarks() {
 	});
 }
 
+function checkFullSync() {
+	chrome.storage.local.get(null, function(options) {
+		let xhr = new XMLHttpRequest();
+		let params = 'client=' + options['s_uuid'] + '&caction=cfsync';
+		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
+		xhr.withCredentials = true;
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				let message = 'FullSync Check failed';
+				notify('error', message);
+				loglines = logit('Error: '+message);
+			} else {
+				let FullSync = JSON.parse(xhr.responseText);
+				if(FullSync['fs'] === '1') 
+					doFullSync();
+				else
+					loglines = logit("Info: FullSync check negative");
+			}
+		}
+		loglines = logit("Info: Start FullSync check");
+		xhr.send(params);
+	});
+}
+
+function doFullSync() {
+	loglines = logit("Info: Export on other client detected. FullSync started.");
+	try {
+		chrome.storage.local.get(null, function(options) {
+			if(options['s_type'] == 'PHP') {
+				removeAllMarks()
+				getAllPHPMarks();
+			}
+		});
+	} catch(error) {
+		loglines = logit(error);
+	} finally {
+		chrome.storage.local.set({last_s: 1});
+	}
+}
+
 function getAllPHPMarks() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
@@ -929,12 +985,10 @@ async function addPHPcMarks(bArray) {
 					if(url != null) {
 						chrome.bookmarks.search({url: bArrayT[bIndex].bmURL}, function(removeItems) {
 							removeItems.forEach(function(removeBookmark) {
-								//if(removeBookmark.dateAdded == bArrayT[bIndex].bmAdded) {
-									chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-									chrome.bookmarks.remove(removeBookmark.id, function(removeB) {
-										chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-									});
-								//}
+								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+								chrome.bookmarks.remove(removeBookmark.id, function(removeB) {
+									chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+								});
 							});
 						});
 					} else {
@@ -1013,10 +1067,8 @@ async function addPHPMarks(bArray) {
 					if(bArrayT[bIndex].bmURL != null) {
 						chrome.bookmarks.search({url: url}, function(removeItems) {
 							removeItems.forEach(function(removeBookmark) {
-								//if(removeBookmark.dateAdded == bArrayT[bIndex].bmAdded) {
-									chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-									chrome.bookmarks.remove(removeBookmark.id, function(removeB) {chrome.bookmarks.onRemoved.addListener(onRemovedCheck);});
-								//}
+								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+								chrome.bookmarks.remove(removeBookmark.id, function(removeB) {chrome.bookmarks.onRemoved.addListener(onRemovedCheck);});
 							});
 						});
 					} else {

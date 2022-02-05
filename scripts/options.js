@@ -242,7 +242,7 @@ function importOptions() {
 	reader.readAsText(file);
 	document.getElementById("expimpdialog").style.display = "none";
 	
-	setTimeout(() => {  if(resCID) { alert("wiederhergestellt"); gName(); } }, 200);
+	setTimeout(() => {  if(resCID) { gName(); } }, 200);
 	setTimeout(() => {  checkForm(); }, 200);
 }
 

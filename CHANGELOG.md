@@ -1,10 +1,16 @@
 ChangeLog
 =========
+v1.18.7 (2022-02-05)
+-------------------------
+- Added startup pre-request (in case other client made export)
+- Added check if command shortcut is set
+
+
 v1.18.6 (2022-01-12)
 -------------------------
 - Contextmenu refresh
 - Fixed init
-
+  
 
 v1.18.5 (2021-12-01)
 -------------------------
