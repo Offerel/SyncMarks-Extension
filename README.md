@@ -1,3 +1,13 @@
+# Please note, that future changes can only be found at https://codeberg.org/Offerel/SyncMarks-Extension. This repository will be archived.
+
+.
+  
+
+ .  
+  
+  
+  
+
 # SyncMarks Extension
 This is a Webextension for Browsers to sync and backup your bookmarks via PHP or WebDAV. You can simply install the AddOn for Firefox via [AMO](https://addons.mozilla.org/addon/davmarks/) or for Microsoft Edge via [Edge Store](https://microsoftedge.microsoft.com/addons/detail/ffobakhdlfhmnnkmimkbnbmnplihhphg). The Addon will work also on other Chromium derivates, including [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser). You can use this plugin to export, import and sync your bookmarks to your backend (WebDAV share / or [SyncMarks-Webapp](https://github.com/Offerel/SyncMarks).
 
