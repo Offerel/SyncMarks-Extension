@@ -1,5 +1,13 @@
 ChangeLog
 =========
+v1.18.8 (2022-02-13)
+-------------------------
+- Changes in translation
+- Changes for FullSync
+- Added autosave settings on change
+- Removed save button
+
+
 v1.18.7 (2022-02-05)
 -------------------------
 - Added startup pre-request (in case other client made export)

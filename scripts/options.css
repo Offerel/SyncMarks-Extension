@@ -17,12 +17,26 @@ input, button {
 #confinput {
 	display: none;
 }
+fieldset {
+	float: left;
+	background-color: #f1f1f1;
+	border-radius: .3em;
+	border: 1px solid dodgerblue;
+	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.22);
+}
+legend {
+	background-color: dodgerblue;
+	padding: .3em .5em;
+	color: white;
+	border-radius: .3em;
+	font-size: .85em;
+}
 button {
 	border-color: transparent;
 	font-size: 14px;
 	letter-spacing: 0.5px;
 	min-height: 36px;
-	width: 100px;
+	width: 115px;
 	margin: 5px;
 	position: relative;
 	display: inline-block;
@@ -213,7 +227,7 @@ input:checked + .slider:before {
     background-color: rgba(0,0,0,0.4);
 }
 .modal button {
-	width: 40%;
+	width: 44%;
 	margin-left: 10px;
 	margin-top: 20px;
 	font-weight: bold;
@@ -237,8 +251,8 @@ input:checked + .slider:before {
 	font-size: 28px;
 	font-weight: bold;
 	position: relative;
-	margin-top: -25px;
-	margin-right: -10px;
+	margin-top: -0.5em;
+	margin-right: -0.4em;
 }
 .mtext {
 	padding-top: 10px;
