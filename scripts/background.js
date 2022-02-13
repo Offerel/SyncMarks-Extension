@@ -6,6 +6,7 @@ const abrowser = typeof InstallTrigger !== 'undefined';
 var clientL = [];
 var oMarks = [];
 var pTabs = [];
+var lastseen = null;
 
 init();
 
@@ -224,7 +225,6 @@ function init() {
 			if(s_startup === true) {
 				loglines = logit("Info: Initiate PHP startup sync");
 				checkFullSync();
-				getPHPMarks();
 			}
 
 			if(options['wdurl']) {
@@ -895,10 +895,14 @@ function checkFullSync() {
 				loglines = logit('Error: '+message);
 			} else {
 				let FullSync = JSON.parse(xhr.responseText);
-				if(FullSync['fs'] === '1') 
+
+				if(FullSync['fs'] === '1') {
+					lastseen = FullSync['lastseen'];
 					doFullSync();
-				else
+				} else {
 					loglines = logit("Info: FullSync check negative");
+					getPHPMarks();
+				}
 			}
 		}
 		loglines = logit("Info: Start FullSync check");
@@ -911,8 +915,7 @@ function doFullSync() {
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				removeAllMarks()
-				getAllPHPMarks();
+				getAllPHPMarks(true);
 			}
 		});
 	} catch(error) {
@@ -922,7 +925,7 @@ function doFullSync() {
 	}
 }
 
-function getAllPHPMarks() {
+function getAllPHPMarks(fs=false) {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
 		let params = 'client='+options['s_uuid']+'&caction=export&type=json&s='+options['actions']['startup'];
@@ -931,9 +934,6 @@ function getAllPHPMarks() {
 		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.onload = function () {
-			let datems = Date.now();
-			let date = new Date(datems);
-			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
 				notify('error',message);
@@ -946,16 +946,99 @@ function getAllPHPMarks() {
 					let PHPMarks = JSON.parse(response);
 					count = 0;
 					loglines = logit('Info: Starting bookmark import from server');
-					importMarks(PHPMarks);
+					(fs === true) ? importFull(PHPMarks):importMarks(PHPMarks);
 				}
 				else {
 					loglines = logit("Error: Error when retrieving bookmarks from server for import");
 				}
 			}
+
+			let date = new Date(Date.now());
+			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 			}
 		loglines = logit('Info: Sending import request to server');
 		xhr.send(params);
+	});
+}
+
+function importFull(ServerBookmarks) {
+	const lMarks = [];
+	const dMarks = new Array();
+	const uMarks = new Array();
+	traverseTree(oMarks);
+	function traverseTree(nodes) {
+		const lbm = new Object();
+		nodes.forEach(function (node) {
+			lMarks.push(node);
+			if (node.children) traverseTree(node.children);
+		});
+	}
+
+	lMarks.forEach(function(lmark) {		
+		const duplicate = ServerBookmarks.some(element => element.bmTitle === lmark.title);
+		if (!duplicate) dMarks.push(lmark);
+	});
+
+	ServerBookmarks.forEach(function(bookmark) {
+		let bmTitle = bookmark.bmTitle;
+		if(bookmark.bmID.endsWith('_____') || bookmark.bmID.length < 2) {
+			// 
+		} else {
+			chrome.bookmarks.search({title:bmTitle}, function(bmresult) {
+				if(bmresult.length > 0) {
+					let remotefName = ServerBookmarks.filter(item => `${item.bmID}`.includes(bookmark.bmParentID))[0].bmTitle;
+					chrome.bookmarks.get(bmresult[0].parentId, function(result){
+						let localfName = result[0].title;
+						let bmark = {};
+						if(abrowser) {
+							bmark.index = parseInt(bookmark.bmIndex);
+							bmark.parentId = bookmark.bmParentID;
+							bmark.title = bookmark.bmTitle;
+							bmark.url = bookmark.bmURL;
+							bmark.type = bookmark.bmType;
+						} else {
+							bmark.index = parseInt(bookmark.bmIndex);
+							bmark.parentId = bookmark.bmParentID;
+							bmark.title = bookmark.bmTitle;
+							bmark.url = bookmark.bmURL;
+						}
+
+						if(localfName == remotefName) {
+							// 
+						} else {
+							chrome.bookmarks.onMoved.removeListener(onMovedCheck);
+							chrome.bookmarks.move(bmresult[0].id, {parentId: result[0].id}, function(move) {
+								chrome.bookmarks.onMoved.addListener(onMovedCheck);
+							});
+						}
+					});
+				} else {				
+					chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+					return new Promise(function(fulfill, reject) {
+						chrome.bookmarks.create(bmark, fulfill);
+						chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+					});
+				}
+			});
+		}
+	});
+
+	dMarks.forEach(lmark => {
+		if (lmark.id.endsWith('_____') || lmark.id-length < 2) {
+			// 
+		} else if (lmark.dateAdded >= lastseen) {
+			uMarks.push(lmark);
+		} else {
+			chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+			chrome.bookmarks.remove(lmark.id, function(removeB) {});
+		}
+	});
+
+	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+
+	uMarks.forEach(umark => {
+		sendMark(umark);
 	});
 }
 

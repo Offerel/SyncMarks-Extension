@@ -90,7 +90,7 @@
     "description": "Remove Button Hint."
   },
   "optionsBTNImport": {
-    "message": "Import",
+    "message": "Sync",
     "description": ""
   },
   "optionsBTNImportHint": {
@@ -98,15 +98,15 @@
     "description": "Import Button Hint."
   },
   "optionsBTNSaveHint": {
-    "message": "Save all actual settings",
+    "message": "Save settings",
     "description": ""
   },
   "optionsBTNSettingsHint": {
-    "message": "Backup of settings",
+    "message": "Backup settings",
     "description": ""
   },
   "optionsBTNExport": {
-    "message": "Export",
+    "message": "Upload",
     "description": ""
   },
   "optionsBTNExportHint": {
@@ -118,7 +118,7 @@
     "description": "Save Button."
   },
   "optionsBTNSettings": {
-    "message": "Backup",
+    "message": "Settings",
     "description": ""
   },
   "optionsBTNStore": {
