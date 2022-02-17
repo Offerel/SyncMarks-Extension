@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gupdate xmlns="http://www.google.com/update2/response" protocol="2.0" server="prod">
   <app appid="ahceniaakablmogkmbmjocdghkgfjdgb" status="ok">
-    <updatecheck codebase="https://codeberg.org/attachments/1b813ceb-292c-43c3-b6bd-fb6921ae0695" version="1.18.8"/>
+    <updatecheck codebase="https://codeberg.org/attachments/1b18b732-3aff-42a3-bd51-ab70a2a1564b" version="1.18.9"/>
   </app>
 </gupdate>
