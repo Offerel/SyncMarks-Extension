@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.18.9 (2022-02-17)
+-------------------------
+- Fixed sync after pre-request
+
+
 v1.18.8 (2022-02-13)
 -------------------------
 - Changes in translation

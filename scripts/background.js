@@ -962,67 +962,137 @@ function getAllPHPMarks(fs=false) {
 	});
 }
 
-function importFull(ServerBookmarks) {
+async function importFull(rMarks) {
 	const lMarks = [];
 	const dMarks = new Array();
 	const uMarks = new Array();
-	traverseTree(oMarks);
-	function traverseTree(nodes) {
-		const lbm = new Object();
+	const rbmCount = rMarks.length;
+
+	createLocalMarks(oMarks);
+	function createLocalMarks(nodes) {
 		nodes.forEach(function (node) {
 			lMarks.push(node);
-			if (node.children) traverseTree(node.children);
+			if (node.children) createLocalMarks(node.children);
 		});
 	}
 
 	lMarks.forEach(function(lmark) {		
-		const duplicate = ServerBookmarks.some(element => element.bmTitle === lmark.title);
+		const duplicate = rMarks.some(element => element.bmTitle === lmark.title);
 		if (!duplicate) dMarks.push(lmark);
 	});
 
-	ServerBookmarks.forEach(function(bookmark) {
-		let bmTitle = bookmark.bmTitle;
-		if(bookmark.bmID.endsWith('_____') || bookmark.bmID.length < 2) {
-			// 
-		} else {
-			chrome.bookmarks.search({title:bmTitle}, function(bmresult) {
-				if(bmresult.length > 0) {
-					let remotefName = ServerBookmarks.filter(item => `${item.bmID}`.includes(bookmark.bmParentID))[0].bmTitle;
-					chrome.bookmarks.get(bmresult[0].parentId, function(result){
-						let localfName = result[0].title;
-						let bmark = {};
-						if(abrowser) {
-							bmark.index = parseInt(bookmark.bmIndex);
-							bmark.parentId = bookmark.bmParentID;
-							bmark.title = bookmark.bmTitle;
-							bmark.url = bookmark.bmURL;
-							bmark.type = bookmark.bmType;
-						} else {
-							bmark.index = parseInt(bookmark.bmIndex);
-							bmark.parentId = bookmark.bmParentID;
-							bmark.title = bookmark.bmTitle;
-							bmark.url = bookmark.bmURL;
-						}
+	async function checkMark(remoteMark, rIndex) {
+		let action = 0;
+		let localMark = (await searchBookmarkAsync({title: remoteMark.bmTitle}))[0];
 
-						if(localfName == remotefName) {
-							// 
-						} else {
-							chrome.bookmarks.onMoved.removeListener(onMovedCheck);
-							chrome.bookmarks.move(bmresult[0].id, {parentId: result[0].id}, function(move) {
-								chrome.bookmarks.onMoved.addListener(onMovedCheck);
-							});
-						}
-					});
-				} else {				
-					chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-					return new Promise(function(fulfill, reject) {
-						chrome.bookmarks.create(bmark, fulfill);
-						chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-					});
-				}
+		if(typeof localMark === 'undefined') {
+			action = 1;
+		} else {
+			let remoteParentFolderName = rMarks.filter(element => element.bmID === remoteMark.bmParentID)[0].bmTitle;
+			let localParentFolderName = (await getBookmarkAsync(localMark.parentId))[0].title;
+			if(remoteParentFolderName !== localParentFolderName) {
+				action = 2;
+			} else {
+				action = 0;
+			}
+		}
+		return action;
+		
+	}
+
+	async function createMark(remoteMark) {
+		let remoteParentFolderName = '';	
+		let localParentId = '';
+
+		if(remoteMark.bmParentID.endsWith('_____') || remoteMark.bmParentID.length === 1) {
+			localParentId = remoteMark.bmParentID;
+		} else {
+			let searchedID = remoteMark.bmParentID;
+			remoteParentFolderName = rMarks.filter(element => element.bmID == searchedID)[0].bmTitle;		
+			localParentId = (await searchBookmarkAsync({title: remoteParentFolderName}))[0].id;
+		}
+
+		let rMark = {};
+
+		if(abrowser) {
+			rMark.index = parseInt(remoteMark.bmIndex);
+			rMark.parentId = localParentId;
+			rMark.title = remoteMark.bmTitle;
+			rMark.url = remoteMark.bmURL;
+			rMark.type = remoteMark.bmType;
+		} else {
+			rMark.index = parseInt(remoteMark.bmIndex);
+			rMark.parentId = localParentId;
+			rMark.title = remoteMark.bmTitle;
+			rMark.url = remoteMark.bmURL;
+		}
+
+		let newMark = (await createBookmarkAsync(rMark));
+		let cNewMark = newMark;
+
+		if(typeof cNewMark.url === 'undefined') {
+			let oldID = remoteMark.bmID;
+			let newID = cNewMark.id;
+
+			rMarks.forEach(async function(cmark, index){
+				if(rMarks[index].bmParentID === oldID) rMarks[index].bmParentID = newID;
+				if(rMarks[index].bmID === oldID) rMarks[index].bmID = newID;
 			});
 		}
-	});
+		
+	}
+
+	async function iMoveMark(remoteMark) {
+		if(typeof remoteMark.bmURL !== 'undefined') {
+			let localMark = (await searchBookmarkAsync({url: remoteMark.bmURL}))[0];
+			let remoteParentFolderName = '';
+			let localParentId = '';
+
+			if(remoteMark.bmParentID.endsWith('_____') || remoteMark.bmParentID.length === 1) {
+				localParentId = remoteMark.bmParentID;
+			} else {
+				let searchedID = remoteMark.bmParentID;
+				remoteParentFolderName = rMarks.filter(element => element.bmID == searchedID)[0].bmTitle;		
+				localParentId = (await searchBookmarkAsync({title: remoteParentFolderName}))[0].id;
+			}
+			
+			let destination = new Object();
+			destination.parentId = localParentId;
+			destination.index = parseInt(remoteMark.bmIndex);
+
+			let newMark = (await moveBookmarkAsync(localMark.id, destination));
+		}
+	}
+
+	chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+	chrome.bookmarks.onMoved.removeListener(onMovedCheck);
+	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+
+	for (let index = 0; index < rbmCount; index++) {
+		let action = 0;
+		remoteMark = rMarks[index];
+
+		if((abrowser === true && !remoteMark.bmID.endsWith('_____')) || (abrowser === false && remoteMark.bmID.length > 1)) {
+			action = await checkMark(remoteMark, index);
+		} else {
+			action = 0;
+		}
+
+		switch (action) {
+			case 0:
+				//console.log('ignore');
+				break;
+			case 1:
+				await createMark(remoteMark);
+				break;
+			case 2:
+				await iMoveMark(remoteMark);
+				break;
+			default:
+				//console.log('unknown action: ' + action);
+				break;
+		}
+	}
 
 	dMarks.forEach(lmark => {
 		if (lmark.id.endsWith('_____') || lmark.id-length < 2) {
@@ -1035,6 +1105,8 @@ function importFull(ServerBookmarks) {
 		}
 	});
 
+	chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+	chrome.bookmarks.onMoved.addListener(onMovedCheck);
 	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 
 	uMarks.forEach(umark => {
@@ -1051,9 +1123,27 @@ function c2cm(bookmarks) {
 	return bookmarks;
 }
 
+function getBookmarkAsync(id) {
+	return new Promise(function(fulfill, reject) {
+		chrome.bookmarks.get(id, fulfill);
+	});
+}
+
+function searchBookmarkAsync(parms) {
+	return new Promise(function(fulfill, reject) {
+		chrome.bookmarks.search(parms, fulfill);
+	});
+}
+
 function createBookmarkAsync(parms) {
 	return new Promise(function(fulfill, reject) {
 		chrome.bookmarks.create(parms, fulfill);
+	});
+}
+
+function moveBookmarkAsync(id, destination) {
+	return new Promise(function(fulfill, reject) {
+		chrome.bookmarks.move(id, destination, fulfill);
 	});
 }
 

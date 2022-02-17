@@ -2,9 +2,7 @@ var background_page = chrome.extension.getBackgroundPage();
 
 function checkForm() {
 	var changed = false;
-
 	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
-        //document.getElementById('ssubmit').disabled=false;
 		document.getElementById('mdownload').disabled=false;
 		document.getElementById('mupload').disabled=false;
 		document.getElementById('mremove').disabled=false;
@@ -18,10 +16,8 @@ function checkForm() {
 	if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) changed = true;
 	if(document.getElementById('user').value != document.getElementById('user').defaultValue) changed = true;
 	if(document.getElementById('password').value != document.getElementById('password').defaultValue) changed = true;
-	//if(document.getElementById('cname').value != document.getElementById('cname').defaultValue) changed = true;
 	if(document.getElementById('php').checked != document.getElementById('php').defaultChecked) changed = true;
 	if(document.getElementById('wdav').checked != document.getElementById('wdav').defaultChecked) changed = true;
-
 	if(document.getElementById('s_startup').checked != document.getElementById('s_startup').defaultChecked) changed = true;
 	if(document.getElementById('s_create').checked != document.getElementById('s_create').defaultChecked) changed = true;
 	if(document.getElementById('s_change').checked != document.getElementById('s_change').defaultChecked) changed = true;
@@ -203,9 +199,10 @@ function exportOptions() {
 	chrome.storage.local.get(null, function(options) {
 		let confJSON = JSON.stringify(options);
 		let dString = new Date().toISOString().slice(0,10);
+		let nameStr = document.getElementById('cname').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 		var element = document.createElement('a');
 		element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(confJSON);
-		element.download = 'SyncMarks_Options_'+dString+'.json';
+		element.download = 'SyncMarks_' + nameStr + '_' + dString + '.json';
 		element.style.display = 'none';
 		document.body.appendChild(element);
 		element.click();
@@ -266,12 +263,16 @@ function importOptions() {
 
 function manualImport(e) {
 	e.preventDefault();
-	if (this.id === 'iyes') background_page.removeAllMarks();
+	let fs = true;
+	if (this.id === 'iyes') {
+		background_page.removeAllMarks();
+		fs = false;
+	}
 
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				background_page.getAllPHPMarks(true);
+				background_page.getAllPHPMarks(fs);
 			} else if (options['s_type'] == 'WebDAV') {
 				background_page.getDAVMarks();
 			}
@@ -407,8 +408,6 @@ window.addEventListener('load', function () {
 
 	localizeHtmlPage();
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
-	//document.getElementById("ssubmit").addEventListener("click", saveOptions);
-
 	document.getElementById("econf").addEventListener("click", function() {comodal.style.display = "block"});
 	document.getElementById("cclose").addEventListener("click", function() {comodal.style.display = "none";});
 	document.getElementById("cexp").addEventListener("click", exportOptions);
@@ -417,11 +416,9 @@ window.addEventListener('load', function () {
 		document.getElementById("confinput").click();
 	});
 	document.getElementById("confinput").addEventListener('change', importOptions);
-
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
 	document.getElementById("ryes").addEventListener("click", manualRemove);
-	//document.getElementById("ino").addEventListener("click", function() { imodal.style.display = "none";});
 	document.getElementById("ino").addEventListener("click", manualImport);
 	document.getElementById("rno").addEventListener("click", function() { rmodal.style.display = "none";});
 	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
@@ -431,23 +428,21 @@ window.addEventListener('load', function () {
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
 	document.getElementById("mremove").addEventListener("click", function() {rmodal.style.display = "block"})
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
-	document.getElementById("wdurl").addEventListener("keyup", checkForm);
-	document.getElementById("user").addEventListener("keyup", checkForm);
-	document.getElementById("password").addEventListener("keyup", checkForm);
-	document.getElementById("wdav").addEventListener("input", checkForm);
-	document.getElementById("php").addEventListener("input", checkForm);
-	document.getElementById("s_startup").addEventListener("input", checkForm);
-	document.getElementById("s_create").addEventListener("input", checkForm);
-	document.getElementById("s_create").addEventListener("input", cCreate);
-	document.getElementById("s_change").addEventListener("input", checkForm);
-	document.getElementById("s_remove").addEventListener("input", checkForm);
+	document.getElementById("wdurl").addEventListener("change", checkForm);
+	document.getElementById("user").addEventListener("change", checkForm);
+	document.getElementById("password").addEventListener("change", checkForm);
+	document.getElementById("wdav").addEventListener("change", checkForm);
+	document.getElementById("php").addEventListener("change", checkForm);
+	document.getElementById("s_startup").addEventListener("change", checkForm);
+	document.getElementById("s_create").addEventListener("change", checkForm);
+	document.getElementById("s_create").addEventListener("change", cCreate);
+	document.getElementById("s_change").addEventListener("change", checkForm);
+	document.getElementById("s_remove").addEventListener("change", checkForm);
+	document.getElementById("b_action").addEventListener("change", checkForm);
 	document.getElementById("cname").addEventListener("change", rName);
-
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
-
 	document.getElementById("logsave").addEventListener("click", saveLog);
 	document.getElementById("logclear").addEventListener("click", clearLog);
-
 	document.getElementById('ebutton').addEventListener('click', function(e) {
 		e.preventDefault();
 		this.classList.toggle("active");
