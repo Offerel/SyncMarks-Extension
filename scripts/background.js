@@ -883,7 +883,7 @@ function getPHPMarks() {
 function checkFullSync() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
-		let params = 'client=' + options['s_uuid'] + '&caction=cfsync';
+		let params = 'client=' + options['s_uuid'] + '&caction=cinfo';
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
@@ -894,10 +894,10 @@ function checkFullSync() {
 				notify('error', message);
 				loglines = logit('Error: '+message);
 			} else {
-				let FullSync = JSON.parse(xhr.responseText);
+				let cinfo = JSON.parse(xhr.responseText);
 
-				if(FullSync['fs'] === '1') {
-					lastseen = FullSync['lastseen'];
+				if(cinfo['fs'] === '1') {
+					lastseen = cinfo['lastseen'];
 					doFullSync();
 				} else {
 					loglines = logit("Info: FullSync check negative");

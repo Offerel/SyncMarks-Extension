@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.19.9 (2022-02-19)
+-------------------------
+- Streamlined client info
+
+
 v1.18.9 (2022-02-17)
 -------------------------
 - Fixed sync after pre-request
@@ -133,9 +138,9 @@ v1.17.12 (2021-03-22)
 
 v1.17.11 (2021-03-20)
 -------------------------
-- Fixed info message defintion up
+- Fixed info message definition up
 - Reworked import config file
-- Attention!!! => Import is only compatibel with WebApp > 1.4.2
+- Attention!!! => Import is only compatible with WebApp > 1.4.2
 
 v1.17.10 (2021-03-14)
 -------------------------
@@ -357,7 +362,7 @@ v1.13.2 (2020-03-27)
 
 v1.13.1 (2020-03-24)
 -------------------------
-- Change by returncode from export
+- Change by return code from export
 
 
 v1.13.0 (2019-01-13)

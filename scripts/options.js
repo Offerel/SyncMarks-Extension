@@ -51,7 +51,6 @@ function saveOptions(e) {
 		creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 	});
 
-    //let cname = document.querySelector("#cname").defaultValue;
 	let xhrl = new XMLHttpRequest();
 	let cdata = "caction=logout&client="+document.getElementById('s_uuid').value;
 	xhrl.open("POST", document.getElementById('wdurl').value, true);
@@ -82,9 +81,6 @@ function saveOptions(e) {
 								wdurl: document.getElementById('wdurl').value,
 								creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 							});
-							//if(document.querySelector('input[name="stype"]:checked').value = 'PHP') {
-							//	rName(cname);
-							//}
 						} else {
 							wmessage.textContent = 'Warning: '+xhr.responseText;
 							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
@@ -125,7 +121,7 @@ function rName() {
 
 function gName() {
 	var xhr = new XMLHttpRequest();
-	let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=gname";
+	let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";
 	xhr.open("POST", document.getElementById("wdurl").value, true);
 	xhr.setRequestHeader('Authorization', 'Basic ' + btoa(document.getElementById('user').value + ':' + document.getElementById('password').value));
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
