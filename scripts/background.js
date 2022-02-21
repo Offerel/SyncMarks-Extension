@@ -571,10 +571,11 @@ function onRemovedCheck(id, bookmark) {
 	});
 }
 
-function exportPHPMarks() {
+function exportPHPMarks(upl=[]) {
 	loglines = logit("Info: Exporting bookmarks to server");
 	chrome.bookmarks.getTree(function(bookmarkItems) {
-		let bookmarks = encodeURIComponent(JSON.stringify(bookmarkItems));
+		let bookmarks = (upl.length === 0) ? encodeURIComponent(JSON.stringify(bookmarkItems)):upl;
+		//let bookmarks = encodeURIComponent(JSON.stringify(bookmarkItems));
 		chrome.storage.local.get(null, function(options) {
 			if(!("s_uuid" in options)) {
 				var s_uuid = uuidv4();
@@ -1077,21 +1078,28 @@ async function importFull(rMarks) {
 		} else {
 			action = 0;
 		}
-
+		
 		switch (action) {
 			case 0:
-				//console.log('ignore');
+				//console.log('ignore: ' + action);
+				//console.log(remoteMark);
 				break;
 			case 1:
+				//console.log('create: ' + action);
+				//console.log(remoteMark);
 				await createMark(remoteMark);
 				break;
 			case 2:
+				//console.log('move: ' + action);
+				//console.log(remoteMark);
 				await iMoveMark(remoteMark);
 				break;
 			default:
-				//console.log('unknown action: ' + action);
+				console.log('unknown action: ' + action);
+				//console.log(remoteMark);
 				break;
 		}
+		
 	}
 
 	dMarks.forEach(lmark => {
@@ -1109,9 +1117,11 @@ async function importFull(rMarks) {
 	chrome.bookmarks.onMoved.addListener(onMovedCheck);
 	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 
-	uMarks.forEach(umark => {
-		sendMark(umark);
-	});
+	//uMarks.forEach(umark => {
+	//	sendMark(umark);
+	//});
+	exportPHPMarks(uMarks);
+
 }
 
 function c2cm(bookmarks) {

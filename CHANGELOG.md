@@ -1,8 +1,9 @@
 ChangeLog
 =========
-v1.19.9 (2022-02-19)
+v1.19.1 (2022-02-21)
 -------------------------
 - Streamlined client info
+- Fix for upload / delete / sync
 
 
 v1.18.9 (2022-02-17)

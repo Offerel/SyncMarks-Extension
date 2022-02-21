@@ -435,6 +435,7 @@ window.addEventListener('load', function () {
 	document.getElementById("s_change").addEventListener("change", checkForm);
 	document.getElementById("s_remove").addEventListener("change", checkForm);
 	document.getElementById("b_action").addEventListener("change", checkForm);
+	//document.getElementById("omobile").addEventListener("change", vMobile);
 	document.getElementById("cname").addEventListener("change", rName);
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 	document.getElementById("logsave").addEventListener("click", saveLog);
