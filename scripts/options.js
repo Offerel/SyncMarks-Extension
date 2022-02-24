@@ -2,12 +2,12 @@ var background_page = chrome.extension.getBackgroundPage();
 
 function checkForm() {
 	var changed = false;
+
 	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
 		document.getElementById('mdownload').disabled=false;
 		document.getElementById('mupload').disabled=false;
 		document.getElementById('mremove').disabled=false;
     } else{
-        document.getElementById('ssubmit').disabled=true;
 		document.getElementById('mdownload').disabled=true;
 		document.getElementById('mupload').disabled=true;
 		document.getElementById('mremove').disabled=false;
@@ -16,13 +16,6 @@ function checkForm() {
 	if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) changed = true;
 	if(document.getElementById('user').value != document.getElementById('user').defaultValue) changed = true;
 	if(document.getElementById('password').value != document.getElementById('password').defaultValue) changed = true;
-	if(document.getElementById('php').checked != document.getElementById('php').defaultChecked) changed = true;
-	if(document.getElementById('wdav').checked != document.getElementById('wdav').defaultChecked) changed = true;
-	if(document.getElementById('s_startup').checked != document.getElementById('s_startup').defaultChecked) changed = true;
-	if(document.getElementById('s_create').checked != document.getElementById('s_create').defaultChecked) changed = true;
-	if(document.getElementById('s_change').checked != document.getElementById('s_change').defaultChecked) changed = true;
-	if(document.getElementById('s_remove').checked != document.getElementById('s_remove').defaultChecked) changed = true;
-	if(document.getElementById('b_action').checked != document.getElementById('b_action').defaultChecked) changed = true;
 
 	if(changed) saveOptions();
 }
@@ -51,14 +44,13 @@ function saveOptions(e) {
 		creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 	});
 
-	let xhrl = new XMLHttpRequest();
-	let cdata = "caction=logout&client="+document.getElementById('s_uuid').value;
-	xhrl.open("POST", document.getElementById('wdurl').value, true);
-	xhrl.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	xhrl.send(cdata);
-
-	cdata = "client=" + document.getElementById('s_uuid').value + "&caction=tl&s="+document.getElementById('s_startup').value;
 	let xhr = new XMLHttpRequest();
+	let cdata = "caction=logout&client="+document.getElementById('s_uuid').value;
+	xhr.open("POST", document.getElementById('wdurl').value, true);
+	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	xhr.send(cdata);
+
+	cdata = "client=" + document.getElementById('s_uuid').value + "&caction=tl&s="+document.getElementById('s_startup').checked;
 	xhr.open("POST", document.getElementById('wdurl').value, true);
 	xhr.setRequestHeader('Authorization', 'Basic ' + btoa(document.getElementById('user').value + ':' + document.getElementById('password').value));
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -301,8 +293,7 @@ function manualExport(e) {
 	try {
 		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
 			background_page.saveAllMarks();
-		}
-		else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
+		} else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
 			background_page.exportPHPMarks();
 		}
 	} catch(error) {
@@ -427,15 +418,16 @@ window.addEventListener('load', function () {
 	document.getElementById("wdurl").addEventListener("change", checkForm);
 	document.getElementById("user").addEventListener("change", checkForm);
 	document.getElementById("password").addEventListener("change", checkForm);
-	document.getElementById("wdav").addEventListener("change", checkForm);
-	document.getElementById("php").addEventListener("change", checkForm);
-	document.getElementById("s_startup").addEventListener("change", checkForm);
-	document.getElementById("s_create").addEventListener("change", checkForm);
+
+	document.getElementById("wdav").addEventListener("change", saveOptions);
+	document.getElementById("php").addEventListener("change", saveOptions);
+	document.getElementById("s_startup").addEventListener("change", saveOptions);
+	document.getElementById("s_create").addEventListener("change", saveOptions);
 	document.getElementById("s_create").addEventListener("change", cCreate);
-	document.getElementById("s_change").addEventListener("change", checkForm);
-	document.getElementById("s_remove").addEventListener("change", checkForm);
-	document.getElementById("b_action").addEventListener("change", checkForm);
-	//document.getElementById("omobile").addEventListener("change", vMobile);
+	document.getElementById("s_change").addEventListener("change", saveOptions);
+	document.getElementById("s_remove").addEventListener("change", saveOptions);
+	document.getElementById("b_action").addEventListener("change", saveOptions);
+
 	document.getElementById("cname").addEventListener("change", rName);
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 	document.getElementById("logsave").addEventListener("click", saveLog);

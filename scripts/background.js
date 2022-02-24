@@ -573,9 +573,17 @@ function onRemovedCheck(id, bookmark) {
 
 function exportPHPMarks(upl=[]) {
 	loglines = logit("Info: Exporting bookmarks to server");
+	let bookmarks = '';
+	let p = 0;
 	chrome.bookmarks.getTree(function(bookmarkItems) {
-		let bookmarks = (upl.length === 0) ? encodeURIComponent(JSON.stringify(bookmarkItems)):upl;
-		//let bookmarks = encodeURIComponent(JSON.stringify(bookmarkItems));
+		if(upl.length === 0) {
+			bookmarks = encodeURIComponent(JSON.stringify(bookmarkItems));
+			p = 0;
+		} else {
+			bookmarks = encodeURIComponent(JSON.stringify(upl));
+			p = 1;
+		}
+		
 		chrome.storage.local.get(null, function(options) {
 			if(!("s_uuid" in options)) {
 				var s_uuid = uuidv4();
@@ -584,7 +592,8 @@ function exportPHPMarks(upl=[]) {
 			else {
 				var s_uuid = options['s_uuid'];
 			}
-			let cdata = 'client='+s_uuid+'&caction=import&bookmark='+bookmarks+"&s="+options['actions']['startup'];
+
+			let cdata = 'client='+s_uuid+'&caction=import&bookmark='+bookmarks+"&p="+p+"&s="+options['actions']['startup'];
 			let xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
 			xhr.setRequestHeader('Authorization', 'Basic ' + options['creds']);
@@ -1081,22 +1090,16 @@ async function importFull(rMarks) {
 		
 		switch (action) {
 			case 0:
-				//console.log('ignore: ' + action);
-				//console.log(remoteMark);
+				console.log('ignore action: ' + action);
 				break;
 			case 1:
-				//console.log('create: ' + action);
-				//console.log(remoteMark);
 				await createMark(remoteMark);
 				break;
 			case 2:
-				//console.log('move: ' + action);
-				//console.log(remoteMark);
 				await iMoveMark(remoteMark);
 				break;
 			default:
 				console.log('unknown action: ' + action);
-				//console.log(remoteMark);
 				break;
 		}
 		
@@ -1117,9 +1120,6 @@ async function importFull(rMarks) {
 	chrome.bookmarks.onMoved.addListener(onMovedCheck);
 	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 
-	//uMarks.forEach(umark => {
-	//	sendMark(umark);
-	//});
 	exportPHPMarks(uMarks);
 
 }

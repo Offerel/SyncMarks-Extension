@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.19.2 (2022-02-24)
+-------------------------
+- Fix sync for unsynced client
+
+
 v1.19.1 (2022-02-21)
 -------------------------
 - Streamlined client info
