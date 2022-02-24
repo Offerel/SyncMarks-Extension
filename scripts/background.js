@@ -571,10 +571,19 @@ function onRemovedCheck(id, bookmark) {
 	});
 }
 
-function exportPHPMarks() {
+function exportPHPMarks(upl=[]) {
 	loglines = logit("Info: Exporting bookmarks to server");
+	let bookmarks = '';
+	let p = 0;
 	chrome.bookmarks.getTree(function(bookmarkItems) {
-		let bookmarks = encodeURIComponent(JSON.stringify(bookmarkItems));
+		if(upl.length === 0) {
+			bookmarks = encodeURIComponent(JSON.stringify(bookmarkItems));
+			p = 0;
+		} else {
+			bookmarks = encodeURIComponent(JSON.stringify(upl));
+			p = 1;
+		}
+		
 		chrome.storage.local.get(null, function(options) {
 			if(!("s_uuid" in options)) {
 				var s_uuid = uuidv4();
@@ -583,7 +592,8 @@ function exportPHPMarks() {
 			else {
 				var s_uuid = options['s_uuid'];
 			}
-			let cdata = 'client='+s_uuid+'&caction=import&bookmark='+bookmarks+"&s="+options['actions']['startup'];
+
+			let cdata = 'client='+s_uuid+'&caction=import&bookmark='+bookmarks+"&p="+p+"&s="+options['actions']['startup'];
 			let xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
 			xhr.setRequestHeader('Authorization', 'Basic ' + options['creds']);
@@ -883,7 +893,7 @@ function getPHPMarks() {
 function checkFullSync() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
-		let params = 'client=' + options['s_uuid'] + '&caction=cfsync';
+		let params = 'client=' + options['s_uuid'] + '&caction=cinfo';
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
@@ -894,10 +904,10 @@ function checkFullSync() {
 				notify('error', message);
 				loglines = logit('Error: '+message);
 			} else {
-				let FullSync = JSON.parse(xhr.responseText);
+				let cinfo = JSON.parse(xhr.responseText);
 
-				if(FullSync['fs'] === '1') {
-					lastseen = FullSync['lastseen'];
+				if(cinfo['fs'] === '1') {
+					lastseen = cinfo['lastseen'];
 					doFullSync();
 				} else {
 					loglines = logit("Info: FullSync check negative");
@@ -1077,10 +1087,10 @@ async function importFull(rMarks) {
 		} else {
 			action = 0;
 		}
-
+		
 		switch (action) {
 			case 0:
-				//console.log('ignore');
+				console.log('ignore action: ' + action);
 				break;
 			case 1:
 				await createMark(remoteMark);
@@ -1089,9 +1099,10 @@ async function importFull(rMarks) {
 				await iMoveMark(remoteMark);
 				break;
 			default:
-				//console.log('unknown action: ' + action);
+				console.log('unknown action: ' + action);
 				break;
 		}
+		
 	}
 
 	dMarks.forEach(lmark => {
@@ -1109,9 +1120,8 @@ async function importFull(rMarks) {
 	chrome.bookmarks.onMoved.addListener(onMovedCheck);
 	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 
-	uMarks.forEach(umark => {
-		sendMark(umark);
-	});
+	exportPHPMarks(uMarks);
+
 }
 
 function c2cm(bookmarks) {
