@@ -112,7 +112,7 @@ function rName() {
 }
 
 function gName() {
-	var xhr = new XMLHttpRequest();
+	let xhr = new XMLHttpRequest();
 	let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";
 	xhr.open("POST", document.getElementById("wdurl").value, true);
 	xhr.setRequestHeader('Authorization', 'Basic ' + btoa(document.getElementById('user').value + ':' + document.getElementById('password').value));
@@ -126,7 +126,7 @@ function gName() {
 		} else {
 			var response = JSON.parse(xhr.responseText);
 		}
-
+		//console.log(response);
 		document.getElementById("cname").defaultValue = (response) ? response.cname:'';
 		document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
 	}
