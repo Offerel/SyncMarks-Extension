@@ -17,6 +17,12 @@ chrome.permissions.getAll(function(e) {
 		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 		chrome.bookmarks.onChanged.addListener(onChangedCheck);
 	}
+	/*
+	if(e.permissions.includes('history')) {
+		chrome.history.onVisited.addListener(onVisited);
+		chrome.history.onVisitRemoved.addListener(onVisitRemoved);
+	}
+	*/
 });
 
 chrome.runtime.onInstalled.addListener(onInstalled);
@@ -45,6 +51,84 @@ chrome.permissions.getAll(function(e) {
 chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
+
+function onVisited(hElement) {
+	chrome.storage.local.get(null, function(options) {
+		let xhr = new XMLHttpRequest();
+		let data = "client=" + options['s_uuid'] + "&caction=hvisited&hel=" + encodeURIComponent(JSON.stringify(hElement));
+
+		xhr.open("POST", options['wdurl'], true);
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				notify('error', xhr.response);
+				loglines = logit("Error: " + xhr.response);
+			} else {
+				let response = xhr.response;	//JSON.parse(xhr.response);
+				
+				//notify('info', response);
+				//loglines = logit("Info: " + response);
+			}
+		}
+		xhr.send(data);
+	});
+}
+
+function onVisitRemoved(hElement) {
+	chrome.storage.local.get(null, function(options) {
+		let xhr = new XMLHttpRequest();
+		let data = "client=" + options['s_uuid'] + "&caction=rvisited&rel=" + encodeURIComponent(JSON.stringify(hElement));
+
+		xhr.open("POST", options['wdurl'], true);
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				notify('error', xhr.response);
+				loglines = logit("Error: " + xhr.response);
+			} else {
+				let response = xhr.response;	//JSON.parse(xhr.response);
+				
+				//notify('info', response);
+				//loglines = logit("Info: " + response);
+			}
+		}
+		xhr.send(data);
+	});
+}
+
+function getHistory() {
+	chrome.storage.local.get(null, function(options) {
+		let xhr = new XMLHttpRequest();
+		let data = "client=" + options['s_uuid'] + "&caction=gvisited";
+		xhr.open("POST", options['wdurl'], true);
+		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				notify('error', xhr.response);
+				loglines = logit("Error: " + xhr.response);
+			} else {
+				let hArr = JSON.parse(xhr.response);
+
+				for (let index = 0; index < hArr.length; index++) {
+					//
+				}
+			}
+		}
+		xhr.send(data);
+	});
+}
+
+function onTitleChanged() {
+	console.log("onTitleChanged");
+}
 
 function ccMenus() {
 	chrome.permissions.getAll(function(e) {
@@ -231,6 +315,7 @@ function init() {
 				ccMenus();
 				getClientList();
 				getNotifications();
+				//getHistory();
 			}
 		}
 	});
@@ -1078,7 +1163,7 @@ async function importFull(rMarks) {
 	chrome.bookmarks.onMoved.removeListener(onMovedCheck);
 	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 
-	for (let index = 0; index < rbmCount; index++) {
+	for (let index = 0; index < rMarks.length; index++) {
 		let action = 0;
 		remoteMark = rMarks[index];
 
@@ -1121,7 +1206,6 @@ async function importFull(rMarks) {
 	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 
 	exportPHPMarks(uMarks);
-
 }
 
 function c2cm(bookmarks) {
