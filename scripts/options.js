@@ -126,7 +126,6 @@ function gName() {
 		} else {
 			var response = JSON.parse(xhr.responseText);
 		}
-		//console.log(response);
 		document.getElementById("cname").defaultValue = (response) ? response.cname:'';
 		document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
 	}
