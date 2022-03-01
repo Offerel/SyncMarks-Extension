@@ -276,7 +276,11 @@ input:checked + .slider:before {
 .toptionc {
 	position: relative;
 	display: inline-flex;
-	width: 149px;
+	/* width: 149px; */
+	width: 260px;
+}
+.toptionb {
+	display: none;
 }
 #changelog {
 	overflow: auto;

@@ -168,6 +168,12 @@ function restoreOptions() {
 		document.querySelector("#s_remove").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['remove'];
 		document.querySelector("#b_action").defaultChecked = (options['actions'] == undefined) ? false:options['actions']['crsrv'];
 
+		if(document.getElementById("s_startup").checked && document.getElementById("s_create").checked && document.getElementById("s_change").checked && document.getElementById("s_remove").checked) {
+			document.getElementById("s_auto").defaultChecked = true;
+		} else {
+			document.getElementById("s_auto").defaultChecked = false;
+		}
+
 		if("s_type" in options) {
 			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').defaultChecked = true;
 			if(options['s_type'] == 'PHP') {
@@ -378,6 +384,26 @@ function cCreate() {
 	}
 }
 
+function cAuto() {
+	//let crsrv = document.getElementById("b_action");
+	if(document.getElementById("s_auto").checked) {
+		document.getElementById("b_action").checked = false;
+
+		document.getElementById("s_startup").checked = true;
+		document.getElementById("s_create").checked = true;
+		document.getElementById("s_change").checked = true;
+		document.getElementById("s_remove").checked = true;
+	} else {
+		document.getElementById("b_action").checked = true;
+
+		document.getElementById("s_startup").checked = false;
+		document.getElementById("s_create").checked = false;
+		document.getElementById("s_change").checked = false;
+		document.getElementById("s_remove").checked = false;
+	}
+	saveOptions();
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 window.addEventListener('load', function () {
@@ -432,6 +458,8 @@ window.addEventListener('load', function () {
 	document.getElementById("s_change").addEventListener("change", saveOptions);
 	document.getElementById("s_remove").addEventListener("change", saveOptions);
 	document.getElementById("b_action").addEventListener("change", saveOptions);
+
+	document.getElementById("s_auto").addEventListener("change", cAuto);
 
 	document.getElementById("cname").addEventListener("change", rName);
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});

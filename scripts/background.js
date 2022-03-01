@@ -126,7 +126,8 @@ function bookmarkTab() {
 						notify('error', xhr.response);
 						loglines = logit("Error: " + xhr.response);
 					} else {
-						let response = (xhr.response == "1") ? "'"+tabs[0].title+"' added":JSON.parse(xhr.response);
+						let response = JSON.parse(xhr.response);
+						response = (response == "1") ? "'"+tabs[0].title+"' added":JSON.parse(xhr.response);
 						notify('info', response);
 						loglines = logit("Info: " + response);
 					}
@@ -223,7 +224,7 @@ function init() {
 			if(options['wdurl']) getDAVMarks();
 		} else if(s_type.indexOf('PHP') == 0) {
 			if(s_startup === true) {
-				loglines = logit("Info: Initiate PHP startup sync");
+				loglines = logit("Info: Initiate startup sync");
 				checkFullSync();
 			}
 
@@ -915,7 +916,7 @@ function checkFullSync() {
 				//}
 			}
 		}
-		loglines = logit("Info: Start Sync check");
+		//loglines = logit("Info: Start Sync check");
 		xhr.send(params);
 	});
 }
@@ -1091,7 +1092,7 @@ async function importFull(rMarks) {
 		
 		switch (action) {
 			case 0:
-				console.log('ignore action: ' + action);
+				//console.log('ignore action: ' + action);
 				break;
 			case 1:
 				await createMark(remoteMark);
@@ -1100,7 +1101,7 @@ async function importFull(rMarks) {
 				await iMoveMark(remoteMark);
 				break;
 			default:
-				console.log('unknown action: ' + action);
+				//console.log('unknown action: ' + action);
 				break;
 		}
 		

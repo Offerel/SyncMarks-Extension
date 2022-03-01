@@ -38,37 +38,34 @@
     "message": "Benutzername",
     "description": "Username."
   },
-  
   "optionsPassword": {
     "message": "Passwort",
     "description": "Password."
   },
-  
   "optionsPasswordHint": {
     "message": "Passwort",
     "description": "Password."
   },
-  
   "optionsSyncOptions": {
     "message": "Optionen",
     "description": "Sync Options."
   },
-  
+   "optionsAuto": {
+    "message": "Automatische Synchronisation",
+    "description": ""
+  },
    "optionsStartup": {
     "message": "Browserstart",
     "description": "Browser startup."
   },
-  
   "optionsStartupHint": {
     "message": "Bitte zuerst 'Importieren' oder bestehende Lesezeichen 'Löschen'",
     "description": "Browser startup hint."
   },
-  
   "optionsCreate": {
     "message": "Erstellen",
     "description": "Bookmark create."
   },
-  
   "optionsChange": {
     "message": "Ändern",
     "description": "Bookmark change."
