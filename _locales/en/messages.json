@@ -261,7 +261,7 @@
     "description": "Error moving bookmark with PHP."
   },
   "successExportBookmarks": {
-    "message": "Export successfully.",
+    "message": "Local bookmarks successfully added at server.",
     "description": "All bookmarks exported."
   },
   "successImportBookmarks": {

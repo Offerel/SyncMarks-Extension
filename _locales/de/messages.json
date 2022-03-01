@@ -261,7 +261,7 @@
   },
   
   "successExportBookmarks": {
-    "message": "Export erfolgreich.",
+    "message": "Lokale Bookmarks erfolgreich auf dem Server hinzugefügt.",
     "description": "Alle Lesezeichen erfolgreich exportiert."
   },
     

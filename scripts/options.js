@@ -1,7 +1,10 @@
 var background_page = chrome.extension.getBackgroundPage();
 
 function checkForm() {
-	var changed = false;
+	var wchanged = false;
+	var uchanged = false;
+	var pchanged = false;
+
 
 	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
 		document.getElementById('mdownload').disabled=false;
@@ -13,11 +16,13 @@ function checkForm() {
 		document.getElementById('mremove').disabled=false;
 	}
 
-	if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) changed = true;
-	if(document.getElementById('user').value != document.getElementById('user').defaultValue) changed = true;
-	if(document.getElementById('password').value != document.getElementById('password').defaultValue) changed = true;
+	if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) wchanged = true;
+	if(document.getElementById('user').value != document.getElementById('user').defaultValue) uchanged = true;
+	if(document.getElementById('password').value != document.getElementById('password').defaultValue) pchanged = true;
 
-	if(changed) saveOptions();
+
+
+	if(wchanged && uchanged && pchanged) saveOptions();
 }
 
 function saveOptions(e) {
@@ -259,7 +264,8 @@ function manualImport(e) {
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				background_page.getAllPHPMarks(fs);
+				//background_page.getAllPHPMarks(fs);
+				background_page.getAllPHPMarks(true);
 			} else if (options['s_type'] == 'WebDAV') {
 				background_page.getDAVMarks();
 			}

@@ -572,7 +572,7 @@ function onRemovedCheck(id, bookmark) {
 }
 
 function exportPHPMarks(upl=[]) {
-	loglines = logit("Info: Exporting bookmarks to server");
+	loglines = logit("Info: Send  new local bookmarks to server");
 	let bookmarks = '';
 	let p = 0;
 	chrome.bookmarks.getTree(function(bookmarkItems) {
@@ -609,17 +609,17 @@ function exportPHPMarks(upl=[]) {
 					let response = JSON.parse(xhr.responseText);
 					if(response == 1) {
 						message = chrome.i18n.getMessage("successExportBookmarks");
-						notify('info',message);
+						if(p == 1) notify('info',message);
 						loglines = logit("Info: "+message);
 					}
 					else {
 						message = chrome.i18n.getMessage("errorExportBookmarks");
-						notify('error',message + ": " + response);
+						if(p == 1) notify('error',message + ": " + response);
 						loglines = logit("Error: "+ message + " " + response);
 					}
 				}
 			}
-			loglines = logit("Info: Sending export of local bookmarks to server");
+			//loglines = logit("Info: Sending export of local bookmarks to server");
 			xhr.send(cdata);
 		})
 	});
@@ -906,22 +906,22 @@ function checkFullSync() {
 			} else {
 				let cinfo = JSON.parse(xhr.responseText);
 
-				if(cinfo['fs'] === '1') {
+				//if(cinfo['fs'] === '1') {
 					lastseen = cinfo['lastseen'];
 					doFullSync();
-				} else {
-					loglines = logit("Info: FullSync check negative");
-					getPHPMarks();
-				}
+				//} else {
+				//	loglines = logit("Info: FullSync check negative");
+				//	getPHPMarks();
+				//}
 			}
 		}
-		loglines = logit("Info: Start FullSync check");
+		loglines = logit("Info: Start Sync check");
 		xhr.send(params);
 	});
 }
 
 function doFullSync() {
-	loglines = logit("Info: Export on other client detected. FullSync started.");
+	loglines = logit("Info: Sync started.");
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
@@ -955,8 +955,9 @@ function getAllPHPMarks(fs=false) {
 					if(abrowser == false) response = c2cm(response);
 					let PHPMarks = JSON.parse(response);
 					count = 0;
-					loglines = logit('Info: Starting bookmark import from server');
-					(fs === true) ? importFull(PHPMarks):importMarks(PHPMarks);
+					loglines = logit('Info: Bookmarks retrieved from server');
+					//(fs === true) ? importFull(PHPMarks):importMarks(PHPMarks);
+					importFull(PHPMarks);
 				}
 				else {
 					loglines = logit("Error: Error when retrieving bookmarks from server for import");
@@ -967,7 +968,7 @@ function getAllPHPMarks(fs=false) {
 			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 			}
-		loglines = logit('Info: Sending import request to server');
+		loglines = logit('Info: Sending Sync request to server');
 		xhr.send(params);
 	});
 }

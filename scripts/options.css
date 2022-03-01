@@ -30,6 +30,7 @@ legend {
 	color: white;
 	border-radius: .3em;
 	font-size: .85em;
+	text-align: left;
 }
 button {
 	border-color: transparent;
