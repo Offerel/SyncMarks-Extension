@@ -25,7 +25,7 @@
   },
   
   "optionsServerURL": {
-    "message": "Server URL",
+    "message": "Backend URL",
     "description": "Show Logfile."
   },
   

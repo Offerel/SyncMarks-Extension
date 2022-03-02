@@ -129,10 +129,10 @@ function gName() {
 			background_page.notify('error',message);
 			background_page.loglines =  background_page.logit('Error: '+message);
 		} else {
-			var response = JSON.parse(xhr.responseText);
+			let response = JSON.parse(xhr.responseText);		
+			document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
+			document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
 		}
-		document.getElementById("cname").defaultValue = (response) ? response.cname:'';
-		document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
 	}
 	xhr.send(cdata);
 }
@@ -179,6 +179,9 @@ function restoreOptions() {
 			if(options['s_type'] == 'PHP') {
 				gName();
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
+				document.getElementById("php_webdav").checked = true;
+			} else {
+				document.getElementById("php_webdav").checked = false;
 			}
 		}
 
@@ -384,6 +387,19 @@ function cCreate() {
 	}
 }
 
+function switchBackend() {
+	let backendPHP = this.checked;
+	if(backendPHP) {
+		document.getElementById("php").checked = true;
+		document.getElementById("wdav").checked = false;
+		document.getElementById("blbl").innerText = "Backend PHP";
+	} else {
+		document.getElementById("php").checked = false;
+		document.getElementById("wdav").checked = true;
+		document.getElementById("blbl").innerText = "Backend WebDAV";
+	}
+}
+
 function cAuto() {
 	//let crsrv = document.getElementById("b_action");
 	if(document.getElementById("s_auto").checked) {
@@ -450,8 +466,10 @@ window.addEventListener('load', function () {
 	document.getElementById("user").addEventListener("change", checkForm);
 	document.getElementById("password").addEventListener("change", checkForm);
 
-	document.getElementById("wdav").addEventListener("change", saveOptions);
-	document.getElementById("php").addEventListener("change", saveOptions);
+	//document.getElementById("wdav").addEventListener("change", saveOptions);
+	//document.getElementById("php").addEventListener("change", saveOptions);	
+	document.getElementById("php_webdav").addEventListener("change", switchBackend);
+	
 	document.getElementById("s_startup").addEventListener("change", saveOptions);
 	document.getElementById("s_create").addEventListener("change", saveOptions);
 	document.getElementById("s_create").addEventListener("change", cCreate);
@@ -465,6 +483,7 @@ window.addEventListener('load', function () {
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 	document.getElementById("logsave").addEventListener("click", saveLog);
 	document.getElementById("logclear").addEventListener("click", clearLog);
+	/*
 	document.getElementById('ebutton').addEventListener('click', function(e) {
 		e.preventDefault();
 		this.classList.toggle("active");
@@ -477,6 +496,7 @@ window.addEventListener('load', function () {
 		}
 
 	});
+	*/
 
 	document.querySelector('h1').addEventListener('click', function(){
 		window.open(document.getElementById('wdurl').value);

@@ -22,19 +22,28 @@
 					<div class="toptionc" style="width: 47%;float: right;"><label for="password" ><span>__MSG_optionsPassword__</span>:</label><input type="password" id="password" placeholder="Password"></div>
 					<div class="toptionc" style="float: left;"><label for="cname">Client Name:</label><input type="text" id="cname" placeholder=""></div>
 				</div>
-				<button id="ebutton" class="collapsible"><span>__MSG_optionsBTNAdvSet__</span></button>
+				<!-- <button id="ebutton" class="collapsible"><span>__MSG_optionsBTNAdvSet__</span></button> -->
+				<div class="ocontainer">
+					<fieldset style="width: calc(100% - 22px);"><legend><span>__MSG_optionsSyncOptions__</span></legend>
+					<div class="toptionc"><label class="switch"><input id="php_webdav" type="checkbox" checked><span class="slider round"></span><span class="lbl" id="blbl">Backend PHP</span></label></div>
+					<div class="toptionc"><label class="switch"><input id="s_auto" type="checkbox" checked><span class="slider round"></span><span class="lbl">__MSG_optionsAuto__</span></label></div>
+					<div class="toptionc"><label class="switch"><input id="b_action" type="checkbox" checked><span class="slider round"></span><span class="lbl">__MSG_bookmarkTab__</span></label></div>
+					</fieldset>
+				</div>
 				<div id="exps" class="exp_content">
 					<div class="ocontainer">
-						<div class="toptionc"><input type="radio" id="php" name="stype" value="PHP" checked><label for="php">PHP</label></div>
-						<div class="toptionc"><input type="radio" id="wdav" name="stype" value="WebDAV"><label for="wdav">WebDAV</label></div>
+						<!-- <div class="toptionc"><label class="switch"><input id="php_webdav" type="checkbox" checked><span class="slider round"></span><span class="lbl" id="blbl">Backend PHP</span></label></div> -->
+						<div class="toptionc toptionb"><input type="radio" id="php" name="stype" value="PHP" checked><label for="php">PHP</label></div>
+						<div class="toptionc toptionb"><input type="radio" id="wdav" name="stype" value="WebDAV"><label for="wdav">WebDAV</label></div>
+						
 					</div>
 					<div class="ocontainer">
-						<div class="toptionc"><label class="switch"><input id="s_auto" type="checkbox" checked><span class="slider round"></span><span class="lbl">__MSG_optionsAuto__</span></label></div>
+						<!-- <div class="toptionc"><label class="switch"><input id="s_auto" type="checkbox" checked><span class="slider round"></span><span class="lbl">__MSG_optionsAuto__</span></label></div>-->
 						<div class="toptionc toptionb"><label class="switch"><input id="s_startup" type="checkbox" checked><span class="slider round"></span><span class="lbl">__MSG_optionsStartup__</span></label></div>
 						<div class="toptionc toptionb"><label class="switch"><input id="s_create" type="checkbox" checked><span class="slider round"></span><span class="lbl">__MSG_optionsCreate__</span></label></div>
 						<div class="toptionc toptionb"><label class="switch"><input id="s_change" type="checkbox" checked><span class="slider round"></span><span class="lbl">__MSG_optionsChange__</span></label></div>
 						<div class="toptionc toptionb"><label class="switch"><input id="s_remove" type="checkbox" checked><span class="slider round"></span><span class="lbl">__MSG_optionsRemove__</span></label></div>
-						<div class="toptionc"><label class="switch"><input id="b_action" type="checkbox" checked><span class="slider round"></span><span class="lbl">__MSG_bookmarkTab__</span></label></div>
+						<!-- <div class="toptionc"><label class="switch"><input id="b_action" type="checkbox" checked><span class="slider round"></span><span class="lbl">__MSG_bookmarkTab__</span></label></div>-->
 					</div>
 				</div>
 				<div class="ocontainer btnc">
