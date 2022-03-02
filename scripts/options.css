@@ -275,13 +275,11 @@ input:checked + .slider:before {
 }
 .toptionc {
 	position: relative;
-	/* display: inline-flex; */
-	/* width: 149px; */
-	/* width: 260px; */
 	text-align: left;
 }
 .toptionb {
-	display: none;
+    display: inline-block;
+    visibility: collapse;
 }
 #changelog {
 	overflow: auto;

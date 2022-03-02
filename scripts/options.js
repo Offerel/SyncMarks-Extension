@@ -401,7 +401,6 @@ function switchBackend() {
 }
 
 function cAuto() {
-	//let crsrv = document.getElementById("b_action");
 	if(document.getElementById("s_auto").checked) {
 		document.getElementById("b_action").checked = false;
 
@@ -465,9 +464,7 @@ window.addEventListener('load', function () {
 	document.getElementById("wdurl").addEventListener("change", checkForm);
 	document.getElementById("user").addEventListener("change", checkForm);
 	document.getElementById("password").addEventListener("change", checkForm);
-
-	//document.getElementById("wdav").addEventListener("change", saveOptions);
-	//document.getElementById("php").addEventListener("change", saveOptions);	
+	
 	document.getElementById("php_webdav").addEventListener("change", switchBackend);
 	
 	document.getElementById("s_startup").addEventListener("change", saveOptions);
@@ -483,20 +480,6 @@ window.addEventListener('load', function () {
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 	document.getElementById("logsave").addEventListener("click", saveLog);
 	document.getElementById("logclear").addEventListener("click", clearLog);
-	/*
-	document.getElementById('ebutton').addEventListener('click', function(e) {
-		e.preventDefault();
-		this.classList.toggle("active");
-		this.nextElementSibling.classList.toggle("active");
-		let panel = this.nextElementSibling;
-		if (panel.style.maxHeight) {
-			panel.style.maxHeight = null;
-		} else {
-			panel.style.maxHeight = panel.scrollHeight + "px";
-		}
-
-	});
-	*/
 
 	document.querySelector('h1').addEventListener('click', function(){
 		window.open(document.getElementById('wdurl').value);
