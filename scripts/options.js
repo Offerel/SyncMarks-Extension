@@ -45,6 +45,7 @@ function saveOptions(e) {
 		s_type: document.querySelector('input[name="stype"]:checked').value,
 		s_uuid: document.querySelector("#s_uuid").value,
 		wdurl: document.querySelector("#wdurl").value,
+		token: document.getElementById("token").value,
 
 		creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 	});
@@ -71,7 +72,13 @@ function saveOptions(e) {
 						wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
 						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorUser"));
 						break;
-			case 200:	if(xhr.responseText.indexOf('updated') == 7) {
+			case 200:	let response = JSON.parse(xhr.responseText);
+
+						if(response.token.length != 0) {
+							document.getElementById('token').defaultValue = response.token;
+						}
+
+						if(response.message.indexOf('updated') == 7) {
 							wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
 							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
 							chrome.storage.local.set({
@@ -79,9 +86,9 @@ function saveOptions(e) {
 								creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
 							});
 						} else {
-							wmessage.textContent = 'Warning: '+xhr.responseText;
+							wmessage.textContent = 'Warning: '+ response.message;
 							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-							console.warn('Syncmarks Warning: '+xhr.responseText);
+							console.warn('Syncmarks Warning: '+ response.message);
 						}
 						break;
 			default:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorLogin") + xhr.status;
@@ -147,6 +154,8 @@ function restoreOptions() {
 			setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
 		}
 		document.querySelector("#wdurl").defaultValue = options['wdurl'] || "";
+		document.getElementById("token").defaultValue = options['token'] || "";
+		
 		if(options['creds'] !== undefined) {
 			let creds = atob(options['creds']).split(':');
 			document.querySelector("#user").defaultValue = creds[0] || "";
