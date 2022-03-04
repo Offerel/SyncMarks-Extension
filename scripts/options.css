@@ -35,6 +35,7 @@ input, button {
     color: indianred;
     cursor: pointer;
     z-index: 1;
+    outline: 0;
 }
 #confinput {
 	display: none;

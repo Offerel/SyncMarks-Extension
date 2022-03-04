@@ -118,7 +118,10 @@ function bookmarkTab() {
 
 				var xhr = new XMLHttpRequest();
 				xhr.open("POST", options['wdurl'], true);
-				xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+				let tarr = {};
+				tarr['client'] = options['s_uuid'];
+				tarr['token'] = options['token'];
+				xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.withCredentials = true;
 				xhr.onload = function () {
@@ -145,7 +148,10 @@ function sendTab(element) {
 			var cdata = "client=" + options['s_uuid'] + "&caction=getpurl&url=" + encodeURIComponent(url) + "&tg=" + element.target.id;
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+			let tarr = {};
+			tarr['client'] = options['s_uuid'];
+			tarr['token'] = options['token'];
+			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -243,7 +249,10 @@ function getNotifications() {
 		let xhr = new XMLHttpRequest();
 		let data = "client=" + options['s_uuid'] + "&caction=gurls";
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		
 		xhr.withCredentials = true;
@@ -325,7 +334,10 @@ function getClientList() {
 		let data = "client=" + options['s_uuid'] + "&caction=getclients&s="+options['actions']['startup'];
 		let xhr = new XMLHttpRequest();
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
@@ -439,7 +451,10 @@ function dmNoti(nkey) {
 		let xhr = new XMLHttpRequest();
 		let data = "client=" + options['s_uuid'] + "&caction=durl&durl="+nkey;
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
@@ -521,7 +536,10 @@ function editMark(eData,id) {
 			let cdata = "client="+s_uuid+"&caction=editmark&bookmark="+jsonMark;
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+			let tarr = {};
+			tarr['client'] = options['s_uuid'];
+			tarr['token'] = options['token'];
+			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -597,7 +615,10 @@ function exportPHPMarks(upl=[]) {
 			let cdata = 'client='+s_uuid+'&caction=import&bookmark='+bookmarks+"&p="+p+"&s="+options['actions']['startup'];
 			let xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader('Authorization', 'Basic ' + options['creds']);
+			let tarr = {};
+			tarr['client'] = options['s_uuid'];
+			tarr['token'] = options['token'];
+			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -620,7 +641,6 @@ function exportPHPMarks(upl=[]) {
 					}
 				}
 			}
-			//loglines = logit("Info: Sending export of local bookmarks to server");
 			xhr.send(cdata);
 		})
 	});
@@ -641,7 +661,10 @@ function saveAllMarks() {
 			xhr.open("PUT", options['wdurl'] + "/" + filename, true);
 			xhr.withCredentials = true;
 			xhr.setRequestHeader('X-Filename', filename);
-			xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+			let tarr = {};
+			tarr['client'] = options['s_uuid'];
+			tarr['token'] = options['token'];
+			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.onload = function () {
 				if( xhr.status < 200 || xhr.status > 226) {
 					message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
@@ -677,7 +700,10 @@ function delMark(id, bookmark) {
 		let cdata = "client="+s_uuid+"&caction=delmark&bookmark="+jsonMark;
 		var xhr = new XMLHttpRequest();
 		xhr.open("POST", options['wdurl'], true);
-		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.onload = function () {
@@ -725,7 +751,10 @@ function moveMark(id, bookmark) {
 				let cdata = "client="+s_uuid+"&caction=movemark&bookmark="+jsonMark+"&s="+options['actions']['startup'];
 				var xhr = new XMLHttpRequest();
 				xhr.open("POST", options['wdurl'], true);
-				xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+				let tarr = {};
+				tarr['client'] = options['s_uuid'];
+				tarr['token'] = options['token'];
+				xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.withCredentials = true;
 				xhr.onload = function () {
@@ -786,7 +815,10 @@ function sendMark(bookmark) {
 
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
-			xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+			let tarr = {};
+			tarr['client'] = options['s_uuid'];
+			tarr['token'] = options['token'];
+			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
 			xhr.onload = function () {
@@ -824,7 +856,10 @@ function saveDAVMarks(bookmarkItems) {
 		xhr.open("PUT", options['wdurl'] + "/" + filename, true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader('X-Filename', filename);
-		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
@@ -854,7 +889,10 @@ function getPHPMarks() {
 		let params = 'client='+s_uuid+'&caction=startup&s='+options['actions']['startup'];
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
-		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		
 		xhr.onload = function () {
@@ -897,7 +935,10 @@ function checkFullSync() {
 		let params = 'client=' + options['s_uuid'] + '&caction=cinfo';
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
-		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
@@ -906,17 +947,10 @@ function checkFullSync() {
 				loglines = logit('Error: '+message);
 			} else {
 				let cinfo = JSON.parse(xhr.responseText);
-
-				//if(cinfo['fs'] === '1') {
-					lastseen = cinfo['lastseen'];
-					doFullSync();
-				//} else {
-				//	loglines = logit("Info: FullSync check negative");
-				//	getPHPMarks();
-				//}
+				lastseen = cinfo['lastseen'];
+				doFullSync();
 			}
 		}
-		//loglines = logit("Info: Start Sync check");
 		xhr.send(params);
 	});
 }
@@ -942,7 +976,10 @@ function getAllPHPMarks(fs=false) {
 		let params = 'client='+options['s_uuid']+'&caction=export&type=json&s='+options['actions']['startup'];
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
-		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.onload = function () {
 			if( xhr.status != 200 ) {
@@ -1327,7 +1364,10 @@ function getDAVMarks() {
 		xhr.open('GET', options['wdurl'] + '/' + filename + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader('X-Filename', filename);
-		xhr.setRequestHeader("Authorization", 'Basic ' + options['creds']);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		
 		xhr.onload = function () {		
 			if( xhr.status != 200 ) {
