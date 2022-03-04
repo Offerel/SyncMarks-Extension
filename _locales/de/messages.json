@@ -146,38 +146,40 @@
     "message": "Nein",
     "description": "No Button."
   },
-
   "optionsBTNCancel": {
     "message": "Abbrechen",
     "description": "Cancel Button."
   },
-
   "optionsNotUsed": {
     "message": "Es sieht so aus, als hättest du das AddOn noch nie benutzt. Du kannst nun alle auf dem Server gespeicherten Bookmarks mit \"Importieren\" importieren. Wenn du bereits Bookmarks in deinem Browser erstellt hast, ist es eventuell eine gute Idee, diese vorher mit \"Löschen\" zu löschen.",
     "description": "Not used hint."
-  },
-  
+  },  
   "optionsErrorURL": {
     "message": "Login Fehler: Bitte prüfe den URL. Dieser sollte im Format https://servername/folder sein.",
     "description": "Login failed, wrong URL."
-  },
-  
+  },  
   "optionsErrorUser": {
     "message": "Login Fehler: Bitte prüfe Benutzer und Passwort.",
     "description": "Login failed, wrong User."
   },
-
   "optionsSuccessLogin": {
     "message": "Login erfolgreich. Optionen gespeichert.",
     "description": "Login failed, wrong User."
   },
-
   "optionsErrorLogin": {
     "message": "Login Fehler: Status: ",
     "description": "Login failed, unknown state."
   },
   "optionsBeforeCImpExp": {
-    "message": "Hier kannst du deine bestehenden Einstellungen sichern oder wiederherstellen..",
+    "message": "Hier kannst du deine bestehenden Einstellungen sichern oder wiederherstellen.",
+    "description": ""
+  },
+  "optionsBeforeLogin": {
+    "message": "Bitte einmalig mit deinen Zugangsdaten einloggen, um einen Zugangscode zu erhalten.",
+    "description": ""
+  },
+  "optionsWrongAData": {
+    "message": "Fehlender oder falscher Zugangscode. Bitte erneut einloggen.",
     "description": ""
   },
   "infoRestoreID": {
@@ -196,22 +198,18 @@
     "message": "Vor dem Export werden alle Bookmarks auf dem Server gelöscht. Danach werden die neuen Bookmarks zum Server eportiert.\n\nSollen die Bookmarks vor dem Export auf dem Server gelöscht werden?",
     "description": ""
   },
-
   "optionsInfoRemove": {
     "message": "Wenn du fortfährst, werden alle deine aktuellen Bookmarks entfernt.\n\nSollen alle lokalen Bookmarks gelöscht werden?",
     "description": "Login failed, unknown state."
   },
-
   "popupBTNOptions": {
     "message": "Optionen",
     "description": "Options Button."
   },
-
   "popupNoSync": {
     "message": "Bisher wurde kein Sync beim Browserstart durchgeführt.",
     "description": "No startup sync done yet.."
-  },
-  
+  },  
   "popupImportConfirm": {
 	"message": "Die Bookmarks werden nun vom Server übernommen. Bist du sicher?",
     "description": "ImportConfirm"

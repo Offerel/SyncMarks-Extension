@@ -146,52 +146,50 @@
     "message": "No",
     "description": "No Button."
   },
-
   "optionsBTNCancel": {
     "message": "Cancel",
     "description": "Cancel Button."
-  },
-  
+  },  
   "optionsNotUsed": {
     "message": "It looks like you haven't used the add-on yet. You can now import any bookmarks saved on the server with \"Import\". If you have already created bookmarks in your browser, it might be a good idea to delete them with \"Remove\".",
     "description": "Not used hint."
-  },
-  
+  },  
   "optionsErrorURL": {
     "message": "Login failed: Please check the WebDAV URL. It should be in a form like https://servername/folder",
     "description": "Login failed, wrong URL."
-  },
-  
+  },  
   "optionsErrorUser": {
     "message": "Login failed: Please check username and password.",
     "description": "Login failed, wrong User."
   },
-
   "optionsSuccessLogin": {
     "message": "Login successfully. Options saved.",
     "description": "Login successfully."
   },
-
   "optionsErrorLogin": {
     "message": "Login failed: Status: ",
     "description": "Login failed, unknown state."
   },
-
   "optionsBeforeCImpExp": {
     "message": "Here you can store or restore your current settings.",
     "description": ""
   },
-  
+  "optionsBeforeLogin": {
+    "message": "Please log in once with your access data to receive an access code.",
+    "description": ""
+  },  
+  "optionsWrongAData": {
+    "message": "Missing or wrong access code. Please log in again.",
+    "description": ""
+  },
   "infoRestoreID": {
     "message": "Do you want to restore the Client ID?",
     "description": ""
-  },
-  
+  },  
   "optionsSuccessImport": {
     "message": "Import successfully.",
     "description": ""
-  },
-  "optionsBeforeImport": { 
+  },  "optionsBeforeImport": { 
     "message": "All local bookmarks are deleted before importing. Afterwards the new bookmarks are imported.\n\nShould the local bookmarks be deleted before the import?",
     "description": "Message before importing."
   },
@@ -199,32 +197,26 @@
     "message": "All bookmarks are deleted at the server before exporting. Afterwards the new bookmarks are exported to the server.\n\nShould the remote bookmarks be deleted before the export?",
     "description": ""
   },
-
   "optionsInfoRemove": {
     "message": "When you continue, all your current bookmarks are removed.\n\nAre you sure to delete all local bookmarks?",
     "description": "Login failed, unknown state."
   },
-
   "popupBTNOptions": {
     "message": "Options",
     "description": "Options Button."
-  },
-  
+  },  
   "popupNoSync": {
     "message": "No startup sync done yet.",
     "description": "No startup sync done yet.."
-  },
-  
+  },  
   "popupImportConfirm": {
     "message": "The bookmarks stored on the server are now added. Are you sure?",
     "description": "ImportConfirm"
   },
-
   "errorGetBookmarks": {
   "message": "There was a error retrieving the bookmarks from the server. The status response is: ",
     "description": "http error when retrieving bookmarks."
-  },
-  
+  },  
   "errorSaveBookmarks": {
     "message": "There was some error saving all bookmarks. The status response is: ",
     "description": "http error when saving bookmarks."

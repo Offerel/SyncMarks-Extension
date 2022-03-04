@@ -18,6 +18,7 @@
 			<form>
 				<div class="ocontainer server">
 					<div class="toptionc"><label for="wdurl"><span>__MSG_optionsServerURL__</span>:</label><input inputmode="url" type="url" id="wdurl" placeholder="https://servername.com/syncmarks/" /></div>
+					<a href="#" id="lginl"><span>__MSG_optionsWrongAData__</span></a>
 					<div class="toptionc"><label for="token"><span>Token</span>:</label><input type="text" id="token" placeholder="Token" /></div>
 					<div class="toptionc" style="width: 50%;float: left;"><label for="user"><span>__MSG_optionsUsername__</span>:</label><input inputmode="email" type="email" id="user" placeholder="Username"><input type="hidden" id="s_uuid"></div>
 					<div class="toptionc" style="width: 47%;float: right;"><label for="password" ><span>__MSG_optionsPassword__</span>:</label><input type="password" id="password" placeholder="Password"></div>
@@ -49,25 +50,15 @@
 					</fieldset>
 				</div>
 				<div id="wmessage"></div>
-
 				<div id="crdialog" class="modal">
 					<div class="modal-content">
-						<span id="cclose" class="close">&times;</span>
-						<span class="mtext">__MSG_optionsBeforeCImpExp__
-
-							<span><label for="user"><span>__MSG_optionsUsername__</span>:</label><input inputmode="email" type="email" id="user" placeholder="Username"></span>
-						<span><label for="password" ><span>__MSG_optionsPassword__</span>:</label><input type="password" id="password" placeholder="Password"></span>
-						</span>
-
-						
-						<!--
-						<input type="file" id="confinput" accept="application/json" />
-						<button id="cexp" disabled><span>__MSG_optionsBTNStore__</span></button>
-						<button id="cimp"><span>__MSG_optionsBTNRestore__</span></button>
-						-->
+						<span id="crclose" class="close">&times;</span>
+						<span class="mtext" id="lgind">__MSG_optionsBeforeLogin__</span>
+						<div class="toptionc"><label for="nuser"><span>__MSG_optionsUsername__</span>:</label><input inputmode="email" type="email" id="nuser" placeholder="Username"></div>
+						<div class="toptionc"><label for="npassword" ><span>__MSG_optionsPassword__</span>:</label><input type="password" id="npassword" placeholder="Password"></div>
+						<div style="text-align: right;"><button id="lgin" disabled><span>Login</span></button></div>
 					</div>
 				</div>
-
 				<div id="expimpdialog" class="modal">
 					<div class="modal-content">
 						<span id="cclose" class="close">&times;</span>
