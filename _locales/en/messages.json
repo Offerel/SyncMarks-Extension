@@ -170,6 +170,10 @@
     "message": "Login failed: Status: ",
     "description": "Login failed, unknown state."
   },
+  "optionsLoginError": {
+    "message": "Login Error: Please check Options",
+    "description": ""
+  },
   "optionsBeforeCImpExp": {
     "message": "Here you can store or restore your current settings.",
     "description": ""

@@ -170,6 +170,10 @@
     "message": "Login Fehler: Status: ",
     "description": "Login failed, unknown state."
   },
+  "optionsLoginError": {
+    "message": "Login Fehler: Bitte in den Optionen neu einloggen",
+    "description": ""
+  },
   "optionsBeforeCImpExp": {
     "message": "Hier kannst du deine bestehenden Einstellungen sichern oder wiederherstellen.",
     "description": ""

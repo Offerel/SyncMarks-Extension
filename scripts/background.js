@@ -115,7 +115,6 @@ function bookmarkTab() {
 				}));
 				
 				let data = "client=bookmarkTab&caction=addmark&bookmark=" + jsonMark + "&s=false";
-
 				var xhr = new XMLHttpRequest();
 				xhr.open("POST", options['wdurl'], true);
 				let tarr = {};
@@ -130,6 +129,18 @@ function bookmarkTab() {
 						loglines = logit("Error: " + xhr.response);
 					} else {
 						let response = JSON.parse(xhr.response);
+						let xtResponse = xhr.getResponseHeader("X-T-Response");
+						if(xtResponse !== null) {
+							chrome.storage.local.set({token: xtResponse});
+						}
+
+						let xfResponse = xhr.getResponseHeader("X-F-Response");
+						if(xfResponse === "failed") {
+							chrome.storage.local.set({token: ''});
+							let message = chrome.i18n.getMessage("optionsLoginError");
+							notify('error', message);
+						}
+
 						response = (response == "1") ? "'"+tabs[0].title+"' added":JSON.parse(xhr.response);
 						notify('info', response);
 						loglines = logit("Info: " + response);
@@ -159,9 +170,10 @@ function sendTab(element) {
 					var message = chrome.i18n.getMessage("sendLinkNot");
 					notify('error',message);
 					loglines = logit('Error: ' + message);
-				}
-				else {
+				} else {
 					loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes"));
+					let xtResponse = xhr.getResponseHeader("X-T-Response");
+					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 				}
 			}
 			loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options['s_uuid']);
@@ -262,6 +274,9 @@ function getNotifications() {
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			} else {
+				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+
 				if(xhr.responseText.length > 2) {
 					var nData = JSON.parse(xhr.responseText);
 					if(Array.isArray(nData)) {
@@ -346,6 +361,15 @@ function getClientList() {
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			} else {
+				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+				let xfResponse = xhr.getResponseHeader("X-F-Response");
+				if(xfResponse === "failed") {
+					chrome.storage.local.set({token: ''});
+					let message = chrome.i18n.getMessage("optionsLoginError");
+					notify('error', message);
+				}
+
 				cData = JSON.parse(xhr.responseText);
 				
 				chrome.storage.local.set({
@@ -385,7 +409,7 @@ function getClientList() {
 							let cnt = cData.length - 1;
 							loglines = logit("Info: List of " + cnt + " clients retrieved successful.");
 						} else {
-							console.info("No clients received");
+							//console.info("No clients received");
 						}
 					}
 				});
@@ -462,6 +486,9 @@ function dmNoti(nkey) {
 				message = "Dismiss notification "+nkey+".";
 				notify('error',message);
 				loglines = logit('Error: '+message);
+			} else {
+				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 			}
 		}
 		xhr.send(data);
@@ -550,6 +577,9 @@ function editMark(eData,id) {
 					loglines = logit('Error: '+message);
 				}
 				else {
+					let xtResponse = xhr.getResponseHeader("X-T-Response");
+					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+
 					let response = JSON.parse(xhr.responseText);
 					if(response == 1) {
 							loglines = logit("Info: Bookmark edited successfully at the server");
@@ -628,6 +658,9 @@ function exportPHPMarks(upl=[]) {
 					loglines = logit("Error: "+message);
 				}
 				else {
+					let xtResponse = xhr.getResponseHeader("X-T-Response");
+					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+
 					let response = JSON.parse(xhr.responseText);
 					if(response == 1) {
 						message = chrome.i18n.getMessage("successExportBookmarks");
@@ -714,6 +747,9 @@ function delMark(id, bookmark) {
 				loglines = logit('Error: '+message);
 			}
 			else {
+				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+
 				let response = JSON.parse(xhr.responseText);
 				if(response == 1) {
 						loglines = logit("Info: Bookmark removed at the server");
@@ -764,6 +800,9 @@ function moveMark(id, bookmark) {
 						loglines = logit('Error: '+message);
 					}
 					else {
+						let xtResponse = xhr.getResponseHeader("X-T-Response");
+						if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+
 						let response = JSON.parse(xhr.responseText);
 						if(response == 1)
 								loglines = logit("Info: Bookmark moved successfully at the server");
@@ -810,9 +849,7 @@ function sendMark(bookmark) {
 			} else {
 				var s_uuid = options['s_uuid'];
 			}
-
 			let cdata = "client="+s_uuid+"&caction=addmark&bookmark="+jsonMark+"&s="+options['actions']['startup'];
-
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", options['wdurl'], true);
 			let tarr = {};
@@ -828,6 +865,9 @@ function sendMark(bookmark) {
 					loglines = logit('Error: '+message);
 				}
 				else {
+					let xtResponse = xhr.getResponseHeader("X-T-Response");
+					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+
 					let response = JSON.parse(xhr.responseText);
 					if(response == 1)
 							loglines = logit("Info: Bookmark added successfully at the server");
@@ -905,6 +945,9 @@ function getPHPMarks() {
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			} else {
+				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+
 				response = (xhr.responseText);
 				if(abrowser == false) response = c2cm(response);
 				let PHPMarks = JSON.parse(response);
@@ -944,11 +987,21 @@ function checkFullSync() {
 			if( xhr.status < 200 || xhr.status > 226) {
 				let message = 'FullSync Check failed';
 				notify('error', message);
-				loglines = logit('Error: '+message);
+				loglines = logit('Error: ' + message);
 			} else {
-				let cinfo = JSON.parse(xhr.responseText);
-				lastseen = cinfo['lastseen'];
-				doFullSync();
+				let rp = xhr.responseText;
+				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+				let cinfo = JSON.parse(rp);
+				let xfResponse = xhr.getResponseHeader("X-F-Response");
+				if(xfResponse === "failed") {
+					let message = chrome.i18n.getMessage("optionsLoginError");
+					chrome.storage.local.set({token: ''});
+					notify('error', message);
+				} else {
+					lastseen = cinfo['lastseen'];
+					doFullSync();
+				}
 			}
 		}
 		xhr.send(params);
@@ -985,21 +1038,24 @@ function getAllPHPMarks(fs=false) {
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
 				notify('error',message);
-				loglines = logit('Error: '+message);
+				loglines = logit('Error: ' + message);
 			}
 			else {
 				let response = xhr.responseText;
-				if(response != "false") {
+				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+
+				//if(response.indexOf("false") === -1) {
 					if(abrowser == false) response = c2cm(response);
 					let PHPMarks = JSON.parse(response);
 					count = 0;
 					loglines = logit('Info: Bookmarks retrieved from server');
 					//(fs === true) ? importFull(PHPMarks):importMarks(PHPMarks);
 					importFull(PHPMarks);
-				}
-				else {
-					loglines = logit("Error: Error when retrieving bookmarks from server for import");
-				}
+				//}
+				//else {
+				//	loglines = logit("Error: Error when retrieving bookmarks from server for import");
+				//}
 			}
 
 			let date = new Date(Date.now());

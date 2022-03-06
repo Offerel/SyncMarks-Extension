@@ -2,14 +2,12 @@ var background_page = chrome.extension.getBackgroundPage();
 
 function checkForm() {
 	var wchanged = false;
-	var uchanged = false;
-	var pchanged = false;
 
 	if((document.getElementById('wdurl').value != '') && (document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue)) {
 		document.getElementById("lginl").style.visibility = 'visible';
 	}
 
-	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
+	if(document.getElementById('wdurl').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
 		document.getElementById('mdownload').disabled=false;
 		document.getElementById('mupload').disabled=false;
 		document.getElementById('mremove').disabled=false;
@@ -20,12 +18,7 @@ function checkForm() {
 	}
 
 	if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) wchanged = true;
-	if(document.getElementById('user').value != document.getElementById('user').defaultValue) uchanged = true;
-	if(document.getElementById('password').value != document.getElementById('password').defaultValue) pchanged = true;
-
-
-
-	if(wchanged && uchanged && pchanged) saveOptions();
+	if(wchanged) saveOptions();
 }
 
 function checkForm2() {
@@ -36,43 +29,13 @@ function checkForm2() {
 	}
 }
 
-function saveOptions(e) {
-	if(typeof e !== "undefined") e.preventDefault();
-	let wmessage = document.getElementById('wmessage');
-	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
-		document.getElementById("wmessage").textContent = chrome.i18n.getMessage("optionsNotUsed");
-		wmessage.style.cssText = "border-color: darkorange; background-color: gold;";
-	}
-
-	chrome.storage.local.set({
-		actions: {
-			startup:document.querySelector("#s_startup").checked,
-			create:document.querySelector("#s_create").checked,
-			change:document.querySelector("#s_change").checked,
-			remove:document.querySelector("#s_remove").checked,
-			crsrv:document.querySelector("#b_action").checked
-		},
-
-		s_type: document.querySelector('input[name="stype"]:checked').value,
-		s_uuid: document.querySelector("#s_uuid").value,
-		wdurl: document.querySelector("#wdurl").value,
-		token: document.getElementById("token").value,
-
-		creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
-	});
-
+function gToken(e) {
+	e.preventDefault();
+	document.getElementById('crdialog').style.display = "none";
 	let xhr = new XMLHttpRequest();
-	let cdata = "caction=logout&client="+document.getElementById('s_uuid').value;
+	cdata = "caction=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked;
 	xhr.open("POST", document.getElementById('wdurl').value, true);
-	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	xhr.send(cdata);
-
-	cdata = "client=" + document.getElementById('s_uuid').value + "&caction=tl&s="+document.getElementById('s_startup').checked;
-	xhr.open("POST", document.getElementById('wdurl').value, true);
-	let tarr = {};
-	tarr['client'] = options['s_uuid'];
-	tarr['token'] = options['token'];
-	xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
+	xhr.setRequestHeader('Authorization', 'Basic ' + btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value));
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xhr.withCredentials = true;
 	
@@ -86,19 +49,20 @@ function saveOptions(e) {
 						wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
 						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorUser"));
 						break;
-			case 200:	let response = JSON.parse(xhr.responseText);
-
-						if(response.token.length != 0) {
-							document.getElementById('token').defaultValue = response.token;
+			case 200:	let rp = xhr.responseText;
+						let response = (rp.indexOf('<') === -1) ? JSON.parse(rp):'0';
+						
+						if(typeof response.length === 'undefined' && response.token.length != 0) {
+							document.getElementById('lginl').style.visibility = "hidden";
+							chrome.storage.local.set({
+								wdurl: document.getElementById('wdurl').value,
+								token: response.token
+							});
 						}
 
 						if(response.message.indexOf('updated') == 7) {
 							wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
-							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
-							chrome.storage.local.set({
-								wdurl: document.getElementById('wdurl').value,
-								creds: btoa(document.querySelector("#user").value+':'+document.querySelector("#password").value)
-							});
+							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";							
 						} else {
 							wmessage.textContent = 'Warning: '+ response.message;
 							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
@@ -115,6 +79,31 @@ function saveOptions(e) {
 		background_page.init();
 	};
 	xhr.send(cdata);
+}
+
+function saveOptions(e) {
+	if(typeof e !== "undefined") e.preventDefault();
+	let wmessage = document.getElementById('wmessage');
+	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
+		document.getElementById("wmessage").textContent = chrome.i18n.getMessage("optionsNotUsed");
+		wmessage.style.cssText = "border-color: darkorange; background-color: gold;";
+	}
+
+	chrome.storage.local.remove("creds");
+
+	chrome.storage.local.set({
+		actions: {
+			startup:document.getElementById("s_startup").checked,
+			create:document.getElementById("s_create").checked,
+			change:document.getElementById("s_change").checked,
+			remove:document.getElementById("s_remove").checked,
+			crsrv:document.getElementById("b_action").checked
+		},
+
+		s_type: document.querySelector('input[name="stype"]:checked').value,
+		s_uuid: document.getElementById("s_uuid").value,
+		wdurl: document.getElementById("wdurl").value,
+	});
 }
 
 function rName() {
@@ -134,6 +123,9 @@ function rName() {
 				message = "Error set name of client."  + xhr.status;
 				background_page.notify('error',message);
 				background_page.loglines = background_page.logit('Error: '+message);
+			} else {
+				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 			}
 		}
 		xhr.send(cdata);
@@ -156,9 +148,12 @@ function gName() {
 			background_page.notify('error',message);
 			background_page.loglines =  background_page.logit('Error: '+message);
 		} else {
+			let xtResponse = xhr.getResponseHeader("X-T-Response");
+			if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+
 			let response = JSON.parse(xhr.responseText);		
 			document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
-			document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
+			if(response !== null) document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
 		}
 	}
 	xhr.send(cdata);
@@ -174,13 +169,10 @@ function restoreOptions() {
 			setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
 		}
 		document.querySelector("#wdurl").defaultValue = options['wdurl'] || "";
-		document.getElementById("token").defaultValue = options['token'] || "";
+		if(options['token'] === '') document.getElementById("lginl").style.visibility = 'visible';
 		
 		if(options['creds'] !== undefined) {
 			let creds = atob(options['creds']).split(':');
-			document.querySelector("#user").defaultValue = creds[0] || "";
-			document.querySelector("#password").defaultValue = creds[1] || "";
-
 			document.getElementById("nuser").defaultValue = creds[0] || "";
 			document.getElementById("npassword").defaultValue = creds[1] || "";
 			checkForm2();
@@ -260,20 +252,18 @@ function importOptions() {
 			},
 			s_type: ioptions.s_type,
 			wdurl: ioptions.wdurl,
-			creds: ioptions.creds,
+			token: ioptions.token
 		});
 
 		if(resCID) {
 			chrome.storage.local.set({
-				s_uuid: ioptions.s_uuid
+				s_uuid: ioptions.s_uuid,
+				token: ioptions.token
 			});
 		}
-		
-		let creds = atob(ioptions.creds).split(':');
 
 		document.querySelector("#wdurl").value = ioptions.wdurl;
-		document.querySelector("#user").value = creds[0];
-		document.querySelector("#password").value = creds[1];
+
 		if(resCID) document.querySelector("#s_uuid").value = ioptions.s_uuid;
 		document.querySelector("#s_startup").checked = ioptions.actions.startup;
 		document.querySelector("#s_create").checked = ioptions.actions.create;
@@ -454,12 +444,6 @@ function cAuto() {
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
-document.addEventListener("DOMContentLoaded", function() {
-	setTimeout(function(){
-		if(document.getElementById("token").value == '') document.getElementById("lginl").style.visibility = 'visible';
-	},1000);
-});
-
 window.addEventListener('load', function () {
 	var rawFile = new XMLHttpRequest();
 	rawFile.open("GET", "../CHANGELOG.md", true);
@@ -502,14 +486,20 @@ window.addEventListener('load', function () {
 	document.getElementById("mremove").addEventListener("click", function() {rmodal.style.display = "block"})
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
 	document.getElementById("wdurl").addEventListener("change", checkForm);
-	document.getElementById("user").addEventListener("change", checkForm);
-	document.getElementById("password").addEventListener("change", checkForm);
 
-	document.getElementById("lginl").addEventListener("click", function(e) {e.preventDefault; document.getElementById("crdialog").style.display = "block";});
-	document.getElementById("nuser").addEventListener("change", checkForm2);
-	document.getElementById("npassword").addEventListener("change", checkForm2);
+	document.getElementById("lginl").addEventListener("click", function(e) {
+		e.preventDefault;
+		document.getElementById("nuser").defaultValue = '';
+		document.getElementById("npassword").defaultValue = '';
+		document.getElementById("crdialog").style.display = "block";
+		document.getElementById("nuser").focus();
+	});
+
+	document.getElementById("nuser").addEventListener("input", checkForm2);
+	document.getElementById("npassword").addEventListener("input", checkForm2);
 	
 	document.getElementById("php_webdav").addEventListener("change", switchBackend);
+	document.getElementById('lgin').addEventListener("click", gToken);
 	
 	document.getElementById("s_startup").addEventListener("change", saveOptions);
 	document.getElementById("s_create").addEventListener("change", saveOptions);

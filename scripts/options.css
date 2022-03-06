@@ -14,9 +14,15 @@ input, button {
     border: 1px solid darkgray;
     outline: 0;
 }
+button#lgin {
+    margin-top: .7em;
+    margin-right: 0;
+}
 #crdialog input {
     width: 100%;
     box-sizing: border-box;
+	margin-bottom: 1em;
+	padding: 0.25em 0.4em;
 }
 #crdialog label {
     font-size: 0.75em;
@@ -64,9 +70,10 @@ button {
 	margin: 5px;
 	position: relative;
 	display: inline-block;
+	transition: all 0.3s;
 }
 button:hover:not(:disabled) {
-	background-color: blue;
+	background-color: #2980b9;
 	color: white;
 }
 button:disabled {
@@ -250,14 +257,22 @@ input:checked + .slider:before {
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
 }
+.toptionc button {
+    background-color: #3498db;
+    color: white;
+}
+.modal button:not(:disabled) {
+	color:white;
+	background-color: #3498db;
+}
 .modal button {
-	width: 44%;
-	margin-left: 10px;
-	margin-top: 20px;
-	font-weight: bold;
+    width: 44%;
+    margin-left: 10px;
+    margin-top: 20px;
+    transition: all 0.3s;
 }
 .modal button:hover {
-	background-color: blue;
+	background-color: #2980b9;
 	color: white;
 }
 .modal-content {
@@ -268,6 +283,7 @@ input:checked + .slider:before {
 	width: 80%;
 	max-width: 350px;
 	border-radius: 5px;
+	box-shadow: 0.3em 0.3em 0.3em 0 rgb(0 0 0 / 35%);
 }
 .close {
     color: #aaa;
@@ -378,6 +394,7 @@ h1 {
 .server .toptionc input {
 	display: flex;
 	width: 100%;
+	padding: 0.25em 0.4em;
 }
 .server div {
 	margin: 6px 0;
