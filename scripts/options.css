@@ -86,11 +86,11 @@ input:hover {
 .browser-style .tooltiptext {
     visibility: hidden;
     width: 200px;
-    background-color: #555;
-    color: #fff;
+    background-color: #fcffe2;
+    color: #220033;
     text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
+    padding: .4em;
+    border-radius: 5px;
     position: absolute;
     z-index: 1;
     bottom: 125%;
@@ -98,6 +98,7 @@ input:hover {
     opacity: 0;
     transition: opacity 0.3s;
     display: inline-block;
+	box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
 }
 .browser-style .tooltiptext::after {
     content: "";
@@ -107,7 +108,7 @@ input:hover {
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: #555 transparent transparent transparent;
+    border-color: #fcffe2 transparent transparent transparent;
 }
 .browser-style:hover .tooltiptext {
     visibility: visible;
@@ -393,7 +394,7 @@ h1 {
 }
 .server .toptionc input {
 	display: flex;
-	width: 100%;
+	width: calc(100% - .7em);
 	padding: 0.25em 0.4em;
 }
 .server div {
@@ -442,44 +443,65 @@ h1 {
 	background-color: dimgray !important;
 }
 #wmessage {
-    visibility: hidden;
-    min-width: 250px;
-    background-color: transparent;
-    color: #555;
-    text-align: center;
-    padding: 16px;
-    position: absolute;
-    z-index: 1;
-    bottom: 30px;
-    border: 1px solid;
-    border-radius: 5px;
-    box-shadow: 0px 8px 6px -6px #888;
-    max-width: 700px;
-    left: 50%;
-    margin: 0 auto;
-    transform: translate(-50%, -50%);
+	background-color: transparent;
+	color: #555;
+	text-align: center;
+	padding: 10px 20px 30px 20px;
+	position: absolute;
+	z-index: 1;
+	border: 0 solid;
+	border-radius: 5px;
+	margin: 0 auto;
+	bottom: -61px;
+	border-top: 0;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
+	left: 0;
+	right: 0;
 }
 #wmessage.show {
-	visibility: visible;
-	-webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-	animation: fadein 0.5s, fadeout 0.5s 2.5s;
+	animation-name: bounceInUp;
+	animation-duration: 1s;
+	animation-fill-mode: both;
+	bottom: -20px;
 }
-@-webkit-keyframes fadein {
-	from {bottom: 0; opacity: 0;}
-	to {bottom: 30px; opacity: 1;}
+@keyframes bounceInUp {
+	0%, 60%, 75%, 90%, 100% {
+		transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+	}
+	0% {
+		opacity: 0;
+		transform: translate3d(0, 700px, 0);
+	}
+	60% {
+		opacity: 1;
+		transform: translate3d(0, -20px, 0);
+	}
+	75% {
+		transform: translate3d(0, 5px, 0);
+	}
+	90% {
+		transform: translate3d(0, -5px, 0);
+	}
+	100% {
+		transform: translate3d(0, 0, 0);
+	}
 }
-@keyframes fadein {
-	from {bottom: 0; opacity: 0;}
-	to {bottom: 30px; opacity: 1;}
+#wmessage.hide {
+	animation-name: slideInDown;
+	animation-duration: .5s;
+	animation-fill-mode: both;
 }
-@-webkit-keyframes fadeout {
-	from {bottom: 30px; opacity: 1;}
-	to {bottom: 0; opacity: 0;}
-}
-@keyframes fadeout {
-	from {bottom: 30px; opacity: 1;}
-	to {bottom: 0; opacity: 0;}
-}
+@keyframes slideInDown {
+	0% {
+		transform: translateY(-70%);
+		visibility: visible;
+	}
+	100% {
+		transform: translateY(0);
+	}
+} 
 #toolbar {
 	background: whitesmoke;
 	position: absolute;

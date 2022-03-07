@@ -163,7 +163,7 @@
     "description": "Login failed, wrong User."
   },
   "optionsSuccessLogin": {
-    "message": "Login erfolgreich. Optionen gespeichert.",
+    "message": "Optionen gespeichert.",
     "description": "Login failed, wrong User."
   },
   "optionsErrorLogin": {
@@ -314,6 +314,18 @@
   },
   "bookmarkTab": {
     "message": "Bookmark zu Backend",
+    "description": ""
+  },
+  "backendType": {
+    "message": "Wähle zwischen PHP und WebDAV Backend",
+    "description": ""
+  },
+  "ManAuto": {
+    "message": "Automatische Synchronisation aktivieren",
+    "description": ""
+  },
+  "toBackend": {
+    "message": "Bookmark manuell direkt an Backend senden",
     "description": ""
   }
 }

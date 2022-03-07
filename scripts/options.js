@@ -10,11 +10,9 @@ function checkForm() {
 	if(document.getElementById('wdurl').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
 		document.getElementById('mdownload').disabled=false;
 		document.getElementById('mupload').disabled=false;
-		document.getElementById('mremove').disabled=false;
     } else{
 		document.getElementById('mdownload').disabled=true;
 		document.getElementById('mupload').disabled=true;
-		document.getElementById('mremove').disabled=false;
 	}
 
 	if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) wchanged = true;
@@ -33,12 +31,12 @@ function gToken(e) {
 	e.preventDefault();
 	document.getElementById('crdialog').style.display = "none";
 	let xhr = new XMLHttpRequest();
+	let wmessage = document.getElementById('wmessage');
 	cdata = "caction=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked;
 	xhr.open("POST", document.getElementById('wdurl').value, true);
 	xhr.setRequestHeader('Authorization', 'Basic ' + btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value));
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xhr.withCredentials = true;
-	
 	xhr.onload = function () {
 		switch(xhr.status) {
 			case 404: 	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL");
@@ -75,7 +73,7 @@ function gToken(e) {
 						break;
 		}
 		wmessage.className = "show";
-		setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
+		setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 3000);
 		background_page.init();
 	};
 	xhr.send(cdata);
@@ -83,7 +81,9 @@ function gToken(e) {
 
 function saveOptions(e) {
 	if(typeof e !== "undefined") e.preventDefault();
-	let wmessage = document.getElementById('wmessage');
+	var wmessage = document.getElementById('wmessage');
+	wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
+
 	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
 		document.getElementById("wmessage").textContent = chrome.i18n.getMessage("optionsNotUsed");
 		wmessage.style.cssText = "border-color: darkorange; background-color: gold;";
@@ -104,6 +104,11 @@ function saveOptions(e) {
 		s_uuid: document.getElementById("s_uuid").value,
 		wdurl: document.getElementById("wdurl").value,
 	});
+
+	wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
+	wmessage.className = "show";
+	setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 5000);
+		
 }
 
 function rName() {
@@ -210,6 +215,13 @@ function restoreOptions() {
 			}
 		}
 
+		chrome.commands.getAll((commands) => {
+			for (let {name, shortcut} of commands) {
+				var s = (name === 'bookmark-tab') ? shortcut:'undef';
+			}
+			document.getElementById("obmd").innerText = document.getElementById("obmd").innerText + ` (${s})`;
+		});
+
 		last_sync = options['last_sync'] || 0;
 		if(last_sync.toString().length > 0) {
 			document.querySelector("#s_startup").removeAttribute("disabled");
@@ -296,7 +308,6 @@ function manualImport(e) {
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				//background_page.getAllPHPMarks(fs);
 				background_page.getAllPHPMarks(true);
 			} else if (options['s_type'] == 'WebDAV') {
 				background_page.getDAVMarks();
@@ -306,20 +317,6 @@ function manualImport(e) {
 		background_page.loglines = background_page.logit(error);
 	} finally {
 		document.getElementById("impdialog").style.display = "none";
-		chrome.storage.local.set({last_s: 1});
-	}
-}
-
-function manualRemove(e) {
-	e.preventDefault();
-	try {
-		background_page.removeAllMarks();
-	}
-	catch(error) {
-		background_page.loglines = background_page.logit(error);
-	}
-	finally {
-		document.getElementById("rmdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
 	}
 }
@@ -354,6 +351,10 @@ function localizeHtmlPage() {
 			obj.innerText = valNewH;
         }
     }
+
+	document.getElementById('blbl').title = chrome.i18n.getMessage("backendType");
+	document.getElementById('oauto').title = chrome.i18n.getMessage("ManAuto");
+	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend");
 }
 
 function openTab(tabname) {
@@ -458,7 +459,6 @@ window.addEventListener('load', function () {
     rawFile.send(null);
 
 	var imodal = document.getElementById("impdialog");
-	var rmodal = document.getElementById("rmdialog");
 	var emodal = document.getElementById("expdialog");
 	var comodal = document.getElementById("expimpdialog");
 
@@ -474,16 +474,12 @@ window.addEventListener('load', function () {
 	document.getElementById("confinput").addEventListener('change', importOptions);
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
-	document.getElementById("ryes").addEventListener("click", manualRemove);
 	document.getElementById("ino").addEventListener("click", manualImport);
-	document.getElementById("rno").addEventListener("click", function() { rmodal.style.display = "none";});
 	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";});
-	document.getElementById("rclose").addEventListener("click", function() {rmodal.style.display = "none";});
 	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";});
 	document.getElementById("crclose").addEventListener("click", function() {document.getElementById("crdialog").style.display = "none";});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
-	document.getElementById("mremove").addEventListener("click", function() {rmodal.style.display = "block"})
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
 	document.getElementById("wdurl").addEventListener("change", checkForm);
 
@@ -523,11 +519,6 @@ window.addEventListener('load', function () {
 		if (event.target == imodal) {
 			imodal.style.display = "none";
 		}
-
-		if (event.target == rmodal) {
-			rmodal.style.display = "none";
-		}
-
 		if (event.target == emodal) {
 			emodal.style.display = "none";
 		}

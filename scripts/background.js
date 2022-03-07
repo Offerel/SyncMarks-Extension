@@ -408,8 +408,6 @@ function getClientList() {
 							});
 							let cnt = cData.length - 1;
 							loglines = logit("Info: List of " + cnt + " clients retrieved successful.");
-						} else {
-							//console.info("No clients received");
 						}
 					}
 				});
@@ -1044,18 +1042,11 @@ function getAllPHPMarks(fs=false) {
 				let response = xhr.responseText;
 				let xtResponse = xhr.getResponseHeader("X-T-Response");
 				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
-
-				//if(response.indexOf("false") === -1) {
-					if(abrowser == false) response = c2cm(response);
-					let PHPMarks = JSON.parse(response);
-					count = 0;
-					loglines = logit('Info: Bookmarks retrieved from server');
-					//(fs === true) ? importFull(PHPMarks):importMarks(PHPMarks);
-					importFull(PHPMarks);
-				//}
-				//else {
-				//	loglines = logit("Error: Error when retrieving bookmarks from server for import");
-				//}
+				if(abrowser == false) response = c2cm(response);
+				let PHPMarks = JSON.parse(response);
+				count = 0;
+				loglines = logit('Info: Bookmarks retrieved from server');
+				importFull(PHPMarks);
 			}
 
 			let date = new Date(Date.now());
@@ -1071,7 +1062,6 @@ async function importFull(rMarks) {
 	const lMarks = [];
 	const dMarks = new Array();
 	const uMarks = new Array();
-	const rbmCount = rMarks.length;
 
 	createLocalMarks(oMarks);
 	function createLocalMarks(nodes) {

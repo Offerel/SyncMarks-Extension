@@ -302,11 +302,23 @@
     "description": ""
   },
   "openBackend": {
-    "message": "Open Backend",
+    "message": "Open backend",
     "description": ""
   },
   "bookmarkTab": {
-    "message": "Bookmark to Backend",
+    "message": "Bookmark to backend",
+    "description": ""
+  },
+  "backendType": {
+    "message": "Choose between PHP and WebDAV backend",
+    "description": ""
+  },
+  "ManAuto": {
+    "message": "Activate automatic synchronisation",
+    "description": ""
+  },
+  "toBackend": {
+    "message": "Send Bookmark directly and manual to the server",
     "description": ""
   }
 }
