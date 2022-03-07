@@ -129,17 +129,22 @@ function bookmarkTab() {
 						loglines = logit("Error: " + xhr.response);
 					} else {
 						let response = JSON.parse(xhr.response);
-						let xtResponse = xhr.getResponseHeader("X-T-Response");
+						let xtResponse = xhr.getResponseHeader("X-Request-Info");
 						if(xtResponse !== null) {
 							chrome.storage.local.set({token: xtResponse});
+						} else {
+							chrome.storage.local.set({token: ''});
+							let message = chrome.i18n.getMessage("optionsLoginError");
+							notify('error', message);
 						}
-
+						/*
 						let xfResponse = xhr.getResponseHeader("X-F-Response");
 						if(xfResponse === "failed") {
 							chrome.storage.local.set({token: ''});
 							let message = chrome.i18n.getMessage("optionsLoginError");
 							notify('error', message);
 						}
+						*/
 
 						response = (response == "1") ? "'"+tabs[0].title+"' added":JSON.parse(xhr.response);
 						notify('info', response);
@@ -172,7 +177,7 @@ function sendTab(element) {
 					loglines = logit('Error: ' + message);
 				} else {
 					loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes"));
-					let xtResponse = xhr.getResponseHeader("X-T-Response");
+					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 				}
 			}
@@ -274,7 +279,7 @@ function getNotifications() {
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			} else {
-				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 
 				if(xhr.responseText.length > 2) {
@@ -361,14 +366,22 @@ function getClientList() {
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			} else {
-				let xtResponse = xhr.getResponseHeader("X-T-Response");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
+				if(xtResponse !== null) {
+					chrome.storage.local.set({token: xtResponse});
+				} else {
+					chrome.storage.local.set({token: ''});
+					let message = chrome.i18n.getMessage("optionsLoginError");
+					notify('error', message);
+				}
+				/*
 				let xfResponse = xhr.getResponseHeader("X-F-Response");
 				if(xfResponse === "failed") {
 					chrome.storage.local.set({token: ''});
 					let message = chrome.i18n.getMessage("optionsLoginError");
 					notify('error', message);
 				}
+				*/
 
 				cData = JSON.parse(xhr.responseText);
 				
@@ -485,7 +498,7 @@ function dmNoti(nkey) {
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			} else {
-				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 			}
 		}
@@ -575,7 +588,7 @@ function editMark(eData,id) {
 					loglines = logit('Error: '+message);
 				}
 				else {
-					let xtResponse = xhr.getResponseHeader("X-T-Response");
+					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 
 					let response = JSON.parse(xhr.responseText);
@@ -656,7 +669,7 @@ function exportPHPMarks(upl=[]) {
 					loglines = logit("Error: "+message);
 				}
 				else {
-					let xtResponse = xhr.getResponseHeader("X-T-Response");
+					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 
 					let response = JSON.parse(xhr.responseText);
@@ -745,7 +758,7 @@ function delMark(id, bookmark) {
 				loglines = logit('Error: '+message);
 			}
 			else {
-				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 
 				let response = JSON.parse(xhr.responseText);
@@ -798,7 +811,7 @@ function moveMark(id, bookmark) {
 						loglines = logit('Error: '+message);
 					}
 					else {
-						let xtResponse = xhr.getResponseHeader("X-T-Response");
+						let xtResponse = xhr.getResponseHeader("X-Request-Info");
 						if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 
 						let response = JSON.parse(xhr.responseText);
@@ -863,7 +876,7 @@ function sendMark(bookmark) {
 					loglines = logit('Error: '+message);
 				}
 				else {
-					let xtResponse = xhr.getResponseHeader("X-T-Response");
+					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 
 					let response = JSON.parse(xhr.responseText);
@@ -943,7 +956,7 @@ function getPHPMarks() {
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			} else {
-				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 
 				response = (xhr.responseText);
@@ -988,9 +1001,19 @@ function checkFullSync() {
 				loglines = logit('Error: ' + message);
 			} else {
 				let rp = xhr.responseText;
-				let xtResponse = xhr.getResponseHeader("X-T-Response");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 				let cinfo = JSON.parse(rp);
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
+				if(xtResponse !== null) {
+					chrome.storage.local.set({token: xtResponse});
+					lastseen = cinfo['lastseen'];
+					doFullSync();
+				} else {
+					let message = chrome.i18n.getMessage("optionsLoginError");
+					chrome.storage.local.set({token: ''});
+					notify('error', message);
+				}
+				
+				/*
 				let xfResponse = xhr.getResponseHeader("X-F-Response");
 				if(xfResponse === "failed") {
 					let message = chrome.i18n.getMessage("optionsLoginError");
@@ -1000,6 +1023,7 @@ function checkFullSync() {
 					lastseen = cinfo['lastseen'];
 					doFullSync();
 				}
+				*/
 			}
 		}
 		xhr.send(params);
@@ -1040,7 +1064,7 @@ function getAllPHPMarks(fs=false) {
 			}
 			else {
 				let response = xhr.responseText;
-				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 				if(abrowser == false) response = c2cm(response);
 				let PHPMarks = JSON.parse(response);

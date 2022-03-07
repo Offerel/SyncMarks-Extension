@@ -129,7 +129,7 @@ function rName() {
 				background_page.notify('error',message);
 				background_page.loglines = background_page.logit('Error: '+message);
 			} else {
-				let xtResponse = xhr.getResponseHeader("X-T-Response");
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 			}
 		}
@@ -153,7 +153,7 @@ function gName() {
 			background_page.notify('error',message);
 			background_page.loglines =  background_page.logit('Error: '+message);
 		} else {
-			let xtResponse = xhr.getResponseHeader("X-T-Response");
+			let xtResponse = xhr.getResponseHeader("X-Request-Info");
 			if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
 
 			let response = JSON.parse(xhr.responseText);		
