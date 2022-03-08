@@ -171,7 +171,7 @@
     "description": "Login failed, unknown state."
   },
   "optionsLoginError": {
-    "message": "Login Error: Please check Options",
+    "message": "Login Error: Please login again",
     "description": ""
   },
   "optionsBeforeCImpExp": {

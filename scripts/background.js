@@ -120,6 +120,7 @@ function bookmarkTab() {
 				let tarr = {};
 				tarr['client'] = options['s_uuid'];
 				tarr['token'] = options['token'];
+				if(tarr['token'] == '') return false;
 				xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.withCredentials = true;
@@ -131,20 +132,14 @@ function bookmarkTab() {
 						let response = JSON.parse(xhr.response);
 						let xtResponse = xhr.getResponseHeader("X-Request-Info");
 						if(xtResponse !== null) {
-							chrome.storage.local.set({token: xtResponse});
-						} else {
-							chrome.storage.local.set({token: ''});
-							let message = chrome.i18n.getMessage("optionsLoginError");
-							notify('error', message);
+							if(xtResponse !== '0') {
+								chrome.storage.local.set({token: xtResponse});
+							} else {
+								chrome.storage.local.set({token: ''});
+								let message = chrome.i18n.getMessage("optionsLoginError");
+								notify('error', message);
+							}
 						}
-						/*
-						let xfResponse = xhr.getResponseHeader("X-F-Response");
-						if(xfResponse === "failed") {
-							chrome.storage.local.set({token: ''});
-							let message = chrome.i18n.getMessage("optionsLoginError");
-							notify('error', message);
-						}
-						*/
 
 						response = (response == "1") ? "'"+tabs[0].title+"' added":JSON.parse(xhr.response);
 						notify('info', response);
@@ -167,6 +162,7 @@ function sendTab(element) {
 			let tarr = {};
 			tarr['client'] = options['s_uuid'];
 			tarr['token'] = options['token'];
+			if(tarr['token'] == '') return false;
 			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
@@ -178,7 +174,13 @@ function sendTab(element) {
 				} else {
 					loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes"));
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
-					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+
+					if(xtResponse !== null) {
+						if(xtResponse !== '0')
+							chrome.storage.local.set({token: xtResponse});
+						else
+							chrome.storage.local.set({token: ''});
+					}
 				}
 			}
 			loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options['s_uuid']);
@@ -269,6 +271,7 @@ function getNotifications() {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		
@@ -280,7 +283,12 @@ function getNotifications() {
 				loglines = logit('Error: '+message);
 			} else {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+				if(xtResponse !== null) {
+					if(xtResponse !== '0')
+						chrome.storage.local.set({token: xtResponse});
+					else
+						chrome.storage.local.set({token: ''});
+				}
 
 				if(xhr.responseText.length > 2) {
 					var nData = JSON.parse(xhr.responseText);
@@ -357,6 +365,7 @@ function getClientList() {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
@@ -368,26 +377,18 @@ function getClientList() {
 			} else {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
-					chrome.storage.local.set({token: xtResponse});
-				} else {
-					chrome.storage.local.set({token: ''});
-					let message = chrome.i18n.getMessage("optionsLoginError");
-					notify('error', message);
+					if(xtResponse !== '0') {
+						chrome.storage.local.set({token: xtResponse});
+					} else {
+						chrome.storage.local.set({token: ''});
+						let message = chrome.i18n.getMessage("optionsLoginError");
+						notify('error', message);
+					}
 				}
-				/*
-				let xfResponse = xhr.getResponseHeader("X-F-Response");
-				if(xfResponse === "failed") {
-					chrome.storage.local.set({token: ''});
-					let message = chrome.i18n.getMessage("optionsLoginError");
-					notify('error', message);
-				}
-				*/
 
 				cData = JSON.parse(xhr.responseText);
 				
-				chrome.storage.local.set({
-					clist:cData
-				});		
+				chrome.storage.local.set({clist:cData});		
 				
 				chrome.permissions.getAll(function(e) {
 					if(e.permissions.includes('contextMenus')) {
@@ -489,6 +490,7 @@ function dmNoti(nkey) {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
@@ -499,7 +501,12 @@ function dmNoti(nkey) {
 				loglines = logit('Error: '+message);
 			} else {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+				if(xtResponse !== null) {
+					if(xtResponse !== '0')
+						chrome.storage.local.set({token: xtResponse});
+					else
+						chrome.storage.local.set({token: ''});
+				}
 			}
 		}
 		xhr.send(data);
@@ -577,6 +584,7 @@ function editMark(eData,id) {
 			let tarr = {};
 			tarr['client'] = options['s_uuid'];
 			tarr['token'] = options['token'];
+			if(tarr['token'] == '') return false;
 			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
@@ -589,7 +597,12 @@ function editMark(eData,id) {
 				}
 				else {
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
-					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+					if(xtResponse !== null) {
+						if(xtResponse !== '0')
+							chrome.storage.local.set({token: xtResponse});
+						else
+							chrome.storage.local.set({token: ''});
+					}
 
 					let response = JSON.parse(xhr.responseText);
 					if(response == 1) {
@@ -643,7 +656,9 @@ function exportPHPMarks(upl=[]) {
 			bookmarks = encodeURIComponent(JSON.stringify(upl));
 			p = 1;
 		}
-		
+
+		console.log("p = " + p);
+
 		chrome.storage.local.get(null, function(options) {
 			if(!("s_uuid" in options)) {
 				var s_uuid = uuidv4();
@@ -659,6 +674,7 @@ function exportPHPMarks(upl=[]) {
 			let tarr = {};
 			tarr['client'] = options['s_uuid'];
 			tarr['token'] = options['token'];
+			if(tarr['token'] == '') return false;
 			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
@@ -670,7 +686,12 @@ function exportPHPMarks(upl=[]) {
 				}
 				else {
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
-					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+					if(xtResponse !== null) {
+						if(xtResponse !== '0')
+							chrome.storage.local.set({token: xtResponse});
+						else
+							chrome.storage.local.set({token: ''});
+					}
 
 					let response = JSON.parse(xhr.responseText);
 					if(response == 1) {
@@ -708,6 +729,7 @@ function saveAllMarks() {
 			let tarr = {};
 			tarr['client'] = options['s_uuid'];
 			tarr['token'] = options['token'];
+			if(tarr['token'] == '') return false;
 			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.onload = function () {
 				if( xhr.status < 200 || xhr.status > 226) {
@@ -747,6 +769,7 @@ function delMark(id, bookmark) {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
@@ -759,7 +782,12 @@ function delMark(id, bookmark) {
 			}
 			else {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+				if(xtResponse !== null) {
+					if(xtResponse !== '0')
+						chrome.storage.local.set({token: xtResponse});
+					else
+						chrome.storage.local.set({token: ''});
+				}
 
 				let response = JSON.parse(xhr.responseText);
 				if(response == 1) {
@@ -801,6 +829,7 @@ function moveMark(id, bookmark) {
 				let tarr = {};
 				tarr['client'] = options['s_uuid'];
 				tarr['token'] = options['token'];
+				if(tarr['token'] == '') return false;
 				xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.withCredentials = true;
@@ -812,7 +841,12 @@ function moveMark(id, bookmark) {
 					}
 					else {
 						let xtResponse = xhr.getResponseHeader("X-Request-Info");
-						if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+						if(xtResponse !== null) {
+							if(xtResponse !== '0')
+								chrome.storage.local.set({token: xtResponse});
+							else
+								chrome.storage.local.set({token: ''});
+						}
 
 						let response = JSON.parse(xhr.responseText);
 						if(response == 1)
@@ -866,6 +900,7 @@ function sendMark(bookmark) {
 			let tarr = {};
 			tarr['client'] = options['s_uuid'];
 			tarr['token'] = options['token'];
+			if(tarr['token'] == '') return false;
 			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
@@ -877,7 +912,12 @@ function sendMark(bookmark) {
 				}
 				else {
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
-					if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+					if(xtResponse !== null) {
+						if(xtResponse !== '0')
+							chrome.storage.local.set({token: xtResponse});
+						else
+							chrome.storage.local.set({token: ''});
+					}
 
 					let response = JSON.parse(xhr.responseText);
 					if(response == 1)
@@ -910,6 +950,7 @@ function saveDAVMarks(bookmarkItems) {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		
 		xhr.onload = function () {
@@ -943,6 +984,7 @@ function getPHPMarks() {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		
@@ -957,7 +999,12 @@ function getPHPMarks() {
 				loglines = logit('Error: '+message);
 			} else {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+				if(xtResponse !== null) {
+					if(xtResponse !== '0')
+						chrome.storage.local.set({token: xtResponse});
+					else
+						chrome.storage.local.set({token: ''});
+				}
 
 				response = (xhr.responseText);
 				if(abrowser == false) response = c2cm(response);
@@ -992,6 +1039,7 @@ function checkFullSync() {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.onload = function () {
@@ -1004,26 +1052,16 @@ function checkFullSync() {
 				let cinfo = JSON.parse(rp);
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
-					chrome.storage.local.set({token: xtResponse});
-					lastseen = cinfo['lastseen'];
-					doFullSync();
-				} else {
-					let message = chrome.i18n.getMessage("optionsLoginError");
-					chrome.storage.local.set({token: ''});
-					notify('error', message);
+					if(xtResponse !== '0') {
+						chrome.storage.local.set({token: xtResponse});
+						lastseen = cinfo['lastseen'];
+						doFullSync();
+					} else {
+						let message = chrome.i18n.getMessage("optionsLoginError");
+						chrome.storage.local.set({token: ''});
+						notify('error', message);
+					}
 				}
-				
-				/*
-				let xfResponse = xhr.getResponseHeader("X-F-Response");
-				if(xfResponse === "failed") {
-					let message = chrome.i18n.getMessage("optionsLoginError");
-					chrome.storage.local.set({token: ''});
-					notify('error', message);
-				} else {
-					lastseen = cinfo['lastseen'];
-					doFullSync();
-				}
-				*/
 			}
 		}
 		xhr.send(params);
@@ -1054,6 +1092,7 @@ function getAllPHPMarks(fs=false) {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.onload = function () {
@@ -1065,7 +1104,12 @@ function getAllPHPMarks(fs=false) {
 			else {
 				let response = xhr.responseText;
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+				if(xtResponse !== null) {
+					if(xtResponse !== '0')
+						chrome.storage.local.set({token: xtResponse});
+					else
+						chrome.storage.local.set({token: ''});
+				}
 				if(abrowser == false) response = c2cm(response);
 				let PHPMarks = JSON.parse(response);
 				count = 0;
@@ -1229,7 +1273,7 @@ async function importFull(rMarks) {
 	chrome.bookmarks.onMoved.addListener(onMovedCheck);
 	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 
-	exportPHPMarks(uMarks);
+	if(uMarks.length > 0) exportPHPMarks(uMarks);
 }
 
 function c2cm(bookmarks) {
@@ -1437,6 +1481,7 @@ function getDAVMarks() {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		
 		xhr.onload = function () {		

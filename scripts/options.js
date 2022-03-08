@@ -29,6 +29,7 @@ function checkForm2() {
 
 function gToken(e) {
 	e.preventDefault();
+	document.getElementById('lginl').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
 	let xhr = new XMLHttpRequest();
 	let wmessage = document.getElementById('wmessage');
@@ -51,6 +52,7 @@ function gToken(e) {
 						let response = (rp.indexOf('<') === -1) ? JSON.parse(rp):'0';
 						
 						if(typeof response.length === 'undefined' && response.token.length != 0) {
+							document.getElementById('lginl').classList.remove('loading');
 							document.getElementById('lginl').style.visibility = "hidden";
 							chrome.storage.local.set({
 								wdurl: document.getElementById('wdurl').value,
@@ -120,6 +122,7 @@ function rName() {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
@@ -219,6 +222,7 @@ function restoreOptions() {
 			for (let {name, shortcut} of commands) {
 				var s = (name === 'bookmark-tab') ? shortcut:'undef';
 			}
+
 			document.getElementById("obmd").innerText = document.getElementById("obmd").innerText + ` (${s})`;
 		});
 
@@ -327,7 +331,7 @@ function manualExport(e) {
 	try {
 		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
 			background_page.saveAllMarks();
-		} else if(document.querySelector('input[name="stype"]:checked').value == 'PHP') {
+		} else if (document.querySelector('input[name="stype"]:checked').value == 'PHP') {
 			background_page.exportPHPMarks();
 		}
 	} catch(error) {
@@ -489,6 +493,13 @@ window.addEventListener('load', function () {
 		document.getElementById("npassword").defaultValue = '';
 		document.getElementById("crdialog").style.display = "block";
 		document.getElementById("nuser").focus();
+	});
+
+	document.getElementById("tken").addEventListener("click", function(e) {
+		e.preventDefault();
+		chrome.storage.local.get(null, function(options) {
+			alert(options['token']);
+		})
 	});
 
 	document.getElementById("nuser").addEventListener("input", checkForm2);
