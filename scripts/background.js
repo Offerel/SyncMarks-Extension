@@ -105,7 +105,7 @@ function bookmarkTab() {
 		chrome.storage.local.get(null, function(options) {
 			if(options.actions.create === false) {				
 				let jsonMark = encodeURIComponent(JSON.stringify({ 
-					"id": Math.random().toString(24).substr(2, 12),
+					"id": Math.random().toString(24).substring(2, 12),
 					"url": tabs[0].url,
 					"title": tabs[0].title,
 					"type": 'bookmark',
@@ -134,6 +134,7 @@ function bookmarkTab() {
 						if(xtResponse !== null) {
 							if(xtResponse !== '0') {
 								chrome.storage.local.set({token: xtResponse});
+								callback(xtResponse);
 							} else {
 								chrome.storage.local.set({token: ''});
 								let message = chrome.i18n.getMessage("optionsLoginError");
@@ -176,10 +177,14 @@ function sendTab(element) {
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 
 					if(xtResponse !== null) {
-						if(xtResponse !== '0')
+						if(xtResponse !== '0') {
 							chrome.storage.local.set({token: xtResponse});
-						else
+							callback(xtResponse);
+						} else {
 							chrome.storage.local.set({token: ''});
+							let message = chrome.i18n.getMessage("optionsLoginError");
+							notify('error', message);
+						}
 					}
 				}
 			}
@@ -265,9 +270,10 @@ function init() {
 function getNotifications() {
 	loglines = logit("Info: Get notifications for current client.");
 	chrome.storage.local.get(null, function(options) {
+		let data = "client=" + options['s_uuid'] + "&caction=gurls&s=" + options['actions']['startup'];
 		let xhr = new XMLHttpRequest();
-		let data = "client=" + options['s_uuid'] + "&caction=gurls";
-		xhr.open("POST", options['wdurl'], true);
+		//xhr.open("POST", options['wdurl'], true);
+		xhr.open("POST", options['wdurl'], false);
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
@@ -278,16 +284,20 @@ function getNotifications() {
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Get list of notifications failed. State: "+xhr.status;
+				message = "Get list of notifications failed. State: " + xhr.status;
 				notify('error',message);
 				loglines = logit('Error: '+message);
 			} else {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
-					if(xtResponse !== '0')
+					if(xtResponse !== '0') {
 						chrome.storage.local.set({token: xtResponse});
-					else
+						callback(xtResponse);
+					} else {
 						chrome.storage.local.set({token: ''});
+						let message = chrome.i18n.getMessage("optionsLoginError");
+						notify('error', message);
+					}
 				}
 
 				if(xhr.responseText.length > 2) {
@@ -361,13 +371,15 @@ function getClientList() {
 	chrome.storage.local.get(null, function(options) {
 		let data = "client=" + options['s_uuid'] + "&caction=getclients&s="+options['actions']['startup'];
 		let xhr = new XMLHttpRequest();
-		xhr.open("POST", options['wdurl'], true);
+		//xhr.open("POST", options['wdurl'], true);
+		xhr.open("POST", options['wdurl'], false);
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
 		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
 		xhr.withCredentials = true;
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
@@ -379,6 +391,7 @@ function getClientList() {
 				if(xtResponse !== null) {
 					if(xtResponse !== '0') {
 						chrome.storage.local.set({token: xtResponse});
+						callback(xtResponse);
 					} else {
 						chrome.storage.local.set({token: ''});
 						let message = chrome.i18n.getMessage("optionsLoginError");
@@ -502,10 +515,14 @@ function dmNoti(nkey) {
 			} else {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
-					if(xtResponse !== '0')
+					if(xtResponse !== '0') {
 						chrome.storage.local.set({token: xtResponse});
-					else
+						callback(xtResponse);
+					} else {
 						chrome.storage.local.set({token: ''});
+						let message = chrome.i18n.getMessage("optionsLoginError");
+						notify('error', message);
+					}
 				}
 			}
 		}
@@ -594,14 +611,17 @@ function editMark(eData,id) {
 					notify('error', message);
 					chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorEditBookmark")});
 					loglines = logit('Error: '+message);
-				}
-				else {
+				} else {
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 					if(xtResponse !== null) {
-						if(xtResponse !== '0')
+						if(xtResponse !== '0') {
 							chrome.storage.local.set({token: xtResponse});
-						else
+							callback(xtResponse);
+						} else {
 							chrome.storage.local.set({token: ''});
+							let message = chrome.i18n.getMessage("optionsLoginError");
+							notify('error', message);
+						}
 					}
 
 					let response = JSON.parse(xhr.responseText);
@@ -657,8 +677,6 @@ function exportPHPMarks(upl=[]) {
 			p = 1;
 		}
 
-		console.log("p = " + p);
-
 		chrome.storage.local.get(null, function(options) {
 			if(!("s_uuid" in options)) {
 				var s_uuid = uuidv4();
@@ -683,14 +701,17 @@ function exportPHPMarks(upl=[]) {
 					message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
 					notify('error',message);
 					loglines = logit("Error: "+message);
-				}
-				else {
+				} else {
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 					if(xtResponse !== null) {
-						if(xtResponse !== '0')
+						if(xtResponse !== '0') {
 							chrome.storage.local.set({token: xtResponse});
-						else
+							callback(xtResponse);
+						} else {
 							chrome.storage.local.set({token: ''});
+							let message = chrome.i18n.getMessage("optionsLoginError");
+							notify('error', message);
+						}
 					}
 
 					let response = JSON.parse(xhr.responseText);
@@ -779,14 +800,17 @@ function delMark(id, bookmark) {
 				notify('error',message);
 				chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorRemoveBookmark")});
 				loglines = logit('Error: '+message);
-			}
-			else {
+			} else {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
-					if(xtResponse !== '0')
+					if(xtResponse !== '0') {
 						chrome.storage.local.set({token: xtResponse});
-					else
+						callback(xtResponse);
+					} else {
 						chrome.storage.local.set({token: ''});
+						let message = chrome.i18n.getMessage("optionsLoginError");
+						notify('error', message);
+					}
 				}
 
 				let response = JSON.parse(xhr.responseText);
@@ -838,14 +862,17 @@ function moveMark(id, bookmark) {
 						message = chrome.i18n.getMessage("errorMoveBookmark") + xhr.status;
 						notify('error',message);
 						loglines = logit('Error: '+message);
-					}
-					else {
+					} else {
 						let xtResponse = xhr.getResponseHeader("X-Request-Info");
 						if(xtResponse !== null) {
-							if(xtResponse !== '0')
+							if(xtResponse !== '0') {
 								chrome.storage.local.set({token: xtResponse});
-							else
+								callback(xtResponse);
+							} else {
 								chrome.storage.local.set({token: ''});
+								let message = chrome.i18n.getMessage("optionsLoginError");
+								notify('error', message);
+							}
 						}
 
 						let response = JSON.parse(xhr.responseText);
@@ -909,14 +936,17 @@ function sendMark(bookmark) {
 					message = chrome.i18n.getMessage("errorSaveSingleBookmarks")  + xhr.status;
 					notify('error',message);
 					loglines = logit('Error: '+message);
-				}
-				else {
+				} else {
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 					if(xtResponse !== null) {
-						if(xtResponse !== '0')
+						if(xtResponse !== '0') {
 							chrome.storage.local.set({token: xtResponse});
-						else
+							callback(xtResponse);
+						} else {
 							chrome.storage.local.set({token: ''});
+							let message = chrome.i18n.getMessage("optionsLoginError");
+							notify('error', message);
+						}
 					}
 
 					let response = JSON.parse(xhr.responseText);
@@ -1000,10 +1030,14 @@ function getPHPMarks() {
 			} else {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
-					if(xtResponse !== '0')
+					if(xtResponse !== '0') {
 						chrome.storage.local.set({token: xtResponse});
-					else
+						callback(xtResponse);
+					} else {
 						chrome.storage.local.set({token: ''});
+						let message = chrome.i18n.getMessage("optionsLoginError");
+						notify('error', message);
+					}
 				}
 
 				response = (xhr.responseText);
@@ -1034,7 +1068,8 @@ function checkFullSync() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
 		let params = 'client=' + options['s_uuid'] + '&caction=cinfo';
-		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
+		//xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
+		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), false);
 		xhr.withCredentials = true;
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
@@ -1054,6 +1089,7 @@ function checkFullSync() {
 				if(xtResponse !== null) {
 					if(xtResponse !== '0') {
 						chrome.storage.local.set({token: xtResponse});
+						callback(xtResponse);
 						lastseen = cinfo['lastseen'];
 						doFullSync();
 					} else {
@@ -1083,7 +1119,7 @@ function doFullSync() {
 	}
 }
 
-function getAllPHPMarks(fs=false) {
+function getAllPHPMarks() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
 		let params = 'client='+options['s_uuid']+'&caction=export&type=json&s='+options['actions']['startup'];
@@ -1100,15 +1136,18 @@ function getAllPHPMarks(fs=false) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
 				notify('error',message);
 				loglines = logit('Error: ' + message);
-			}
-			else {
+			} else {
 				let response = xhr.responseText;
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
-					if(xtResponse !== '0')
+					if(xtResponse !== '0') {
 						chrome.storage.local.set({token: xtResponse});
-					else
+						callback(xtResponse);
+					} else {
 						chrome.storage.local.set({token: ''});
+						let message = chrome.i18n.getMessage("optionsLoginError");
+						notify('error', message);
+					}
 				}
 				if(abrowser == false) response = c2cm(response);
 				let PHPMarks = JSON.parse(response);

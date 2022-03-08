@@ -3,37 +3,30 @@
     "message": "SyncMarks",
     "description": "Name der Erweiterung."
   },
-
   "extensionDescription": {
     "message": "Export/Import/Sync von Bookmarks zu WebDAV oder PHP.",
     "description": "Beschreibung der Erweiterung."
-  },
-  
+  },  
   "optionsServerData": {
     "message": "Daten des Servers",
     "description": "Server Data."
-  },
-  
+  },  
   "optionsServerType": {
     "message": "Server Art",
     "description": "Server type."
-  },
-  
+  },  
   "optionsShowLog": {
     "message": "Zeige Logfile an",
     "description": "Show Logfile."
-  },
-  
+  },  
   "optionsServerURL": {
-    "message": "Backend URL",
-    "description": "Server URL."
-  },
-  
+    "message": "Server URL",
+    "description": ""
+  },  
   "optionsUsername": {
     "message": "Benutzer",
     "description": "Username."
-  },
-  
+  },  
    "optionsUsernameHint": {
     "message": "Benutzername",
     "description": "Username."
@@ -55,7 +48,7 @@
     "description": ""
   },
    "optionsStartup": {
-    "message": "Browserstart",
+    "message": "Browser Start",
     "description": "Browser startup."
   },
   "optionsStartupHint": {
@@ -195,11 +188,11 @@
     "description": ""
   },
   "optionsBeforeImport": {
-    "message": "Vor dem Import werden alle lokalen Bookmarks gelöscht. Danach werden die neuen Bookmarks importiert.\n\nSollen die lokalen Bookmarks vor dem Import gelöscht werden?",
+    "message": "Sollen alle lokalen Bookmarks vor dem Import gelöscht werden?",
     "description": "Message before importing."
   },
   "optionsBeforeExport": {
-    "message": "Vor dem Export werden alle Bookmarks auf dem Server gelöscht. Danach werden die neuen Bookmarks zum Server eportiert.\n\nSollen die Bookmarks vor dem Export auf dem Server gelöscht werden?",
+    "message": "Vor dem Export werden alle Bookmarks auf dem Server gelöscht. Danach werden die neuen Bookmarks zum Server exportiert.\n\nSollen die Bookmarks vor dem Export auf dem Server gelöscht werden?",
     "description": ""
   },
   "optionsInfoRemove": {
@@ -211,7 +204,7 @@
     "description": "Options Button."
   },
   "popupNoSync": {
-    "message": "Bisher wurde kein Sync beim Browserstart durchgeführt.",
+    "message": "Bisher wurde kein Sync beim Start durchgeführt.",
     "description": "No startup sync done yet.."
   },  
   "popupImportConfirm": {
@@ -313,7 +306,7 @@
     "description": ""
   },
   "bookmarkTab": {
-    "message": "Bookmark zu Backend",
+    "message": "Bookmark direkt zu Server",
     "description": ""
   },
   "backendType": {

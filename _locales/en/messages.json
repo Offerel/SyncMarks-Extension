@@ -3,37 +3,30 @@
     "message": "SyncMarks",
     "description": "Name of the extension."
   },
-
   "extensionDescription": {
     "message": "Export/Import/Sync bookmarks to WebDAV or PHP.",
     "description": "Description of the extension."
-  },
-  
+  },  
   "optionsServerData": {
     "message": "Server Data",
     "description": "Server Data."
-  },
-  
+  },  
   "optionsServerType": {
     "message": "Server type",
     "description": "Server type."
-  },
-  
+  },  
   "optionsShowLog": {
     "message": "Show Log",
     "description": "Show Logfile."
-  },
-  
+  },  
   "optionsServerURL": {
-    "message": "Backend URL",
-    "description": "Show Logfile."
-  },
-  
+    "message": "Server URL",
+    "description": ""
+  },  
   "optionsUsername": {
     "message": "Username",
     "description": "Username."
-  },
-  
+  },  
   "optionsUsernameHint": {
     "message": "username",
     "description": "Username."
@@ -107,7 +100,7 @@
     "description": ""
   },
   "optionsBTNExportHint": {
-    "message": "Overwrite all bookmarkson the server.",
+    "message": "Overwrite all bookmarks on the server.",
     "description": "Export Button Hint."
   },
   "optionsBTNSave": {
@@ -194,7 +187,7 @@
     "message": "Import successfully.",
     "description": ""
   },  "optionsBeforeImport": { 
-    "message": "All local bookmarks are deleted before importing. Afterwards the new bookmarks are imported.\n\nShould the local bookmarks be deleted before the import?",
+    "message": "Should all local bookmarks be deleted before import?",
     "description": "Message before importing."
   },
   "optionsBeforeExport": { 
@@ -306,7 +299,7 @@
     "description": ""
   },
   "bookmarkTab": {
-    "message": "Bookmark to backend",
+    "message": "Bookmark direct to server",
     "description": ""
   },
   "backendType": {
@@ -314,7 +307,7 @@
     "description": ""
   },
   "ManAuto": {
-    "message": "Activate automatic synchronisation",
+    "message": "Activate automatic synchronization",
     "description": ""
   },
   "toBackend": {

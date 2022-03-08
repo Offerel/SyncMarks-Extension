@@ -303,11 +303,7 @@ function importOptions() {
 
 function manualImport(e) {
 	e.preventDefault();
-	let fs = true;
-	if (this.id === 'iyes') {
-		background_page.removeAllMarks();
-		fs = false;
-	}
+	if (this.id === 'iyes') background_page.removeAllMarks();
 
 	try {
 		chrome.storage.local.get(null, function(options) {
@@ -420,11 +416,11 @@ function switchBackend() {
 	if(backendPHP) {
 		document.getElementById("php").checked = true;
 		document.getElementById("wdav").checked = false;
-		document.getElementById("blbl").innerText = "Backend PHP";
+		document.getElementById("blbl").innerText = "Server: PHP";
 	} else {
 		document.getElementById("php").checked = false;
 		document.getElementById("wdav").checked = true;
-		document.getElementById("blbl").innerText = "Backend WebDAV";
+		document.getElementById("blbl").innerText = "Server: WebDAV";
 	}
 }
 
@@ -493,13 +489,6 @@ window.addEventListener('load', function () {
 		document.getElementById("npassword").defaultValue = '';
 		document.getElementById("crdialog").style.display = "block";
 		document.getElementById("nuser").focus();
-	});
-
-	document.getElementById("tken").addEventListener("click", function(e) {
-		e.preventDefault();
-		chrome.storage.local.get(null, function(options) {
-			alert(options['token']);
-		})
 	});
 
 	document.getElementById("nuser").addEventListener("input", checkForm2);
