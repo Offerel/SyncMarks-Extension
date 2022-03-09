@@ -126,7 +126,6 @@ function lCLients() {
 	
 	chrome.storage.local.get(null, function(options) {
 		let clist = options.clist;
-
 		if(typeof clist !== 'undefined') {
 			clist.forEach(function(client){
 				let cli = document.createElement("li");
@@ -136,7 +135,6 @@ function lCLients() {
 				clientl.appendChild(cli);
 			});
 		}
-		
 	});
 	
     clientl.addEventListener("click", function(element) {

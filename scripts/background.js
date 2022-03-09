@@ -52,7 +52,6 @@ function ccMenus() {
 			chrome.contextMenus.removeAll();
 			chrome.storage.local.get(null, function(options) {
 				if(options['s_type'] == "PHP") {
-					
 					if(options.actions.crsrv === true) {
 						chrome.commands.getAll((commands) => {
 							for (let {name, shortcut} of commands) {
@@ -272,7 +271,6 @@ function getNotifications() {
 	chrome.storage.local.get(null, function(options) {
 		let data = "client=" + options['s_uuid'] + "&caction=gurls&s=" + options['actions']['startup'];
 		let xhr = new XMLHttpRequest();
-		//xhr.open("POST", options['wdurl'], true);
 		xhr.open("POST", options['wdurl'], false);
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
@@ -371,7 +369,6 @@ function getClientList() {
 	chrome.storage.local.get(null, function(options) {
 		let data = "client=" + options['s_uuid'] + "&caction=getclients&s="+options['actions']['startup'];
 		let xhr = new XMLHttpRequest();
-		//xhr.open("POST", options['wdurl'], true);
 		xhr.open("POST", options['wdurl'], false);
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
@@ -747,11 +744,7 @@ function saveAllMarks() {
 			xhr.open("PUT", options['wdurl'] + "/" + filename, true);
 			xhr.withCredentials = true;
 			xhr.setRequestHeader('X-Filename', filename);
-			let tarr = {};
-			tarr['client'] = options['s_uuid'];
-			tarr['token'] = options['token'];
-			if(tarr['token'] == '') return false;
-			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
+			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['creds']));
 			xhr.onload = function () {
 				if( xhr.status < 200 || xhr.status > 226) {
 					message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
@@ -977,12 +970,7 @@ function saveDAVMarks(bookmarkItems) {
 		xhr.open("PUT", options['wdurl'] + "/" + filename, true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader('X-Filename', filename);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		
+		xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['creds']));
 		xhr.onload = function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
@@ -1068,7 +1056,6 @@ function checkFullSync() {
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
 		let params = 'client=' + options['s_uuid'] + '&caction=cinfo';
-		//xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), false);
 		xhr.withCredentials = true;
 		let tarr = {};
@@ -1517,12 +1504,7 @@ function getDAVMarks() {
 		xhr.open('GET', options['wdurl'] + '/' + filename + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader('X-Filename', filename);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		
+		xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['creds']));
 		xhr.onload = function () {		
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
