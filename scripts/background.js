@@ -1232,8 +1232,6 @@ async function importFull(rMarks) {
 	}
 
 	async function iMoveMark(remoteMark) {
-		console.log(remoteMark);
-
 		let localMark = (await searchBookmarkAsync({title: remoteMark.bmTitle}))[0];
 		let remoteParentFolderName = '';
 		let localParentId = '';
