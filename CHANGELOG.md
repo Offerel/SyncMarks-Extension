@@ -1,5 +1,11 @@
 ChangeLog
 =========
+v1.19.5 (2022-03-09)
+-------------------------
+- Fix WebDAV Login
+- Added token based login
+
+
 v1.19.3 (2022-02-25)
 -------------------------
 - Minor Fixes
@@ -7,7 +13,7 @@ v1.19.3 (2022-02-25)
 
 v1.19.2 (2022-02-24)
 -------------------------
-- Fix sync for unsynced client
+- Fix sync for un-synced client
 
 
 v1.19.1 (2022-02-21)

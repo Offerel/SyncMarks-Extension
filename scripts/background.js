@@ -251,6 +251,7 @@ function init() {
 		if(s_type == 'PHP') {
 			if(options['token'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
+				chrome.browserAction.setBadgeTextColor({color: "white"});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
@@ -258,6 +259,7 @@ function init() {
 		} else if(s_type == 'PHP') {
 			if(options['creds'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
+				chrome.browserAction.setBadgeTextColor({color: "white"});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
