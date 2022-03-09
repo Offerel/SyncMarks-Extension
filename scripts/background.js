@@ -252,11 +252,15 @@ function init() {
 			if(options['token'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+			} else {
+				chrome.browserAction.setBadgeText({text: ''});
 			}
 		} else if(s_type == 'PHP') {
 			if(options['creds'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+			} else {
+				chrome.browserAction.setBadgeText({text: ''});
 			}
 		}
 
