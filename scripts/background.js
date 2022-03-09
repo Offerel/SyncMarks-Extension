@@ -248,6 +248,18 @@ function init() {
 		let s_startup = options['actions']['startup'] || false;
 		let s_type = options['s_type'] || "";
 
+		if(s_type == 'PHP') {
+			if(options['token'] == '') {
+				chrome.browserAction.setBadgeText({text: '!'});
+				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+			}
+		} else if(s_type == 'PHP') {
+			if(options['creds'] == '') {
+				chrome.browserAction.setBadgeText({text: '!'});
+				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+			}
+		}
+
 		if( s_startup === true && s_type.indexOf('PHP') == -1) {
 			loglines = logit("Info: Initiate WebDAV startup sync");
 			if(options['wdurl']) getDAVMarks();
