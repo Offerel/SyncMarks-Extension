@@ -302,7 +302,7 @@
     "description": ""
   },
   "openBackend": {
-    "message": "Öffne Backend",
+    "message": "Öffne Server",
     "description": ""
   },
   "bookmarkTab": {
@@ -310,7 +310,7 @@
     "description": ""
   },
   "backendType": {
-    "message": "Wähle zwischen PHP und WebDAV Backend",
+    "message": "Wähle zwischen PHP und WebDAV Server",
     "description": ""
   },
   "ManAuto": {
@@ -318,7 +318,7 @@
     "description": ""
   },
   "toBackend": {
-    "message": "Bookmark manuell direkt an Backend senden",
+    "message": "Bookmark manuell direkt an Server senden",
     "description": ""
   }
 }
