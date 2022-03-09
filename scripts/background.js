@@ -1232,6 +1232,26 @@ async function importFull(rMarks) {
 	}
 
 	async function iMoveMark(remoteMark) {
+		console.log(remoteMark);
+
+		let localMark = (await searchBookmarkAsync({title: remoteMark.bmTitle}))[0];
+		let remoteParentFolderName = '';
+		let localParentId = '';
+
+		if(remoteMark.bmParentID.endsWith('_____') || remoteMark.bmParentID.length === 1) {
+			localParentId = remoteMark.bmParentID;
+		} else {
+			let searchedID = remoteMark.bmParentID;
+			remoteParentFolderName = rMarks.filter(element => element.bmID == searchedID)[0].bmTitle;		
+			localParentId = (await searchBookmarkAsync({title: remoteParentFolderName}))[0].id;
+		}
+
+		let destination = new Object();
+		destination.parentId = localParentId;
+		destination.index = parseInt(remoteMark.bmIndex);
+		let newMark = (await moveBookmarkAsync(localMark.id, destination));
+
+		/*
 		if(typeof remoteMark.bmURL !== 'undefined') {
 			let localMark = (await searchBookmarkAsync({url: remoteMark.bmURL}))[0];
 			let remoteParentFolderName = '';
@@ -1251,6 +1271,7 @@ async function importFull(rMarks) {
 
 			let newMark = (await moveBookmarkAsync(localMark.id, destination));
 		}
+		*/
 	}
 
 	chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
