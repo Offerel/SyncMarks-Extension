@@ -30,6 +30,7 @@ legend {
 	color: white;
 	border-radius: .3em;
 	font-size: .85em;
+	text-align: left;
 }
 button {
 	border-color: transparent;
@@ -274,8 +275,11 @@ input:checked + .slider:before {
 }
 .toptionc {
 	position: relative;
-	display: inline-flex;
-	width: 149px;
+	text-align: left;
+}
+.toptionb {
+    display: inline-block;
+    visibility: collapse;
 }
 #changelog {
 	overflow: auto;

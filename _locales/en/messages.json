@@ -25,7 +25,7 @@
   },
   
   "optionsServerURL": {
-    "message": "Server URL",
+    "message": "Backend URL",
     "description": "Show Logfile."
   },
   
@@ -38,37 +38,34 @@
     "message": "username",
     "description": "Username."
   },
-  
   "optionsPassword": {
     "message": "Password",
     "description": "Password."
   },
-  
   "optionsPasswordHint": {
     "message": "password",
     "description": "Password."
   },
-  
   "optionsSyncOptions": {
     "message": "Sync Options",
     "description": "Sync Options."
   },
-  
+  "optionsAuto": {
+    "message": "Automatic synchronization",
+    "description": ""
+  },
   "optionsStartup": {
     "message": "Startup",
     "description": "Browser startup."
   },
-  
   "optionsStartupHint": {
     "message": "You can enable this after 'Import' or 'Remove'",
     "description": "Browser startup hint."
   },
-  
   "optionsCreate": {
     "message": "Create",
     "description": "Bookmark create."
   },
-  
   "optionsChange": {
     "message": "Change",
     "description": "Bookmark change."
@@ -261,7 +258,7 @@
     "description": "Error moving bookmark with PHP."
   },
   "successExportBookmarks": {
-    "message": "Export successfully.",
+    "message": "Local bookmarks successfully added at server.",
     "description": "All bookmarks exported."
   },
   "successImportBookmarks": {

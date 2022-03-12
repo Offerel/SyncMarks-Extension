@@ -1,7 +1,10 @@
 var background_page = chrome.extension.getBackgroundPage();
 
 function checkForm() {
-	var changed = false;
+	var wchanged = false;
+	var uchanged = false;
+	var pchanged = false;
+
 
 	if(document.getElementById('wdurl').value != '' && document.getElementById('user').value != '' && document.getElementById('password').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
 		document.getElementById('mdownload').disabled=false;
@@ -13,11 +16,13 @@ function checkForm() {
 		document.getElementById('mremove').disabled=false;
 	}
 
-	if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) changed = true;
-	if(document.getElementById('user').value != document.getElementById('user').defaultValue) changed = true;
-	if(document.getElementById('password').value != document.getElementById('password').defaultValue) changed = true;
+	if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) wchanged = true;
+	if(document.getElementById('user').value != document.getElementById('user').defaultValue) uchanged = true;
+	if(document.getElementById('password').value != document.getElementById('password').defaultValue) pchanged = true;
 
-	if(changed) saveOptions();
+
+
+	if(wchanged && uchanged && pchanged) saveOptions();
 }
 
 function saveOptions(e) {
@@ -124,10 +129,10 @@ function gName() {
 			background_page.notify('error',message);
 			background_page.loglines =  background_page.logit('Error: '+message);
 		} else {
-			var response = JSON.parse(xhr.responseText);
+			let response = JSON.parse(xhr.responseText);		
+			document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
+			document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
 		}
-		document.getElementById("cname").defaultValue = (response) ? response.cname:'';
-		document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
 	}
 	xhr.send(cdata);
 }
@@ -163,11 +168,20 @@ function restoreOptions() {
 		document.querySelector("#s_remove").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['remove'];
 		document.querySelector("#b_action").defaultChecked = (options['actions'] == undefined) ? false:options['actions']['crsrv'];
 
+		if(document.getElementById("s_startup").checked && document.getElementById("s_create").checked && document.getElementById("s_change").checked && document.getElementById("s_remove").checked) {
+			document.getElementById("s_auto").defaultChecked = true;
+		} else {
+			document.getElementById("s_auto").defaultChecked = false;
+		}
+
 		if("s_type" in options) {
 			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').defaultChecked = true;
 			if(options['s_type'] == 'PHP') {
 				gName();
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
+				document.getElementById("php_webdav").checked = true;
+			} else {
+				document.getElementById("php_webdav").checked = false;
 			}
 		}
 
@@ -259,7 +273,8 @@ function manualImport(e) {
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				background_page.getAllPHPMarks(fs);
+				//background_page.getAllPHPMarks(fs);
+				background_page.getAllPHPMarks(true);
 			} else if (options['s_type'] == 'WebDAV') {
 				background_page.getDAVMarks();
 			}
@@ -372,6 +387,38 @@ function cCreate() {
 	}
 }
 
+function switchBackend() {
+	let backendPHP = this.checked;
+	if(backendPHP) {
+		document.getElementById("php").checked = true;
+		document.getElementById("wdav").checked = false;
+		document.getElementById("blbl").innerText = "Backend PHP";
+	} else {
+		document.getElementById("php").checked = false;
+		document.getElementById("wdav").checked = true;
+		document.getElementById("blbl").innerText = "Backend WebDAV";
+	}
+}
+
+function cAuto() {
+	if(document.getElementById("s_auto").checked) {
+		document.getElementById("b_action").checked = false;
+
+		document.getElementById("s_startup").checked = true;
+		document.getElementById("s_create").checked = true;
+		document.getElementById("s_change").checked = true;
+		document.getElementById("s_remove").checked = true;
+	} else {
+		document.getElementById("b_action").checked = true;
+
+		document.getElementById("s_startup").checked = false;
+		document.getElementById("s_create").checked = false;
+		document.getElementById("s_change").checked = false;
+		document.getElementById("s_remove").checked = false;
+	}
+	saveOptions();
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 window.addEventListener('load', function () {
@@ -417,9 +464,9 @@ window.addEventListener('load', function () {
 	document.getElementById("wdurl").addEventListener("change", checkForm);
 	document.getElementById("user").addEventListener("change", checkForm);
 	document.getElementById("password").addEventListener("change", checkForm);
-
-	document.getElementById("wdav").addEventListener("change", saveOptions);
-	document.getElementById("php").addEventListener("change", saveOptions);
+	
+	document.getElementById("php_webdav").addEventListener("change", switchBackend);
+	
 	document.getElementById("s_startup").addEventListener("change", saveOptions);
 	document.getElementById("s_create").addEventListener("change", saveOptions);
 	document.getElementById("s_create").addEventListener("change", cCreate);
@@ -427,22 +474,12 @@ window.addEventListener('load', function () {
 	document.getElementById("s_remove").addEventListener("change", saveOptions);
 	document.getElementById("b_action").addEventListener("change", saveOptions);
 
+	document.getElementById("s_auto").addEventListener("change", cAuto);
+
 	document.getElementById("cname").addEventListener("change", rName);
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 	document.getElementById("logsave").addEventListener("click", saveLog);
 	document.getElementById("logclear").addEventListener("click", clearLog);
-	document.getElementById('ebutton').addEventListener('click', function(e) {
-		e.preventDefault();
-		this.classList.toggle("active");
-		this.nextElementSibling.classList.toggle("active");
-		let panel = this.nextElementSibling;
-		if (panel.style.maxHeight) {
-			panel.style.maxHeight = null;
-		} else {
-			panel.style.maxHeight = panel.scrollHeight + "px";
-		}
-
-	});
 
 	document.querySelector('h1').addEventListener('click', function(){
 		window.open(document.getElementById('wdurl').value);

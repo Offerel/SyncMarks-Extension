@@ -5,7 +5,7 @@
   },
 
   "extensionDescription": {
-    "message": "Export/Import/Sync von Lesezeichen zu WebDAV oder PHP.",
+    "message": "Export/Import/Sync von Bookmarks zu WebDAV oder PHP.",
     "description": "Beschreibung der Erweiterung."
   },
   
@@ -25,7 +25,7 @@
   },
   
   "optionsServerURL": {
-    "message": "Server URL",
+    "message": "Backend URL",
     "description": "Server URL."
   },
   
@@ -38,37 +38,34 @@
     "message": "Benutzername",
     "description": "Username."
   },
-  
   "optionsPassword": {
     "message": "Passwort",
     "description": "Password."
   },
-  
   "optionsPasswordHint": {
     "message": "Passwort",
     "description": "Password."
   },
-  
   "optionsSyncOptions": {
     "message": "Optionen",
     "description": "Sync Options."
   },
-  
+   "optionsAuto": {
+    "message": "Automatische Synchronisation",
+    "description": ""
+  },
    "optionsStartup": {
     "message": "Browserstart",
     "description": "Browser startup."
   },
-  
   "optionsStartupHint": {
-    "message": "Bitte zuerst 'Importieren' oder bestehende Lesezeichen 'Löschen'",
+    "message": "Bitte zuerst 'Importieren' oder bestehende Bookmarks 'Löschen'",
     "description": "Browser startup hint."
   },
-  
   "optionsCreate": {
     "message": "Erstellen",
     "description": "Bookmark create."
   },
-  
   "optionsChange": {
     "message": "Ändern",
     "description": "Bookmark change."
@@ -86,7 +83,7 @@
     "description": "Remove Button."
   },
   "optionsBTNRemoveHint": {
-    "message": "Alle lokalen Lesezeichen werden gelöscht!",
+    "message": "Alle lokalen Bookmarks werden gelöscht!",
     "description": "Remove Button Hint."
   },
   "optionsBTNImport": {
@@ -94,7 +91,7 @@
     "description": ""
   },
   "optionsBTNImportHint": {
-    "message": "Wiederherstellen vom Server, überschreiben der lokalen Lesezeichen.",
+    "message": "Wiederherstellen vom Server, überschreiben der lokalen Bookmarks.",
     "description": "Import Button Hint."
   },
   "optionsBTNSaveHint": {
@@ -156,7 +153,7 @@
   },
 
   "optionsNotUsed": {
-    "message": "Es sieht so aus, als hättest du das AddOn noch nie benutzt. Du kannst nun alle auf dem Server gespeicherten Lesezeichen mit \"Importieren\" importieren. Wenn du bereits Lesezeichen in deinem Browser erstellt hast, ist es eventuell eine gute Idee, diese vorher mit \"Löschen\" zu löschen.",
+    "message": "Es sieht so aus, als hättest du das AddOn noch nie benutzt. Du kannst nun alle auf dem Server gespeicherten Bookmarks mit \"Importieren\" importieren. Wenn du bereits Bookmarks in deinem Browser erstellt hast, ist es eventuell eine gute Idee, diese vorher mit \"Löschen\" zu löschen.",
     "description": "Not used hint."
   },
   
@@ -192,16 +189,16 @@
     "description": ""
   },
   "optionsBeforeImport": {
-    "message": "Vor dem Import werden alle lokalen Lesezeichen gelöscht. Danach werden die neuen Lesezeichen importiert.\n\nSollen die lokalen Lesezeichen vor dem Import gelöscht werden?",
+    "message": "Vor dem Import werden alle lokalen Bookmarks gelöscht. Danach werden die neuen Bookmarks importiert.\n\nSollen die lokalen Bookmarks vor dem Import gelöscht werden?",
     "description": "Message before importing."
   },
   "optionsBeforeExport": {
-    "message": "Vor dem Export werden alle Lesezeichen auf dem Server gelöscht. Danach werden die neuen Lesezeichen zum Server eportiert.\n\nSollen die Lesezeichen vor dem Export auf dem Server gelöscht werden?",
+    "message": "Vor dem Export werden alle Bookmarks auf dem Server gelöscht. Danach werden die neuen Bookmarks zum Server eportiert.\n\nSollen die Bookmarks vor dem Export auf dem Server gelöscht werden?",
     "description": ""
   },
 
   "optionsInfoRemove": {
-    "message": "Wenn du fortfährst, werden alle deine aktuellen Lesezeichen entfernt.\n\nSollen alle lokalen Lesezeichen gelöscht werden?",
+    "message": "Wenn du fortfährst, werden alle deine aktuellen Bookmarks entfernt.\n\nSollen alle lokalen Bookmarks gelöscht werden?",
     "description": "Login failed, unknown state."
   },
 
@@ -216,57 +213,57 @@
   },
   
   "popupImportConfirm": {
-	"message": "Die Lesezeichen werden nun vom Server übernommen. Bist du sicher?",
+	"message": "Die Bookmarks werden nun vom Server übernommen. Bist du sicher?",
     "description": "ImportConfirm"
   },
   
   "errorGetBookmarks": {
-    "message": "Es gab einen Fehler beim Abrufen der Lesezeichen vom Server. Der Antwortcode vom Server lautet: ",
-    "description": "http Fehler beim Abrufen der Lesezeichen."
+    "message": "Es gab einen Fehler beim Abrufen der Bookmarks vom Server. Der Antwortcode vom Server lautet: ",
+    "description": "http Fehler beim Abrufen der Bookmarks."
   },
   
   "errorSaveBookmarks": {
-    "message": "Es gab einen Fehler beim Speichern aller Lesezeichen. Die Rückmeldung lautet: ",
-    "description": "http error beim Speichern der Lesezeichen."
+    "message": "Es gab einen Fehler beim Speichern aller Bookmarks. Die Rückmeldung lautet: ",
+    "description": "http error beim Speichern der Bookmarks."
   },
   
   "errorSaveSingleBookmarks": {
-    "message": "Es gab einen Fehler beim Speichern des Lesezeichens auf dem PHP Server. Die Rückmeldung lautet: ",
+    "message": "Es gab einen Fehler beim Speichern des Bookmarks auf dem PHP Server. Die Rückmeldung lautet: ",
     "description": "http error when saving single bookmark."
   },
   
   "errorExportBookmarks": {
-    "message": "Es gab einen Fehler beim Export der Lesezeichen.",
-    "description": "Fehler beim exportieren der Lesezeichen."
+    "message": "Es gab einen Fehler beim Export der Bookmarks.",
+    "description": "Fehler beim exportieren der Bookmarks."
   },
   
   "errorImportBookmark": {
-    "message": "Es gab einen Fehler beim Import des Lesezeichens: ",
+    "message": "Es gab einen Fehler beim Import des Bookmarks: ",
     "description": "Error when import bookmark."
   },
   
   "errorRemoveBookmark": {
-    "message": "Es gab einen Fehler beim Entfernen des Lesezeichens.",
-    "description": "Fehler beim Entfernen des Lesezeichens mit PHP."
+    "message": "Es gab einen Fehler beim Entfernen des Bookmarks.",
+    "description": "Fehler beim Entfernen des Bookmarks mit PHP."
   },
 
   "errorEditBookmark": {
-    "message": "Es gab einen Fehler beim Ändern des Lesezeichens auf dem Server.",
+    "message": "Es gab einen Fehler beim Ändern des Bookmarks auf dem Server.",
     "description": ""
   },
   
   "errorMoveBookmark": {
-    "message": "Es gab einen Fehler beim Verschieben des Lesezeichens auf dem PHP-Server. Die Rückmeldung lautet: ",
-    "description": "Fehler beim Verschieben des Lesezeichens."
+    "message": "Es gab einen Fehler beim Verschieben des Bookmarks auf dem PHP-Server. Die Rückmeldung lautet: ",
+    "description": "Fehler beim Verschieben des Bookmarks."
   },
   
   "successExportBookmarks": {
-    "message": "Export erfolgreich.",
-    "description": "Alle Lesezeichen erfolgreich exportiert."
+    "message": "Lokale Bookmarks erfolgreich auf dem Server hinzugefügt.",
+    "description": "Alle Bookmarks erfolgreich exportiert."
   },
     
   "successImportBookmarks": {
-    "message": " Lesezeichen/Ordner importiert.",
+    "message": " Bookmark/Ordner importiert.",
     "description": "Count bookmarks imported."
   },
   "internalError": {
@@ -274,11 +271,11 @@
     "description": "Interner Fehler."
   },
   "infoNewClient": {
-    "message": "Dieser Browser scheint ein neuer Client für den Server zu sein. Dieser Client ist nun auf dem Server registriert. Es wurden bisher keine Lesezeichen importiert. Sie diese nun manuell importieren.",
+    "message": "Dieser Browser scheint ein neuer Client für den Server zu sein. Dieser Client ist nun auf dem Server registriert. Es wurden bisher keine Bookmarks importiert. Sie diese nun manuell importieren.",
     "description": "New Client, unknown to the server."
   },
   "infoNoChange": {
-    "message": "Keine Lesezeichen hinzugefügt, verschoben oder gelöscht bei der letzten Synchronisation.",
+    "message": "Keine Bookmarks hinzugefügt, verschoben oder gelöscht bei der letzten Synchronisation.",
     "description": "Meldung, wenn sich auf dem Server keine Daten verändert haben."
   },
   "infoChanges": {
@@ -286,7 +283,7 @@
     "description": "Message if no data has changed on the server."
   },
   "infoEmptyConfig": {
-    "message": "Es wurden keine Konfigurationsdaten gefunden. Vielleicht ist dies eine Neuinstallation, bitte konfiguriere die Optionen vor der ersten Verwendung. Anschließend können Lesezeichen Importiert oder Exportiert werden, um mit dem Server synchron zu sein.",
+    "message": "Es wurden keine Konfigurationsdaten gefunden. Vielleicht ist dies eine Neuinstallation, bitte konfiguriere die Optionen vor der ersten Verwendung. Anschließend können Bookmarks Importiert oder Exportiert werden, um mit dem Server synchron zu sein.",
     "description": "Message if extension is not configured yet."
   },
   "sendPage": {
