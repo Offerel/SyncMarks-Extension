@@ -3,37 +3,30 @@
     "message": "SyncMarks",
     "description": "Name of the extension."
   },
-
   "extensionDescription": {
     "message": "Export/Import/Sync bookmarks to WebDAV or PHP.",
     "description": "Description of the extension."
-  },
-  
+  },  
   "optionsServerData": {
     "message": "Server Data",
     "description": "Server Data."
-  },
-  
+  },  
   "optionsServerType": {
     "message": "Server type",
     "description": "Server type."
-  },
-  
+  },  
   "optionsShowLog": {
     "message": "Show Log",
     "description": "Show Logfile."
-  },
-  
+  },  
   "optionsServerURL": {
-    "message": "Backend URL",
-    "description": "Show Logfile."
-  },
-  
+    "message": "Server URL",
+    "description": ""
+  },  
   "optionsUsername": {
     "message": "Username",
     "description": "Username."
-  },
-  
+  },  
   "optionsUsernameHint": {
     "message": "username",
     "description": "Username."
@@ -107,7 +100,7 @@
     "description": ""
   },
   "optionsBTNExportHint": {
-    "message": "Overwrite all bookmarkson the server.",
+    "message": "Overwrite all bookmarks on the server.",
     "description": "Export Button Hint."
   },
   "optionsBTNSave": {
@@ -146,85 +139,81 @@
     "message": "No",
     "description": "No Button."
   },
-
   "optionsBTNCancel": {
     "message": "Cancel",
     "description": "Cancel Button."
-  },
-  
+  },  
   "optionsNotUsed": {
-    "message": "It looks like you haven't used the add-on yet. You can now import any bookmarks saved on the server with \"Import\". If you have already created bookmarks in your browser, it might be a good idea to delete them with \"Remove\".",
+    "message": "You can now synchronize bookmarks from the server.",
     "description": "Not used hint."
-  },
-  
+  },  
   "optionsErrorURL": {
     "message": "Login failed: Please check the WebDAV URL. It should be in a form like https://servername/folder",
     "description": "Login failed, wrong URL."
-  },
-  
+  },  
   "optionsErrorUser": {
     "message": "Login failed: Please check username and password.",
     "description": "Login failed, wrong User."
   },
-
   "optionsSuccessLogin": {
     "message": "Login successfully. Options saved.",
     "description": "Login successfully."
   },
-
   "optionsErrorLogin": {
     "message": "Login failed: Status: ",
     "description": "Login failed, unknown state."
   },
-
+  "optionsLoginError": {
+    "message": "Login Error: Please login again",
+    "description": ""
+  },
   "optionsBeforeCImpExp": {
     "message": "Here you can store or restore your current settings.",
     "description": ""
   },
-  
+  "optionsBeforeLogin": {
+    "message": "Please log in once with your access data to receive an access code.",
+    "description": ""
+  },  
+  "optionsWrongAData": {
+    "message": "Missing or wrong access code. Please log in again.",
+    "description": ""
+  },
   "infoRestoreID": {
     "message": "Do you want to restore the Client ID?",
     "description": ""
-  },
-  
+  },  
   "optionsSuccessImport": {
     "message": "Import successfully.",
     "description": ""
-  },
-  "optionsBeforeImport": { 
-    "message": "All local bookmarks are deleted before importing. Afterwards the new bookmarks are imported.\n\nShould the local bookmarks be deleted before the import?",
+  },  "optionsBeforeImport": { 
+    "message": "Should all local bookmarks be deleted before import?",
     "description": "Message before importing."
   },
   "optionsBeforeExport": { 
     "message": "All bookmarks are deleted at the server before exporting. Afterwards the new bookmarks are exported to the server.\n\nShould the remote bookmarks be deleted before the export?",
     "description": ""
   },
-
   "optionsInfoRemove": {
     "message": "When you continue, all your current bookmarks are removed.\n\nAre you sure to delete all local bookmarks?",
     "description": "Login failed, unknown state."
   },
-
   "popupBTNOptions": {
     "message": "Options",
     "description": "Options Button."
-  },
-  
+  },  
   "popupNoSync": {
     "message": "No startup sync done yet.",
     "description": "No startup sync done yet.."
-  },
-  
+  },  
   "popupImportConfirm": {
     "message": "The bookmarks stored on the server are now added. Are you sure?",
     "description": "ImportConfirm"
   },
-
   "errorGetBookmarks": {
   "message": "There was a error retrieving the bookmarks from the server. The status response is: ",
     "description": "http error when retrieving bookmarks."
-  },
-  
+  },  
   "errorSaveBookmarks": {
     "message": "There was some error saving all bookmarks. The status response is: ",
     "description": "http error when saving bookmarks."
@@ -270,7 +259,7 @@
     "description": "Internal error on promise."
   },
   "infoNewClient": {
-    "message": "This browser seems to be a new client for the server. The client is now registered at the server. No bookmarks are imported. You can import them manually.",
+    "message": "This browser is a new client and is now registered at the server.",
     "description": "New Client, unknown to the server."
   },
   "infoNoChange": {
@@ -282,7 +271,7 @@
     "description": "Message if no data has changed on the server."
   },
   "infoEmptyConfig": {
-    "message": "Configuration is empty. Maybe thats a new installation, please configure the options before use. After that you can import or export bookmarks to be in sync with the server.",
+    "message": "Configuration is empty. Please configure the AddOn before use.",
     "description": "Message if extension is not configured yet."
   },
   "sendPage": {
@@ -306,11 +295,23 @@
     "description": ""
   },
   "openBackend": {
-    "message": "Open Backend",
+    "message": "Open server",
     "description": ""
   },
   "bookmarkTab": {
-    "message": "Bookmark to Backend",
+    "message": "Bookmark direct to server",
+    "description": ""
+  },
+  "backendType": {
+    "message": "Choose between PHP and WebDAV server",
+    "description": ""
+  },
+  "ManAuto": {
+    "message": "Activate automatic synchronization",
+    "description": ""
+  },
+  "toBackend": {
+    "message": "Send Bookmark directly and manual to the server",
     "description": ""
   }
 }

@@ -3,37 +3,30 @@
     "message": "SyncMarks",
     "description": "Name der Erweiterung."
   },
-
   "extensionDescription": {
     "message": "Export/Import/Sync von Bookmarks zu WebDAV oder PHP.",
     "description": "Beschreibung der Erweiterung."
-  },
-  
+  },  
   "optionsServerData": {
     "message": "Daten des Servers",
     "description": "Server Data."
-  },
-  
+  },  
   "optionsServerType": {
     "message": "Server Art",
     "description": "Server type."
-  },
-  
+  },  
   "optionsShowLog": {
     "message": "Zeige Logfile an",
     "description": "Show Logfile."
-  },
-  
+  },  
   "optionsServerURL": {
-    "message": "Backend URL",
-    "description": "Server URL."
-  },
-  
+    "message": "Server URL",
+    "description": ""
+  },  
   "optionsUsername": {
     "message": "Benutzer",
     "description": "Username."
-  },
-  
+  },  
    "optionsUsernameHint": {
     "message": "Benutzername",
     "description": "Username."
@@ -55,7 +48,7 @@
     "description": ""
   },
    "optionsStartup": {
-    "message": "Browserstart",
+    "message": "Browser Start",
     "description": "Browser startup."
   },
   "optionsStartupHint": {
@@ -146,38 +139,44 @@
     "message": "Nein",
     "description": "No Button."
   },
-
   "optionsBTNCancel": {
     "message": "Abbrechen",
     "description": "Cancel Button."
   },
-
   "optionsNotUsed": {
-    "message": "Es sieht so aus, als hättest du das AddOn noch nie benutzt. Du kannst nun alle auf dem Server gespeicherten Bookmarks mit \"Importieren\" importieren. Wenn du bereits Bookmarks in deinem Browser erstellt hast, ist es eventuell eine gute Idee, diese vorher mit \"Löschen\" zu löschen.",
+    "message": "Du kannst nun alle Bookmarks vom Server Synchronisieren.",
     "description": "Not used hint."
-  },
-  
+  },  
   "optionsErrorURL": {
     "message": "Login Fehler: Bitte prüfe den URL. Dieser sollte im Format https://servername/folder sein.",
     "description": "Login failed, wrong URL."
-  },
-  
+  },  
   "optionsErrorUser": {
     "message": "Login Fehler: Bitte prüfe Benutzer und Passwort.",
     "description": "Login failed, wrong User."
   },
-
   "optionsSuccessLogin": {
-    "message": "Login erfolgreich. Optionen gespeichert.",
+    "message": "Optionen gespeichert.",
     "description": "Login failed, wrong User."
   },
-
   "optionsErrorLogin": {
     "message": "Login Fehler: Status: ",
     "description": "Login failed, unknown state."
   },
+  "optionsLoginError": {
+    "message": "Login Fehler: Bitte erneut einloggen",
+    "description": ""
+  },
   "optionsBeforeCImpExp": {
-    "message": "Hier kannst du deine bestehenden Einstellungen sichern oder wiederherstellen..",
+    "message": "Hier kannst du deine bestehenden Einstellungen sichern oder wiederherstellen.",
+    "description": ""
+  },
+  "optionsBeforeLogin": {
+    "message": "Bitte einmalig mit deinen Zugangsdaten einloggen, um einen Zugangscode zu erhalten.",
+    "description": ""
+  },
+  "optionsWrongAData": {
+    "message": "Fehlender oder falscher Zugangscode. Bitte erneut einloggen.",
     "description": ""
   },
   "infoRestoreID": {
@@ -189,29 +188,25 @@
     "description": ""
   },
   "optionsBeforeImport": {
-    "message": "Vor dem Import werden alle lokalen Bookmarks gelöscht. Danach werden die neuen Bookmarks importiert.\n\nSollen die lokalen Bookmarks vor dem Import gelöscht werden?",
+    "message": "Sollen alle lokalen Bookmarks vor dem Import gelöscht werden?",
     "description": "Message before importing."
   },
   "optionsBeforeExport": {
-    "message": "Vor dem Export werden alle Bookmarks auf dem Server gelöscht. Danach werden die neuen Bookmarks zum Server eportiert.\n\nSollen die Bookmarks vor dem Export auf dem Server gelöscht werden?",
+    "message": "Vor dem Export werden alle Bookmarks auf dem Server gelöscht. Danach werden die neuen Bookmarks zum Server exportiert.\n\nSollen die Bookmarks vor dem Export auf dem Server gelöscht werden?",
     "description": ""
   },
-
   "optionsInfoRemove": {
     "message": "Wenn du fortfährst, werden alle deine aktuellen Bookmarks entfernt.\n\nSollen alle lokalen Bookmarks gelöscht werden?",
     "description": "Login failed, unknown state."
   },
-
   "popupBTNOptions": {
     "message": "Optionen",
     "description": "Options Button."
   },
-
   "popupNoSync": {
-    "message": "Bisher wurde kein Sync beim Browserstart durchgeführt.",
+    "message": "Bisher wurde kein Sync beim Start durchgeführt.",
     "description": "No startup sync done yet.."
-  },
-  
+  },  
   "popupImportConfirm": {
 	"message": "Die Bookmarks werden nun vom Server übernommen. Bist du sicher?",
     "description": "ImportConfirm"
@@ -271,7 +266,7 @@
     "description": "Interner Fehler."
   },
   "infoNewClient": {
-    "message": "Dieser Browser scheint ein neuer Client für den Server zu sein. Dieser Client ist nun auf dem Server registriert. Es wurden bisher keine Bookmarks importiert. Sie diese nun manuell importieren.",
+    "message": "Dieser Browser ist ein neuer Client und wurde auf dem Server registriert.",
     "description": "New Client, unknown to the server."
   },
   "infoNoChange": {
@@ -283,7 +278,7 @@
     "description": "Message if no data has changed on the server."
   },
   "infoEmptyConfig": {
-    "message": "Es wurden keine Konfigurationsdaten gefunden. Vielleicht ist dies eine Neuinstallation, bitte konfiguriere die Optionen vor der ersten Verwendung. Anschließend können Bookmarks Importiert oder Exportiert werden, um mit dem Server synchron zu sein.",
+    "message": "Keine Konfigurationsdaten gefunden. Bitte konfiguriere das AddOn vor der ersten Verwendung.",
     "description": "Message if extension is not configured yet."
   },
   "sendPage": {
@@ -307,11 +302,23 @@
     "description": ""
   },
   "openBackend": {
-    "message": "Öffne Backend",
+    "message": "Öffne Server",
     "description": ""
   },
   "bookmarkTab": {
-    "message": "Bookmark zu Backend",
+    "message": "Bookmark direkt zu Server",
+    "description": ""
+  },
+  "backendType": {
+    "message": "Wähle zwischen PHP und WebDAV Server",
+    "description": ""
+  },
+  "ManAuto": {
+    "message": "Automatische Synchronisation aktivieren",
+    "description": ""
+  },
+  "toBackend": {
+    "message": "Bookmark manuell direkt an Server senden",
     "description": ""
   }
 }
