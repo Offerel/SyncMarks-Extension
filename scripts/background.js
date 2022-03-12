@@ -123,7 +123,7 @@ function bookmarkTab() {
 				xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.withCredentials = true;
-				xhr.onload = function () {
+				xhr.onload = async function () {
 					if( xhr.status < 200 || xhr.status > 226) {
 						notify('error', xhr.response);
 						loglines = logit("Error: " + xhr.response);
@@ -132,12 +132,14 @@ function bookmarkTab() {
 						let xtResponse = xhr.getResponseHeader("X-Request-Info");
 						if(xtResponse !== null) {
 							if(xtResponse !== '0') {
-								chrome.storage.local.set({token: xtResponse});
-								callback(xtResponse);
+								await chrome.storage.local.set({token: xtResponse});
 							} else {
 								chrome.storage.local.set({token: ''});
 								let message = chrome.i18n.getMessage("optionsLoginError");
 								notify('error', message);
+								chrome.browserAction.setBadgeText({text: '!'});
+								chrome.browserAction.setBadgeTextColor({color: "white"});
+								chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 							}
 						}
 
@@ -166,7 +168,7 @@ function sendTab(element) {
 			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
-			xhr.onload = function () {
+			xhr.onload = async function () {
 				if( xhr.status < 200 || xhr.status > 226) {
 					var message = chrome.i18n.getMessage("sendLinkNot");
 					notify('error',message);
@@ -177,12 +179,14 @@ function sendTab(element) {
 
 					if(xtResponse !== null) {
 						if(xtResponse !== '0') {
-							chrome.storage.local.set({token: xtResponse});
-							callback(xtResponse);
+							await chrome.storage.local.set({token: xtResponse});
 						} else {
 							chrome.storage.local.set({token: ''});
 							let message = chrome.i18n.getMessage("optionsLoginError");
 							notify('error', message);
+							chrome.browserAction.setBadgeText({text: '!'});
+							chrome.browserAction.setBadgeTextColor({color: "white"});
+							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 						}
 					}
 				}
@@ -228,7 +232,7 @@ function init() {
 	});
 	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
-	chrome.storage.local.get(null, function(options) {
+	chrome.storage.local.get(null, async function(options) {
 		if(options['wdurl'] === undefined) return false;
 		if(options.actions.crsrv === true) {
 			chrome.commands.getAll((commands) => {
@@ -270,15 +274,10 @@ function init() {
 			loglines = logit("Info: Initiate WebDAV startup sync");
 			if(options['wdurl']) getDAVMarks();
 		} else if(s_type.indexOf('PHP') == 0) {
-			if(s_startup === true) {
-				loglines = logit("Info: Initiate startup sync");
-				checkFullSync();
-			}
-
 			if(options['wdurl']) {
-				ccMenus();
-				getClientList();
-				getNotifications();
+				await ccMenus();
+				await getClientList();
+				loglines = logit("Info: Init finished");
 			}
 		}
 	});
@@ -289,7 +288,7 @@ function getNotifications() {
 	chrome.storage.local.get(null, function(options) {
 		let data = "client=" + options['s_uuid'] + "&caction=gurls&s=" + options['actions']['startup'];
 		let xhr = new XMLHttpRequest();
-		xhr.open("POST", options['wdurl'], false);
+		xhr.open("POST", options['wdurl'], true);
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
@@ -298,7 +297,7 @@ function getNotifications() {
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		
 		xhr.withCredentials = true;
-		xhr.onload = function () {
+		xhr.onload = async function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Get list of notifications failed. State: " + xhr.status;
 				notify('error',message);
@@ -307,12 +306,14 @@ function getNotifications() {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
 					if(xtResponse !== '0') {
-						chrome.storage.local.set({token: xtResponse});
-						callback(xtResponse);
+						await chrome.storage.local.set({token: xtResponse});
 					} else {
 						chrome.storage.local.set({token: ''});
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
+						chrome.browserAction.setBadgeText({text: '!'});
+						chrome.browserAction.setBadgeTextColor({color: "white"});
+						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
 
@@ -331,15 +332,20 @@ function getNotifications() {
 					}
 				}
 			}
+			let s_startup = options['actions']['startup'] || false;
+			if(s_startup === true) {
+				loglines = logit("Info: Start Sync");
+				await checkFullSync();
+			}
 		}
 		xhr.send(data);
 	});
 }
 
 function onTabActivated(tab){
-	pTabs.forEach(function(pTab, index){
+	pTabs.forEach(async function(pTab, index){
 		if(pTab.tID == tab.tabId) {
-			dmNoti(pTab.nID);
+			await dmNoti(pTab.nID);
 			pTabs.splice(index,1);
 		}
 	});
@@ -387,7 +393,7 @@ function getClientList() {
 	chrome.storage.local.get(null, function(options) {
 		let data = "client=" + options['s_uuid'] + "&caction=getclients&s="+options['actions']['startup'];
 		let xhr = new XMLHttpRequest();
-		xhr.open("POST", options['wdurl'], false);
+		xhr.open("POST", options['wdurl'], true);
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
@@ -396,7 +402,7 @@ function getClientList() {
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
 		xhr.withCredentials = true;
-		xhr.onload = function () {
+		xhr.onload = async function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Get list of clients failed. State: "+xhr.status;
 				notify('error',message);
@@ -405,12 +411,14 @@ function getClientList() {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
 					if(xtResponse !== '0') {
-						chrome.storage.local.set({token: xtResponse});
-						callback(xtResponse);
+						await chrome.storage.local.set({token: xtResponse});
 					} else {
 						chrome.storage.local.set({token: ''});
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
+						chrome.browserAction.setBadgeText({text: '!'});
+						chrome.browserAction.setBadgeTextColor({color: "white"});
+						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
 
@@ -453,6 +461,8 @@ function getClientList() {
 						}
 					}
 				});
+
+				getNotifications();
 			}
 		}
 		xhr.send(data);
@@ -522,7 +532,7 @@ function dmNoti(nkey) {
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
-		xhr.onload = function () {
+		xhr.onload = async function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = "Dismiss notification "+nkey+".";
 				notify('error',message);
@@ -531,12 +541,14 @@ function dmNoti(nkey) {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
 					if(xtResponse !== '0') {
-						chrome.storage.local.set({token: xtResponse});
-						callback(xtResponse);
+						await chrome.storage.local.set({token: xtResponse});
 					} else {
 						chrome.storage.local.set({token: ''});
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
+						chrome.browserAction.setBadgeText({text: '!'});
+						chrome.browserAction.setBadgeTextColor({color: "white"});
+						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
 			}
@@ -577,7 +589,7 @@ function onCreatedCheck(id, bookmark) {
 
 function onMovedCheck(id, bookmark) {
 	get_oMarks();
-	chrome.storage.local.get(null, function(options) {
+	chrome.storage.local.get(null, async function(options) {
 		var s_change = options['actions']['change'] || false;
 		var s_type = options['s_type'] || "";
 		
@@ -585,7 +597,7 @@ function onMovedCheck(id, bookmark) {
 			saveAllMarks();
 		}
 		else if(s_change === true && s_type.indexOf('PHP') == 0) {
-			moveMark(id, bookmark);
+			await moveMark(id, bookmark);
 		}
 	});
 }
@@ -620,7 +632,7 @@ function editMark(eData,id) {
 			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
-			xhr.onload = function () {
+			xhr.onload = async function () {
 				if( xhr.status < 200 || xhr.status > 226) {
 					message = chrome.i18n.getMessage("errorEditBookmark") + xhr.status;
 					notify('error', message);
@@ -630,12 +642,14 @@ function editMark(eData,id) {
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 					if(xtResponse !== null) {
 						if(xtResponse !== '0') {
-							chrome.storage.local.set({token: xtResponse});
-							callback(xtResponse);
+							await chrome.storage.local.set({token: xtResponse});
 						} else {
 							chrome.storage.local.set({token: ''});
 							let message = chrome.i18n.getMessage("optionsLoginError");
 							notify('error', message);
+							chrome.browserAction.setBadgeText({text: '!'});
+							chrome.browserAction.setBadgeTextColor({color: "white"});
+							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 						}
 					}
 
@@ -664,7 +678,7 @@ function editMark(eData,id) {
 }
 
 function onRemovedCheck(id, bookmark) {
-	chrome.storage.local.get(null, function(options) {
+	chrome.storage.local.get(null, async function(options) {
 		var s_remove = options['actions']['remove'] || false;
 		var s_type = options['s_type'] || "";
 		
@@ -673,8 +687,8 @@ function onRemovedCheck(id, bookmark) {
 			saveAllMarks();
 		}
 		else if(s_remove === true  && s_type.indexOf('PHP') == 0) {
-			delMark(id, bookmark);
-			get_oMarks();
+			await delMark(id, bookmark);
+			await get_oMarks();
 		}
 	});
 }
@@ -711,7 +725,7 @@ function exportPHPMarks(upl=[]) {
 			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
-			xhr.onload = function () {
+			xhr.onload = async function () {
 				if( xhr.status < 200 || xhr.status > 226) {
 					message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
 					notify('error',message);
@@ -720,12 +734,14 @@ function exportPHPMarks(upl=[]) {
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 					if(xtResponse !== null) {
 						if(xtResponse !== '0') {
-							chrome.storage.local.set({token: xtResponse});
-							callback(xtResponse);
+							await chrome.storage.local.set({token: xtResponse});
 						} else {
 							chrome.storage.local.set({token: ''});
 							let message = chrome.i18n.getMessage("optionsLoginError");
 							notify('error', message);
+							chrome.browserAction.setBadgeText({text: '!'});
+							chrome.browserAction.setBadgeTextColor({color: "white"});
+							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 						}
 					}
 
@@ -805,7 +821,7 @@ function delMark(id, bookmark) {
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
-		xhr.onload = function () {
+		xhr.onload = async function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				message = chrome.i18n.getMessage("errorRemoveBookmark") + xhr.status;
 				notify('error',message);
@@ -815,12 +831,14 @@ function delMark(id, bookmark) {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
 					if(xtResponse !== '0') {
-						chrome.storage.local.set({token: xtResponse});
-						callback(xtResponse);
+						await chrome.storage.local.set({token: xtResponse});
 					} else {
 						chrome.storage.local.set({token: ''});
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
+						chrome.browserAction.setBadgeText({text: '!'});
+						chrome.browserAction.setBadgeTextColor({color: "white"});
+						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
 
@@ -868,7 +886,7 @@ function moveMark(id, bookmark) {
 				xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.withCredentials = true;
-				xhr.onload = function () {
+				xhr.onload = async function () {
 					if( xhr.status < 200 || xhr.status > 226) {
 						message = chrome.i18n.getMessage("errorMoveBookmark") + xhr.status;
 						notify('error',message);
@@ -877,12 +895,14 @@ function moveMark(id, bookmark) {
 						let xtResponse = xhr.getResponseHeader("X-Request-Info");
 						if(xtResponse !== null) {
 							if(xtResponse !== '0') {
-								chrome.storage.local.set({token: xtResponse});
-								callback(xtResponse);
+								await chrome.storage.local.set({token: xtResponse});
 							} else {
 								chrome.storage.local.set({token: ''});
 								let message = chrome.i18n.getMessage("optionsLoginError");
 								notify('error', message);
+								chrome.browserAction.setBadgeText({text: '!'});
+								chrome.browserAction.setBadgeTextColor({color: "white"});
+								chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 							}
 						}
 
@@ -914,7 +934,7 @@ function sendMark(bookmark) {
 		bookmark.type = "bookmark";
 	}
 
-	chrome.bookmarks.get(bookmark.parentId, function(bmark) {
+	chrome.bookmarks.get(bookmark.parentId, async function(bmark) {
 		let jsonMark = encodeURIComponent(JSON.stringify({ 
 			"id": bookmark.id,
 			"url": bookmark.url,
@@ -925,7 +945,7 @@ function sendMark(bookmark) {
 			"added": bookmark.dateAdded
 		}));
 
-		chrome.storage.local.get(null, function(options) {
+		await chrome.storage.local.get(null, function(options) {
 			if(!("s_uuid" in options)) {
 				var s_uuid = uuidv4();
 				chrome.storage.local.set({s_uuid: s_uuid});
@@ -942,7 +962,7 @@ function sendMark(bookmark) {
 			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.withCredentials = true;
-			xhr.onload = function () {
+			xhr.onload = async function () {
 				if( xhr.status < 200 || xhr.status > 226) {
 					message = chrome.i18n.getMessage("errorSaveSingleBookmarks")  + xhr.status;
 					notify('error',message);
@@ -951,12 +971,14 @@ function sendMark(bookmark) {
 					let xtResponse = xhr.getResponseHeader("X-Request-Info");
 					if(xtResponse !== null) {
 						if(xtResponse !== '0') {
-							chrome.storage.local.set({token: xtResponse});
-							callback(xtResponse);
+							await chrome.storage.local.set({token: xtResponse});
 						} else {
 							chrome.storage.local.set({token: ''});
 							let message = chrome.i18n.getMessage("optionsLoginError");
 							notify('error', message);
+							chrome.browserAction.setBadgeText({text: '!'});
+							chrome.browserAction.setBadgeTextColor({color: "white"});
+							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 						}
 					}
 
@@ -1024,7 +1046,7 @@ function getPHPMarks() {
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		
-		xhr.onload = function () {
+		xhr.onload = async function () {
 			let datems = Date.now();
 			let date = new Date(datems);
 			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
@@ -1037,12 +1059,14 @@ function getPHPMarks() {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
 					if(xtResponse !== '0') {
-						chrome.storage.local.set({token: xtResponse});
-						callback(xtResponse);
+						await chrome.storage.local.set({token: xtResponse});
 					} else {
 						chrome.storage.local.set({token: ''});
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
+						chrome.browserAction.setBadgeText({text: '!'});
+						chrome.browserAction.setBadgeTextColor({color: "white"});
+						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
 
@@ -1070,8 +1094,8 @@ function getPHPMarks() {
 	});
 }
 
-function checkFullSync() {
-	chrome.storage.local.get(null, function(options) {
+async function checkFullSync() {
+	chrome.storage.local.get(null, async function(options) {
 		let xhr = new XMLHttpRequest();
 		let params = 'client=' + options['s_uuid'] + '&caction=cinfo';
 		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), false);
@@ -1082,7 +1106,7 @@ function checkFullSync() {
 		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.onload = function () {
+		xhr.onload = async function () {
 			if( xhr.status < 200 || xhr.status > 226) {
 				let message = 'FullSync Check failed';
 				notify('error', message);
@@ -1093,28 +1117,33 @@ function checkFullSync() {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
 					if(xtResponse !== '0') {
-						chrome.storage.local.set({token: xtResponse});
-						callback(xtResponse);
-						lastseen = cinfo['lastseen'];
-						doFullSync();
+						await chrome.storage.local.set({token: xtResponse});
+						
 					} else {
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						chrome.storage.local.set({token: ''});
 						notify('error', message);
+						chrome.browserAction.setBadgeText({text: '!'});
+						chrome.browserAction.setBadgeTextColor({color: "white"});
+						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+						return false;
 					}
 				}
+
+				lastseen = cinfo['lastseen'];
+				await doFullSync();
 			}
 		}
 		xhr.send(params);
 	});
 }
 
-function doFullSync() {
+async function doFullSync() {
 	loglines = logit("Info: Sync started.");
 	try {
-		chrome.storage.local.get(null, function(options) {
+		chrome.storage.local.get(null, async function(options) {
 			if(options['s_type'] == 'PHP') {
-				getAllPHPMarks(true);
+				await getAllPHPMarks(true);
 			}
 		});
 	} catch(error) {
@@ -1125,10 +1154,10 @@ function doFullSync() {
 }
 
 function getAllPHPMarks() {
-	chrome.storage.local.get(null, function(options) {
+	chrome.storage.local.get(null, async function(options) {
 		let xhr = new XMLHttpRequest();
 		let params = 'client='+options['s_uuid']+'&caction=export&type=json&s='+options['actions']['startup'];
-		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
+		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), false);
 		xhr.withCredentials = true;
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
@@ -1136,7 +1165,7 @@ function getAllPHPMarks() {
 		if(tarr['token'] == '') return false;
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.onload = function () {
+		xhr.onload = async function () {
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
 				notify('error',message);
@@ -1146,19 +1175,21 @@ function getAllPHPMarks() {
 				let xtResponse = xhr.getResponseHeader("X-Request-Info");
 				if(xtResponse !== null) {
 					if(xtResponse !== '0') {
-						chrome.storage.local.set({token: xtResponse});
-						callback(xtResponse);
+						await chrome.storage.local.set({token: xtResponse});
 					} else {
 						chrome.storage.local.set({token: ''});
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
+						chrome.browserAction.setBadgeText({text: '!'});
+						chrome.browserAction.setBadgeTextColor({color: "white"});
+						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
 				if(abrowser == false) response = c2cm(response);
 				let PHPMarks = JSON.parse(response);
 				count = 0;
 				loglines = logit('Info: Bookmarks retrieved from server');
-				importFull(PHPMarks);
+				await importFull(PHPMarks);
 			}
 
 			let date = new Date(Date.now());
@@ -1266,28 +1297,6 @@ async function importFull(rMarks) {
 		destination.parentId = localParentId;
 		destination.index = parseInt(remoteMark.bmIndex);
 		let newMark = (await moveBookmarkAsync(localMark.id, destination));
-
-		/*
-		if(typeof remoteMark.bmURL !== 'undefined') {
-			let localMark = (await searchBookmarkAsync({url: remoteMark.bmURL}))[0];
-			let remoteParentFolderName = '';
-			let localParentId = '';
-
-			if(remoteMark.bmParentID.endsWith('_____') || remoteMark.bmParentID.length === 1) {
-				localParentId = remoteMark.bmParentID;
-			} else {
-				let searchedID = remoteMark.bmParentID;
-				remoteParentFolderName = rMarks.filter(element => element.bmID == searchedID)[0].bmTitle;		
-				localParentId = (await searchBookmarkAsync({title: remoteParentFolderName}))[0].id;
-			}
-			
-			let destination = new Object();
-			destination.parentId = localParentId;
-			destination.index = parseInt(remoteMark.bmIndex);
-
-			let newMark = (await moveBookmarkAsync(localMark.id, destination));
-		}
-		*/
 	}
 
 	chrome.bookmarks.onCreated.removeListener(onCreatedCheck);

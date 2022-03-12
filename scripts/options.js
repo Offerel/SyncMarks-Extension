@@ -183,6 +183,7 @@ function gName() {
 	let tarr = {};
 	tarr['client'] = options['s_uuid'];
 	tarr['token'] = options['token'];
+	if(tarr['token'] == '') return false;
 	xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xhr.withCredentials = true;
@@ -305,6 +306,9 @@ function importOptions() {
 		});
 
 		if(resCID) {
+			document.querySelector("#cname").placeholder = ioptions.s_uuid;
+			document.querySelector("#s_uuid").value = ioptions.s_uuid;
+			document.getElementById("lginl").style.visibility = 'hidden';
 			chrome.storage.local.set({
 				s_uuid: ioptions.s_uuid,
 				token: ioptions.token,
@@ -313,15 +317,11 @@ function importOptions() {
 		}
 
 		document.querySelector("#wdurl").value = ioptions.wdurl;
-
-		if(resCID) document.querySelector("#s_uuid").value = ioptions.s_uuid;
 		document.querySelector("#s_startup").checked = ioptions.actions.startup;
 		document.querySelector("#s_create").checked = ioptions.actions.create;
 		document.querySelector("#s_change").checked = ioptions.actions.change;
 		document.querySelector("#s_remove").checked = ioptions.actions.remove;
 		document.querySelector("#b_action").checked = ioptions.actions.crsrv;
-
-		if(resCID) document.querySelector("#cname").placeholder = ioptions.s_uuid;
 
 		wmessage.textContent = chrome.i18n.getMessage("optionsSuccessImport");
 		wmessage.style.cssText = "border-color: green; background-color: #98FB98;";

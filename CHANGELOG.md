@@ -1,9 +1,11 @@
 ChangeLog
 =========
-v1.19.5 (2022-03-09)
+v1.19.4 (2022-03-12)
 -------------------------
-- Fix WebDAV Login
 - Added token based login
+- Fixed encoding issue
+- Fixed import issue
+- Fixed WebDAV login
 
 
 v1.19.3 (2022-02-25)
