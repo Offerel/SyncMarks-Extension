@@ -45,9 +45,9 @@ button#lgin {
     border-radius: 6px;
     border: 1px solid darkred;
     background-color: bisque;
+	top: 2.5em;
 }
 #lginl.loading {
-	/*width:calc(80px / 0.707); /* 0.707 = cos(45deg) */
 	height:14px;
 	background: repeating-linear-gradient(-45deg, currentColor 0 15px,#0000 0 20px) left/200% 100%;
 	animation:i3 4s infinite linear;
@@ -59,19 +59,18 @@ button#lgin {
 	display: none;
 }
 fieldset {
-	float: left;
-	background-color: #f1f1f1;
-	border-radius: .3em;
-	border: 1px solid dodgerblue;
-	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.22);
+	padding: 10px 30px !important;
+	border: 1px solid transparent;
 }
 legend {
-	background-color: dodgerblue;
-	padding: .3em .5em;
-	color: white;
+	background-color: #d3d3d394;
+	padding: .1em .3em;
+	color: #426ae1ba;
 	border-radius: .3em;
 	font-size: .85em;
 	text-align: left;
+	font-style: italic;
+	border: thin dotted;
 }
 button {
 	border-color: transparent;
@@ -320,7 +319,11 @@ input:checked + .slider:before {
 .ocontainer {
 	display: block;
 	text-align: center;
-	padding: 10px;
+	background-color: white;
+	margin: 15px;
+	padding: 30px;
+	box-shadow: 0 8px 12px 1px rgba(29, 17, 51, 0.04), 0 3px 16px 2px rgba(9, 32, 77, 0.12), 0 5px 10px -3px rgba(29, 17, 51, 0.12);
+	border-radius: 8px;
 }
 .btnc .toptionc {
 	display: contents;
@@ -371,6 +374,7 @@ input:checked + .slider:before {
 .tab-bar {
 	box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
 	margin-bottom: 10px;
+	background-color: white;
 }
 h1 {
 	margin-top: 0;
@@ -541,4 +545,19 @@ h1 {
 }
 #toolbar li:hover {
 	background-color: dodgerblue;
+}
+.btnc {
+	display: flex;
+	flex-flow: row wrap;
+}
+.btnc .bmarks {
+	flex: 1;
+}
+.btnc fieldset {
+	margin-top: 0px;
+}
+@media all and (max-width: 560px) {
+	.btnc .sett {
+		width: 100%;
+	}
 }

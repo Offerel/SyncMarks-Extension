@@ -1,6 +1,11 @@
 ChangeLog
 =========
-v1.19.4 (2022-03-12)
+v1.19.5.1 (2022-03-13)
+-------------------------
+- Re-style options
+
+
+v1.19.5 (2022-03-12)
 -------------------------
 - Added token based login
 - Fixed encoding issue

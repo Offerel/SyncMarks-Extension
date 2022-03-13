@@ -309,11 +309,18 @@ function importOptions() {
 			document.querySelector("#cname").placeholder = ioptions.s_uuid;
 			document.querySelector("#s_uuid").value = ioptions.s_uuid;
 			document.getElementById("lginl").style.visibility = 'hidden';
-			chrome.storage.local.set({
-				s_uuid: ioptions.s_uuid,
-				token: ioptions.token,
-				creds: ioptions.creds,
-			});
+
+			if (ioptions.s_type === 'PHP') {
+				chrome.storage.local.set({
+					s_uuid: ioptions.s_uuid,
+					token: ioptions.token
+				});
+			} else if (ioptions.s_type === 'WebDAV') {
+				chrome.storage.local.set({
+					s_uuid: ioptions.s_uuid,
+					creds: ioptions.creds
+				})
+			}
 		}
 
 		document.querySelector("#wdurl").value = ioptions.wdurl;
