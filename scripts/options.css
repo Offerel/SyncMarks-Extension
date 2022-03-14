@@ -556,8 +556,12 @@ h1 {
 .btnc fieldset {
 	margin-top: 0px;
 }
+.btnc .sett {
+	margin-left: 0;
+}
 @media all and (max-width: 560px) {
 	.btnc .sett {
 		width: 100%;
+		margin-left: 15px !important;
 	}
 }

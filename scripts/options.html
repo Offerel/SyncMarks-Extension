@@ -17,18 +17,20 @@
 		<div id="options" class="otabs">
 			<form>
 				<fieldset class="ocontainer server">
-					<legend>Server</legend>
+					<!-- <legend>Server</legend> -->
 					<a href="#" id="lginl"><span>__MSG_optionsWrongAData__</span></a><input type="hidden" id="s_uuid">
 					<div class="toptionc"><label for="wdurl"><span>__MSG_optionsServerURL__</span>:</label><input inputmode="url" type="url" id="wdurl" placeholder="https://servername.com/syncmarks/" /></div>
 					<div class="toptionc"><label for="cname">Client Name:</label><input type="text" id="cname" placeholder=""></div>
 				</fieldset>
-				<fieldset class="ocontainer"><legend><span>__MSG_optionsSyncOptions__</span></legend>
+				<fieldset class="ocontainer">
+					<!-- <legend><span>__MSG_optionsSyncOptions__</span></legend> -->
 					<div class="toptionc"><label class="switch"><input id="php_webdav" type="checkbox" checked><span class="slider round"></span><span class="lbl" id="blbl">Server: PHP</span></label></div>
 					<div class="toptionc"><label class="switch"><input id="s_auto" type="checkbox" checked><span class="slider round"></span><span class="lbl" id="oauto">__MSG_optionsAuto__</span></label></div>
 					<div class="toptionc"><label class="switch"><input id="b_action" type="checkbox" checked><span class="slider round"></span><span class="lbl" id="obmd">__MSG_bookmarkTab__</span></label></div>
 				</fieldset>
 				<div class="btnc">
-					<fieldset class="ocontainer bmarks"><legend>Bookmarks</legend>
+					<fieldset class="ocontainer bmarks">
+						<!-- <legend>Bookmarks</legend> -->
 						<div class="toptionc" style="display: inline-block;">
 							<button id="mdownload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNImport__</span><span class="tooltiptext">__MSG_optionsBTNImportHint__</span></button>
 						</div>
@@ -36,7 +38,8 @@
 							<button id="mupload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNExport__</span><span class="tooltiptext">__MSG_optionsBTNExportHint__</span></button>
 						</div>
 					</fieldset>
-					<fieldset class="ocontainer sett"><legend><span>__MSG_optionsBTNSettings__</span></legend>
+					<fieldset class="ocontainer sett">
+						<!-- <legend><span>__MSG_optionsBTNSettings__</span></legend> -->
 						<div class="toptionc" style="display: inline-block;"><button id="econf" type="button" class="browser-style"><span>Backup</span><span class="tooltiptext">__MSG_optionsBTNSettingsHint__</span></button></div>
 					</fieldset>
 				</div>

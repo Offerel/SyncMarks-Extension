@@ -247,15 +247,13 @@ function restoreOptions() {
 				document.getElementById("php_webdav").checked = false;
 				if(options['creds'] === '') document.getElementById("lginl").style.visibility = 'visible';
 			}
-			
 		}
 
 		chrome.commands.getAll((commands) => {
 			for (let {name, shortcut} of commands) {
 				var s = (name === 'bookmark-tab') ? shortcut:'undef';
 			}
-
-			document.getElementById("obmd").innerText = document.getElementById("obmd").innerText + ` (${s})`;
+			document.getElementById("obmd").title = document.getElementById("obmd").title + ` (${s})`;
 		});
 
 		last_sync = options['last_sync'] || 0;
@@ -395,7 +393,7 @@ function localizeHtmlPage() {
 
 	document.getElementById('blbl').title = chrome.i18n.getMessage("backendType");
 	document.getElementById('oauto').title = chrome.i18n.getMessage("ManAuto");
-	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend");
+	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend") + "";
 }
 
 function openTab(tabname) {
