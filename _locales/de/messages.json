@@ -320,5 +320,9 @@
   "toBackend": {
     "message": "Bookmark manuell direkt an Server senden",
     "description": ""
+  },
+  "optionsLastLogged": {
+    "message": "Zuletzt eingeloggt mit",
+    "description": ""
   }
 }

@@ -177,31 +177,33 @@ function rName() {
 }
 
 function gName() {
-	let xhr = new XMLHttpRequest();
-	let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";
-	xhr.open("POST", document.getElementById("wdurl").value, true);
-	let tarr = {};
-	tarr['client'] = options['s_uuid'];
-	tarr['token'] = options['token'];
-	if(tarr['token'] == '') return false;
-	xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	xhr.withCredentials = true;
-	xhr.onload = function () {
-		if( xhr.status < 200 || xhr.status > 226) {
-			message = "Error get name of client."  + xhr.status;
-			background_page.notify('error',message);
-			background_page.loglines =  background_page.logit('Error: '+message);
-		} else {
-			let xtResponse = xhr.getResponseHeader("X-Request-Info");
-			if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
-
-			let response = JSON.parse(xhr.responseText);		
-			document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
-			if(response !== null) document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
+	chrome.storage.local.get(null, function(options) {
+		let xhr = new XMLHttpRequest();
+		let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";
+		xhr.open("POST", document.getElementById("wdurl").value, true);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				message = "Error get name of client."  + xhr.status;
+				background_page.notify('error',message);
+				background_page.loglines =  background_page.logit('Error: '+message);
+			} else {
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
+				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+				
+				let response = JSON.parse(xhr.responseText);
+				document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
+				if(response !== null) document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
+			}
 		}
-	}
-	xhr.send(cdata);
+		xhr.send(cdata);
+	});
 }
 
 function restoreOptions() {
@@ -523,6 +525,38 @@ window.addEventListener('load', function () {
 	document.getElementById("wdurl").addEventListener("change", checkForm);
 	document.getElementById("lginl").addEventListener("click", function(e) {
 		e.preventDefault;
+		chrome.storage.local.get(null, function(options) {
+			let tarr = {};
+			tarr['client'] = options['s_uuid'];
+			tarr['token'] = options['token'];
+			let xhr = new XMLHttpRequest();
+			xhr.open("POST", document.getElementById("wdurl").value, true);
+			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xhr.withCredentials = true;
+			xhr.onload = function () {
+				if( xhr.status >= 200 || xhr.status < 226) {
+					let response = JSON.parse(xhr.responseText);
+					if(response.cInfo) {
+						let cInfo = JSON.parse(response.cInfo);
+						console.log(cInfo);
+						let iBox = document.getElementById("lgini");
+						let ip = document.getElementById('ipinfo');
+						iBox.style.visibility = 'visible';
+						ip.innerText = cInfo.ip;
+						let ipinfo = document.createElement('span');
+						let tm = new Date(cInfo.tm * 1000).toLocaleString();
+						ipinfo.innerText = tm + ' | ' + cInfo.de + ' | ' + cInfo.co + ' | ' + cInfo.ct + ' | ' + cInfo.re + '\n' + cInfo.ua;
+						ip.appendChild(ipinfo);
+
+						//ip.title = tm + ' | ' + cInfo.de + ' | ' + cInfo.co + ' | ' + cInfo.ct + ' | ' + cInfo.re + "&#10;Test";
+					}
+				}
+			}
+			let data = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";;
+			xhr.send(data);
+		});
+
 		document.getElementById("nuser").defaultValue = '';
 		document.getElementById("npassword").defaultValue = '';
 		document.getElementById("crdialog").style.display = "block";
