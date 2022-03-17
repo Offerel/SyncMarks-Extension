@@ -48,15 +48,18 @@ button#lgin {
 	display: none;
 }
 #ipinfo:hover span {
-    border: #c0c0c0 1px dotted;
+    border: #ffc500 1px dotted;
     padding: 5px 20px 5px 5px;
-    display: inline-block;
+    display: block;
     z-index: 100;
-    background: beige;
-    margin: -52px 0px 0px -146px;
+    background: lemonchiffon;
     position: absolute;
     border-radius: .3em;
     box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
+    left: 51%;
+    transform: translate(-50%, -50%);
+    margin-top: -4.4em;
+    white-space: nowrap;
 }
 #lgind {
     margin-bottom: 10px;
