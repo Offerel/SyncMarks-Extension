@@ -97,14 +97,15 @@ fieldset {
 	border: 1px solid transparent;
 }
 legend {
-	background-color: #d3d3d394;
+	background-color: #daeff7;
 	padding: .1em .3em;
-	color: #426ae1ba;
+	color: #3498db;
 	border-radius: .3em;
 	font-size: .85em;
 	text-align: left;
-	font-style: italic;
-	border: thin dotted;
+	border: thin solid;
+	margin-left: -20px;
+	border-color: #b1d3f4;
 }
 button {
 	border-color: transparent;
