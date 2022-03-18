@@ -28,6 +28,7 @@ function checkForm2() {
 }
 
 function gToken(e) {
+	e.preventDefault();
 	document.getElementById('lginl').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
 	let xhr = new XMLHttpRequest();
@@ -252,7 +253,6 @@ function restoreOptions() {
 			} else {
 				document.getElementById("php_webdav").checked = false;
 				if(options['creds'] === '') {
-					ipInfo();
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
 			}
