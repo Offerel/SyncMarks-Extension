@@ -113,7 +113,7 @@ function gToken(e) {
 						wmessage.style.cssText = "background-color: #ff7d52;";
 						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorLogin") + xhr.status);
 						break;
-		}
+		} 
 		wmessage.className = "show";
 		setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 3000);
 		background_page.init();
