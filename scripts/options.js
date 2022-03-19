@@ -46,7 +46,6 @@ function gToken(e) {
 	}
 
 	var creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
-
 	xhr.setRequestHeader('Authorization', 'Basic ' + creds);
 	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xhr.withCredentials = true;
@@ -70,6 +69,7 @@ function gToken(e) {
 								token: response.token,
 								s_type: 'PHP',
 							});
+							document.getElementById('cname').defaultValue = response.cname;
 							chrome.storage.local.remove("creds");
 						}
 
@@ -94,6 +94,7 @@ function gToken(e) {
 									creds: creds,
 									s_type: 'WebDAV',
 								});
+								document.getElementById('cname').defaultValue = response.cname;
 								chrome.storage.local.remove("token");
 							} else {
 								document.getElementById('lginl').classList.remove('loading');
@@ -102,6 +103,7 @@ function gToken(e) {
 									creds: '',
 									s_type: 'WebDAV',
 								});
+								document.getElementById('cname').defaultValue = response.cname;
 								chrome.storage.local.remove("token");
 							}
 						}
@@ -111,7 +113,7 @@ function gToken(e) {
 						wmessage.style.cssText = "background-color: #ff7d52;";
 						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorLogin") + xhr.status);
 						break;
-		}
+		} 
 		wmessage.className = "show";
 		setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 3000);
 		background_page.init();
@@ -177,31 +179,33 @@ function rName() {
 }
 
 function gName() {
-	let xhr = new XMLHttpRequest();
-	let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";
-	xhr.open("POST", document.getElementById("wdurl").value, true);
-	let tarr = {};
-	tarr['client'] = options['s_uuid'];
-	tarr['token'] = options['token'];
-	if(tarr['token'] == '') return false;
-	xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	xhr.withCredentials = true;
-	xhr.onload = function () {
-		if( xhr.status < 200 || xhr.status > 226) {
-			message = "Error get name of client."  + xhr.status;
-			background_page.notify('error',message);
-			background_page.loglines =  background_page.logit('Error: '+message);
-		} else {
-			let xtResponse = xhr.getResponseHeader("X-Request-Info");
-			if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
-
-			let response = JSON.parse(xhr.responseText);		
-			document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
-			if(response !== null) document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
+	chrome.storage.local.get(null, function(options) {
+		let xhr = new XMLHttpRequest();
+		let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";
+		xhr.open("POST", document.getElementById("wdurl").value, true);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+		xhr.onload = function () {
+			if( xhr.status < 200 || xhr.status > 226) {
+				message = "Error get name of client."  + xhr.status;
+				background_page.notify('error',message);
+				background_page.loglines =  background_page.logit('Error: '+message);
+			} else {
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
+				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+				
+				let response = JSON.parse(xhr.responseText);
+				document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
+				if(response !== null) document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
+			}
 		}
-	}
-	xhr.send(cdata);
+		xhr.send(cdata);
+	});
 }
 
 function restoreOptions() {
@@ -242,20 +246,23 @@ function restoreOptions() {
 				gName();
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
-				if(options['token'] === '') document.getElementById("lginl").style.visibility = 'visible';
+				if(options['token'] === '') {
+					ipInfo();
+					document.getElementById("lginl").style.visibility = 'visible';
+				}
 			} else {
 				document.getElementById("php_webdav").checked = false;
-				if(options['creds'] === '') document.getElementById("lginl").style.visibility = 'visible';
+				if(options['creds'] === '') {
+					document.getElementById("lginl").style.visibility = 'visible';
+				}
 			}
-			
 		}
 
 		chrome.commands.getAll((commands) => {
 			for (let {name, shortcut} of commands) {
 				var s = (name === 'bookmark-tab') ? shortcut:'undef';
 			}
-
-			document.getElementById("obmd").innerText = document.getElementById("obmd").innerText + ` (${s})`;
+			document.getElementById("obmd").title = document.getElementById("obmd").title + ` (${s})`;
 		});
 
 		last_sync = options['last_sync'] || 0;
@@ -309,11 +316,18 @@ function importOptions() {
 			document.querySelector("#cname").placeholder = ioptions.s_uuid;
 			document.querySelector("#s_uuid").value = ioptions.s_uuid;
 			document.getElementById("lginl").style.visibility = 'hidden';
-			chrome.storage.local.set({
-				s_uuid: ioptions.s_uuid,
-				token: ioptions.token,
-				creds: ioptions.creds,
-			});
+
+			if (ioptions.s_type === 'PHP') {
+				chrome.storage.local.set({
+					s_uuid: ioptions.s_uuid,
+					token: ioptions.token
+				});
+			} else if (ioptions.s_type === 'WebDAV') {
+				chrome.storage.local.set({
+					s_uuid: ioptions.s_uuid,
+					creds: ioptions.creds
+				})
+			}
 		}
 
 		document.querySelector("#wdurl").value = ioptions.wdurl;
@@ -388,7 +402,7 @@ function localizeHtmlPage() {
 
 	document.getElementById('blbl').title = chrome.i18n.getMessage("backendType");
 	document.getElementById('oauto').title = chrome.i18n.getMessage("ManAuto");
-	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend");
+	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend") + "";
 }
 
 function openTab(tabname) {
@@ -475,6 +489,37 @@ function cAuto() {
 		document.getElementById("s_remove").checked = false;
 	}
 	saveOptions();
+}
+
+function ipInfo() {
+	chrome.storage.local.get(null, function(options) {
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		let xhr = new XMLHttpRequest();
+		xhr.open("POST", document.getElementById("wdurl").value, true);
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+		xhr.onload = function () {
+			if( xhr.status >= 200 || xhr.status < 226) {
+				let response = JSON.parse(xhr.responseText);
+				if(response.cInfo) {
+					let cInfo = JSON.parse(response.cInfo);
+					let iBox = document.getElementById("lgini");
+					let ip = document.getElementById('ipinfo');
+					iBox.style.visibility = 'visible';
+					ip.innerText = cInfo.ip;
+					let ipinfo = document.createElement('span');
+					let tm = new Date(cInfo.tm * 1000).toLocaleString();
+					ipinfo.innerText = tm + ' | ' + cInfo.de + ' | ' + cInfo.co + ' | ' + cInfo.ct + ' | ' + cInfo.re + '\n' + cInfo.ua;
+					ip.appendChild(ipinfo);
+				}
+			}
+		}
+		let data = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";;
+		xhr.send(data);
+	});
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);

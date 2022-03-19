@@ -313,5 +313,9 @@
   "toBackend": {
     "message": "Send Bookmark directly and manual to the server",
     "description": ""
+  },
+  "optionsLastLogged": {
+    "message": "Last logged in with",
+    "description": ""
   }
 }

@@ -16,42 +16,47 @@
 		</div>
 		<div id="options" class="otabs">
 			<form>
-				<div class="ocontainer server">
+				<fieldset class="ocontainer server">
+					<legend>Server</legend>
+					<a href="#" id="lginl"><span>__MSG_optionsWrongAData__</span></a><input type="hidden" id="s_uuid">
 					<div class="toptionc"><label for="wdurl"><span>__MSG_optionsServerURL__</span>:</label><input inputmode="url" type="url" id="wdurl" placeholder="https://servername.com/syncmarks/" /></div>
-					<a href="#" id="lginl"><span>__MSG_optionsWrongAData__</span></a>
-					<input type="hidden" id="s_uuid">
-					<div class="toptionc" style="float: left; margin-top: 10px;"><label for="cname">Client Name:</label><input type="text" id="cname" placeholder=""></div>
-				</div>
-				<div class="ocontainer">
-					<fieldset style="width: calc(100% - 22px); margin-top: 10px;"><legend><span>__MSG_optionsSyncOptions__</span></legend>
+					<div class="toptionc"><label for="cname">Client Name:</label><input type="text" id="cname" placeholder=""></div>
+				</fieldset>
+				<fieldset class="ocontainer">
+					<legend><span>__MSG_optionsSyncOptions__</span></legend>
 					<div class="toptionc"><label class="switch"><input id="php_webdav" type="checkbox" checked><span class="slider round"></span><span class="lbl" id="blbl">Server: PHP</span></label></div>
 					<div class="toptionc"><label class="switch"><input id="s_auto" type="checkbox" checked><span class="slider round"></span><span class="lbl" id="oauto">__MSG_optionsAuto__</span></label></div>
 					<div class="toptionc"><label class="switch"><input id="b_action" type="checkbox" checked><span class="slider round"></span><span class="lbl" id="obmd">__MSG_bookmarkTab__</span></label></div>
+				</fieldset>
+				<div class="btnc">
+					<fieldset class="ocontainer bmarks">
+						<legend>Bookmarks</legend>
+						<div class="toptionc" style="display: inline-block;">
+							<button id="mdownload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNImport__</span><span class="tooltiptext">__MSG_optionsBTNImportHint__</span></button>
+						</div>
+						<div class="toptionc" style="display: inline-block;">
+							<button id="mupload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNExport__</span><span class="tooltiptext">__MSG_optionsBTNExportHint__</span></button>
+						</div>
+					</fieldset>
+					<fieldset class="ocontainer sett">
+						<legend><span>__MSG_optionsBTNSettings__</span></legend>
+						<div class="toptionc" style="display: inline-block;"><button id="econf" type="button" class="browser-style"><span>Backup</span><span class="tooltiptext">__MSG_optionsBTNSettingsHint__</span></button></div>
 					</fieldset>
 				</div>
 				<div class="toptionb">
-				<input type="radio" id="php" name="stype" value="PHP" checked>
-				<input type="radio" id="wdav" name="stype" value="WebDAV">
-				<input id="s_startup" type="checkbox" checked>
-				<input id="s_create" type="checkbox" checked>
-				<input id="s_change" type="checkbox" checked>
-				<input id="s_remove" type="checkbox" checked>
-				</div>
-				<div class="ocontainer btnc">
-					<fieldset style="width: 65%;"><legend>Bookmarks</legend>
-						<div class="toptionc"><button id="mdownload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNImport__</span><span class="tooltiptext">__MSG_optionsBTNImportHint__</span></button></div>
-						<div class="toptionc"><button id="mupload" type="button" class="browser-style" disabled><span>__MSG_optionsBTNExport__</span><span class="tooltiptext">__MSG_optionsBTNExportHint__</span></button></div>
-					</fieldset>
-					<fieldset style="width: 25%;right: 5px;position: absolute;"><legend><span>__MSG_optionsBTNSettings__</span></legend>
-						<div class="toptionc"><button id="econf" type="button" class="browser-style"><span>Backup</span><span class="tooltiptext">__MSG_optionsBTNSettingsHint__</span></button></div>
-					</fieldset>
-					
+					<input type="radio" id="php" name="stype" value="PHP" checked>
+					<input type="radio" id="wdav" name="stype" value="WebDAV">
+					<input id="s_startup" type="checkbox" checked>
+					<input id="s_create" type="checkbox" checked>
+					<input id="s_change" type="checkbox" checked>
+					<input id="s_remove" type="checkbox" checked>
 				</div>
 				<div id="wmessage"></div>
 				<div id="crdialog" class="modal">
 					<div class="modal-content">
 						<span id="crclose" class="close">&times;</span>
 						<span class="mtext" id="lgind">__MSG_optionsBeforeLogin__</span>
+						<div id="lgini"><span>__MSG_optionsLastLogged__</span>: <span id="ipinfo"></span></div>
 						<div class="toptionc"><label for="nuser"><span>__MSG_optionsUsername__</span>:</label><input inputmode="email" type="email" id="nuser" placeholder="Username"></div>
 						<div class="toptionc"><label for="npassword" ><span>__MSG_optionsPassword__</span>:</label><input type="password" id="npassword" placeholder="Password"></div>
 						<div style="text-align: right;"><button id="lgin" disabled>Login</button></div>

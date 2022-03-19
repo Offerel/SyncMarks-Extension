@@ -138,7 +138,6 @@ function bookmarkTab() {
 								let message = chrome.i18n.getMessage("optionsLoginError");
 								notify('error', message);
 								chrome.browserAction.setBadgeText({text: '!'});
-								chrome.browserAction.setBadgeTextColor({color: "white"});
 								chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 							}
 						}
@@ -185,7 +184,6 @@ function sendTab(element) {
 							let message = chrome.i18n.getMessage("optionsLoginError");
 							notify('error', message);
 							chrome.browserAction.setBadgeText({text: '!'});
-							chrome.browserAction.setBadgeTextColor({color: "white"});
 							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 						}
 					}
@@ -255,7 +253,6 @@ function init() {
 		if(s_type == 'PHP') {
 			if(options['token'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
-				chrome.browserAction.setBadgeTextColor({color: "white"});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
@@ -263,7 +260,6 @@ function init() {
 		} else if(s_type == 'PHP') {
 			if(options['creds'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
-				chrome.browserAction.setBadgeTextColor({color: "white"});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
@@ -312,7 +308,6 @@ function getNotifications() {
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
 						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeTextColor({color: "white"});
 						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
@@ -417,7 +412,6 @@ function getClientList() {
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
 						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeTextColor({color: "white"});
 						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
@@ -547,7 +541,6 @@ function dmNoti(nkey) {
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
 						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeTextColor({color: "white"});
 						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
@@ -648,7 +641,6 @@ function editMark(eData,id) {
 							let message = chrome.i18n.getMessage("optionsLoginError");
 							notify('error', message);
 							chrome.browserAction.setBadgeText({text: '!'});
-							chrome.browserAction.setBadgeTextColor({color: "white"});
 							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 						}
 					}
@@ -740,7 +732,6 @@ function exportPHPMarks(upl=[]) {
 							let message = chrome.i18n.getMessage("optionsLoginError");
 							notify('error', message);
 							chrome.browserAction.setBadgeText({text: '!'});
-							chrome.browserAction.setBadgeTextColor({color: "white"});
 							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 						}
 					}
@@ -837,7 +828,6 @@ function delMark(id, bookmark) {
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
 						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeTextColor({color: "white"});
 						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
@@ -901,7 +891,6 @@ function moveMark(id, bookmark) {
 								let message = chrome.i18n.getMessage("optionsLoginError");
 								notify('error', message);
 								chrome.browserAction.setBadgeText({text: '!'});
-								chrome.browserAction.setBadgeTextColor({color: "white"});
 								chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 							}
 						}
@@ -977,7 +966,6 @@ function sendMark(bookmark) {
 							let message = chrome.i18n.getMessage("optionsLoginError");
 							notify('error', message);
 							chrome.browserAction.setBadgeText({text: '!'});
-							chrome.browserAction.setBadgeTextColor({color: "white"});
 							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 						}
 					}
@@ -1065,7 +1053,6 @@ function getPHPMarks() {
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
 						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeTextColor({color: "white"});
 						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
@@ -1124,7 +1111,6 @@ async function checkFullSync() {
 						chrome.storage.local.set({token: ''});
 						notify('error', message);
 						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeTextColor({color: "white"});
 						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 						return false;
 					}
@@ -1181,7 +1167,6 @@ function getAllPHPMarks() {
 						let message = chrome.i18n.getMessage("optionsLoginError");
 						notify('error', message);
 						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeTextColor({color: "white"});
 						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 					}
 				}
