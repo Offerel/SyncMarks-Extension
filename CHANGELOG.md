@@ -2,7 +2,7 @@ ChangeLog
 =========
 v1.19.6 (2022-03-17)
 -------------------------
-- Display ip info
+- Display ip infof d
 
 
 v1.19.5.1 (2022-03-13)
