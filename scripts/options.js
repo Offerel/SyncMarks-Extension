@@ -468,6 +468,7 @@ function switchBackend() {
 		document.getElementById('cname').disabled = false;
 		document.getElementById('b_action').disabled = false;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'unset';
+		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = ''
 	} else {
 		document.getElementById("php").checked = false;
 		document.getElementById("wdav").checked = true;
@@ -475,6 +476,7 @@ function switchBackend() {
 		document.getElementById('cname').disabled = true;
 		document.getElementById('b_action').disabled = true;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'none';
+		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = 'lightgrey'
 	}
 }
 
