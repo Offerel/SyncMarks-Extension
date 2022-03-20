@@ -465,10 +465,16 @@ function switchBackend() {
 		document.getElementById("php").checked = true;
 		document.getElementById("wdav").checked = false;
 		document.getElementById("blbl").innerText = "Server: PHP";
+		document.getElementById('cname').disabled = false;
+		document.getElementById('b_action').disabled = false;
+		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'unset';
 	} else {
 		document.getElementById("php").checked = false;
 		document.getElementById("wdav").checked = true;
 		document.getElementById("blbl").innerText = "Server: WebDAV";
+		document.getElementById('cname').disabled = true;
+		document.getElementById('b_action').disabled = true;
+		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'none';
 	}
 }
 

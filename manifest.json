@@ -4,7 +4,7 @@
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
   "update_url": "https://codeberg.org/Offerel/SyncMarks-Extension/raw/branch/master/gupdate.xml",
-  "version": "1.19.6",
+  "version": "1.19.7",
   "default_locale": "en",
   "icons": {
     "48": "icons/bookmark.png"
