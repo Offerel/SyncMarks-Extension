@@ -337,6 +337,8 @@ function importOptions() {
 		document.querySelector("#s_remove").checked = ioptions.actions.remove;
 		document.querySelector("#b_action").checked = ioptions.actions.crsrv;
 
+		document.getElementById("s_auto").checked = (ioptions.actions.startup && ioptions.actions.create && ioptions.actions.change && ioptions.actions.remove) ? true:false;
+
 		wmessage.textContent = chrome.i18n.getMessage("optionsSuccessImport");
 		wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
 		wmessage.className = "show";
