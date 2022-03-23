@@ -1,7 +1,7 @@
 var background_page = chrome.extension.getBackgroundPage();
 
 function checkForm() {
-	var wchanged = false;
+	//var wchanged = false;
 
 	if((document.getElementById('wdurl').value != '') && (document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue)) {
 		document.getElementById("lginl").style.visibility = 'visible';
@@ -15,8 +15,8 @@ function checkForm() {
 		document.getElementById('mupload').disabled=true;
 	}
 
-	if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) wchanged = true;
-	if(wchanged) saveOptions();
+	//if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) wchanged = true;
+	//if(wchanged) saveOptions();
 }
 
 function checkForm2() {
@@ -148,7 +148,6 @@ function saveOptions(e) {
 	wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
 	wmessage.className = "show";
 	setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 5000);
-		
 }
 
 function rName() {
@@ -313,8 +312,8 @@ function importOptions() {
 		});
 
 		if(resCID) {
-			document.querySelector("#cname").placeholder = ioptions.s_uuid;
-			document.querySelector("#s_uuid").value = ioptions.s_uuid;
+			document.getElementById("cname").placeholder = ioptions.s_uuid;
+			document.getElementById("s_uuid").value = ioptions.s_uuid;
 			document.getElementById("lginl").style.visibility = 'hidden';
 
 			if (ioptions.s_type === 'PHP') {
@@ -330,13 +329,12 @@ function importOptions() {
 			}
 		}
 
-		document.querySelector("#wdurl").value = ioptions.wdurl;
-		document.querySelector("#s_startup").checked = ioptions.actions.startup;
-		document.querySelector("#s_create").checked = ioptions.actions.create;
-		document.querySelector("#s_change").checked = ioptions.actions.change;
-		document.querySelector("#s_remove").checked = ioptions.actions.remove;
-		document.querySelector("#b_action").checked = ioptions.actions.crsrv;
-
+		document.getElementById("wdurl").value = ioptions.wdurl;
+		document.getElementById("s_startup").checked = ioptions.actions.startup;
+		document.getElementById("s_create").checked = ioptions.actions.create;
+		document.getElementById("s_change").checked = ioptions.actions.change;
+		document.getElementById("s_remove").checked = ioptions.actions.remove;
+		document.getElementById("b_action").checked = ioptions.actions.crsrv;
 		document.getElementById("s_auto").checked = (ioptions.actions.startup && ioptions.actions.create && ioptions.actions.change && ioptions.actions.remove) ? true:false;
 
 		wmessage.textContent = chrome.i18n.getMessage("optionsSuccessImport");
