@@ -62,7 +62,7 @@ function ccMenus() {
 								type: "normal",
 								contexts: ["page"],
 								id: "smark",
-								onclick: bookmarkTab
+								//onclick: bookmarkTab
 							});
 						});
 					}

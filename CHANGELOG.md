@@ -1,10 +1,12 @@
 ChangeLog
 =========
-v1.19.6 (2022-03-17)
+v1.19.7 (2022-03-20)
 -------------------------
-- Display ip info
+- Disable unused options on WebDAV
+- Fix restore options
+- Fix double adding bookmarkTab
 
-v1.19.5.1 (2022-03-13)
+v1.19.6 (2022-03-13)
 -------------------------
 - Re-style options
 
