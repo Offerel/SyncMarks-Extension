@@ -61,8 +61,7 @@ function ccMenus() {
 								title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
 								type: "normal",
 								contexts: ["page"],
-								id: "smark",
-								//onclick: bookmarkTab
+								id: "smark"
 							});
 						});
 					}
@@ -237,13 +236,11 @@ function init() {
 				for (let {name, shortcut} of commands) {
 					var s = (name === 'bookmark-tab') ? shortcut:'undef';
 				}
-
 				chrome.browserAction.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
 				chrome.browserAction.setPopup({popup: ''});
 				chrome.browserAction.onClicked.addListener(function() {
 					bookmarkTab();
 				});
-
 			});
 		}
 		

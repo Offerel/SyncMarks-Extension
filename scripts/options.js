@@ -1,8 +1,6 @@
 var background_page = chrome.extension.getBackgroundPage();
 
 function checkForm() {
-	//var wchanged = false;
-
 	if((document.getElementById('wdurl').value != '') && (document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue)) {
 		document.getElementById("lginl").style.visibility = 'visible';
 	}
@@ -14,9 +12,6 @@ function checkForm() {
 		document.getElementById('mdownload').disabled=true;
 		document.getElementById('mupload').disabled=true;
 	}
-
-	//if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) wchanged = true;
-	//if(wchanged) saveOptions();
 }
 
 function checkForm2() {
