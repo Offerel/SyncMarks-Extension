@@ -46,6 +46,153 @@ chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
 
+function sendRequest(action, data = null, addendum = null) {
+	chrome.storage.local.get(null, function(options) {
+		const xhr = new XMLHttpRequest();
+
+		const params = {
+			action: action.name,
+			client: (action.name === 'addmark') ? 'bookmarkTab':options['s_uuid'],
+			data: data,
+			add: addendum,
+			sync: options['actions']['startup']
+		}
+	
+		//xhr.open("POST", options['wdurl'] + '?t=' + Math.random(), true);
+		xhr.open("POST", options['wdurl'], true);
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+
+		if(tarr['token'] == '') return false;
+
+		loglines = logit("Info: Send '" + action.name + "' request to backend");
+
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.withCredentials = true;
+		xhr.timeout = 5000;
+		xhr.responseType = 'json';
+
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4) {
+				if (xhr.status === 200) {
+					action(xhr.response);
+				} else {
+					let message = `Error ${xhr.status}: ${xhr.statusText}`;
+					notify('error', message);
+					console.error(action.name, message);
+					loglines = logit(message);
+					return false;
+				}
+			}
+		}
+
+		xhr.onload = async function () {
+			let xtResponse = xhr.getResponseHeader("X-Request-Info");
+			if(xtResponse !== null) {
+				if(xtResponse !== '0') {
+					await chrome.storage.local.set({token: xtResponse});
+				} else {
+					chrome.storage.local.set({token: ''});
+					let message = chrome.i18n.getMessage("optionsLoginError");
+					notify('error', message);
+					chrome.browserAction.setBadgeText({text: '!'});
+					chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+				}
+			}
+		}
+
+		xhr.onerror = function () {
+			let message = "Error: " + xhr.status + ' | ' + xhr.response;
+			notify('error', message);
+			loglines = logit(message);
+			console.error(action.name, message);
+			return false;
+		}
+
+		xhr.ontimeout = function() {
+			let message = "Error: Timeout of " + parseFloat(xhr.timeout/1000).toFixed(1) + " seconds exceeded";
+			notify('error', message);
+			loglines = logit(message);
+			console.warn(action.name, message);
+			return false;
+		}
+
+		const qparams = new URLSearchParams(params).toString();
+		xhr.send(qparams);
+	});
+}
+
+function getclients(response) {
+	chrome.storage.local.set({clist:response});
+	chrome.permissions.getAll(function(e) {
+		if(e.permissions.includes('contextMenus')) {
+			if(Array.isArray(response)) {
+				response.forEach(function(client){
+					var ctitle = client.name ? client.name:client.id;
+					chrome.contextMenus.create({
+						title: ctitle,
+						type: "normal",
+						parentId: "ssendpage",
+						contexts: ["page"],
+						id: 'page_' + client.id
+					});
+					chrome.contextMenus.create({
+						title: ctitle,
+						type: "normal",
+						parentId: "ssendlink",
+						contexts: ["link"],
+						id: 'link_' + client.id
+					});
+
+					try{
+						chrome.contextMenus.create({
+							title: ctitle,
+							type: "normal",
+							parentId: "ssendtab",
+							contexts: ["tab"],
+							id: 'tab_' + client.id
+						});
+					} catch {}
+				});
+				let cnt = response.length - 1;
+				loglines = logit("Info: List of " + cnt + " clients retrieved successful.");
+			}
+		}
+	});
+
+	loglines = logit("Info: Get notifications for current client.");
+	sendRequest(gurls);
+}
+
+function gurls(response) {
+	if(Array.isArray(response)) {
+		try {
+			response.forEach(function(notification) {
+				loglines = logit('Info: Received tab: <a href="' + notification.url + '">' + notification.url + '</a>');
+				openTab(notification.url,notification.nkey,notification.title);
+			});
+		} catch(error) {
+			loglines = logit(error);
+		}
+		loglines = logit("Info: List of " + response.length + " notifications retrieved successful.");
+	}
+
+	chrome.storage.local.get(null, async function(options) {
+		let s_startup = options['actions']['startup'] || false;
+		if(s_startup === true) {
+			loglines = logit("Info: Start Sync");
+			sendRequest(cinfo);
+		}
+	});
+}
+
+function cinfo(response) {
+	lastseen = response['lastseen'];
+	doFullSync();
+}
+
 function ccMenus() {
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
@@ -269,68 +416,11 @@ function init() {
 		} else if(s_type.indexOf('PHP') == 0) {
 			if(options['wdurl']) {
 				await ccMenus();
-				await getClientList();
+				loglines = logit("Info: Get list of clients.");
+				sendRequest(getclients, null, null);
 				loglines = logit("Info: Init finished");
 			}
 		}
-	});
-}
-
-function getNotifications() {
-	loglines = logit("Info: Get notifications for current client.");
-	chrome.storage.local.get(null, function(options) {
-		let data = "client=" + options['s_uuid'] + "&caction=gurls&s=" + options['actions']['startup'];
-		let xhr = new XMLHttpRequest();
-		xhr.open("POST", options['wdurl'], true);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		
-		xhr.withCredentials = true;
-		xhr.onload = async function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Get list of notifications failed. State: " + xhr.status;
-				notify('error',message);
-				loglines = logit('Error: '+message);
-			} else {
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) {
-					if(xtResponse !== '0') {
-						await chrome.storage.local.set({token: xtResponse});
-					} else {
-						chrome.storage.local.set({token: ''});
-						let message = chrome.i18n.getMessage("optionsLoginError");
-						notify('error', message);
-						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-					}
-				}
-
-				if(xhr.responseText.length > 2) {
-					var nData = JSON.parse(xhr.responseText);
-					if(Array.isArray(nData)) {
-						try {
-							nData.forEach(function(notification) {
-								loglines = logit('Info: Received tab: <a href="' + notification.url + '">' + notification.url + '</a>');
-								openTab(notification.url,notification.nkey,notification.title);
-							});
-						} catch(error) {
-							loglines = logit(error);
-						}
-						loglines = logit("Info: List of " + nData.length + " notifications retrieved successful.");
-					}
-				}
-			}
-			let s_startup = options['actions']['startup'] || false;
-			if(s_startup === true) {
-				loglines = logit("Info: Start Sync");
-				await checkFullSync();
-			}
-		}
-		xhr.send(data);
 	});
 }
 
@@ -377,86 +467,6 @@ function openTab(tURL,nID,tTitle) {
 
 		let nnid = JSON.stringify({id:nID,url:tURL});
 		notify(nnid, tURL, tTitle);
-	});
-}
-
-function getClientList() {
-	loglines = logit("Info: Get list of clients.");
-	chrome.storage.local.get(null, function(options) {
-		let data = "client=" + options['s_uuid'] + "&caction=getclients&s="+options['actions']['startup'];
-		let xhr = new XMLHttpRequest();
-		xhr.open("POST", options['wdurl'], true);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-		xhr.withCredentials = true;
-		xhr.onload = async function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Get list of clients failed. State: "+xhr.status;
-				notify('error',message);
-				loglines = logit('Error: '+message);
-			} else {
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) {
-					if(xtResponse !== '0') {
-						await chrome.storage.local.set({token: xtResponse});
-					} else {
-						chrome.storage.local.set({token: ''});
-						let message = chrome.i18n.getMessage("optionsLoginError");
-						notify('error', message);
-						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-					}
-				}
-
-				cData = JSON.parse(xhr.responseText);
-				
-				chrome.storage.local.set({clist:cData});		
-				
-				chrome.permissions.getAll(function(e) {
-					if(e.permissions.includes('contextMenus')) {
-						if(Array.isArray(cData)) {
-							cData.forEach(function(client){
-								var ctitle = client.name ? client.name:client.id;
-								chrome.contextMenus.create({
-									title: ctitle,
-									type: "normal",
-									parentId: "ssendpage",
-									contexts: ["page"],
-									id: 'page_' + client.id
-								});
-								chrome.contextMenus.create({
-									title: ctitle,
-									type: "normal",
-									parentId: "ssendlink",
-									contexts: ["link"],
-									id: 'link_' + client.id
-								});
-
-								try{
-									chrome.contextMenus.create({
-										title: ctitle,
-										type: "normal",
-										parentId: "ssendtab",
-										contexts: ["tab"],
-										id: 'tab_' + client.id
-									});
-								} catch {}
-							});
-							let cnt = cData.length - 1;
-							loglines = logit("Info: List of " + cnt + " clients retrieved successful.");
-						}
-					}
-				});
-
-				getNotifications();
-			}
-		}
-		xhr.send(data);
 	});
 }
 
@@ -1074,49 +1084,6 @@ function getPHPMarks() {
 			}
 		}
 		loglines = logit("Info: Initiate startup sync");
-		xhr.send(params);
-	});
-}
-
-async function checkFullSync() {
-	chrome.storage.local.get(null, async function(options) {
-		let xhr = new XMLHttpRequest();
-		let params = 'client=' + options['s_uuid'] + '&caction=cinfo';
-		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), false);
-		xhr.withCredentials = true;
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.onload = async function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				let message = 'FullSync Check failed';
-				notify('error', message);
-				loglines = logit('Error: ' + message);
-			} else {
-				let rp = xhr.responseText;
-				let cinfo = JSON.parse(rp);
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) {
-					if(xtResponse !== '0') {
-						await chrome.storage.local.set({token: xtResponse});
-						
-					} else {
-						let message = chrome.i18n.getMessage("optionsLoginError");
-						chrome.storage.local.set({token: ''});
-						notify('error', message);
-						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-						return false;
-					}
-				}
-
-				lastseen = cinfo['lastseen'];
-				await doFullSync();
-			}
-		}
 		xhr.send(params);
 	});
 }
