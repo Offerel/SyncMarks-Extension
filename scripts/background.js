@@ -55,7 +55,7 @@ function sendRequest(action, data = null, addendum = null) {
 			client: (action.name === 'addmark') ? 'bookmarkTab':options['s_uuid'],
 			data: data,
 			add: addendum,
-			sync: options['actions']['startup']
+			sync: (action.name === 'addmark') ? null:options['actions']['startup']
 		}
 	
 		//xhr.open("POST", options['wdurl'] + '?t=' + Math.random(), true);
@@ -193,6 +193,25 @@ function cinfo(response) {
 	doFullSync();
 }
 
+function bexport(response) {
+	if(abrowser == false) response = JSON.parse(c2cm(JSON.stringify(response)));
+	count = 0;
+	loglines = logit('Info: Bookmarks retrieved from server');
+	importFull(response);
+
+	let date = new Date(Date.now());
+	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
+	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+}
+
+function addmark(response) {
+	console.log(response);
+	return false;
+	response = (response == "1") ? "'"+tabs[0].title+"' added":JSON.parse(xhr.response);
+	notify('info', response);
+	loglines = logit("Info: " + response);
+}
+
 function ccMenus() {
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
@@ -258,7 +277,9 @@ function bookmarkTab() {
 					"nfolder": 'More Bookmarks',
 					"added": new Date().valueOf()
 				}));
-				
+
+				sendRequest(addmark, jsonMark);
+				/*
 				let data = "client=bookmarkTab&caction=addmark&bookmark=" + jsonMark + "&s=false";
 				var xhr = new XMLHttpRequest();
 				xhr.open("POST", options['wdurl'], true);
@@ -294,6 +315,7 @@ function bookmarkTab() {
 					}
 				}
 				xhr.send(data);
+				*/
 			}
 		});
 	});
@@ -1093,7 +1115,8 @@ async function doFullSync() {
 	try {
 		chrome.storage.local.get(null, async function(options) {
 			if(options['s_type'] == 'PHP') {
-				await getAllPHPMarks(true);
+				loglines = logit('Info: Sending Sync request to server');
+				sendRequest(bexport, 'json');
 			}
 		});
 	} catch(error) {
@@ -1101,53 +1124,6 @@ async function doFullSync() {
 	} finally {
 		chrome.storage.local.set({last_s: 1});
 	}
-}
-
-function getAllPHPMarks() {
-	chrome.storage.local.get(null, async function(options) {
-		let xhr = new XMLHttpRequest();
-		let params = 'client='+options['s_uuid']+'&caction=export&type=json&s='+options['actions']['startup'];
-		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), false);
-		xhr.withCredentials = true;
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.onload = async function () {
-			if( xhr.status != 200 ) {
-				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
-				notify('error',message);
-				loglines = logit('Error: ' + message);
-			} else {
-				let response = xhr.responseText;
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) {
-					if(xtResponse !== '0') {
-						await chrome.storage.local.set({token: xtResponse});
-					} else {
-						chrome.storage.local.set({token: ''});
-						let message = chrome.i18n.getMessage("optionsLoginError");
-						notify('error', message);
-						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-					}
-				}
-				if(abrowser == false) response = c2cm(response);
-				let PHPMarks = JSON.parse(response);
-				count = 0;
-				loglines = logit('Info: Bookmarks retrieved from server');
-				await importFull(PHPMarks);
-			}
-
-			let date = new Date(Date.now());
-			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
-			}
-		loglines = logit('Info: Sending Sync request to server');
-		xhr.send(params);
-	});
 }
 
 async function importFull(rMarks) {
