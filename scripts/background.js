@@ -166,6 +166,10 @@ function getclients(response) {
 	sendRequest(gurls);
 }
 
+function getpurl(response) {
+	//
+}
+
 function gurls(response) {
 	if(Array.isArray(response)) {
 		try {
@@ -204,12 +208,55 @@ function bexport(response) {
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
+function bimport(response) {
+	if(response == 1) {
+		message = chrome.i18n.getMessage("successExportBookmarks");
+		loglines = logit("Info: " + message);
+	} else {
+		message = chrome.i18n.getMessage("errorExportBookmarks");
+		loglines = logit("Error: "+ message + " " + response);
+	}
+}
+
 function addmark(response) {
-	console.log(response);
-	return false;
-	response = (response == "1") ? "'"+tabs[0].title+"' added":JSON.parse(xhr.response);
+	response = (response == "1") ? "Bookmark added":JSON.parse(xhr.response);
 	notify('info', response);
 	loglines = logit("Info: " + response);
+
+	let datems = Date.now();
+	chrome.storage.local.set({last_s: datems});
+}
+
+function durl(response) {
+	//
+}
+
+function editmark(response) {
+	if(response == 1) {
+		loglines = logit("Info: Bookmark edited successfully at the server");
+	} else {
+		message = "Error: Bookmark not edited at the server, please check the server logfile.";
+		loglines = logit(message);
+		notify('error',message);
+	}
+}
+
+function movemark(response) {
+	if(response == 1)
+		loglines = logit("Info: Bookmark moved successfully at the server");
+	else
+		loglines = logit("Error: Bookmark not moved at the server, response from server is: " + response);
+}
+
+function delmark(response) {
+	if(response == 1) {
+		loglines = logit("Info: Bookmark removed at the server");
+	} else {
+		loglines = logit("Error: Bookmark not removed at the server, please check the server logfile");
+	}
+
+	let datems = Date.now();
+	chrome.storage.local.set({last_s: datems});
 }
 
 function ccMenus() {
@@ -266,9 +313,10 @@ function ccMenus() {
 
 function bookmarkTab() {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		/*
 		chrome.storage.local.get(null, function(options) {
 			if(options.actions.create === false) {				
-				let jsonMark = encodeURIComponent(JSON.stringify({ 
+				let jsonMark = JSON.stringify({ 
 					"id": Math.random().toString(24).substring(2, 12),
 					"url": tabs[0].url,
 					"title": tabs[0].title,
@@ -276,48 +324,23 @@ function bookmarkTab() {
 					"folder": (abrowser === true) ? 'unfiled_____':2,  
 					"nfolder": 'More Bookmarks',
 					"added": new Date().valueOf()
-				}));
+				});
 
 				sendRequest(addmark, jsonMark);
-				/*
-				let data = "client=bookmarkTab&caction=addmark&bookmark=" + jsonMark + "&s=false";
-				var xhr = new XMLHttpRequest();
-				xhr.open("POST", options['wdurl'], true);
-				let tarr = {};
-				tarr['client'] = options['s_uuid'];
-				tarr['token'] = options['token'];
-				if(tarr['token'] == '') return false;
-				xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-				xhr.withCredentials = true;
-				xhr.onload = async function () {
-					if( xhr.status < 200 || xhr.status > 226) {
-						notify('error', xhr.response);
-						loglines = logit("Error: " + xhr.response);
-					} else {
-						let response = JSON.parse(xhr.response);
-						let xtResponse = xhr.getResponseHeader("X-Request-Info");
-						if(xtResponse !== null) {
-							if(xtResponse !== '0') {
-								await chrome.storage.local.set({token: xtResponse});
-							} else {
-								chrome.storage.local.set({token: ''});
-								let message = chrome.i18n.getMessage("optionsLoginError");
-								notify('error', message);
-								chrome.browserAction.setBadgeText({text: '!'});
-								chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-							}
-						}
-
-						response = (response == "1") ? "'"+tabs[0].title+"' added":JSON.parse(xhr.response);
-						notify('info', response);
-						loglines = logit("Info: " + response);
-					}
-				}
-				xhr.send(data);
-				*/
 			}
 		});
+		*/
+		let jsonMark = JSON.stringify({ 
+			"id": Math.random().toString(24).substring(2, 12),
+			"url": tabs[0].url,
+			"title": tabs[0].title,
+			"type": 'bookmark',
+			"folder": (abrowser === true) ? 'unfiled_____':2,  
+			"nfolder": 'More Bookmarks',
+			"added": new Date().valueOf()
+		});
+
+		sendRequest(addmark, jsonMark);
 	});
 }
 
@@ -325,40 +348,8 @@ function sendTab(element) {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		chrome.storage.local.get(null, function(options) {
 			let url = (element.target.url) ? element.target.url:tabs[0].url;
-			var cdata = "client=" + options['s_uuid'] + "&caction=getpurl&url=" + encodeURIComponent(url) + "&tg=" + element.target.id;
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", options['wdurl'], true);
-			let tarr = {};
-			tarr['client'] = options['s_uuid'];
-			tarr['token'] = options['token'];
-			if(tarr['token'] == '') return false;
-			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			xhr.withCredentials = true;
-			xhr.onload = async function () {
-				if( xhr.status < 200 || xhr.status > 226) {
-					var message = chrome.i18n.getMessage("sendLinkNot");
-					notify('error',message);
-					loglines = logit('Error: ' + message);
-				} else {
-					loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes"));
-					let xtResponse = xhr.getResponseHeader("X-Request-Info");
-
-					if(xtResponse !== null) {
-						if(xtResponse !== '0') {
-							await chrome.storage.local.set({token: xtResponse});
-						} else {
-							chrome.storage.local.set({token: ''});
-							let message = chrome.i18n.getMessage("optionsLoginError");
-							notify('error', message);
-							chrome.browserAction.setBadgeText({text: '!'});
-							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-						}
-					}
-				}
-			}
 			loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options['s_uuid']);
-			xhr.send(cdata);
+			sendRequest(getpurl, url, element.target.id);
 		});
 	});
 }
@@ -449,7 +440,7 @@ function init() {
 function onTabActivated(tab){
 	pTabs.forEach(async function(pTab, index){
 		if(pTab.tID == tab.tabId) {
-			await dmNoti(pTab.nID);
+			sendRequest(durl, pTab.nID);
 			pTabs.splice(index,1);
 		}
 	});
@@ -543,42 +534,6 @@ function checkCommandShortcuts() {
   });
 }
 
-function dmNoti(nkey) {
-	chrome.storage.local.get(null, function(options) {
-		let xhr = new XMLHttpRequest();
-		let data = "client=" + options['s_uuid'] + "&caction=durl&durl="+nkey;
-		xhr.open("POST", options['wdurl'], true);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.withCredentials = true;
-		xhr.onload = async function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Dismiss notification "+nkey+".";
-				notify('error',message);
-				loglines = logit('Error: '+message);
-			} else {
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) {
-					if(xtResponse !== '0') {
-						await chrome.storage.local.set({token: xtResponse});
-					} else {
-						chrome.storage.local.set({token: ''});
-						let message = chrome.i18n.getMessage("optionsLoginError");
-						notify('error', message);
-						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-					}
-				}
-			}
-		}
-		xhr.send(data);
-	});
-}
-
 function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
 	notid = notid + '_' + Date.now().toString();
 
@@ -617,9 +572,17 @@ function onMovedCheck(id, bookmark) {
 		
 		if(s_change === true && s_type.indexOf('PHP') == -1) {
 			saveAllMarks();
-		}
-		else if(s_change === true && s_type.indexOf('PHP') == 0) {
-			await moveMark(id, bookmark);
+		} else if(s_change === true && s_type.indexOf('PHP') == 0) {
+			let jsonMark = {
+				"id": id,
+				"index": bookmark.index,
+				"folderIndex": folder[0]['index'],
+				"folder": bookmark.parentId,
+				"nfolder": folder[0]['title'],
+				"url":bmark[0].url
+			};
+			loglines = logit("Info: Sending move request to server. Bookmark ID: " + id);
+			sendRequest(movemark, jsonMark);
 		}
 	});
 }
@@ -634,67 +597,18 @@ function onChangedCheck(id, changeInfo) {
 			saveAllMarks();
 		}
 		else if(s_change === true && s_type.indexOf('PHP') == 0) {
-			editMark(changeInfo,id);
+			chrome.bookmarks.get(id, function(bmark) {
+				let jsonMark = {
+					"url": changeInfo.url,
+					"title": changeInfo.title,
+					"parentId": bmark[0].parentId,
+					"index": bmark[0].index
+				};
+
+				loglines = logit("Info: Sending edit request to server. URL: "+ changeInfo.url);
+				sendRequest(editmark, jsonMark);
+			});
 		}
-	});
-}
-
-function editMark(eData,id) {
-	chrome.bookmarks.get(id, function(bmark) {
-		let jsonMark = encodeURIComponent(JSON.stringify({ "url": eData.url,"title": eData.title,"parentId": bmark[0].parentId,"index": bmark[0].index }));
-		chrome.storage.local.get(null, function(options) {
-			var s_uuid = options['s_uuid'];
-			let cdata = "client="+s_uuid+"&caction=editmark&bookmark="+jsonMark;
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", options['wdurl'], true);
-			let tarr = {};
-			tarr['client'] = options['s_uuid'];
-			tarr['token'] = options['token'];
-			if(tarr['token'] == '') return false;
-			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			xhr.withCredentials = true;
-			xhr.onload = async function () {
-				if( xhr.status < 200 || xhr.status > 226) {
-					message = chrome.i18n.getMessage("errorEditBookmark") + xhr.status;
-					notify('error', message);
-					chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorEditBookmark")});
-					loglines = logit('Error: '+message);
-				} else {
-					let xtResponse = xhr.getResponseHeader("X-Request-Info");
-					if(xtResponse !== null) {
-						if(xtResponse !== '0') {
-							await chrome.storage.local.set({token: xtResponse});
-						} else {
-							chrome.storage.local.set({token: ''});
-							let message = chrome.i18n.getMessage("optionsLoginError");
-							notify('error', message);
-							chrome.browserAction.setBadgeText({text: '!'});
-							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-						}
-					}
-
-					let response = JSON.parse(xhr.responseText);
-					if(response == 1) {
-							loglines = logit("Info: Bookmark edited successfully at the server");
-							chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": Bookmark edited."});
-					}
-						else {
-							message = "Error: Bookmark not edited at the server, please check the server logfile.";
-							loglines = logit(message);
-							notify('error',message);
-							chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorEditBookmark")});
-						}
-				}
-			}
-			loglines = logit("Info: Sending edit request to server. URL: "+ eData.url +", Client: "+s_uuid);
-			xhr.send(cdata);
-		})
-		
-		let datems = Date.now();
-		let date = new Date(datems);
-		let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-		chrome.storage.local.set({last_s: datems});
 	});
 }
 
@@ -716,70 +630,20 @@ function onRemovedCheck(id, bookmark) {
 
 function exportPHPMarks(upl=[]) {
 	loglines = logit("Info: Send  new local bookmarks to server");
+
 	let bookmarks = '';
 	let p = 0;
+
 	chrome.bookmarks.getTree(function(bookmarkItems) {
 		if(upl.length === 0) {
-			bookmarks = encodeURIComponent(JSON.stringify(bookmarkItems));
+			bookmarks =bookmarkItems;
 			p = 0;
 		} else {
-			bookmarks = encodeURIComponent(JSON.stringify(upl));
+			bookmarks = upl;
 			p = 1;
 		}
 
-		chrome.storage.local.get(null, function(options) {
-			if(!("s_uuid" in options)) {
-				var s_uuid = uuidv4();
-				chrome.storage.local.set({s_uuid: s_uuid});
-			}
-			else {
-				var s_uuid = options['s_uuid'];
-			}
-
-			let cdata = 'client='+s_uuid+'&caction=import&bookmark='+bookmarks+"&p="+p+"&s="+options['actions']['startup'];
-			let xhr = new XMLHttpRequest();
-			xhr.open("POST", options['wdurl'], true);
-			let tarr = {};
-			tarr['client'] = options['s_uuid'];
-			tarr['token'] = options['token'];
-			if(tarr['token'] == '') return false;
-			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			xhr.withCredentials = true;
-			xhr.onload = async function () {
-				if( xhr.status < 200 || xhr.status > 226) {
-					message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
-					notify('error',message);
-					loglines = logit("Error: "+message);
-				} else {
-					let xtResponse = xhr.getResponseHeader("X-Request-Info");
-					if(xtResponse !== null) {
-						if(xtResponse !== '0') {
-							await chrome.storage.local.set({token: xtResponse});
-						} else {
-							chrome.storage.local.set({token: ''});
-							let message = chrome.i18n.getMessage("optionsLoginError");
-							notify('error', message);
-							chrome.browserAction.setBadgeText({text: '!'});
-							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-						}
-					}
-
-					let response = JSON.parse(xhr.responseText);
-					if(response == 1) {
-						message = chrome.i18n.getMessage("successExportBookmarks");
-						if(p == 1) notify('info',message);
-						loglines = logit("Info: "+message);
-					}
-					else {
-						message = chrome.i18n.getMessage("errorExportBookmarks");
-						if(p == 1) notify('error',message + ": " + response);
-						loglines = logit("Error: "+ message + " " + response);
-					}
-				}
-			}
-			xhr.send(cdata);
-		})
+		sendRequest(bimport, bookmarks, p);
 	});
 	
 	let datems = Date.now();
@@ -821,139 +685,28 @@ function saveAllMarks() {
 }
 
 function delMark(id, bookmark) {
-	var oldMark = findByID(oMarks, id);
-	var jsonMark = encodeURIComponent(JSON.stringify({ "url": bookmark.node.url,"folder": bookmark.node.parentId,"index": bookmark.node.index,"type": bookmark.node.type,"id": id,"title": oldMark.title }));
-	chrome.storage.local.get(null, function(options) {
-		if(!("s_uuid" in options)) {
-			var s_uuid = uuidv4();
-			chrome.storage.local.set({s_uuid: s_uuid});
-		}
-		else {
-			var s_uuid = options['s_uuid'];
-		}
-		let cdata = "client="+s_uuid+"&caction=delmark&bookmark="+jsonMark;
-		var xhr = new XMLHttpRequest();
-		xhr.open("POST", options['wdurl'], true);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.withCredentials = true;
-		xhr.onload = async function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				message = chrome.i18n.getMessage("errorRemoveBookmark") + xhr.status;
-				notify('error',message);
-				chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorRemoveBookmark")});
-				loglines = logit('Error: '+message);
-			} else {
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) {
-					if(xtResponse !== '0') {
-						await chrome.storage.local.set({token: xtResponse});
-					} else {
-						chrome.storage.local.set({token: ''});
-						let message = chrome.i18n.getMessage("optionsLoginError");
-						notify('error', message);
-						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-					}
-				}
-
-				let response = JSON.parse(xhr.responseText);
-				if(response == 1) {
-						loglines = logit("Info: Bookmark removed at the server");
-						chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": Bookmark removed."});
-				}
-					else {
-						loglines = logit("Error: Bookmark not removed at the server, please check the server logfile");
-						chrome.browserAction.setTitle({title: date.toLocaleDateString(undefined,doptions) + ": " + chrome.i18n.getMessage("errorRemoveBookmark")});
-					}
-			}
-		}
-		loglines = logit("Info: Sending remove request to server: <a href='"+bookmark.node.url+"'>"+bookmark.node.url+"</a>");
-		xhr.send(cdata);
-	})
-	
-	let datems = Date.now();
-	let date = new Date(datems);
-	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-	chrome.storage.local.set({last_s: datems});
-}
-
-function moveMark(id, bookmark) {
-	chrome.storage.local.get(null, function(options) {
-		chrome.bookmarks.get(bookmark.parentId, function(folder) {
-			chrome.bookmarks.get(id, function(bmark) {
-				if(!("s_uuid" in options)) {
-					var s_uuid = uuidv4();
-					chrome.storage.local.set({s_uuid: s_uuid});
-				}
-				else {
-					var s_uuid = options['s_uuid'];
-				}
-				
-				let jsonMark = encodeURIComponent(JSON.stringify({ "id": id, "index": bookmark.index, "folderIndex": folder[0]['index'],"folder": bookmark.parentId,"nfolder": folder[0]['title'],"url":bmark[0].url }));
-				let cdata = "client="+s_uuid+"&caction=movemark&bookmark="+jsonMark+"&s="+options['actions']['startup'];
-				var xhr = new XMLHttpRequest();
-				xhr.open("POST", options['wdurl'], true);
-				let tarr = {};
-				tarr['client'] = options['s_uuid'];
-				tarr['token'] = options['token'];
-				if(tarr['token'] == '') return false;
-				xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-				xhr.withCredentials = true;
-				xhr.onload = async function () {
-					if( xhr.status < 200 || xhr.status > 226) {
-						message = chrome.i18n.getMessage("errorMoveBookmark") + xhr.status;
-						notify('error',message);
-						loglines = logit('Error: '+message);
-					} else {
-						let xtResponse = xhr.getResponseHeader("X-Request-Info");
-						if(xtResponse !== null) {
-							if(xtResponse !== '0') {
-								await chrome.storage.local.set({token: xtResponse});
-							} else {
-								chrome.storage.local.set({token: ''});
-								let message = chrome.i18n.getMessage("optionsLoginError");
-								notify('error', message);
-								chrome.browserAction.setBadgeText({text: '!'});
-								chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-							}
-						}
-
-						let response = JSON.parse(xhr.responseText);
-						if(response == 1)
-								loglines = logit("Info: Bookmark moved successfully at the server");
-							else
-								loglines = logit("Error: Bookmark not moved at the server, response from server is: "+response);
-					}
-				}
-				loglines = logit("Info: Sending move request to server. Bookmark ID: "+id);
-				xhr.send(cdata);
-			});
-		});
-	});
-	
-	let datems = Date.now();
-	let date = new Date(datems);
-	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-	chrome.storage.local.set({last_s: datems});
-	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+	let oldMark = findByID(oMarks, id);
+	let jsonMark = {
+		"url": bookmark.node.url,
+		"folder": bookmark.node.parentId,
+		"index": bookmark.node.index,
+		"type": bookmark.node.type,
+		"id": id,
+		"title": oldMark.title
+	};
+	loglines = logit("Info: Sending remove request to server: <a href='"+bookmark.node.url+"'>"+bookmark.node.url+"</a>");
+	sendRequest(delmark, jsonMark);
 }
 
 function sendMark(bookmark) {
 	if(!("type" in bookmark) && !("url" in bookmark)) {
 		bookmark.type = "folder";
-	}
-	else if(!("type" in bookmark) && ("url" in bookmark)) {
+	} else if(!("type" in bookmark) && ("url" in bookmark)) {
 		bookmark.type = "bookmark";
 	}
 
 	chrome.bookmarks.get(bookmark.parentId, async function(bmark) {
-		let jsonMark = encodeURIComponent(JSON.stringify({ 
+		let jsonMark = { 
 			"id": bookmark.id,
 			"url": bookmark.url,
 			"title": bookmark.title,
@@ -961,62 +714,11 @@ function sendMark(bookmark) {
 			"folder": bookmark.parentId,
 			"nfolder": bmark[0].title,
 			"added": bookmark.dateAdded
-		}));
+		};
 
-		await chrome.storage.local.get(null, function(options) {
-			if(!("s_uuid" in options)) {
-				var s_uuid = uuidv4();
-				chrome.storage.local.set({s_uuid: s_uuid});
-			} else {
-				var s_uuid = options['s_uuid'];
-			}
-			let cdata = "client="+s_uuid+"&caction=addmark&bookmark="+jsonMark+"&s="+options['actions']['startup'];
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", options['wdurl'], true);
-			let tarr = {};
-			tarr['client'] = options['s_uuid'];
-			tarr['token'] = options['token'];
-			if(tarr['token'] == '') return false;
-			xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			xhr.withCredentials = true;
-			xhr.onload = async function () {
-				if( xhr.status < 200 || xhr.status > 226) {
-					message = chrome.i18n.getMessage("errorSaveSingleBookmarks")  + xhr.status;
-					notify('error',message);
-					loglines = logit('Error: '+message);
-				} else {
-					let xtResponse = xhr.getResponseHeader("X-Request-Info");
-					if(xtResponse !== null) {
-						if(xtResponse !== '0') {
-							await chrome.storage.local.set({token: xtResponse});
-						} else {
-							chrome.storage.local.set({token: ''});
-							let message = chrome.i18n.getMessage("optionsLoginError");
-							notify('error', message);
-							chrome.browserAction.setBadgeText({text: '!'});
-							chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-						}
-					}
-
-					let response = JSON.parse(xhr.responseText);
-					if(response == 1)
-							loglines = logit("Info: Bookmark added successfully at the server");
-						else
-							loglines = logit("Error: "+response);
-				}
-			}
-			loglines = logit("Info: Sending add request to server. <a href='"+bookmark.url+"'>"+bookmark.url+"</a>");
-			xhr.send(cdata);
-		});
+		loglines = logit("Info: Sending add request to server. <a href='"+bookmark.url+"'>"+bookmark.url+"</a>");
+		sendRequest(addmark, jsonMark);
 	});
-	
-	let datems = Date.now();
-	let date = new Date(datems);
-	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-	chrome.storage.local.set({last_s: datems});
-	
-	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
 function saveDAVMarks(bookmarkItems) {
