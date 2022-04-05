@@ -259,6 +259,10 @@ function delmark(response) {
 	chrome.storage.local.set({last_s: datems});
 }
 
+function arename(response) {
+
+}
+
 function ccMenus() {
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
@@ -313,23 +317,6 @@ function ccMenus() {
 
 function bookmarkTab() {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		/*
-		chrome.storage.local.get(null, function(options) {
-			if(options.actions.create === false) {				
-				let jsonMark = JSON.stringify({ 
-					"id": Math.random().toString(24).substring(2, 12),
-					"url": tabs[0].url,
-					"title": tabs[0].title,
-					"type": 'bookmark',
-					"folder": (abrowser === true) ? 'unfiled_____':2,  
-					"nfolder": 'More Bookmarks',
-					"added": new Date().valueOf()
-				});
-
-				sendRequest(addmark, jsonMark);
-			}
-		});
-		*/
 		let jsonMark = JSON.stringify({ 
 			"id": Math.random().toString(24).substring(2, 12),
 			"url": tabs[0].url,
@@ -456,7 +443,6 @@ function pTabsLoad(tID, nID) {
 				pTabs.push(e);
 			});
 		}
-		
 		pTabs.push(tabInfo);
 		pTabsSave(pTabs);
 	});
@@ -647,9 +633,6 @@ function exportPHPMarks(upl=[]) {
 	});
 	
 	let datems = Date.now();
-	let date = new Date(datems);
-	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 	chrome.storage.local.set({last_s: datems});
 }
 
@@ -718,97 +701,6 @@ function sendMark(bookmark) {
 
 		loglines = logit("Info: Sending add request to server. <a href='"+bookmark.url+"'>"+bookmark.url+"</a>");
 		sendRequest(addmark, jsonMark);
-	});
-}
-
-function saveDAVMarks(bookmarkItems) {
-	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-	chrome.storage.local.get(null, function(options) {
-		var bookmarks = JSON.stringify(bookmarkItems);
-		var xhr = new XMLHttpRequest();
-		xhr.open("PUT", options['wdurl'] + "/" + filename, true);
-		xhr.withCredentials = true;
-		xhr.setRequestHeader('X-Filename', filename);
-		xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['creds']));
-		xhr.onload = function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
-				notify('error',message);
-				loglines = logit("Info: "+message);
-				chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-			}
-			else {
-				loglines = logit("Info: Bookmarks send successfully to WebDAV share");
-			}
-		}
-		xhr.send(bookmarks);
-	});	
-}
-
-function getPHPMarks() {
-	chrome.storage.local.get(null, function(options) {
-		if(!("s_uuid" in options)) {
-			var s_uuid = uuidv4();
-			chrome.storage.local.set({s_uuid: s_uuid});
-		}
-		else {
-			var s_uuid = options['s_uuid'];
-		}
-		let xhr = new XMLHttpRequest();
-		let params = 'client='+s_uuid+'&caction=startup&s='+options['actions']['startup'];
-		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), true);
-		xhr.withCredentials = true;
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		
-		xhr.onload = async function () {
-			let datems = Date.now();
-			let date = new Date(datems);
-			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
-			if( xhr.status != 200 ) {
-				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
-				notify('error',message);
-				loglines = logit('Error: '+message);
-			} else {
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) {
-					if(xtResponse !== '0') {
-						await chrome.storage.local.set({token: xtResponse});
-					} else {
-						chrome.storage.local.set({token: ''});
-						let message = chrome.i18n.getMessage("optionsLoginError");
-						notify('error', message);
-						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-					}
-				}
-
-				response = (xhr.responseText);
-				if(abrowser == false) response = c2cm(response);
-				let PHPMarks = JSON.parse(response);
-				if(PHPMarks.includes('New client registered')) {
-					message = chrome.i18n.getMessage("infoNewClient");
-					notify('info',message);
-					loglines = logit('Info: '+message);
-				} else if(PHPMarks.includes('No bookmarks added')) {
-					message = chrome.i18n.getMessage("infoNoChange");
-					loglines = logit("Info: "+message);
-					chrome.storage.local.set({last_message: message});
-				} else {
-					message = PHPMarks.length + chrome.i18n.getMessage("infoChanges");
-					loglines = logit(message);
-					abrowser ? addPHPMarks(PHPMarks) : addPHPcMarks(PHPMarks);
-					chrome.storage.local.set({last_message: message});
-				}		
-			}
-		}
-		loglines = logit("Info: Initiate startup sync");
-		xhr.send(params);
 	});
 }
 
@@ -1008,169 +900,6 @@ function moveBookmarkAsync(id, destination) {
 	});
 }
 
-async function addPHPcMarks(bArray) {
-	var bArrayT = bArray;
-	for (let bIndex = 0; bIndex < bArray.length; bIndex++) {
-		switch(bArrayT[bIndex].bmAction) {
-			case 1:	
-				var url = bArrayT[bIndex].bmURL;
-				loglines = logit('Info: Delete: ' + url);
-				if(url.startsWith("http")) {
-					if(url != null) {
-						chrome.bookmarks.search({url: bArrayT[bIndex].bmURL}, function(removeItems) {
-							removeItems.forEach(function(removeBookmark) {
-								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-								chrome.bookmarks.remove(removeBookmark.id, function(removeB) {
-									chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-								});
-							});
-						});
-					} else {
-						chrome.bookmarks.search({title: bArrayT[bIndex].bmTitle}, function(removeFolder) {
-							if(removeFolder.length == 1) {
-								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-								chrome.bookmarks.remove(removeFolder.id, function(removeF) {
-									chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-								});
-							} else if(removeFolder.length > 1) {
-								for (let fIndex = 0; fIndex < removeFolder.length; fIndex++) {
-									if(removeFolder[fIndex].index == bArrayT[bIndex].bmIndex) {
-										chrome.bookmarks.remove(removeFolder[fIndex].id, function(removeB) {
-											chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-										});
-									}
-								}
-							}
-						});
-					}
-				}
-				break;
-			case 2: 
-				loglines = logit('Info: Move: ' + bArrayT[bIndex].bmURL);
-				chrome.bookmarks.search({url: bArrayT[bIndex].bmURL},function(bookmarkItems) {
-					if (bookmarkItems.length) {
-						if (bArrayT[bIndex].fdName != bookmarkItems[0].parentId) {
-							chrome.bookmarks.onMoved.removeListener(onMovedCheck);
-							chrome.bookmarks.move(bookmarkItems[0].id, {parentId: bArrayT[bIndex].fdID}, function(move) {
-								chrome.bookmarks.onMoved.addListener(onMovedCheck);
-							});
-						}
-					}
-				});
-				break;
-			default: 
-				loglines = logit('Info: Add: ' + bArrayT[bIndex].bmURL);
-				var newId = "";
-				if(!bArrayT[bIndex].fdID.length == 1) {
-					chrome.bookmarks.search({title: bArrayT[bIndex].fdName}, async function(pFolder) {
-						if(pFolder.length == 1 && pFolder[0].url != null) {
-							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-							newId = (await createBookmarkAsync({parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-							chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-						} else if(pFolder.length > 1) {
-							for(pIndex = 0; pIndex < pFolder.length; pIndex++) {
-								if(pFolder[pIndex].index == bArrayT[bIndex].bmIndex) {
-									chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-									newId = (await createBookmarkAsync({parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-									chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-								}
-							}
-						} else {
-							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-							newId = (await createBookmarkAsync({parentId: '2', title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-							chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-						}
-					});
-				} else {
-					chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-					newId = (await createBookmarkAsync({parentId: bArrayT[bIndex].fdID, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-				}
-		}
-	}
-}
-
-async function addPHPMarks(bArray) {
-	var bArrayT = bArray;
-	for (let bIndex = 0; bIndex < bArray.length; bIndex++) {
-		switch(bArrayT[bIndex].bmAction) {
-			case "1":
-				var url = bArrayT[bIndex].bmURL;
-				loglines = logit('Info: Delete: ' + url);
-				if(url.startsWith("http")) {
-					if(bArrayT[bIndex].bmURL != null) {
-						chrome.bookmarks.search({url: url}, function(removeItems) {
-							removeItems.forEach(function(removeBookmark) {
-								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-								chrome.bookmarks.remove(removeBookmark.id, function(removeB) {chrome.bookmarks.onRemoved.addListener(onRemovedCheck);});
-							});
-						});
-					} else {
-						chrome.bookmarks.search({title: bArrayT[bIndex].bmTitle}, function(removeFolder) {
-							if(removeFolder.length == 1) {
-								chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-								chrome.bookmarks.remove(removeFolder.id, function(removeF) {
-									chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-								});
-							} else if(removeFolder.length > 1) {
-								for (let fIndex = 0; fIndex < removeFolder.length; fIndex++) {
-									if(removeFolder[fIndex].index == bArrayT[bIndex].bmIndex) {
-										chrome.bookmarks.remove(removeFolder[fIndex].id, function(removeB) {
-											chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-										});
-									}
-								}
-							}
-						});
-					}
-				}
-				break;
-			case "2": 
-				loglines = logit('Info: Move: ' + bArrayT[bIndex].bmURL);
-				chrome.bookmarks.search({url: bArrayT[bIndex].bmURL},function(bookmarkItems) {
-					if (bookmarkItems.length) {
-						if (bArrayT[bIndex].fdName != bookmarkItems[0].parentId) {
-							chrome.bookmarks.onMoved.removeListener(onMovedCheck);
-							chrome.bookmarks.move(bookmarkItems[0].id, {parentId: bArrayT[bIndex].fdID}, function(move) {
-								chrome.bookmarks.onMoved.addListener(onMovedCheck);
-							});
-						}
-					}
-				});
-				break;
-			default: 
-				loglines = logit('Info: Add: ' + bArrayT[bIndex].bmURL);
-				var newId = "";
-				chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-				if(!bArrayT[bIndex].fdID.endsWith('_____')) {
-					chrome.bookmarks.search({title: bArrayT[bIndex].fdName}, async function(pFolder) {
-						if(pFolder.length == 1 && pFolder[0].type == 'folder') {
-							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-							newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-							chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-						} else if(pFolder.length > 1) {
-							for(pIndex = 0; pIndex < pFolder.length; pIndex++) {
-								if(pFolder[pIndex].index == bArrayT[bIndex].bmIndex) {
-									chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-									newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: pFolder[0].id, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-									chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-								}
-							}
-						} else {
-							chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-							newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: 'unfiled_____', title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-							chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-						}
-					});
-				} else {
-					chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-					newId = (await createBookmarkAsync({type: bArrayT[bIndex].bmType, parentId: bArrayT[bIndex].fdID, title: bArrayT[bIndex].bmTitle, url: bArrayT[bIndex].bmURL})).id;
-					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-				}
-		}
-	}
-}
-
 function getDAVMarks() {
 	chrome.storage.local.get(null, function(options) {
 		var xhr = new XMLHttpRequest();
@@ -1209,26 +938,6 @@ function parseMarks(DAVMarks, level=0) {
 		});
 	}
 	return pMarks;
-}
-
-function removeAllMarks() {
-	loglines = logit('Info: Try to remove all local bookmarks');
-	try {
-		chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-		chrome.bookmarks.getTree(function(tree) {
-			tree[0].children.forEach(function(mainfolder) {
-				mainfolder.children.forEach(function(userfolder) {
-					chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-					chrome.bookmarks.removeTree(userfolder.id);
-				});
-			});
-		});
-		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-	} catch(error) {
-		loglines = logit(error);
-	} finally {
-		chrome.storage.local.set({last_s: 1});
-	}
 }
 
 function importMarks(parsedMarks, index=0) {
@@ -1395,10 +1104,4 @@ function addAllMarks(parsedMarks, index=1) {
 		}
 	});
 
-}
-
-function uuidv4() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  )
 }

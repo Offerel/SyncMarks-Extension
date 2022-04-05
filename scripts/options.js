@@ -150,6 +150,7 @@ function rName() {
 	chrome.storage.local.get(null, function(options) {
 		var xhr = new XMLHttpRequest();
 		let cdata = "client="+options['s_uuid']+"&caction=arename&nname="+name;
+		background_page.sendRequest(arename, name);
 		xhr.open("POST", options['wdurl'], true);
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
@@ -202,6 +203,12 @@ function gName() {
 	});
 }
 
+function uuidv4() {
+	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+		(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+	)
+}
+
 function restoreOptions() {
 	chrome.storage.local.get(null, function(options) {
 		let wmessage = document.getElementById('wmessage');
@@ -214,7 +221,7 @@ function restoreOptions() {
 		document.querySelector("#wdurl").defaultValue = options['wdurl'] || "";		
 		
 		if(options['s_uuid'] === undefined) {
-			let nuuid = background_page.uuidv4();
+			let nuuid = uuidv4();
 			document.getElementById("s_uuid").defaultValue = nuuid;
 			document.getElementById("cname").placeholder = nuuid;
 		} else {
@@ -344,14 +351,80 @@ function importOptions() {
 	setTimeout(() => {  checkForm(); }, 200);
 }
 
+function removeAllMarks() {
+	loglines = logit('Info: Try to remove all local bookmarks');
+	try {
+		chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+		chrome.bookmarks.getTree(function(tree) {
+			tree[0].children.forEach(function(mainfolder) {
+				mainfolder.children.forEach(function(userfolder) {
+					chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+					chrome.bookmarks.removeTree(userfolder.id);
+				});
+			});
+		});
+		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+	} catch(error) {
+		loglines = logit(error);
+	} finally {
+		chrome.storage.local.set({last_s: 1});
+	}
+}
+
+function getAllPHPMarks() {
+	chrome.storage.local.get(null, async function(options) {
+		let xhr = new XMLHttpRequest();
+		let params = 'client='+options['s_uuid']+'&caction=export&type=json&s='+options['actions']['startup'];
+		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), false);
+		xhr.withCredentials = true;
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+		if(tarr['token'] == '') return false;
+		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		xhr.onload = async function () {
+			if( xhr.status != 200 ) {
+				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
+				notify('error',message);
+				loglines = logit('Error: ' + message);
+			} else {
+				let response = xhr.responseText;
+				let xtResponse = xhr.getResponseHeader("X-Request-Info");
+				if(xtResponse !== null) {
+					if(xtResponse !== '0') {
+						await chrome.storage.local.set({token: xtResponse});
+					} else {
+						chrome.storage.local.set({token: ''});
+						let message = chrome.i18n.getMessage("optionsLoginError");
+						notify('error', message);
+						chrome.browserAction.setBadgeText({text: '!'});
+						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+					}
+				}
+				if(abrowser == false) response = c2cm(response);
+				let PHPMarks = JSON.parse(response);
+				count = 0;
+				loglines = logit('Info: Bookmarks retrieved from server');
+				await importFull(PHPMarks);
+			}
+			let date = new Date(Date.now());
+			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
+			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+			}
+		loglines = logit('Info: Sending Sync request to server');
+		xhr.send(params);
+	});
+}
+
 function manualImport(e) {
 	e.preventDefault();
-	if (this.id === 'iyes') background_page.removeAllMarks();
+	if (this.id === 'iyes') removeAllMarks();
 
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				background_page.getAllPHPMarks(true);
+				getAllPHPMarks(true);
 			} else if (options['s_type'] == 'WebDAV') {
 				background_page.getDAVMarks();
 			}
