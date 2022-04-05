@@ -77,7 +77,7 @@ function sendRequest(action, data = null, addendum = null) {
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
-					action(xhr.response);
+					action(xhr.response, addendum);
 				} else {
 					let message = `Error ${xhr.status}: ${xhr.statusText}`;
 					notify('error', message);
@@ -124,7 +124,7 @@ function sendRequest(action, data = null, addendum = null) {
 	});
 }
 
-function getclients(response) {
+function getclients(response, a = '') {
 	chrome.storage.local.set({clist:response});
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
@@ -166,11 +166,11 @@ function getclients(response) {
 	sendRequest(gurls);
 }
 
-function getpurl(response) {
+function getpurl(response, a = '') {
 	//
 }
 
-function gurls(response) {
+function gurls(response, a = '') {
 	if(Array.isArray(response)) {
 		try {
 			response.forEach(function(notification) {
@@ -187,17 +187,22 @@ function gurls(response) {
 		let s_startup = options['actions']['startup'] || false;
 		if(s_startup === true) {
 			loglines = logit("Info: Start Sync");
-			sendRequest(cinfo);
+			sendRequest(cinfo, null, 'sync');
 		}
 	});
 }
 
-function cinfo(response) {
+function cinfo(response, a = '') {
 	lastseen = response['lastseen'];
-	doFullSync();
+	if(a == 'sync') {
+		doFullSync();
+	} else {
+		document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
+		if(response !== null) document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
+	}
 }
 
-function bexport(response) {
+function bexport(response, a = '') {
 	if(abrowser == false) response = JSON.parse(c2cm(JSON.stringify(response)));
 	count = 0;
 	loglines = logit('Info: Bookmarks retrieved from server');
@@ -208,7 +213,7 @@ function bexport(response) {
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
-function bimport(response) {
+function bimport(response, a = '') {
 	if(response == 1) {
 		message = chrome.i18n.getMessage("successExportBookmarks");
 		loglines = logit("Info: " + message);
@@ -218,7 +223,7 @@ function bimport(response) {
 	}
 }
 
-function addmark(response) {
+function addmark(response, a = '') {
 	response = (response == "1") ? "Bookmark added":JSON.parse(xhr.response);
 	notify('info', response);
 	loglines = logit("Info: " + response);
@@ -227,11 +232,11 @@ function addmark(response) {
 	chrome.storage.local.set({last_s: datems});
 }
 
-function durl(response) {
+function durl(response, a = '') {
 	//
 }
 
-function editmark(response) {
+function editmark(response, a = '') {
 	if(response == 1) {
 		loglines = logit("Info: Bookmark edited successfully at the server");
 	} else {
@@ -241,14 +246,14 @@ function editmark(response) {
 	}
 }
 
-function movemark(response) {
+function movemark(response, a = '') {
 	if(response == 1)
 		loglines = logit("Info: Bookmark moved successfully at the server");
 	else
 		loglines = logit("Error: Bookmark not moved at the server, response from server is: " + response);
 }
 
-function delmark(response) {
+function delmark(response, a = '') {
 	if(response == 1) {
 		loglines = logit("Info: Bookmark removed at the server");
 	} else {
@@ -259,8 +264,8 @@ function delmark(response) {
 	chrome.storage.local.set({last_s: datems});
 }
 
-function arename(response) {
-
+function arename(response, a = '') {
+	//
 }
 
 function ccMenus() {

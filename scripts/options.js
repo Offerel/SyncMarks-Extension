@@ -1,5 +1,9 @@
 var background_page = chrome.extension.getBackgroundPage();
 
+chrome.runtime.onMessage.addListener((message, sender) => {
+	console.log("background script got message", message, "from", sender);
+});
+
 function checkForm() {
 	if((document.getElementById('wdurl').value != '') && (document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue)) {
 		document.getElementById("lginl").style.visibility = 'visible';
@@ -146,34 +150,12 @@ function saveOptions(e) {
 }
 
 function rName() {
-	let name = this.value;
-	chrome.storage.local.get(null, function(options) {
-		var xhr = new XMLHttpRequest();
-		let cdata = "client="+options['s_uuid']+"&caction=arename&nname="+name;
-		background_page.sendRequest(arename, name);
-		xhr.open("POST", options['wdurl'], true);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.withCredentials = true;
-		xhr.onload = function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Error set name of client."  + xhr.status;
-				background_page.notify('error',message);
-				background_page.loglines = background_page.logit('Error: '+message);
-			} else {
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
-			}
-		}
-		xhr.send(cdata);
-	});
+	background_page.sendRequest(background_page.arename, this.value);
 }
 
 function gName() {
+	background_page.sendRequest(background_page.cinfo);
+
 	chrome.storage.local.get(null, function(options) {
 		let xhr = new XMLHttpRequest();
 		let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";
@@ -618,6 +600,7 @@ window.addEventListener('load', function () {
 	var comodal = document.getElementById("expimpdialog");
 
 	localizeHtmlPage();
+
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
 	document.getElementById("econf").addEventListener("click", function() {comodal.style.display = "block"});
 	document.getElementById("cclose").addEventListener("click", function() {comodal.style.display = "none";});
