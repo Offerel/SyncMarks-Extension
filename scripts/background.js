@@ -58,7 +58,6 @@ function sendRequest(action, data = null, addendum = null) {
 			sync: (action.name === 'addmark') ? null:options['actions']['startup']
 		}
 	
-		//xhr.open("POST", options['wdurl'] + '?t=' + Math.random(), true);
 		xhr.open("POST", options['wdurl'], true);
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
@@ -125,7 +124,7 @@ function sendRequest(action, data = null, addendum = null) {
 			return false;
 		}
 
-		const qparams = new URLSearchParams(params).toString();
+		const qparams = new URLSearchParams(params);
 		xhr.send(qparams);
 	});
 }
@@ -229,10 +228,9 @@ function bimport(response, a = '') {
 }
 
 function addmark(response, a = '') {
-	response = (response == "1") ? "Bookmark added":JSON.parse(xhr.response);
+	response = (response == "1") ? "Bookmark added":response;
 	notify('info', response);
 	loglines = logit("Info: " + response);
-
 	let datems = Date.now();
 	chrome.storage.local.set({last_s: datems});
 }
