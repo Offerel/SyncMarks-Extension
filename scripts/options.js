@@ -2,7 +2,6 @@ var background_page = chrome.extension.getBackgroundPage();
 
 chrome.runtime.onMessage.addListener((message, sender) => {
 	if(sender.id === chrome.runtime.id) {
-		console.log(message);
 		if(message.ctype) {
 			document.getElementById("cname").title = (message.cname) ? document.getElementById('s_uuid').value + " (" + message.ctype + ")":document.getElementById('s_uuid').value;
 			if(message !== null) document.getElementById("cname").defaultValue = (message.cname == document.getElementById('s_uuid').value) ? '':message.cname;
