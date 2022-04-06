@@ -1,7 +1,23 @@
 var background_page = chrome.extension.getBackgroundPage();
 
 chrome.runtime.onMessage.addListener((message, sender) => {
-	console.log("background script got message", message, "from", sender);
+	if(sender.id === chrome.runtime.id) {
+		console.log(message);
+		if(message.ctype) {
+			document.getElementById("cname").title = (message.cname) ? document.getElementById('s_uuid').value + " (" + message.ctype + ")":document.getElementById('s_uuid').value;
+			if(message !== null) document.getElementById("cname").defaultValue = (message.cname == document.getElementById('s_uuid').value) ? '':message.cname;
+		} else if (message.cInfo) {
+			let cInfo = JSON.parse(message.cInfo);
+			let iBox = document.getElementById("lgini");
+			let ip = document.getElementById('ipinfo');
+			iBox.style.visibility = 'visible';
+			ip.innerText = cInfo.ip;
+			let ipinfo = document.createElement('span');
+			let tm = new Date(cInfo.tm * 1000).toLocaleString();
+			ipinfo.innerText = tm + ' | ' + cInfo.de + ' | ' + cInfo.co + ' | ' + cInfo.ct + ' | ' + cInfo.re + '\n' + cInfo.ua;
+			ip.appendChild(ipinfo);
+		}
+	}
 });
 
 function checkForm() {
@@ -155,34 +171,6 @@ function rName() {
 
 function gName() {
 	background_page.sendRequest(background_page.cinfo);
-
-	chrome.storage.local.get(null, function(options) {
-		let xhr = new XMLHttpRequest();
-		let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";
-		xhr.open("POST", document.getElementById("wdurl").value, true);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.withCredentials = true;
-		xhr.onload = function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Error get name of client."  + xhr.status;
-				background_page.notify('error',message);
-				background_page.loglines =  background_page.logit('Error: '+message);
-			} else {
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
-				
-				let response = JSON.parse(xhr.responseText);
-				document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
-				if(response !== null) document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
-			}
-		}
-		xhr.send(cdata);
-	});
 }
 
 function uuidv4() {
@@ -230,7 +218,8 @@ function restoreOptions() {
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
 				if(options['token'] === '') {
-					ipInfo();
+					//ipInfo();
+					background_page.sendRequest(background_page.cinfo);
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
 			} else {
@@ -353,52 +342,6 @@ function removeAllMarks() {
 	}
 }
 
-function getAllPHPMarks() {
-	chrome.storage.local.get(null, async function(options) {
-		let xhr = new XMLHttpRequest();
-		let params = 'client='+options['s_uuid']+'&caction=export&type=json&s='+options['actions']['startup'];
-		xhr.open('POST', options['wdurl'] + '?t=' + Math.random(), false);
-		xhr.withCredentials = true;
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.onload = async function () {
-			if( xhr.status != 200 ) {
-				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
-				notify('error',message);
-				loglines = logit('Error: ' + message);
-			} else {
-				let response = xhr.responseText;
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) {
-					if(xtResponse !== '0') {
-						await chrome.storage.local.set({token: xtResponse});
-					} else {
-						chrome.storage.local.set({token: ''});
-						let message = chrome.i18n.getMessage("optionsLoginError");
-						notify('error', message);
-						chrome.browserAction.setBadgeText({text: '!'});
-						chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-					}
-				}
-				if(abrowser == false) response = c2cm(response);
-				let PHPMarks = JSON.parse(response);
-				count = 0;
-				loglines = logit('Info: Bookmarks retrieved from server');
-				await importFull(PHPMarks);
-			}
-			let date = new Date(Date.now());
-			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
-			}
-		loglines = logit('Info: Sending Sync request to server');
-		xhr.send(params);
-	});
-}
-
 function manualImport(e) {
 	e.preventDefault();
 	if (this.id === 'iyes') removeAllMarks();
@@ -406,7 +349,7 @@ function manualImport(e) {
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				getAllPHPMarks(true);
+				background_page.sendRequest(background_page.bexport, 'json');
 			} else if (options['s_type'] == 'WebDAV') {
 				background_page.getDAVMarks();
 			}
@@ -550,34 +493,7 @@ function cAuto() {
 }
 
 function ipInfo() {
-	chrome.storage.local.get(null, function(options) {
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		let xhr = new XMLHttpRequest();
-		xhr.open("POST", document.getElementById("wdurl").value, true);
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.withCredentials = true;
-		xhr.onload = function () {
-			if( xhr.status >= 200 || xhr.status < 226) {
-				let response = JSON.parse(xhr.responseText);
-				if(response.cInfo) {
-					let cInfo = JSON.parse(response.cInfo);
-					let iBox = document.getElementById("lgini");
-					let ip = document.getElementById('ipinfo');
-					iBox.style.visibility = 'visible';
-					ip.innerText = cInfo.ip;
-					let ipinfo = document.createElement('span');
-					let tm = new Date(cInfo.tm * 1000).toLocaleString();
-					ipinfo.innerText = tm + ' | ' + cInfo.de + ' | ' + cInfo.co + ' | ' + cInfo.ct + ' | ' + cInfo.re + '\n' + cInfo.ua;
-					ip.appendChild(ipinfo);
-				}
-			}
-		}
-		let data = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";;
-		xhr.send(data);
-	});
+	background_page.sendRequest(background_page.cinfo, 'p');
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);

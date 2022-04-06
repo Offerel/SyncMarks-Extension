@@ -64,7 +64,7 @@ function sendRequest(action, data = null, addendum = null) {
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
 
-		if(tarr['token'] == '') return false;
+		if(tarr['token'] === '' && data !== 'p') return false;
 
 		loglines = logit("Info: Send '" + action.name + "' request to backend");
 
@@ -99,6 +99,16 @@ function sendRequest(action, data = null, addendum = null) {
 					notify('error', message);
 					chrome.browserAction.setBadgeText({text: '!'});
 					chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+
+					chrome.browserAction.onClicked.addListener(function() {
+						chrome.runtime.openOptionsPage();
+					});
+
+					chrome.runtime.sendMessage(response);
+
+					if(xhr.response.cInfo) {
+						chrome.runtime.sendMessage(response);
+					}
 				}
 			}
 		}
@@ -197,8 +207,7 @@ function cinfo(response, a = '') {
 	if(a == 'sync') {
 		doFullSync();
 	} else {
-		document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
-		if(response !== null) document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
+		chrome.runtime.sendMessage(response);
 	}
 }
 
@@ -374,7 +383,7 @@ function findByID(oMarks, id) {
 }
 
 function init() {
-	loglines = logit("Info: AddOn version: "+chrome.runtime.getManifest().version);
+	loglines = logit("Info: AddOn version: " + chrome.runtime.getManifest().version);
 	loglines = logit("Info: "+navigator.userAgent);
 	chrome.runtime.getPlatformInfo(function(info){
 		loglines = logit("Info: Current architecture: "+info.arch+" | Current OS: "+info.os);
@@ -403,6 +412,9 @@ function init() {
 			if(options['token'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+				chrome.browserAction.onClicked.addListener(function() {
+					chrome.runtime.openOptionsPage();
+				});
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
 			}
@@ -410,15 +422,18 @@ function init() {
 			if(options['creds'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+				chrome.browserAction.onClicked.addListener(function() {
+					chrome.runtime.openOptionsPage();
+				});
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
 			}
 		}
 
-		if( s_startup === true && s_type.indexOf('PHP') == -1) {
+		if( s_startup === true && s_type.indexOf('PHP') === -1) {
 			loglines = logit("Info: Initiate WebDAV startup sync");
 			if(options['wdurl']) getDAVMarks();
-		} else if(s_type.indexOf('PHP') == 0) {
+		} else if(s_type.indexOf('PHP') === 0) {
 			if(options['wdurl']) {
 				await ccMenus();
 				loglines = logit("Info: Get list of clients.");
