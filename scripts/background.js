@@ -96,18 +96,14 @@ function sendRequest(action, data = null, addendum = null) {
 				} else {
 					chrome.storage.local.set({token: ''});
 					let message = chrome.i18n.getMessage("optionsLoginError");
-					notify('error', message);
+					if(data !== 'p') notify('error', message);
 					chrome.browserAction.setBadgeText({text: '!'});
 					chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-
-					chrome.browserAction.onClicked.addListener(function() {
-						chrome.runtime.openOptionsPage();
-					});
-
-					chrome.runtime.sendMessage(response);
-
+					chrome.browserAction.onClicked.removeListener(bookmarkTab);
+					chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+					
 					if(xhr.response.cInfo) {
-						chrome.runtime.sendMessage(response);
+						chrome.runtime.sendMessage(xhr.response);
 					}
 				}
 			}
@@ -399,9 +395,10 @@ function init() {
 				}
 				chrome.browserAction.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
 				chrome.browserAction.setPopup({popup: ''});
-				chrome.browserAction.onClicked.addListener(function() {
+				/*chrome.browserAction.onClicked.addListener(function() {
 					bookmarkTab();
-				});
+				});*/
+				chrome.browserAction.onClicked.addListener(bookmarkTab);
 			});
 		}
 		
@@ -412,9 +409,8 @@ function init() {
 			if(options['token'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-				chrome.browserAction.onClicked.addListener(function() {
-					chrome.runtime.openOptionsPage();
-				});
+				chrome.browserAction.onClicked.removeListener(bookmarkTab);
+				chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
 			}
@@ -422,9 +418,8 @@ function init() {
 			if(options['creds'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-				chrome.browserAction.onClicked.addListener(function() {
-					chrome.runtime.openOptionsPage();
-				});
+				chrome.browserAction.onClicked.removeListener(bookmarkTab);
+				chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
 			}

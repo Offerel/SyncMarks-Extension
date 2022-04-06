@@ -218,8 +218,7 @@ function restoreOptions() {
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
 				if(options['token'] === '') {
-					//ipInfo();
-					background_page.sendRequest(background_page.cinfo);
+					background_page.sendRequest(background_page.cinfo, 'p');
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
 			} else {
@@ -490,10 +489,6 @@ function cAuto() {
 		document.getElementById("s_remove").checked = false;
 	}
 	saveOptions();
-}
-
-function ipInfo() {
-	background_page.sendRequest(background_page.cinfo, 'p');
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
