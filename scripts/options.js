@@ -320,29 +320,9 @@ function importOptions() {
 	setTimeout(() => {  checkForm(); }, 200);
 }
 
-function removeAllMarks() {
-	loglines = logit('Info: Try to remove all local bookmarks');
-	try {
-		chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-		chrome.bookmarks.getTree(function(tree) {
-			tree[0].children.forEach(function(mainfolder) {
-				mainfolder.children.forEach(function(userfolder) {
-					chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-					chrome.bookmarks.removeTree(userfolder.id);
-				});
-			});
-		});
-		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-	} catch(error) {
-		loglines = logit(error);
-	} finally {
-		chrome.storage.local.set({last_s: 1});
-	}
-}
-
 function manualImport(e) {
 	e.preventDefault();
-	if (this.id === 'iyes') removeAllMarks();
+	if (this.id === 'iyes') background_page.removeAllMarks();
 
 	try {
 		chrome.storage.local.get(null, function(options) {

@@ -162,7 +162,7 @@ function getclients(response, a = '') {
 					} catch {}
 				});
 				let cnt = response.length - 1;
-				loglines = logit("Info: List of " + cnt + " clients retrieved successful.");
+				loglines = logit("Info: List of " + cnt + " clients received successful.");
 			}
 		}
 	});
@@ -185,7 +185,7 @@ function gurls(response, a = '') {
 		} catch(error) {
 			loglines = logit(error);
 		}
-		loglines = logit("Info: List of " + response.length + " notifications retrieved successful.");
+		loglines = logit("Info: List of " + response.length + " notifications received successful.");
 	}
 
 	chrome.storage.local.get(null, async function(options) {
@@ -209,7 +209,7 @@ function cinfo(response, a = '') {
 function bexport(response, a = '') {
 	if(abrowser == false) response = JSON.parse(c2cm(JSON.stringify(response)));
 	count = 0;
-	loglines = logit('Info: Bookmarks retrieved from server');
+	loglines = logit('Info: '+ response.length +' Bookmarks received from server');
 	importFull(response);
 
 	let date = new Date(Date.now());
@@ -354,7 +354,7 @@ function logit(message) {
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0)
 		notify('error',message);
-	//	console.warn(message);
+	//	console.info(message);
 	return logline;
 }
 
@@ -364,6 +364,26 @@ function get_oMarks() {
 			chrome.bookmarks.getTree(function(results) { oMarks = results; });
 		}
 	});
+}
+
+function removeAllMarks() {
+	loglines = logit('Info: Try to remove all local bookmarks');
+	try {
+		chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+		chrome.bookmarks.getTree(function(tree) {
+			tree[0].children.forEach(function(mainfolder) {
+				mainfolder.children.forEach(function(userfolder) {
+					chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+					chrome.bookmarks.removeTree(userfolder.id);
+				});
+			});
+		});
+		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+	} catch(error) {
+		loglines = logit(error);
+	} finally {
+		chrome.storage.local.set({last_s: 1});
+	}
 }
 
 function findByID(oMarks, id) {
@@ -393,9 +413,6 @@ function init() {
 				}
 				chrome.browserAction.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
 				chrome.browserAction.setPopup({popup: ''});
-				/*chrome.browserAction.onClicked.addListener(function() {
-					bookmarkTab();
-				});*/
 				chrome.browserAction.onClicked.addListener(bookmarkTab);
 			});
 		}
@@ -779,9 +796,13 @@ async function importFull(rMarks) {
 		} else {
 			let searchedID = remoteMark.bmParentID;
 			remoteParentFolderName = rMarks.filter(element => element.bmID == searchedID)[0].bmTitle;		
-			localParentId = (await searchBookmarkAsync({title: remoteParentFolderName}))[0].id;
+			let sRes = (await searchBookmarkAsync({title: remoteParentFolderName}));
+			if(sRes.length > 0) 
+				localParentId = sRes[0].id;
+			else
+				return false;
 		}
-
+		
 		let rMark = {};
 
 		if(abrowser) {
@@ -791,16 +812,16 @@ async function importFull(rMarks) {
 			rMark.url = remoteMark.bmURL;
 			rMark.type = remoteMark.bmType;
 		} else {
-			rMark.index = parseInt(remoteMark.bmIndex);
+			//rMark.index = parseInt(remoteMark.bmIndex);
 			rMark.parentId = localParentId;
 			rMark.title = remoteMark.bmTitle;
 			rMark.url = remoteMark.bmURL;
 		}
-
+		
 		let newMark = (await createBookmarkAsync(rMark));
 		let cNewMark = newMark;
 
-		if(typeof cNewMark.url === 'undefined') {
+		if(cNewMark && typeof(cNewMark.url) === undefined) {
 			let oldID = remoteMark.bmID;
 			let newID = cNewMark.id;
 
@@ -809,7 +830,6 @@ async function importFull(rMarks) {
 				if(rMarks[index].bmID === oldID) rMarks[index].bmID = newID;
 			});
 		}
-		
 	}
 
 	async function iMoveMark(remoteMark) {
