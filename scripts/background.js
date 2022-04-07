@@ -649,10 +649,7 @@ function exportPHPMarks(upl=[]) {
 	let bookmarks = '';
 	let p = 0;
 
-	console.warn(upl);
-
 	chrome.bookmarks.getTree(function(bookmarkItems) {
-
 		if(upl.length === 0) {
 			bookmarks = bookmarkItems;
 			p = 0;
