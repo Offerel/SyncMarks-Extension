@@ -47,7 +47,7 @@ function gToken(e) {
 	document.getElementById('crdialog').style.display = "none";
 	let xhr = new XMLHttpRequest();
 	let wmessage = document.getElementById('wmessage');
-	cdata = "caction=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked;
+	cdata = "action=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked;
 	let rnd = Math.floor((Math.random() * 100) + 1) + '.txt';
 	var url = document.getElementById('wdurl').value;	
 
