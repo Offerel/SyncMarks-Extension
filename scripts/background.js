@@ -645,14 +645,16 @@ function onRemovedCheck(id, bookmark) {
 }
 
 function exportPHPMarks(upl=[]) {
-	loglines = logit("Info: Send  new local bookmarks to server");
-
+	loglines = logit("Info: Send new local bookmarks to server");
 	let bookmarks = '';
 	let p = 0;
 
+	console.warn(upl);
+
 	chrome.bookmarks.getTree(function(bookmarkItems) {
+
 		if(upl.length === 0) {
-			bookmarks =bookmarkItems;
+			bookmarks = bookmarkItems;
 			p = 0;
 		} else {
 			bookmarks = upl;
@@ -812,7 +814,6 @@ async function importFull(rMarks) {
 			rMark.url = remoteMark.bmURL;
 			rMark.type = remoteMark.bmType;
 		} else {
-			//rMark.index = parseInt(remoteMark.bmIndex);
 			rMark.parentId = localParentId;
 			rMark.title = remoteMark.bmTitle;
 			rMark.url = remoteMark.bmURL;
@@ -878,14 +879,14 @@ async function importFull(rMarks) {
 			default:
 				//console.log('unknown action: ' + action);
 				break;
-		}
-		
+		}	
 	}
 
+	let cDate = (lastseen == 0) ? Date.now():lastseen;
 	dMarks.forEach(lmark => {
-		if (lmark.id.endsWith('_____') || lmark.id-length < 2) {
+		if (lmark.id.endsWith('_____') || lmark.id.length < 2) {
 			// 
-		} else if (lmark.dateAdded >= lastseen) {
+		} else if (lmark.dateAdded >= cDate) {
 			uMarks.push(lmark);
 		} else {
 			chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
