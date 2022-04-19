@@ -16,6 +16,16 @@ chrome.permissions.getAll(function(e) {
 		chrome.bookmarks.onMoved.addListener(onMovedCheck);
 		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 		chrome.bookmarks.onChanged.addListener(onChangedCheck);
+	} else {
+		chrome.storage.local.get(null, function(options) {
+			if(options.actions.crsrv === true) {
+				chrome.browserAction.setPopup({popup: ''});
+				chrome.browserAction.onClicked.addListener(bookmarkTab);
+			} else {
+				chrome.browserAction.onClicked.removeListener(bookmarkTab);
+				chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+			}
+		});
 	}
 });
 

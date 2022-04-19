@@ -17,8 +17,7 @@
   },
   "browser_action": {
     "default_icon": "icons/bookmark.png",
-    "default_title": "__MSG_extensionName__",
-    "default_popup": "scripts/stargets.html"
+    "default_title": "__MSG_extensionName__"
   },
   "options_ui": {
     "page": "scripts/options.html",
