@@ -610,17 +610,21 @@ function onMovedCheck(id, bookmark) {
 		
 		if(s_change === true && s_type.indexOf('PHP') == -1) {
 			saveAllMarks();
-		} else if(s_change === true && s_type.indexOf('PHP') == 0) {
-			let jsonMark = JSON.stringify({
-				"id": id,
-				"index": bookmark.index,
-				"folderIndex": folder[0]['index'],
-				"folder": bookmark.parentId,
-				"nfolder": folder[0]['title'],
-				"url":bmark[0].url
+		} else if (s_change === true && s_type.indexOf('PHP') == 0) {
+			chrome.bookmarks.get(bookmark.parentId, function(folder) {
+				chrome.bookmarks.get(id, function(bmark) {
+					let jsonMark = JSON.stringify({
+						"id": id,
+						"index": bookmark.index,
+						"folderIndex": folder[0]['index'],
+						"folder": bookmark.parentId,
+						"nfolder": folder[0]['title'],
+						"url":bmark[0].url
+					});
+					loglines = logit("Info: Sending move request to server. Bookmark ID: " + id);
+					sendRequest(movemark, jsonMark);
+				});
 			});
-			loglines = logit("Info: Sending move request to server. Bookmark ID: " + id);
-			sendRequest(movemark, jsonMark);
 		}
 	});
 }
@@ -633,8 +637,7 @@ function onChangedCheck(id, changeInfo) {
 		
 		if(s_change === true && s_type.indexOf('PHP') == -1) {
 			saveAllMarks();
-		}
-		else if(s_change === true && s_type.indexOf('PHP') == 0) {
+		} else if(s_change === true && s_type.indexOf('PHP') == 0) {
 			chrome.bookmarks.get(id, function(bmark) {
 				let jsonMark = JSON.stringify({
 					"url": changeInfo.url,
