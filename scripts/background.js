@@ -88,7 +88,7 @@ function sendRequest(action, data = null, addendum = null) {
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
-		xhr.timeout = 5000;
+		xhr.timeout = 10000;
 		xhr.responseType = 'json';
 
 		xhr.onreadystatechange = function() {
@@ -658,8 +658,7 @@ function onRemovedCheck(id, bookmark) {
 		if(s_remove === true  && s_type.indexOf('PHP') == -1) {
 			chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 			saveAllMarks();
-		}
-		else if(s_remove === true  && s_type.indexOf('PHP') == 0) {
+		} else if (s_remove === true  && s_type.indexOf('PHP') == 0) {
 			await delMark(id, bookmark);
 			await get_oMarks();
 		}
@@ -719,13 +718,13 @@ function saveAllMarks() {
 }
 
 function delMark(id, bookmark) {
-	let oldMark = findByID(oMarks, id);
+	let oldMark = findByID(oMarks, bookmark.node.id);	
 	let jsonMark = JSON.stringify({
 		"url": bookmark.node.url,
 		"folder": bookmark.node.parentId,
 		"index": bookmark.node.index,
 		"type": bookmark.node.type,
-		"id": id,
+		"id": bookmark.node.id,
 		"title": oldMark.title
 	});
 	loglines = logit("Info: Sending remove request to server: <a href='"+bookmark.node.url+"'>"+bookmark.node.url+"</a>");
