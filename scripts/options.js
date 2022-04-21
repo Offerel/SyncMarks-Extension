@@ -22,15 +22,33 @@ chrome.runtime.onMessage.addListener((message, sender) => {
 function checkForm() {
 	if((document.getElementById('wdurl').value != '') && (document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue)) {
 		document.getElementById("lginl").style.visibility = 'visible';
+
+		chrome.storage.local.set({
+			actions: {
+				crsrv:document.getElementById("b_action").checked
+			},	
+			s_type: document.querySelector('input[name="stype"]:checked').value,
+			s_uuid: document.getElementById("s_uuid").value,
+			wdurl: document.getElementById("wdurl").value,
+		});
 	}
 
-	if(document.getElementById('wdurl').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
-		document.getElementById('mdownload').disabled=false;
-		document.getElementById('mupload').disabled=false;
-    } else{
-		document.getElementById('mdownload').disabled=true;
-		document.getElementById('mupload').disabled=true;
-	}
+	chrome.permissions.getAll(function(e) {
+		if(e.permissions.includes('bookmarks')) {
+			if(document.getElementById('wdurl').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
+				document.getElementById('mdownload').disabled=false;
+				document.getElementById('mupload').disabled=false;
+			} else{
+				document.getElementById('mdownload').disabled=true;
+				document.getElementById('mupload').disabled=true;
+			}
+		} else {
+			document.getElementById('mdownload').disabled=true;
+			document.getElementById('mupload').disabled=true;
+			document.getElementById('s_auto').checked = false;
+			document.getElementById('s_auto').disabled = true;
+		}
+	});	
 }
 
 function checkForm2() {

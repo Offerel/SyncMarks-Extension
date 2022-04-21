@@ -19,7 +19,7 @@ chrome.permissions.getAll(function(e) {
 	} else {
 		chrome.storage.local.get(null, function(options) {
 			if(options.actions.crsrv === true) {
-				chrome.browserAction.setPopup({popup: ''});
+				//chrome.browserAction.setPopup({popup: ''});
 				chrome.browserAction.onClicked.addListener(bookmarkTab);
 			} else {
 				chrome.browserAction.onClicked.removeListener(bookmarkTab);
@@ -422,7 +422,7 @@ function init() {
 					var s = (name === 'bookmark-tab') ? shortcut:'undef';
 				}
 				chrome.browserAction.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
-				chrome.browserAction.setPopup({popup: ''});
+				//chrome.browserAction.setPopup({popup: ''});
 				chrome.browserAction.onClicked.addListener(bookmarkTab);
 			});
 		}
