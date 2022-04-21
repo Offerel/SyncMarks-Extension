@@ -58,14 +58,22 @@ chrome.commands.onCommand.addListener((command) => {
 
 function sendRequest(action, data = null, addendum = null) {
 	chrome.storage.local.get(null, function(options) {
-		const xhr = new XMLHttpRequest();
+		const xhr = new XMLHttpRequest();		
+
+		let client = options['s_uuid'];
+		let sync = null;
+
+		if(action.name === 'addmark' && options['actions']['startup'] == false) {
+			client = 'bookmarkTab';
+			sync = options['actions']['startup'];
+		}
 
 		const params = {
 			action: action.name,
-			client: (action.name === 'addmark') ? 'bookmarkTab':options['s_uuid'],
+			client: client,
 			data: data,
 			add: addendum,
-			sync: (action.name === 'addmark') ? null:options['actions']['startup']
+			sync: sync
 		}
 	
 		xhr.open("POST", options['wdurl'], true);
@@ -217,8 +225,10 @@ function cinfo(response, a = '') {
 }
 
 function bexport(response, a = '') {
+	response = JSON.parse(response);
 	if(abrowser == false) response = JSON.parse(c2cm(JSON.stringify(response)));
 	count = 0;
+	
 	loglines = logit('Info: '+ response.length +' Bookmarks received from server');
 	importFull(response);
 
@@ -239,7 +249,7 @@ function bimport(response, a = '') {
 
 function addmark(response, a = '') {
 	response = (response == "1") ? "Bookmark added":response;
-	notify('info', response);
+	if(a === '1') notify('info', response);
 	loglines = logit("Info: " + response);
 	let datems = Date.now();
 	chrome.storage.local.set({last_s: datems});
@@ -345,7 +355,7 @@ function bookmarkTab() {
 			"added": new Date().valueOf()
 		});
 
-		sendRequest(addmark, jsonMark);
+		sendRequest(addmark, jsonMark, '1');
 	});
 }
 
@@ -425,6 +435,8 @@ function init() {
 				//chrome.browserAction.setPopup({popup: ''});
 				chrome.browserAction.onClicked.addListener(bookmarkTab);
 			});
+		} else {
+			chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 		}
 		
 		let s_startup = options['actions']['startup'] || false;
@@ -599,14 +611,14 @@ function onMovedCheck(id, bookmark) {
 		if(s_change === true && s_type.indexOf('PHP') == -1) {
 			saveAllMarks();
 		} else if(s_change === true && s_type.indexOf('PHP') == 0) {
-			let jsonMark = {
+			let jsonMark = JSON.stringify({
 				"id": id,
 				"index": bookmark.index,
 				"folderIndex": folder[0]['index'],
 				"folder": bookmark.parentId,
 				"nfolder": folder[0]['title'],
 				"url":bmark[0].url
-			};
+			});
 			loglines = logit("Info: Sending move request to server. Bookmark ID: " + id);
 			sendRequest(movemark, jsonMark);
 		}
@@ -624,12 +636,12 @@ function onChangedCheck(id, changeInfo) {
 		}
 		else if(s_change === true && s_type.indexOf('PHP') == 0) {
 			chrome.bookmarks.get(id, function(bmark) {
-				let jsonMark = {
+				let jsonMark = JSON.stringify({
 					"url": changeInfo.url,
 					"title": changeInfo.title,
 					"parentId": bmark[0].parentId,
 					"index": bmark[0].index
-				};
+				});
 
 				loglines = logit("Info: Sending edit request to server. URL: "+ changeInfo.url);
 				sendRequest(editmark, jsonMark);
@@ -708,14 +720,14 @@ function saveAllMarks() {
 
 function delMark(id, bookmark) {
 	let oldMark = findByID(oMarks, id);
-	let jsonMark = {
+	let jsonMark = JSON.stringify({
 		"url": bookmark.node.url,
 		"folder": bookmark.node.parentId,
 		"index": bookmark.node.index,
 		"type": bookmark.node.type,
 		"id": id,
 		"title": oldMark.title
-	};
+	});
 	loglines = logit("Info: Sending remove request to server: <a href='"+bookmark.node.url+"'>"+bookmark.node.url+"</a>");
 	sendRequest(delmark, jsonMark);
 }
@@ -728,7 +740,7 @@ function sendMark(bookmark) {
 	}
 
 	chrome.bookmarks.get(bookmark.parentId, async function(bmark) {
-		let jsonMark = { 
+		let jsonMark = JSON.stringify({ 
 			"id": bookmark.id,
 			"url": bookmark.url,
 			"title": bookmark.title,
@@ -736,9 +748,9 @@ function sendMark(bookmark) {
 			"folder": bookmark.parentId,
 			"nfolder": bmark[0].title,
 			"added": bookmark.dateAdded
-		};
+		});
 
-		loglines = logit("Info: Sending add request to server. <a href='"+bookmark.url+"'>"+bookmark.url+"</a>");
+		loglines = logit("Info: Sending add request to server: <a href='"+bookmark.url+"'>"+bookmark.url+"</a>");
 		sendRequest(addmark, jsonMark);
 	});
 }

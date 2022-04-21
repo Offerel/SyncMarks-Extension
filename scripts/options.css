@@ -388,6 +388,8 @@ button:not(:disabled) {
 	float: left;
 	min-height: unset;
 	height: 25px;
+	background-color: whitesmoke;
+	color: unset;
 }
 .tab-bar button:hover {
 	background-color: darkgrey;
@@ -402,7 +404,7 @@ button:not(:disabled) {
 }
 .abutton {
 	background-color: DimGray !important;
-	color: white;
+	color: white !important;
 }
 .tab-bar {
 	box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
@@ -552,15 +554,15 @@ h1 {
 	}
 } 
 #toolbar {
-	background: whitesmoke;
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	height: 30px;
-	margin: 0;
-	padding: 0;
-	border-bottom: 1px solid gainsboro;
+    background: gainsboro;
+    position: absolute;
+    left: 0px;
+    right: -2px;
+    top: 0;
+    height: 30px;
+    margin: 0;
+    padding: 0 0 0 1px;
+    border-bottom: 1px solid gainsboro;
 }
 #toolbar li {
 	height: 30px;
