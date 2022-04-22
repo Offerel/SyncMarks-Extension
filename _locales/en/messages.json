@@ -176,7 +176,7 @@
     "description": ""
   },  
   "optionsWrongAData": {
-    "message": "Missing or wrong access code. Please log in again.",
+    "message": "Login error. Please log in again",
     "description": ""
   },
   "infoRestoreID": {

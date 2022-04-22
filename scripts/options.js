@@ -1,22 +1,54 @@
 var background_page = chrome.extension.getBackgroundPage();
 
-function checkForm() {
-	//var wchanged = false;
+chrome.runtime.onMessage.addListener((message, sender) => {
+	if(sender.id === chrome.runtime.id) {
+		if(message.ctype) {
+			document.getElementById("cname").title = (message.cname) ? document.getElementById('s_uuid').value + " (" + message.ctype + ")":document.getElementById('s_uuid').value;
+			if(message !== null) document.getElementById("cname").defaultValue = (message.cname == document.getElementById('s_uuid').value) ? '':message.cname;
+		} else if (message.cInfo) {
+			let cInfo = JSON.parse(message.cInfo);
+			let iBox = document.getElementById("lgini");
+			let ip = document.getElementById('ipinfo');
+			iBox.style.visibility = 'visible';
+			ip.innerText = cInfo.ip;
+			let ipinfo = document.createElement('span');
+			let tm = new Date(cInfo.tm * 1000).toLocaleString();
+			ipinfo.innerText = tm + ' | ' + cInfo.de + ' | ' + cInfo.co + ' | ' + cInfo.ct + ' | ' + cInfo.re + '\n' + cInfo.ua;
+			ip.appendChild(ipinfo);
+		}
+	}
+});
 
+function checkForm() {
 	if((document.getElementById('wdurl').value != '') && (document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue)) {
 		document.getElementById("lginl").style.visibility = 'visible';
+
+		chrome.storage.local.set({
+			actions: {
+				crsrv:document.getElementById("b_action").checked
+			},	
+			s_type: document.querySelector('input[name="stype"]:checked').value,
+			s_uuid: document.getElementById("s_uuid").value,
+			wdurl: document.getElementById("wdurl").value,
+		});
 	}
 
-	if(document.getElementById('wdurl').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
-		document.getElementById('mdownload').disabled=false;
-		document.getElementById('mupload').disabled=false;
-    } else{
-		document.getElementById('mdownload').disabled=true;
-		document.getElementById('mupload').disabled=true;
-	}
-
-	//if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) wchanged = true;
-	//if(wchanged) saveOptions();
+	chrome.permissions.getAll(function(e) {
+		if(e.permissions.includes('bookmarks')) {
+			if(document.getElementById('wdurl').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
+				document.getElementById('mdownload').disabled=false;
+				document.getElementById('mupload').disabled=false;
+			} else{
+				document.getElementById('mdownload').disabled=true;
+				document.getElementById('mupload').disabled=true;
+			}
+		} else {
+			document.getElementById('mdownload').disabled=true;
+			document.getElementById('mupload').disabled=true;
+			document.getElementById('s_auto').checked = false;
+			document.getElementById('s_auto').disabled = true;
+		}
+	});	
 }
 
 function checkForm2() {
@@ -33,7 +65,7 @@ function gToken(e) {
 	document.getElementById('crdialog').style.display = "none";
 	let xhr = new XMLHttpRequest();
 	let wmessage = document.getElementById('wmessage');
-	cdata = "caction=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked;
+	cdata = "action=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked;
 	let rnd = Math.floor((Math.random() * 100) + 1) + '.txt';
 	var url = document.getElementById('wdurl').value;	
 
@@ -151,60 +183,17 @@ function saveOptions(e) {
 }
 
 function rName() {
-	let name = this.value;
-	chrome.storage.local.get(null, function(options) {
-		var xhr = new XMLHttpRequest();
-		let cdata = "client="+options['s_uuid']+"&caction=arename&nname="+name;
-		xhr.open("POST", options['wdurl'], true);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.withCredentials = true;
-		xhr.onload = function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Error set name of client."  + xhr.status;
-				background_page.notify('error',message);
-				background_page.loglines = background_page.logit('Error: '+message);
-			} else {
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
-			}
-		}
-		xhr.send(cdata);
-	});
+	background_page.sendRequest(background_page.arename, this.value);
 }
 
 function gName() {
-	chrome.storage.local.get(null, function(options) {
-		let xhr = new XMLHttpRequest();
-		let cdata = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";
-		xhr.open("POST", document.getElementById("wdurl").value, true);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		if(tarr['token'] == '') return false;
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.withCredentials = true;
-		xhr.onload = function () {
-			if( xhr.status < 200 || xhr.status > 226) {
-				message = "Error get name of client."  + xhr.status;
-				background_page.notify('error',message);
-				background_page.loglines =  background_page.logit('Error: '+message);
-			} else {
-				let xtResponse = xhr.getResponseHeader("X-Request-Info");
-				if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
-				
-				let response = JSON.parse(xhr.responseText);
-				document.getElementById("cname").title = (response) ? document.getElementById('s_uuid').value + " (" + response.ctype + ")":document.getElementById('s_uuid').value;
-				if(response !== null) document.getElementById("cname").defaultValue = (response.cname == document.getElementById('s_uuid').value) ? '':response.cname;
-			}
-		}
-		xhr.send(cdata);
-	});
+	background_page.sendRequest(background_page.cinfo);
+}
+
+function uuidv4() {
+	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+		(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+	)
 }
 
 function restoreOptions() {
@@ -219,7 +208,7 @@ function restoreOptions() {
 		document.querySelector("#wdurl").defaultValue = options['wdurl'] || "";		
 		
 		if(options['s_uuid'] === undefined) {
-			let nuuid = background_page.uuidv4();
+			let nuuid = uuidv4();
 			document.getElementById("s_uuid").defaultValue = nuuid;
 			document.getElementById("cname").placeholder = nuuid;
 		} else {
@@ -246,7 +235,7 @@ function restoreOptions() {
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
 				if(options['token'] === '') {
-					ipInfo();
+					background_page.sendRequest(background_page.cinfo, 'p');
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
 			} else {
@@ -356,7 +345,7 @@ function manualImport(e) {
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				background_page.getAllPHPMarks(true);
+				background_page.sendRequest(background_page.bexport, 'json');
 			} else if (options['s_type'] == 'WebDAV') {
 				background_page.getDAVMarks();
 			}
@@ -499,37 +488,6 @@ function cAuto() {
 	saveOptions();
 }
 
-function ipInfo() {
-	chrome.storage.local.get(null, function(options) {
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-		let xhr = new XMLHttpRequest();
-		xhr.open("POST", document.getElementById("wdurl").value, true);
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.withCredentials = true;
-		xhr.onload = function () {
-			if( xhr.status >= 200 || xhr.status < 226) {
-				let response = JSON.parse(xhr.responseText);
-				if(response.cInfo) {
-					let cInfo = JSON.parse(response.cInfo);
-					let iBox = document.getElementById("lgini");
-					let ip = document.getElementById('ipinfo');
-					iBox.style.visibility = 'visible';
-					ip.innerText = cInfo.ip;
-					let ipinfo = document.createElement('span');
-					let tm = new Date(cInfo.tm * 1000).toLocaleString();
-					ipinfo.innerText = tm + ' | ' + cInfo.de + ' | ' + cInfo.co + ' | ' + cInfo.ct + ' | ' + cInfo.re + '\n' + cInfo.ua;
-					ip.appendChild(ipinfo);
-				}
-			}
-		}
-		let data = "client=" + document.getElementById("s_uuid").value + "&caction=cinfo";;
-		xhr.send(data);
-	});
-}
-
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 window.addEventListener('load', function () {
@@ -550,6 +508,7 @@ window.addEventListener('load', function () {
 	var comodal = document.getElementById("expimpdialog");
 
 	localizeHtmlPage();
+
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
 	document.getElementById("econf").addEventListener("click", function() {comodal.style.display = "block"});
 	document.getElementById("cclose").addEventListener("click", function() {comodal.style.display = "none";});

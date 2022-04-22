@@ -176,7 +176,7 @@
     "description": ""
   },
   "optionsWrongAData": {
-    "message": "Fehlender oder falscher Zugangscode. Bitte erneut einloggen.",
+    "message": "Login Error. Bitte erneut einloggen",
     "description": ""
   },
   "infoRestoreID": {

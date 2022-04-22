@@ -66,25 +66,27 @@ button#lgin {
 }
 #lginl {
     visibility: hidden;
-    position: absolute;
-    left: 8em;
+    left: calc(50% + .2em);
     font-size: .9em;
     text-decoration: none;
-    font-weight: bold;
-    color: indianred;
+    color: #fcffe2;
     cursor: pointer;
     z-index: 1;
     outline: 0;
-    width: 35em;
-    border-radius: 6px;
-    border: 1px solid darkred;
-    background-color: bisque;
-    top: 2.6em;
+    width: calc(100% - 90px);
+    border-radius: .3em;
+    border: thin solid #f44336;
+    background-color: #ff9800;
+    top: 3.3em;
+    position: absolute;
+    transform: translate(-50%, 0);
+    box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
+    line-height: 1.3em;
 }
 #lginl.loading {
-	height:14px;
-	background: repeating-linear-gradient(-45deg, currentColor 0 15px,#0000 0 20px) left/200% 100%;
-	animation:i3 4s infinite linear;
+    background: repeating-linear-gradient(-45deg, currentColor 0 15px,#ff9800 0 20px) left/200% 100%;
+    animation: i3 4s infinite linear;
+    color: #f44336;
 }
 @keyframes i3 {
 	100% {background-position:right}
@@ -304,13 +306,9 @@ input:checked + .slider:before {
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
 }
-.toptionc button {
+button:not(:disabled) {
     background-color: #3498db;
     color: white;
-}
-.modal button:not(:disabled) {
-	color:white;
-	background-color: #3498db;
 }
 .modal button {
     width: 44%;
@@ -390,6 +388,8 @@ input:checked + .slider:before {
 	float: left;
 	min-height: unset;
 	height: 25px;
+	background-color: whitesmoke;
+	color: unset;
 }
 .tab-bar button:hover {
 	background-color: darkgrey;
@@ -404,7 +404,7 @@ input:checked + .slider:before {
 }
 .abutton {
 	background-color: DimGray !important;
-	color: white;
+	color: white !important;
 }
 .tab-bar {
 	box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
@@ -554,15 +554,15 @@ h1 {
 	}
 } 
 #toolbar {
-	background: whitesmoke;
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	height: 30px;
-	margin: 0;
-	padding: 0;
-	border-bottom: 1px solid gainsboro;
+    background: gainsboro;
+    position: absolute;
+    left: 0px;
+    right: -2px;
+    top: 0;
+    height: 30px;
+    margin: 0;
+    padding: 0 0 0 1px;
+    border-bottom: 1px solid gainsboro;
 }
 #toolbar li {
 	height: 30px;

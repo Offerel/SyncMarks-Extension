@@ -1,5 +1,12 @@
 ChangeLog
 =========
+v1.20.0 (2022-04-22)
+-------------------------
+- Standardization for requests
+- Simplification of functions
+- Popup for mobile replaced with singleclick
+- Bug fixes
+
 v1.19.7 (2022-03-20)
 -------------------------
 - Disable unused options on WebDAV
