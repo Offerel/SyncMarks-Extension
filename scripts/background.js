@@ -19,7 +19,6 @@ chrome.permissions.getAll(function(e) {
 	} else {
 		chrome.storage.local.get(null, function(options) {
 			if(options.actions.crsrv === true) {
-				//chrome.browserAction.setPopup({popup: ''});
 				chrome.browserAction.onClicked.addListener(bookmarkTab);
 			} else {
 				chrome.browserAction.onClicked.removeListener(bookmarkTab);
@@ -65,7 +64,7 @@ function sendRequest(action, data = null, addendum = null) {
 
 		if(action.name === 'addmark' && options['actions']['startup'] == false) {
 			client = 'bookmarkTab';
-			sync = options['actions']['startup'];
+			sync = false;
 		}
 
 		const params = {
@@ -97,9 +96,7 @@ function sendRequest(action, data = null, addendum = null) {
 					action(xhr.response, addendum);
 				} else {
 					let message = `Error ${xhr.status}: ${xhr.statusText}`;
-					notify('error', message);
 					console.error(action.name, message);
-					loglines = logit(message);
 					return false;
 				}
 			}
@@ -128,8 +125,6 @@ function sendRequest(action, data = null, addendum = null) {
 
 		xhr.onerror = function () {
 			let message = "Error: " + xhr.status + ' | ' + xhr.response;
-			notify('error', message);
-			loglines = logit(message);
 			console.error(action.name, message);
 			return false;
 		}
@@ -249,7 +244,33 @@ function bimport(response, a = '') {
 
 function addmark(response, a = '') {
 	response = (response == "1") ? "Bookmark added":response;
-	if(a === '1') notify('info', response);
+	chrome.tabs.executeScript({code: `(function() {
+		let toast = document.createElement('div');
+		toast.classList.add('htoast');
+		let style = document.createElement('style');
+		document.head.appendChild(style);
+		style.sheet.insertRule('
+			.htoast {
+				position: fixed;
+				bottom: 3em;
+				z-index: 10000;
+				left: 50%;
+				color: white;
+				background-color: darkslategrey;
+				padding: .3em .5em;
+				border-radius: .4em;
+				opacity: 0;
+				transition: opacity 0.5s;
+			}
+			.stoast {
+				opacity: 1;
+			}
+		');
+		toast.innerText = '` + response + `';
+		document.body.appendChild(toast);
+		setTimeout(function() {toast.classList.add('stoast')}, 2000);
+    })()`});
+	
 	loglines = logit("Info: " + response);
 	let datems = Date.now();
 	chrome.storage.local.set({last_s: datems});
@@ -432,7 +453,6 @@ function init() {
 					var s = (name === 'bookmark-tab') ? shortcut:'undef';
 				}
 				chrome.browserAction.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
-				//chrome.browserAction.setPopup({popup: ''});
 				chrome.browserAction.onClicked.addListener(bookmarkTab);
 			});
 		} else {
