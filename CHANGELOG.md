@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.20.1 (2022-05-03)
+-------------------------
+- Added toast
+- Small Fixes
+
 v1.20.0 (2022-04-22)
 -------------------------
 - Standardization for requests

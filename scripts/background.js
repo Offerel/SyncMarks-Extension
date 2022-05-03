@@ -243,37 +243,62 @@ function bimport(response, a = '') {
 }
 
 function addmark(response, a = '') {
-	response = (response == "1") ? "Bookmark added":response;
+	let color = '';
+	let bg = '';
+
+	if(response == "1") {
+		response = "Bookmark added";
+		color = 'darkgreen';
+		bg = 'lightgreen';
+	} else {
+		response = response;
+		color = 'darkred';
+		bg = 'lightsalmon';
+	}
+	
 	chrome.tabs.executeScript({code: `(function() {
 		let toast = document.createElement('div');
-		toast.classList.add('htoast');
+		toast.id = 'htoast';
 		let style = document.createElement('style');
 		document.head.appendChild(style);
-		style.sheet.insertRule('
-			.htoast {
+		style.sheet.insertRule(\`
+			#htoast {
 				position: fixed;
-				bottom: 3em;
-				z-index: 10000;
+				bottom: -3em;
+				z-index: 100;
 				left: 50%;
-				color: white;
-				background-color: darkslategrey;
-				padding: .3em .5em;
-				border-radius: .4em;
+				color: ` + color + `;
+				background-color: ` + bg + `;
+				padding: 0.3em 0.5em;
+				border-radius: 0.4em;
 				opacity: 0;
-				transition: opacity 0.5s;
+				transform: translateX(-50%);
+				width: max-content;
+				max-width: 45%;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				box-shadow: 0px 0px 10px 1px rgb(0 0 0 / 50%);
+				border: thin solid white;
+				transition: opacity 0.5s, bottom 0.5s;
 			}
+		\`);
+		style.sheet.insertRule(\`
 			.stoast {
-				opacity: 1;
+				bottom: 3em !important;
+				opacity: 1 !important;
 			}
-		');
+		\`);
 		toast.innerText = '` + response + `';
 		document.body.appendChild(toast);
-		setTimeout(function() {toast.classList.add('stoast')}, 2000);
+		setTimeout(function() {toast.classList.add('stoast')}, 10);
+		setTimeout(function() {toast.className = ''}, 4000);
+		setTimeout(function() {toast.remove(); style.remove();}, 4500);
     })()`});
-	
 	loglines = logit("Info: " + response);
 	let datems = Date.now();
 	chrome.storage.local.set({last_s: datems});
+	
 }
 
 function durl(response, a = '') {
