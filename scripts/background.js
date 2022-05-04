@@ -245,15 +245,26 @@ function bimport(response, a = '') {
 function addmark(response, a = '') {
 	let color = '';
 	let bg = '';
+	let spos = '';
+	let epos = '';
+	let url = chrome.runtime.getURL('icons/bookmark.png');
 
 	if(response == "1") {
 		response = "Bookmark added";
-		color = 'darkgreen';
-		bg = 'lightgreen';
+		color = '#45740d';
+		bg = 'rgb(167 241 82)';
 	} else {
 		response = response;
-		color = 'darkred';
-		bg = 'lightsalmon';
+		color = 'white';
+		bg = 'rgb(233 81 61)';
+	}
+
+	if(navigator.userAgent.toLowerCase().match(/mobile/i)) {
+		spos = 'bottom: -3em;';
+		epos = 'bottom: 3em !important;';
+	} else {
+		spos = 'top: -3.5em;';
+		epos = 'top: 1em !important;';
 	}
 	
 	chrome.tabs.executeScript({code: `(function() {
@@ -264,36 +275,42 @@ function addmark(response, a = '') {
 		style.sheet.insertRule(\`
 			#htoast {
 				position: fixed;
-				bottom: -3em;
+				`+spos+`
 				z-index: 100;
 				left: 50%;
-				color: ` + color + `;
-				background-color: ` + bg + `;
-				padding: 0.3em 0.5em;
+				color: `+color+`;
+				background-color: `+bg+`;
+				padding: 0.3em 0.5em .3em 3.5em;
 				border-radius: 0.4em;
 				opacity: 0;
 				transform: translateX(-50%);
 				width: max-content;
-				max-width: 45%;
+				max-width: 75%;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
-				box-shadow: 0px 0px 10px 1px rgb(0 0 0 / 50%);
-				border: thin solid white;
-				transition: opacity 0.5s, bottom 0.5s;
+				box-shadow: rgb(0 0 0 / 50%) 0 0 0.3em 0;
+				transition: opacity 0.5s, bottom 0.5s, top 0.3s;
+				line-height: 2em;
+				font-family: sans-serif;
+				background-image: url(`+url+`);
+				background-repeat: no-repeat;
+				background-size: 2em;
+				background-position-x: .7em;
+				background-position-y: .3em;
 			}
 		\`);
 		style.sheet.insertRule(\`
 			.stoast {
-				bottom: 3em !important;
+				`+epos+`
 				opacity: 1 !important;
 			}
 		\`);
 		toast.innerText = '` + response + `';
 		document.body.appendChild(toast);
-		setTimeout(function() {toast.classList.add('stoast')}, 10);
-		setTimeout(function() {toast.className = ''}, 4000);
-		setTimeout(function() {toast.remove(); style.remove();}, 4500);
+		setTimeout(function() {toast.classList.add('stoast')}, 5);
+		setTimeout(function() {toast.className = ''}, 3000);
+		setTimeout(function() {toast.remove(); style.remove();}, 3500);
     })()`});
 	loglines = logit("Info: " + response);
 	let datems = Date.now();
