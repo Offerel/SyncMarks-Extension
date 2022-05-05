@@ -249,70 +249,75 @@ function addmark(response, a = '') {
 	let epos = '';
 	let url = chrome.runtime.getURL('icons/bookmark.png');
 
-	if(response == "1") {
-		response = "Bookmark added";
-		color = '#45740d';
-		bg = 'rgb(167 241 82)';
-	} else {
-		response = response;
-		color = 'white';
-		bg = 'rgb(233 81 61)';
-	}
+	chrome.storage.local.get(null, async function(options) {
+		if(options['actions']['startup'] === true) {
+			if(response == "1") {
+				response = "Bookmark added";
+				color = '#45740d';
+				bg = 'rgb(167 241 82)';
+			} else {
+				response = response;
+				color = 'white';
+				bg = 'rgb(233 81 61)';
+			}
+		
+			if(navigator.userAgent.toLowerCase().match(/mobile/i)) {
+				spos = 'bottom: -3em;';
+				epos = 'bottom: 3em !important;';
+			} else {
+				spos = 'top: -3.5em;';
+				epos = 'top: 1em !important;';
+			}
+			
+			chrome.tabs.executeScript({code: `(function() {
+				let toast = document.createElement('div');
+				toast.id = 'htoast';
+				let style = document.createElement('style');
+				document.head.appendChild(style);
+				style.sheet.insertRule(\`
+					#htoast {
+						position: fixed;
+						`+spos+`
+						z-index: 100;
+						left: 50%;
+						color: `+color+`;
+						background-color: `+bg+`;
+						padding: 0.3em 0.5em .3em 3.5em;
+						border-radius: 0.4em;
+						opacity: 0;
+						transform: translateX(-50%);
+						width: max-content;
+						max-width: 75%;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						box-shadow: rgb(0 0 0 / 50%) 0 0 0.3em 0;
+						transition: opacity 0.5s, bottom 0.5s, top 0.3s;
+						line-height: 2em;
+						font-family: sans-serif;
+						background-image: url(`+url+`);
+						background-repeat: no-repeat;
+						background-size: 2em;
+						background-position-x: .7em;
+						background-position-y: .3em;
+					}
+				\`);
+				style.sheet.insertRule(\`
+					.stoast {
+						`+epos+`
+						opacity: 1 !important;
+					}
+				\`);
+				toast.innerText = '` + response + `';
+				document.body.appendChild(toast);
+				setTimeout(function() {toast.classList.add('stoast')}, 5);
+				setTimeout(function() {toast.className = ''}, 3000);
+				setTimeout(function() {toast.remove(); style.remove();}, 3500);
+			})()`});
+			loglines = logit("Info: " + response);
+		}
+	});
 
-	if(navigator.userAgent.toLowerCase().match(/mobile/i)) {
-		spos = 'bottom: -3em;';
-		epos = 'bottom: 3em !important;';
-	} else {
-		spos = 'top: -3.5em;';
-		epos = 'top: 1em !important;';
-	}
-	
-	chrome.tabs.executeScript({code: `(function() {
-		let toast = document.createElement('div');
-		toast.id = 'htoast';
-		let style = document.createElement('style');
-		document.head.appendChild(style);
-		style.sheet.insertRule(\`
-			#htoast {
-				position: fixed;
-				`+spos+`
-				z-index: 100;
-				left: 50%;
-				color: `+color+`;
-				background-color: `+bg+`;
-				padding: 0.3em 0.5em .3em 3.5em;
-				border-radius: 0.4em;
-				opacity: 0;
-				transform: translateX(-50%);
-				width: max-content;
-				max-width: 75%;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				box-shadow: rgb(0 0 0 / 50%) 0 0 0.3em 0;
-				transition: opacity 0.5s, bottom 0.5s, top 0.3s;
-				line-height: 2em;
-				font-family: sans-serif;
-				background-image: url(`+url+`);
-				background-repeat: no-repeat;
-				background-size: 2em;
-				background-position-x: .7em;
-				background-position-y: .3em;
-			}
-		\`);
-		style.sheet.insertRule(\`
-			.stoast {
-				`+epos+`
-				opacity: 1 !important;
-			}
-		\`);
-		toast.innerText = '` + response + `';
-		document.body.appendChild(toast);
-		setTimeout(function() {toast.classList.add('stoast')}, 5);
-		setTimeout(function() {toast.className = ''}, 3000);
-		setTimeout(function() {toast.remove(); style.remove();}, 3500);
-    })()`});
-	loglines = logit("Info: " + response);
 	let datems = Date.now();
 	chrome.storage.local.set({last_s: datems});
 	
