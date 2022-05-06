@@ -82,7 +82,7 @@ function sendRequest(action, data = null, addendum = null) {
 
 		if(tarr['token'] === '' && data !== 'p') return false;
 
-		loglines = logit("Info: Send '" + action.name + "' request to backend");
+		//loglines = logit("Info: Send '" + action.name + "' request to backend");
 
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -250,7 +250,7 @@ function addmark(response, a = '') {
 	let url = chrome.runtime.getURL('icons/bookmark.png');
 
 	chrome.storage.local.get(null, async function(options) {
-		if(options['actions']['startup'] === true) {
+		if(options['actions']['startup'] === false) {
 			if(response == "1") {
 				response = "Bookmark added";
 				color = '#45740d';
@@ -748,8 +748,8 @@ function exportPHPMarks(upl=[]) {
 			bookmarks = upl;
 			p = 1;
 		}
-
-		sendRequest(bimport, bookmarks, p);
+		
+		sendRequest(bimport, JSON.stringify(bookmarks), p);
 	});
 	
 	let datems = Date.now();
