@@ -8,6 +8,14 @@ var oMarks = [];
 var pTabs = [];
 var lastseen = null;
 
+var bookmarksList = chrome.bookmarks.getTree(function(bookmarks) {
+    let bmid = bookmarks[0]['id'];
+	console.log(bmid);
+	return bmid;
+});
+
+console.log(bookmarksList);
+
 init();
 
 chrome.permissions.getAll(function(e) {
@@ -484,13 +492,13 @@ function findByID(oMarks, id) {
     return null;
 }
 
-function init() {
+async function init() {
 	loglines = logit("Info: AddOn version: " + chrome.runtime.getManifest().version);
 	loglines = logit("Info: "+navigator.userAgent);
 	chrome.runtime.getPlatformInfo(function(info){
 		loglines = logit("Info: Current architecture: "+info.arch+" | Current OS: "+info.os);
 	});
-	get_oMarks();
+	await get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, async function(options) {
 		if(options['wdurl'] === undefined) return false;
