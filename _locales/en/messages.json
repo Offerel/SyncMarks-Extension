@@ -4,8 +4,8 @@
     "description": "Name of the extension."
   },
   "extensionDescription": {
-    "message": "Export/Import/Sync bookmarks to WebDAV or PHP.",
-    "description": "Description of the extension."
+    "message": "Synchronize bookmarks via your own server",
+    "description": ""
   },  
   "optionsServerData": {
     "message": "Server Data",

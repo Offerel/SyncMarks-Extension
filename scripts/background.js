@@ -1,20 +1,13 @@
 const filename = "bookmarks.json";
+const abrowser = typeof browser !== 'undefined';
+
 var dictOldIDsToNewIDs = { "-1": "-1" };
 var loglines = '';
 var debug = false;
-const abrowser = typeof InstallTrigger !== 'undefined';
 var clientL = [];
 var oMarks = [];
 var pTabs = [];
 var lastseen = null;
-
-var bookmarksList = chrome.bookmarks.getTree(function(bookmarks) {
-    let bmid = bookmarks[0]['id'];
-	console.log(bmid);
-	return bmid;
-});
-
-console.log(bookmarksList);
 
 init();
 
@@ -89,8 +82,6 @@ function sendRequest(action, data = null, addendum = null) {
 		tarr['token'] = options['token'];
 
 		if(tarr['token'] === '' && data !== 'p') return false;
-
-		//loglines = logit("Info: Send '" + action.name + "' request to backend");
 
 		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -250,85 +241,87 @@ function bimport(response, a = '') {
 	}
 }
 
-function addmark(response, a = '') {
-	let color = '';
-	let bg = '';
-	let spos = '';
-	let epos = '';
+function toastMessage(mode, message) {
 	let url = chrome.runtime.getURL('icons/bookmark.png');
 
+	if(mode == '0') {
+		color = '#45740d';
+		bg = 'rgb(167 241 82)';
+	} else {
+		color = 'white';
+		bg = 'rgb(233 81 61)';
+	}
+
+	chrome.tabs.executeScript({code: `(function() {
+		let toast = document.createElement('div');
+		toast.id = 'htoast';
+		let style = document.createElement('style');
+		document.head.appendChild(style);
+		style.sheet.insertRule(\`
+			#htoast {
+				position: fixed;
+				bottom: -3em;
+				z-index: 100;
+				left: 50%;
+				color: `+color+`;
+				background-color: `+bg+`;
+				padding: 0.3em 0.5em .3em 3.5em;
+				border-radius: 0.4em;
+				opacity: 0;
+				transform: translateX(-50%);
+				width: max-content;
+				max-width: 75%;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				box-shadow: rgb(0 0 0 / 50%) 0 0 0.3em 0;
+				transition: opacity 0.5s, bottom 0.5s, top 0.3s;
+				line-height: 2em;
+				font-family: sans-serif;
+				background-image: url(`+url+`);
+				background-repeat: no-repeat;
+				background-size: 2em;
+				background-position-x: .7em;
+				background-position-y: .3em;
+			}
+		\`);
+		style.sheet.insertRule(\`
+			.stoast {
+				bottom: 3em !important;
+				opacity: 1 !important;
+			}
+		\`);
+		toast.innerText = '` + message + `';
+		document.body.appendChild(toast);
+		setTimeout(function() {toast.classList.add('stoast')}, 5);
+		setTimeout(function() {toast.className = ''}, 3000);
+		setTimeout(function() {toast.remove(); style.remove();}, 3500);
+	})()`});
+}
+
+function addmark(response, a = '') {
 	chrome.storage.local.get(null, async function(options) {
 		if(options['actions']['startup'] === false) {
 			if(response == "1") {
 				response = "Bookmark added";
-				color = '#45740d';
-				bg = 'rgb(167 241 82)';
+				mode = '0';
 			} else {
 				response = response;
-				color = 'white';
-				bg = 'rgb(233 81 61)';
+				mode = '1';
 			}
 		
 			if(navigator.userAgent.toLowerCase().match(/mobile/i)) {
-				spos = 'bottom: -3em;';
-				epos = 'bottom: 3em !important;';
+				toastMessage(mode, response);
 			} else {
-				spos = 'top: -3.5em;';
-				epos = 'top: 1em !important;';
+				notify(new Date().getTime(), response);
 			}
-			
-			chrome.tabs.executeScript({code: `(function() {
-				let toast = document.createElement('div');
-				toast.id = 'htoast';
-				let style = document.createElement('style');
-				document.head.appendChild(style);
-				style.sheet.insertRule(\`
-					#htoast {
-						position: fixed;
-						`+spos+`
-						z-index: 100;
-						left: 50%;
-						color: `+color+`;
-						background-color: `+bg+`;
-						padding: 0.3em 0.5em .3em 3.5em;
-						border-radius: 0.4em;
-						opacity: 0;
-						transform: translateX(-50%);
-						width: max-content;
-						max-width: 75%;
-						white-space: nowrap;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						box-shadow: rgb(0 0 0 / 50%) 0 0 0.3em 0;
-						transition: opacity 0.5s, bottom 0.5s, top 0.3s;
-						line-height: 2em;
-						font-family: sans-serif;
-						background-image: url(`+url+`);
-						background-repeat: no-repeat;
-						background-size: 2em;
-						background-position-x: .7em;
-						background-position-y: .3em;
-					}
-				\`);
-				style.sheet.insertRule(\`
-					.stoast {
-						`+epos+`
-						opacity: 1 !important;
-					}
-				\`);
-				toast.innerText = '` + response + `';
-				document.body.appendChild(toast);
-				setTimeout(function() {toast.classList.add('stoast')}, 5);
-				setTimeout(function() {toast.className = ''}, 3000);
-				setTimeout(function() {toast.remove(); style.remove();}, 3500);
-			})()`});
+
 			loglines = logit("Info: " + response);
 		}
 	});
 
 	let datems = Date.now();
 	chrome.storage.local.set({last_s: datems});
-	
 }
 
 function durl(response, a = '') {

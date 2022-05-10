@@ -4,8 +4,8 @@
     "description": "Name der Erweiterung."
   },
   "extensionDescription": {
-    "message": "Export/Import/Sync von Bookmarks zu WebDAV oder PHP.",
-    "description": "Beschreibung der Erweiterung."
+    "message": "Synchronisieren Sie Lesezeichen über den eigenen Server",
+    "description": ""
   },  
   "optionsServerData": {
     "message": "Daten des Servers",

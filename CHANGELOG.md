@@ -1,5 +1,11 @@
 ChangeLog
 =========
+v1.20.6 (2022-05-10)
+-------------------------
+- Changed browser detection
+- Fixed toast/notification
+
+
 v1.20.5 (2022-05-06)
 -------------------------
 - Fix exporting bookmarks
