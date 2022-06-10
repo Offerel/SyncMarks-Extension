@@ -115,26 +115,26 @@
     "message": "Store",
     "description": ""
   },
-
   "optionsBTNRestore": {
     "message": "Restore",
     "description": ""
   },
-
   "optionsBTNClear": {
     "message": "Delete",
+    "description": ""
+  },
+  "optionsDebugLog": {
+    "message": "Debug Log",
     "description": ""
   },
   "optionsBTNAdvSet": {
     "message": "Advanced Settings",
     "description": ""
   },
-
   "optionsBTNYes": {
     "message": "Yes",
     "description": "Yes Button."
   },
-
   "optionsBTNNo": {
     "message": "No",
     "description": "No Button."

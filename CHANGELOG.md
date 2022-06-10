@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.20.7 (2022-06-10)
+-------------------------
+- Added Debug Level to logfile
+
+
 v1.20.6 (2022-05-10)
 -------------------------
 - Changed browser detection

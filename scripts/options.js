@@ -394,21 +394,52 @@ function localizeHtmlPage() {
 	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend") + "";
 }
 
+function filterLog() {
+	let larea = document.getElementById("logarea");
+	let debug = document.getElementById('logdebug').checked;
+	let lines = background_page.loglines.split("\n");
+	let tlines = new Array();
+	let rlines = "";
+
+	if(larea.childNodes.length > 2) {
+		larea.removeChild(larea.childNodes[2]); 
+	}
+	
+	if(!debug) {
+		lines.forEach(function(line) {
+			if(line.indexOf("Debug:") === -1) tlines.push(line);
+		});
+		rlines = tlines.join("\n");
+	} else {
+		rlines = lines.join("\n");
+	}
+
+	var logp = new DOMParser().parseFromString(rlines, 'text/html').body;
+	larea.appendChild(logp);
+}
+
 function openTab(tabname) {
 	var x = document.getElementsByClassName("otabs");
+	let larea = document.getElementById("logarea");
+	if(larea.childNodes.length > 2) {
+		larea.removeChild(larea.childNodes[2]); 
+	}
+
+	if(tabname.target.innerText == 'Logfile') {
+		let lines = background_page.loglines.split("\n");
+		let tlines = new Array();
+		lines.forEach(function(line, key) {
+			if(line.indexOf("Debug:") === -1) tlines.push(line);
+		});
+		let rlines = tlines.join("\n");
+		var logp = new DOMParser().parseFromString(rlines, 'text/html').body;
+		larea.appendChild(logp);
+	}
+
 	for (var i = 0; i < x.length; i++) {
 		x[i].style.display = "none";
-		let larea = document.getElementById("logarea");
-
-		if(larea.childNodes.length > 2) {
-			larea.removeChild(larea.childNodes[2]); 
-		}
-
-		if(tabname.target.innerText == 'Logfile') {
-			var logp = new DOMParser().parseFromString(background_page.loglines, 'text/html').body;
-			larea.appendChild(logp);
-		}
 	}
+
 	document.getElementById(tabname.target.attributes['data-val'].value).style.display = "block";
 	document.querySelectorAll('.tab-button').forEach(function(e) {
 		e.classList.remove("abutton");
@@ -517,6 +548,7 @@ window.addEventListener('load', function () {
 		e.preventDefault();
 		document.getElementById("confinput").click();
 	});
+	document.getElementById("logdebug").addEventListener('change', filterLog);
 	document.getElementById("confinput").addEventListener('change', importOptions);
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);

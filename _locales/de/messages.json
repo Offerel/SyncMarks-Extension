@@ -115,17 +115,18 @@
     "message": "Sichern",
     "description": ""
   },
-
   "optionsBTNRestore": {
     "message": "Wiederherstellen",
     "description": ""
   },
-
   "optionsBTNClear": {
     "message": "Löschen",
     "description": ""
   },
-
+  "optionsDebugLog": {
+    "message": "Debug Log",
+    "description": ""
+  },
   "optionsBTNAdvSet": {
     "message": "Erweiterte Einstellungen",
     "description": ""

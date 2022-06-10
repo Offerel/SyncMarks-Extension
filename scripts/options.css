@@ -200,10 +200,10 @@ input:hover {
     cursor: pointer;
 }
 #logsave {
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z' /%3E%3C/svg%3E");
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z' /%3E%3C/svg%3E");
 }
 #logclear {
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z' /%3E%3C/svg%3E");
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z' /%3E%3C/svg%3E");
 }
 .cframe {
     width: calc(100% - 30px);
@@ -211,15 +211,20 @@ input:hover {
     height: calc(100% - 150px);
     position: absolute;
 }
+#toolbar > label {
+    position: absolute;
+    right: .5em;
+    line-height: 2em;
+}
 #logarea {
 	background: white;
 	border: 1px solid gainsboro;
 	overflow: hidden;
 	max-width: 700px;
 	width: 100%;
-	margin-top: 30px;
+	margin-top: 38px;
 	position: initial;
-	height: 100%;
+	height: calc(100% - 10px);
 }
 #logarea body {
 	white-space: pre;
@@ -559,27 +564,19 @@ h1 {
     left: 0px;
     right: -2px;
     top: 0;
-    height: 30px;
     margin: 0;
     padding: 0 0 0 1px;
     border-bottom: 1px solid gainsboro;
 }
-#toolbar li {
-	height: 30px;
-	cursor: pointer;
-	background-repeat: no-repeat;
-	background-size: 24px;
-	background-position: 5px;
-	padding: 0 10px 0 30px;
-	list-style: none;
-	float: left;
-	background-color: ghostwhite;
-	position: relative;
-	line-height: 30px;
-	border-right: 1px solid gainsboro;
-}
-#toolbar li:hover {
-	background-color: dodgerblue;
+#toolbar button {
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-size: 24px;
+    background-position: 5px;
+    padding: 0 10px 0 30px;
+    position: relative;
+    line-height: 25px;
+    min-height: 27px;
 }
 .btnc {
 	display: flex;

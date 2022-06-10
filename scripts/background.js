@@ -218,7 +218,7 @@ function cinfo(response, a = '') {
 	}
 }
 
-function bexport(response, a = '') {
+function bexport(response) {
 	response = JSON.parse(response);
 	if(abrowser == false) response = JSON.parse(c2cm(JSON.stringify(response)));
 	count = 0;
@@ -871,7 +871,7 @@ async function importFull(rMarks) {
 			if(remoteParentFolderName !== localParentFolderName) {
 				action = 2;
 			} else {
-				action = 0;
+				action = 3;
 			}
 		}
 		return action;
@@ -957,16 +957,22 @@ async function importFull(rMarks) {
 		
 		switch (action) {
 			case 0:
-				//console.log('ignore action: ' + action);
+				loglines = logit('Debug: Ignore bookmark "'+remoteMark.bmID+'"');
 				break;
 			case 1:
+				loglines = logit('Debug: Create bookmark "'+remoteMark.bmID+'"');
 				await createMark(remoteMark);
 				break;
 			case 2:
+				loglines = logit('Debug: Move bookmark "'+remoteMark.bmID+'"');
+				await iMoveMark(remoteMark);
+				break;
+			case 3:
+				loglines = logit('Debug: Existing Bookmark "'+remoteMark.bmID+'"');
 				await iMoveMark(remoteMark);
 				break;
 			default:
-				//console.log('unknown action: ' + action);
+				loglines = logit('Debug: Unknown action for bookmark "'+remoteMark.bmID+'"');
 				break;
 		}	
 	}
