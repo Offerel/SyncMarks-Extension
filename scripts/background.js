@@ -81,9 +81,17 @@ function sendRequest(action, data = null, addendum = null) {
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
 
-		if(tarr['token'] === '' && data !== 'p') return false;
+		let tc = false;
 
-		xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
+		if(options['token'].length > 0) tc = 'tk';
+		if(options['creds'].length > 0) tc = 'cr';
+		console.log('tc: ', tc);
+//		if(tarr['token'] === '' && data !== 'p') return false;
+		if(tc == false && data !== 'p') return tc;
+
+		if(tc == 'tk') xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
+		if(tc == 'cr') xhr.setRequestHeader('Authorization', 'Basic ' + creds);
+
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.timeout = 10000;

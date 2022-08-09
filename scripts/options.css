@@ -14,6 +14,10 @@ input, button {
     border: 1px solid darkgray;
     outline: 0;
 }
+.btm {
+	width: 50%;
+	display: flow-root;
+}
 button#lgin {
     margin-top: .7em;
     margin-right: 0;

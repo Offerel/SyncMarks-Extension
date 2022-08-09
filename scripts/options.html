@@ -59,7 +59,21 @@
 						<div id="lgini"><span>__MSG_optionsLastLogged__</span>: <span id="ipinfo"></span></div>
 						<div class="toptionc"><label for="nuser"><span>__MSG_optionsUsername__</span>:</label><input inputmode="email" type="email" id="nuser" placeholder="Username"></div>
 						<div class="toptionc"><label for="npassword" ><span>__MSG_optionsPassword__</span>:</label><input type="password" id="npassword" placeholder="Password"></div>
-						<div style="text-align: right;"><button id="lgin" disabled>Login</button></div>
+						<div>
+							<div class="btm" style="float: left;">
+								<label class="switch">
+									<input id="tbt" type="checkbox" tabindex="-1">
+									<span class="slider round"></span>
+									<span class="lbl" id="tbtl">Basic Auth</span>
+								</label>
+							</div>
+							<div class="btm" style="text-align: right;">
+								<button id="lgin" disabled>Login</button>
+							</div>
+								
+
+							
+						</div>
 					</div>
 				</div>
 				<div id="expimpdialog" class="modal">

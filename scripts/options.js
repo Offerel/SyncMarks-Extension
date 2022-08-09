@@ -61,11 +61,13 @@ function checkForm2() {
 
 function gToken(e) {
 	e.preventDefault();
+	let tbt = document.getElementById('tbt').checked;
 	document.getElementById('lginl').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
 	let xhr = new XMLHttpRequest();
 	let wmessage = document.getElementById('wmessage');
-	cdata = "action=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked;
+
+	cdata = "action=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked + "&tbt=" + tbt;
 	let rnd = Math.floor((Math.random() * 100) + 1) + '.txt';
 	var url = document.getElementById('wdurl').value;	
 
@@ -98,9 +100,24 @@ function gToken(e) {
 							document.getElementById('lginl').style.visibility = "hidden";
 							chrome.storage.local.set({
 								wdurl: document.getElementById('wdurl').value,
-								token: response.token,
+							//	token: tbt ? response.token:creds,
 								s_type: 'PHP',
 							});
+
+							if(tbt) {
+								chrome.storage.local.set({
+									creds: creds,
+									token: ''
+								});
+								console.log('creds: ' + creds);
+							} else {
+								chrome.storage.local.set({
+									token: response.token,
+									creds: ''
+								});
+								console.log('token: ' + response.token);
+							}
+
 							document.getElementById('cname').defaultValue = response.cname;
 							chrome.storage.local.remove("creds");
 						}
@@ -216,11 +233,11 @@ function restoreOptions() {
 			document.getElementById("cname").placeholder = options['s_uuid'];
 		}
 
-		document.querySelector("#s_startup").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['startup'];
-		document.querySelector("#s_create").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['create'];
-		document.querySelector("#s_change").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['change'];
-		document.querySelector("#s_remove").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['remove'];
-		document.querySelector("#b_action").defaultChecked = (options['actions'] == undefined) ? false:options['actions']['crsrv'];
+		document.getElementById("s_startup").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['startup'];
+		document.getElementById("s_create").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['create'];
+		document.getElementById("s_change").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['change'];
+		document.getElementById("s_remove").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['remove'];
+		document.getElementById("b_action").defaultChecked = (options['actions'] == undefined) ? false:options['actions']['crsrv'];
 
 		if(document.getElementById("s_startup").checked && document.getElementById("s_create").checked && document.getElementById("s_change").checked && document.getElementById("s_remove").checked) {
 			document.getElementById("s_auto").defaultChecked = true;
@@ -268,6 +285,7 @@ function exportOptions(e) {
 	e.preventDefault();
 	chrome.storage.local.get(null, function(options) {
 		delete options.clist;
+		console.log(options);
 		let confJSON = JSON.stringify(options);
 		let dString = new Date().toISOString().slice(0,10);
 		let nameStr = document.getElementById('cname').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
