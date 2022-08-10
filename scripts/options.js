@@ -279,6 +279,7 @@ function exportOptions(e) {
 		delete options.clist;
 		delete options.token;
 		delete options.creds;
+		delete options.last_message;
 
 		let confJSON = JSON.stringify(options);
 		let dString = new Date().toISOString().slice(0,10);
