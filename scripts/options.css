@@ -33,14 +33,13 @@ button#lgin {
 }
 #lgini {
     background-color: bisque;
-    display: block;
+    display: none;
     border-radius: .3em;
     padding: .3em .5em;
     border: 1px solid;
     border-color: burlywood;
     color: firebrick;
     font-size: .8em;
-    visibility: hidden;
 }
 #ipinfo {
     background: burlywood;

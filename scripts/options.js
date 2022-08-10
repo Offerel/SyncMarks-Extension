@@ -9,7 +9,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
 			let cInfo = JSON.parse(message.cInfo);
 			let iBox = document.getElementById("lgini");
 			let ip = document.getElementById('ipinfo');
-			iBox.style.visibility = 'visible';
+			iBox.style.display = 'block';
 			ip.innerText = cInfo.ip;
 			let ipinfo = document.createElement('span');
 			let tm = new Date(cInfo.tm * 1000).toLocaleString();
@@ -100,26 +100,18 @@ function gToken(e) {
 							document.getElementById('lginl').style.visibility = "hidden";
 							chrome.storage.local.set({
 								wdurl: document.getElementById('wdurl').value,
-							//	token: tbt ? response.token:creds,
 								s_type: 'PHP',
 							});
 
 							if(tbt) {
-								chrome.storage.local.set({
-									creds: creds,
-									token: ''
-								});
-								console.log('creds: ' + creds);
+								chrome.storage.local.set({creds: creds});
+								chrome.storage.local.remove('token');
 							} else {
-								chrome.storage.local.set({
-									token: response.token,
-									creds: ''
-								});
-								console.log('token: ' + response.token);
+								chrome.storage.local.set({token: response.token});
+								chrome.storage.local.remove('creds');
 							}
 
 							document.getElementById('cname').defaultValue = response.cname;
-							chrome.storage.local.remove("creds");
 						}
 
 						if(response.message.indexOf('updated') == 7) {
@@ -251,14 +243,14 @@ function restoreOptions() {
 				gName();
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
-				if(options['token'] === '') {
+				if(options['token'] === undefined && options['creds'] === undefined) {
 					background_page.sendRequest(background_page.cinfo, 'p');
-					document.getElementById("lginl").style.visibility = 'visible';
+					document.getElementById("lginl").style.display = 'block';
 				}
 			} else {
 				document.getElementById("php_webdav").checked = false;
-				if(options['creds'] === '') {
-					document.getElementById("lginl").style.visibility = 'visible';
+				if(options['creds'] === undefined) {
+					document.getElementById("lginl").style.display = 'block';
 				}
 			}
 		}
@@ -285,7 +277,9 @@ function exportOptions(e) {
 	e.preventDefault();
 	chrome.storage.local.get(null, function(options) {
 		delete options.clist;
-		console.log(options);
+		delete options.token;
+		delete options.creds;
+
 		let confJSON = JSON.stringify(options);
 		let dString = new Date().toISOString().slice(0,10);
 		let nameStr = document.getElementById('cname').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -316,24 +310,13 @@ function importOptions() {
 			},
 			s_type: ioptions.s_type,
 			wdurl: ioptions.wdurl,
+			s_uuid: ioptions.s_uuid,
 		});
 
 		if(resCID) {
 			document.getElementById("cname").placeholder = ioptions.s_uuid;
 			document.getElementById("s_uuid").value = ioptions.s_uuid;
 			document.getElementById("lginl").style.visibility = 'hidden';
-
-			if (ioptions.s_type === 'PHP') {
-				chrome.storage.local.set({
-					s_uuid: ioptions.s_uuid,
-					token: ioptions.token
-				});
-			} else if (ioptions.s_type === 'WebDAV') {
-				chrome.storage.local.set({
-					s_uuid: ioptions.s_uuid,
-					creds: ioptions.creds
-				})
-			}
 		}
 
 		document.getElementById("wdurl").value = ioptions.wdurl;

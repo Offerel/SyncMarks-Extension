@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.20.8 (2022-08-10)
+-------------------------
+- Added Fallback to BasicAuth
+
+
 v1.20.7 (2022-06-10)
 -------------------------
 - Added Debug Level to logfile

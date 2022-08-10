@@ -83,14 +83,12 @@ function sendRequest(action, data = null, addendum = null) {
 
 		let tc = false;
 
-		if(options['token'].length > 0) tc = 'tk';
-		if(options['creds'].length > 0) tc = 'cr';
-		console.log('tc: ', tc);
-//		if(tarr['token'] === '' && data !== 'p') return false;
-		if(tc == false && data !== 'p') return tc;
+		if(options['token'] != undefined) tc = 'tk';
+		if(options['creds'] != undefined) tc = 'cr';
+		if(tc == false && data !== 'p') return false;
 
 		if(tc == 'tk') xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		if(tc == 'cr') xhr.setRequestHeader('Authorization', 'Basic ' + creds);
+		if(tc == 'cr') xhr.setRequestHeader('Authorization', 'Basic ' + options['creds']);
 
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
@@ -115,7 +113,7 @@ function sendRequest(action, data = null, addendum = null) {
 				if(xtResponse !== '0') {
 					await chrome.storage.local.set({token: xtResponse});
 				} else {
-					chrome.storage.local.set({token: ''});
+					chrome.storage.local.remove('token');
 					let message = chrome.i18n.getMessage("optionsLoginError");
 					if(data !== 'p') notify('error', message);
 					chrome.browserAction.setBadgeText({text: '!'});
@@ -519,7 +517,7 @@ async function init() {
 		let s_type = options['s_type'] || "";
 
 		if(s_type == 'PHP') {
-			if(options['token'] == '') {
+			if(options['token'] === undefined && options['creds'] === undefined) {
 				chrome.browserAction.setBadgeText({text: '!'});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
 				chrome.browserAction.onClicked.removeListener(bookmarkTab);
@@ -527,7 +525,7 @@ async function init() {
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
 			}
-		} else if(s_type == 'PHP') {
+		} else if(s_type == 'WebDAV') {
 			if(options['creds'] == '') {
 				chrome.browserAction.setBadgeText({text: '!'});
 				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
