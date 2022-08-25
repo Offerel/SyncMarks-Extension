@@ -310,16 +310,26 @@ function addmark(response, a = '') {
 		if(options['actions']['startup'] === false) {
 			if(response == "1") {
 				response = "Bookmark added";
+				chrome.browserAction.setBadgeText({text: 'i'});
+				chrome.browserAction.setBadgeBackgroundColor({color: "chartreuse"});
+				setTimeout(function(){
+					chrome.browserAction.setBadgeText({text: ''});
+				}, 5000);
 				mode = '0';
 			} else {
 				response = response;
+				chrome.browserAction.setBadgeText({text: '!'});
+				chrome.browserAction.setBadgeBackgroundColor({color: "gold"});
+				setTimeout(function(){
+					chrome.browserAction.setBadgeText({text: ''});
+				}, 5000);
 				mode = '1';
 			}
 		
 			if(navigator.userAgent.toLowerCase().match(/mobile/i)) {
 				toastMessage(mode, response);
 			} else {
-				notify(new Date().getTime(), response);
+				notify(Math.random().toString(16).substring(2, 10), response);
 			}
 
 			loglines = logit("Info: " + response);
