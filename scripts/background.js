@@ -52,6 +52,17 @@ chrome.permissions.getAll(function(e) {
 	}
 });
 
+chrome.contextMenus.create({
+	id: "settings",
+	title: chrome.i18n.getMessage("optionsSyncOptions"),
+	contexts: ["browser_action"],
+})
+
+chrome.contextMenus.onClicked.addListener(info => {
+	if (info.menuItemId == "settings") chrome.runtime.openOptionsPage()
+})
+
+
 chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
