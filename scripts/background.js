@@ -52,17 +52,6 @@ chrome.permissions.getAll(function(e) {
 	}
 });
 
-chrome.contextMenus.create({
-	id: "settings",
-	title: chrome.i18n.getMessage("optionsSyncOptions"),
-	contexts: ["browser_action"],
-})
-
-chrome.contextMenus.onClicked.addListener(info => {
-	if (info.menuItemId == "settings") chrome.runtime.openOptionsPage()
-})
-
-
 chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
@@ -103,7 +92,7 @@ function sendRequest(action, data = null, addendum = null) {
 
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
-		xhr.timeout = 10000;
+		xhr.timeout = 30000;
 		xhr.responseType = 'json';
 
 		xhr.onreadystatechange = function() {
@@ -391,6 +380,16 @@ function ccMenus() {
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
 			chrome.contextMenus.removeAll();
+			chrome.contextMenus.create({
+				id: "sm_settings",
+				title: chrome.i18n.getMessage("optionsSyncOptions"),
+				contexts: ["browser_action"]
+			})
+			
+			chrome.contextMenus.onClicked.addListener(info => {
+				if (info.menuItemId == "sm_settings") chrome.runtime.openOptionsPage();
+			})
+			
 			chrome.storage.local.get(null, function(options) {
 				if(options['s_type'] == "PHP") {
 					if(options.actions.crsrv === true) {
