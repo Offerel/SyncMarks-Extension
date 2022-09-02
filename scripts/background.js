@@ -63,7 +63,7 @@ function sendRequest(action, data = null, addendum = null) {
 		let client = options['s_uuid'];
 		let sync = null;
 
-		if(action.name === 'addmark' && options['actions']['startup'] == false) {
+		if(action.name === 'addmark' && options['actions']['crsrv'] === true) {
 			client = 'bookmarkTab';
 			sync = false;
 		}
@@ -75,8 +75,8 @@ function sendRequest(action, data = null, addendum = null) {
 			add: addendum,
 			sync: sync
 		}
-	
-		xhr.open("POST", options['wdurl'], true);
+		let url = options['wdurl'];
+		xhr.open("POST", url);
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
 		tarr['token'] = options['token'];
@@ -306,9 +306,10 @@ function toastMessage(mode, message) {
 }
 
 function addmark(response, a = '') {
+	response = response.toString();
 	chrome.storage.local.get(null, async function(options) {
-		if(options['actions']['startup'] === false) {
-			if(response == "1") {
+		if(options['actions']['crsrv'] === true) {
+			if(response === "0") {
 				response = "Bookmark added";
 				chrome.browserAction.setBadgeText({text: 'i'});
 				chrome.browserAction.setBadgeBackgroundColor({color: "chartreuse"});
@@ -325,8 +326,10 @@ function addmark(response, a = '') {
 				}, 5000);
 				mode = '1';
 			}
-		
-			if(navigator.userAgent.toLowerCase().match(/mobile/i)) {
+
+			let uastr = navigator.userAgent;
+			
+			if(uastr.toLowerCase().match(/mobile/i) || window.innerWidth < 800) {
 				toastMessage(mode, response);
 			} else {
 				notify(Math.random().toString(16).substring(2, 10), response);
