@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.20.11 (2022-09-03)
+-------------------------
+- Fixed mobile detection
+
+
 v1.20.10 (2022-08-28)
 -------------------------
 - Added icon context menu

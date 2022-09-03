@@ -327,9 +327,9 @@ function addmark(response, a = '') {
 				mode = '1';
 			}
 
-			let uastr = navigator.userAgent;
+			let uastr = navigator.userAgent.toLowerCase();
 			
-			if(uastr.toLowerCase().match(/mobile/i) || window.innerWidth < 800) {
+			if(uastr.match(/mobile/i)) {
 				toastMessage(mode, response);
 			} else {
 				notify(Math.random().toString(16).substring(2, 10), response);
