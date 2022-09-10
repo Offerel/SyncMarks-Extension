@@ -36,7 +36,7 @@
 		"notifications",
 		"contextMenus"
 	],
-	"version": "1.20.11",
+	"version": "1.20.12",
 	"web_accessible_resources": [
 		"icons/bookmark.png"
 	]
