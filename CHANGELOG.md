@@ -1,5 +1,11 @@
 ChangeLog
 =========
+v1.20.13 (2022-09-11)
+-------------------------
+- Fix in Options
+- Fix delete bookmark
+
+
 v1.20.11 (2022-09-03)
 -------------------------
 - Fixed mobile detection

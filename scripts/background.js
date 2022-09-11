@@ -506,12 +506,12 @@ function removeAllMarks() {
 
 function findByID(oMarks, id) {
     if(oMarks === null || typeof oMarks === "undefined") return null;
-    for (var i = 0; i < oMarks.length; i++) {
-        if(oMarks[i].id === id) return oMarks[i];
-        var child = findByID(oMarks[i].children, id);
-        if(child !== null) return child;
-    }
-    return null;
+	for (var i = 0; i < oMarks.length; i++) {
+		if(oMarks[i].id === id) return oMarks[i];
+		var child = findByID(oMarks[i].children, id);
+		if(child !== null) return child;
+	}
+	return null;
 }
 
 async function init() {
@@ -759,7 +759,7 @@ function onRemovedCheck(id, bookmark) {
 			chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 			saveAllMarks();
 		} else if (s_remove === true  && s_type.indexOf('PHP') == 0) {
-			await delMark(id, bookmark);
+			await deleMark(id, bookmark);
 			await get_oMarks();
 		}
 	});
@@ -817,16 +817,17 @@ function saveAllMarks() {
 	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
-function delMark(id, bookmark) {
-	let oldMark = findByID(oMarks, bookmark.node.id);	
+function deleMark(id, bookmark) {
+	//let oldMark = findByID(oMarks, bookmark.node.id);
 	let jsonMark = JSON.stringify({
 		"url": bookmark.node.url,
 		"folder": bookmark.node.parentId,
 		"index": bookmark.node.index,
 		"type": bookmark.node.type,
 		"id": bookmark.node.id,
-		"title": oldMark.title
+		"title": bookmark.node.title
 	});
+	
 	loglines = logit("Info: Sending remove request to server: <a href='"+bookmark.node.url+"'>"+bookmark.node.url+"</a>");
 	sendRequest(delmark, jsonMark);
 }
