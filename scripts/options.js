@@ -244,12 +244,8 @@ function restoreOptions() {
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
 				if(options['token'] === undefined && options['creds'] === undefined) {
-					//console.log('token/creds: undefined');
 					background_page.sendRequest(background_page.cinfo, 'p');
 					document.getElementById("lginl").style.visibility = 'visible';
-				} else {
-					//console.log('token: ',options['token']);
-					//console.log('creds: ',options['creds']);
 				}
 			} else {
 				document.getElementById("php_webdav").checked = false;
