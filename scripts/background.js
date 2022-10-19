@@ -513,7 +513,14 @@ async function init() {
 	await get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, async function(options) {
-		if(options['wdurl'] === undefined) return false;
+		if(options['wdurl'] === undefined) {
+			chrome.browserAction.setBadgeText({text: '!'});
+			chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+			chrome.browserAction.onClicked.removeListener(bookmarkTab);
+			chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+			return false;
+		}
+
 		if(options.actions.crsrv === true) {
 			chrome.commands.getAll((commands) => {
 				for (let {name, shortcut} of commands) {

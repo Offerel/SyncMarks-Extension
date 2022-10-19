@@ -3,6 +3,7 @@ ChangeLog
 v1.20.14 (2022-09-14)
 -------------------------
 - Removed FindByID
+- Fixed rare issue with empty URL in options
 
 
 v1.20.13 (2022-09-11)
