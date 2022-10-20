@@ -428,6 +428,7 @@ function openTab(tabname) {
 	}
 
 	if(tabname.target.innerText == 'Logfile') {
+		console.log(background_page.loglines);
 		let lines = background_page.loglines.split("\n");
 		let tlines = new Array();
 		lines.forEach(function(line, key) {

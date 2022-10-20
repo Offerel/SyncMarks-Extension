@@ -116,11 +116,7 @@ function sendRequest(action, data = null, addendum = null) {
 					chrome.storage.local.remove('token');
 					let message = chrome.i18n.getMessage("optionsLoginError");
 					if(data !== 'p') notify('error', message);
-					chrome.browserAction.setBadgeText({text: '!'});
-					chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-					chrome.browserAction.onClicked.removeListener(bookmarkTab);
-					chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
-					
+					changeIcon('error');
 					if(xhr.response.cInfo) {
 						chrome.runtime.sendMessage(xhr.response);
 					}
@@ -311,19 +307,11 @@ function addmark(response, a = '') {
 		if(options['actions']['crsrv'] === true) {
 			if(response === "0") {
 				response = "Bookmark added";
-				chrome.browserAction.setBadgeText({text: 'i'});
-				chrome.browserAction.setBadgeBackgroundColor({color: "chartreuse"});
-				setTimeout(function(){
-					chrome.browserAction.setBadgeText({text: ''});
-				}, 5000);
+				changeIcon('info');
 				mode = '0';
 			} else {
 				response = response;
-				chrome.browserAction.setBadgeText({text: '!'});
-				chrome.browserAction.setBadgeBackgroundColor({color: "gold"});
-				setTimeout(function(){
-					chrome.browserAction.setBadgeText({text: ''});
-				}, 5000);
+				changeIcon('warn');
 				mode = '1';
 			}
 
@@ -504,6 +492,34 @@ function removeAllMarks() {
 	}
 }
 
+function changeIcon(mode) {
+	switch (mode) {
+		case 'error':
+			chrome.browserAction.setBadgeText({text: '!'});
+			chrome.browserAction.setBadgeBackgroundColor({color: "red"});
+			chrome.browserAction.onClicked.removeListener(bookmarkTab);
+			chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+			break;
+		case 'warn':
+			chrome.browserAction.setBadgeText({text: '!'});
+			chrome.browserAction.setBadgeBackgroundColor({color: "gold"});
+			setTimeout(function(){
+				chrome.browserAction.setBadgeText({text: ''});
+			}, 5000);
+			break;
+		case 'info':
+			chrome.browserAction.setBadgeText({text: 'i'});
+			chrome.browserAction.setBadgeBackgroundColor({color: "chartreuse"});
+			setTimeout(function(){
+				chrome.browserAction.setBadgeText({text: ''});
+			}, 5000);
+			break;
+		default:
+			statement(s)
+	 }
+	
+}
+
 async function init() {
 	loglines = logit("Info: AddOn version: " + chrome.runtime.getManifest().version);
 	loglines = logit("Info: "+navigator.userAgent);
@@ -514,10 +530,7 @@ async function init() {
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, async function(options) {
 		if(options['wdurl'] === undefined) {
-			chrome.browserAction.setBadgeText({text: '!'});
-			chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-			chrome.browserAction.onClicked.removeListener(bookmarkTab);
-			chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+			changeIcon('error');
 			return false;
 		}
 
@@ -538,19 +551,13 @@ async function init() {
 
 		if(s_type == 'PHP') {
 			if(options['token'] === undefined && options['creds'] === undefined) {
-				chrome.browserAction.setBadgeText({text: '!'});
-				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-				chrome.browserAction.onClicked.removeListener(bookmarkTab);
-				chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+				changeIcon('error');
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
 			}
 		} else if(s_type == 'WebDAV') {
 			if(options['creds'] == '') {
-				chrome.browserAction.setBadgeText({text: '!'});
-				chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-				chrome.browserAction.onClicked.removeListener(bookmarkTab);
-				chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+				changeIcon('error');
 			} else {
 				chrome.browserAction.setBadgeText({text: ''});
 			}
