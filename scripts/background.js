@@ -919,7 +919,7 @@ async function importFull(rMarks) {
 			localParentId = remoteMark.bmParentID;
 		} else {
 			let searchedID = remoteMark.bmParentID;
-			remoteParentFolderName = rMarks.filter(element => element.bmID == searchedID)[0].bmTitle;		
+			remoteParentFolderName = (rMarks.filter(element => element.bmID == searchedID)[0] != undefined) ? rMarks.filter(element => element.bmID == searchedID)[0].bmTitle:'';
 			let sRes = (await searchBookmarkAsync({title: remoteParentFolderName}));
 			if(sRes.length > 0) 
 				localParentId = sRes[0].id;

@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.20.16 (2022-10-24)
+-------------------------
+- Fixed Initial sync with empty parent folder
+
+
 v1.20.15 (2022-10-20)
 -------------------------
 - Added changeIcon function
