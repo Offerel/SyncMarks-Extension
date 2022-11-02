@@ -367,6 +367,39 @@ function arename(response, a = '') {
 	//
 }
 
+function sendTabs(response) {
+	//
+}
+
+function getTabs() {
+	chrome.tabs.onCreated.addListener(tabCreated);
+	chrome.tabs.onUpdated.addListener(checkTab);
+	chrome.tabs.onRemoved.addListener(tabCreated);
+	//sendRequest(getTabs);
+	console.log("sendRequest(getTabs)");
+}
+
+function tabCreated(tab) {
+	setTimeout(() => {  chrome.tabs.query({}, saveTabs); }, 5000);
+}
+
+function checkTab(tID, info) {
+	if(info.status === 'complete') {
+		tabCreated(tID);
+	}
+}
+
+function saveTabs(oTabs) {
+	var tabs = [];
+	oTabs.forEach(function(tab){
+		if(tab.url !== undefined && tab.pinned === false && tab.incognito === false) {
+			tabs.push({'windowId':tab.windowId, 'url':tab.url, title:tab.title});
+		}
+	});
+
+	sendRequest(sendTabs, JSON.stringify(tabs));
+}
+
 function ccMenus() {
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
@@ -395,6 +428,10 @@ function ccMenus() {
 								id: "smark"
 							});
 						});
+					}
+
+					if(options.s_tabs === true) {
+						getTabs();
 					}
 					
 					try{
@@ -908,7 +945,6 @@ async function importFull(rMarks) {
 			}
 		}
 		return action;
-		
 	}
 
 	async function createMark(remoteMark) {

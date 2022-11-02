@@ -183,6 +183,7 @@ function saveOptions(e) {
 
 		s_type: document.querySelector('input[name="stype"]:checked').value,
 		s_uuid: document.getElementById("s_uuid").value,
+		s_tabs: document.getElementById("s_tabs").checked,
 		wdurl: document.getElementById("wdurl").value,
 	});
 
@@ -247,11 +248,13 @@ function restoreOptions() {
 					background_page.sendRequest(background_page.cinfo, 'p');
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
+				document.getElementById("s_tabs").defaultChecked = (options['s_tabs'] == undefined) ? false:options['s_tabs'];
 			} else {
 				document.getElementById("php_webdav").checked = false;
 				if(options['creds'] === undefined) {
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
+				document.getElementById("s_tabs").defaultChecked = false;
 			}
 		}
 
@@ -280,6 +283,7 @@ function exportOptions(e) {
 		delete options.token;
 		delete options.creds;
 		delete options.last_message;
+		delete options.pTabs;
 
 		let confJSON = JSON.stringify(options);
 		let dString = new Date().toISOString().slice(0,10);
@@ -327,6 +331,7 @@ function importOptions() {
 		document.getElementById("s_remove").checked = ioptions.actions.remove;
 		document.getElementById("b_action").checked = ioptions.actions.crsrv;
 		document.getElementById("s_auto").checked = (ioptions.actions.startup && ioptions.actions.create && ioptions.actions.change && ioptions.actions.remove) ? true:false;
+		document.getElementById("s_tabs").checked = ioptions.s_tabs;
 
 		wmessage.textContent = chrome.i18n.getMessage("optionsSuccessImport");
 		wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
@@ -583,6 +588,7 @@ window.addEventListener('load', function () {
 	document.getElementById("s_change").addEventListener("change", saveOptions);
 	document.getElementById("s_remove").addEventListener("change", saveOptions);
 	document.getElementById("b_action").addEventListener("change", saveOptions);
+	document.getElementById("s_tabs").addEventListener("change", saveOptions);
 
 	document.getElementById("s_auto").addEventListener("change", cAuto);
 
