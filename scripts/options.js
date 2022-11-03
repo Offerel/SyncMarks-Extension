@@ -22,7 +22,6 @@ chrome.runtime.onMessage.addListener((message, sender) => {
 function checkForm() {
 	if((document.getElementById('wdurl').value != '') && (document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue)) {
 		document.getElementById("lginl").style.visibility = 'visible';
-
 		chrome.storage.local.set({
 			actions: {
 				crsrv:document.getElementById("b_action").checked
@@ -66,7 +65,6 @@ function gToken(e) {
 	document.getElementById('crdialog').style.display = "none";
 	let xhr = new XMLHttpRequest();
 	let wmessage = document.getElementById('wmessage');
-
 	cdata = "action=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked + "&tbt=" + tbt;
 	let rnd = Math.floor((Math.random() * 100) + 1) + '.txt';
 	var url = document.getElementById('wdurl').value;	
@@ -271,7 +269,6 @@ function restoreOptions() {
 		}
 		
 		if(document.querySelector("#wdurl").value.length > 4) document.getElementById("cexp").disabled = false;
-
 		checkForm();
 	});
 }
@@ -511,14 +508,12 @@ function switchBackend() {
 function cAuto() {
 	if(document.getElementById("s_auto").checked) {
 		document.getElementById("b_action").checked = false;
-
 		document.getElementById("s_startup").checked = true;
 		document.getElementById("s_create").checked = true;
 		document.getElementById("s_change").checked = true;
 		document.getElementById("s_remove").checked = true;
 	} else {
 		document.getElementById("b_action").checked = true;
-
 		document.getElementById("s_startup").checked = false;
 		document.getElementById("s_create").checked = false;
 		document.getElementById("s_change").checked = false;
@@ -578,10 +573,8 @@ window.addEventListener('load', function () {
 
 	document.getElementById("nuser").addEventListener("input", checkForm2);
 	document.getElementById("npassword").addEventListener("input", checkForm2);
-	
 	document.getElementById("php_webdav").addEventListener("change", switchBackend);
 	document.getElementById('lgin').addEventListener("click", gToken);
-	
 	document.getElementById("s_startup").addEventListener("change", saveOptions);
 	document.getElementById("s_create").addEventListener("change", saveOptions);
 	document.getElementById("s_create").addEventListener("change", cCreate);
@@ -589,14 +582,11 @@ window.addEventListener('load', function () {
 	document.getElementById("s_remove").addEventListener("change", saveOptions);
 	document.getElementById("b_action").addEventListener("change", saveOptions);
 	document.getElementById("s_tabs").addEventListener("change", saveOptions);
-
 	document.getElementById("s_auto").addEventListener("change", cAuto);
-
 	document.getElementById("cname").addEventListener("change", rName);
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 	document.getElementById("logsave").addEventListener("click", saveLog);
 	document.getElementById("logclear").addEventListener("click", clearLog);
-
 	document.querySelector('h1').addEventListener('click', function(){
 		window.open(document.getElementById('wdurl').value);
 	});

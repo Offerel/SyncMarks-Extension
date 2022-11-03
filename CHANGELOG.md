@@ -1,5 +1,10 @@
 ChangeLog
 =========
+v1.20.18 (2022-11-03)
+-------------------------
+- Added tab sync function
+
+
 v1.20.16 (2022-10-24)
 -------------------------
 - Fixed Initial sync with empty parent folder

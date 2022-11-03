@@ -368,22 +368,38 @@ function arename(response, a = '') {
 }
 
 function sendTabs(response) {
-	//
+	response = parseInt(response);
+	if(response < 1) {
+		message = "Tabs could not be saved remotely, please check server log";
+		loglines = logit(message);
+		notify('error',message);
+	}
 }
 
-function getTabs() {
+function getTabs(response) {
+	tabCount = response.length;
+	
+	for(let i = 0; i < tabCount; i++) {
+		chrome.tabs.query({url: response[i].bmURL}, function(tabInfo) {
+			if(tabInfo.length === 0) {
+				chrome.tabs.create({url: response[i].bmURL, active:false});
+			}
+		});
+	}
+}
+
+function getNewTabs() {
+	sendRequest(getTabs);
 	chrome.tabs.onCreated.addListener(tabCreated);
-	chrome.tabs.onUpdated.addListener(checkTab);
+	chrome.tabs.onUpdated.addListener(tabUpdated);
 	chrome.tabs.onRemoved.addListener(tabCreated);
-	//sendRequest(getTabs);
-	console.log("sendRequest(getTabs)");
 }
 
 function tabCreated(tab) {
-	setTimeout(() => {  chrome.tabs.query({}, saveTabs); }, 5000);
+	setTimeout(() => {  chrome.tabs.query({}, saveTabs); }, 3000);
 }
 
-function checkTab(tID, info) {
+function tabUpdated(tID, info) {
 	if(info.status === 'complete') {
 		tabCreated(tID);
 	}
@@ -429,10 +445,6 @@ function ccMenus() {
 							});
 						});
 					}
-
-					if(options.s_tabs === true) {
-						getTabs();
-					}
 					
 					try{
 						chrome.contextMenus.create({
@@ -463,6 +475,12 @@ function ccMenus() {
 				}
 			})
 		}
+
+		chrome.storage.local.get(null, function(options) {
+			if(options.s_tabs === true) {
+				getNewTabs();
+			}
+		});
 	});
 }
 
