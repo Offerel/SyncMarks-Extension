@@ -1,5 +1,12 @@
 ChangeLog
 =========
+v1.20.19 (2022-11-03)
+-------------------------
+- Fixed Android bug in options
+- Fixed backup bug on Android
+- Fixed tab sync bug on Android 
+
+
 v1.20.18 (2022-11-03)
 -------------------------
 - Added tab sync function

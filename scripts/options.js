@@ -255,21 +255,22 @@ function restoreOptions() {
 				document.getElementById("s_tabs").defaultChecked = false;
 			}
 		}
-
+		
+		last_sync = options['last_sync'] || 0;
+		if(last_sync.toString().length > 0) {
+			document.querySelector("#s_startup").removeAttribute("disabled");
+		}
+		
+		if(document.getElementById("wdurl").value.length > 4) document.getElementById("cexp").disabled = false;
+		checkForm();
+		
 		chrome.commands.getAll((commands) => {
 			for (let {name, shortcut} of commands) {
 				var s = (name === 'bookmark-tab') ? shortcut:'undef';
 			}
 			document.getElementById("obmd").title = document.getElementById("obmd").title + ` (${s})`;
 		});
-
-		last_sync = options['last_sync'] || 0;
-		if(last_sync.toString().length > 0) {
-			document.querySelector("#s_startup").removeAttribute("disabled");
-		}
 		
-		if(document.querySelector("#wdurl").value.length > 4) document.getElementById("cexp").disabled = false;
-		checkForm();
 	});
 }
 
