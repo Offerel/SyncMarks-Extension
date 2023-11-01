@@ -1,4 +1,4 @@
-const filename = "bookmarks.json";
+const filename = 'bookmarks.json';
 const abrowser = typeof browser !== 'undefined';
 
 var dictOldIDsToNewIDs = { "-1": "-1" };
@@ -15,12 +15,35 @@ chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		switch (request.action) {
 			case 'cinfo':
-				console.log(sendRequest(cinfo));
+				sendRequest(cinfo, request.data);
+				break;
+			case 'init':
+				init();
+				break;
+			case 'arename':
+				sendRequest(arename, request.data);
+				break;
+			case 'removeAllMarks':
+				removeAllMarks();
+				break;
+			case 'bexport':
+				sendRequest(bexport, request.data);
+				break;
+			case 'getDAVMarks':
+				getDAVMarks();
+				break;
+			case 'loglines':
+				loglines = logit(request.data);
+				break;
+			case 'saveAllMarks':
+				saveAllMarks();
+				break;
+			case 'exportPHPMarks':
+				exportPHPMarks();
 				break;
 			default:
 				return false;
 		}
-		//if (request.greeting === "hello") sendResponse({farewell: "goodbye"});
 	}
 );
 
@@ -97,13 +120,13 @@ function sendRequest(action, data = null, addendum = null) {
 			sync: sync
 		}
 
-		var data = [];
+		var fdata = [];
 		for (let property in params) {
 			let encodedKey = encodeURIComponent(property);
 			let encodedValue = encodeURIComponent(params[property]);
-			data.push(encodedKey + "=" + encodedValue);
+			fdata.push(encodedKey + "=" + encodedValue);
 		}
-		data = data.join("&");
+		fdata = fdata.join("&");
 
 		fetch(url, {
 			method: "POST",
@@ -114,76 +137,32 @@ function sendRequest(action, data = null, addendum = null) {
 			},
 			redirect: "follow",
 			referrerPolicy: "no-referrer",
-			body: data,
-		}).then((response) => response.json()).then((responseData) => {
-			if(action == 'cinfo') chrome.runtime.sendMessage(xhr.response);
+			body: fdata,
+		}).then(response => {
+			response.json();
+			let xtResponse = response.headers.get('X-Request-Info');
+			//if((xtResponse !== '0') || (xtResponse !== null)) {
+				chrome.storage.local.set({token: xtResponse});
+			/*} else {
+				chrome.storage.local.remove('token');
+				let message = chrome.i18n.getMessage("optionsLoginError");
+				if(data !== 'p') notify('error', message);
+				changeIcon('error');
+				if(xhr.response.cInfo) {
+					chrome.runtime.sendMessage(xhr.response);
+				}
+			}
+			*/
+		} ).then((responseData) => {
+			if(action == 'cinfo') chrome.runtime.sendMessage(responseData);
 			action(responseData, addendum);
-			//return responseData;
 		}).catch(err => {
 			console.warn(err);
-		})
-		
-		//xhr.open("POST", url);
-
-		//let tc = false;
-
-		//xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		//xhr.withCredentials = true;
-		//xhr.timeout = 30000;
-		//xhr.responseType = 'json';
-		/*
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState === 4) {
-				if (xhr.status === 200) {
-					action(xhr.response, addendum);
-				} else {
-					let message = `Error ${xhr.status}: ${xhr.statusText}`;
-					console.error(action.name, message);
-					return false;
-				}
-			}
-		}
-		*/
-		/*
-		xhr.onload = async function () {
-			let xtResponse = xhr.getResponseHeader("X-Request-Info");
-			if(xtResponse !== null) {
-				if(xtResponse !== '0') {
-					await chrome.storage.local.set({token: xtResponse});
-				} else {
-					chrome.storage.local.remove('token');
-					let message = chrome.i18n.getMessage("optionsLoginError");
-					if(data !== 'p') notify('error', message);
-					changeIcon('error');
-					if(xhr.response.cInfo) {
-						chrome.runtime.sendMessage(xhr.response);
-					}
-				}
-			}
-		}
-		*/
-		/*
-		xhr.onerror = function () {
-			let message = "Error: " + xhr.status + ' | ' + xhr.response;
-			console.error(action.name, message);
-			return false;
-		}
-		*/
-		/*
-		xhr.ontimeout = function() {
-			let message = "Error: Timeout of " + parseFloat(xhr.timeout/1000).toFixed(1) + " seconds exceeded";
-			notify('error', message);
-			loglines = logit(message);
-			console.warn(action.name, message);
-			return false;
-		}
-		*/
-		//const qparams = new URLSearchParams(params);
-		//xhr.send(qparams);
+		});
 	});
 }
 
-function getclients(response, a = '') {
+function getclients(response) {
 	chrome.storage.local.set({clist:response});
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
@@ -225,11 +204,11 @@ function getclients(response, a = '') {
 	sendRequest(gurls);
 }
 
-function getpurl(response, a = '') {
+function getpurl(response) {
 	//
 }
 
-function gurls(response, a = '') {
+function gurls(response) {
 	if(Array.isArray(response)) {
 		try {
 			response.forEach(function(notification) {
@@ -271,6 +250,7 @@ function bexport(response) {
 	let date = new Date(Date.now());
 	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+	
 }
 
 function bimport(response, a = '') {
@@ -551,6 +531,7 @@ function sendTab(element) {
 }
 
 function logit(message) {
+	if (message == '') return '';
 	var ndate = new Date();
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0)
@@ -888,25 +869,27 @@ function exportPHPMarks(upl=[]) {
 function saveAllMarks() {
 	loglines = logit("Info: Requesting all bookmarks from server");
 	chrome.bookmarks.getTree(function(bmTree){
-		var bookmarks = JSON.stringify(bmTree);
-		var xhr = new XMLHttpRequest();
 		chrome.storage.local.get(null, function(options) {
-			xhr.open("PUT", options['wdurl'] + "/" + filename, true);
-			xhr.withCredentials = true;
-			xhr.setRequestHeader('X-Filename', filename);
-			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['creds']));
-			xhr.onload = function () {
-				if( xhr.status < 200 || xhr.status > 226) {
-					message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
-					notify('error',message);
-					loglines = logit("Info: "+message);
-					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-				}
-				else {
+			const requestOptions = {
+				method: 'PUT',
+				headers: {
+					'X-Filename': filename,
+					'Authorization': 'Basic ' + btoa(options['creds'])
+				},
+				body: JSON.stringify(bmTree)
+			};
+
+			fetch(options['wdurl'] + "/" + filename, requestOptions)
+				.then(response => response.json())
+				.then(data => {
 					loglines = logit("Info: Bookmarks send successfully to WebDAV share");
-				}
-			}
-			xhr.send(bookmarks);
+				})
+				.catch(err => {
+					message = chrome.i18n.getMessage("errorSaveBookmarks") + response.status + err;
+					notify('error',message);
+					loglines = logit("Info: " + message);
+					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+				});
 		});
 	});
 	let datems = Date.now();
@@ -1158,29 +1141,33 @@ function moveBookmarkAsync(id, destination) {
 
 function getDAVMarks() {
 	chrome.storage.local.get(null, function(options) {
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', options['wdurl'] + '/' + filename + '?t=' + Math.random(), true);
-		xhr.withCredentials = true;
-		xhr.setRequestHeader('X-Filename', filename);
-		xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['creds']));
-		xhr.onload = function () {		
-			if( xhr.status != 200 ) {
-				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
-				notify('error',message);
-				loglines = logit('Error: '+message);
-			}
-			else {
-				let DAVMarks = JSON.parse(xhr.responseText);
+		loglines = logit('Info: Requesting bookmarks from WebDAV Server');
+
+		const requestOptions = {
+			method: 'GET',
+			headers: {
+				'X-Filename': filename,
+				'Authorization': 'Basic ' + btoa(options['creds'])
+			},
+			body: JSON.stringify(bmTree)
+		};
+
+		fetch(options['wdurl'] + '/' + filename + '?t=' + Math.random(), requestOptions)
+			.then(response => response.json())
+			.then(data => {
+				let DAVMarks = JSON.parse(data);
 				chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 				chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 				pMarks = [];
 				let parsedMarks = parseMarks(DAVMarks, index=0);
 				count = 0;
-				addAllMarks(parsedMarks);			
-			}
-		}
-		loglines = logit('Info: Requesting bookmarks from WebDAV Server');
-		xhr.send();
+				addAllMarks(parsedMarks);
+			})
+			.catch(err => {
+				message = chrome.i18n.getMessage("errorGetBookmarks") + response.status + err;
+				notify('error',message);
+				loglines = logit('Error: '+message);
+			});
 	});
 }
 
