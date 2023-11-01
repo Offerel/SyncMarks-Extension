@@ -194,8 +194,11 @@ function rName() {
 	background_page.sendRequest(background_page.arename, this.value);
 }
 
-function gName() {
-	background_page.sendRequest(background_page.cinfo);
+async function gName() {
+	//background_page.sendRequest(background_page.cinfo);
+	const response = await chrome.runtime.sendMessage({action: "cinfo"});
+	// do something with response here, not outside the function
+	console.log(response);
 }
 
 function uuidv4() {

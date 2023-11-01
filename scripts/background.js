@@ -11,6 +11,19 @@ var lastseen = null;
 
 init();
 
+chrome.runtime.onMessage.addListener(
+	function(request, sender, sendResponse) {
+		switch (request.action) {
+			case 'cinfo':
+				console.log(sendRequest(cinfo));
+				break;
+			default:
+				return false;
+		}
+		//if (request.greeting === "hello") sendResponse({farewell: "goodbye"});
+	}
+);
+
 chrome.permissions.getAll(function(e) {
 	if(e.permissions.includes('bookmarks')) {
 		chrome.bookmarks.onCreated.addListener(onCreatedCheck);
@@ -20,10 +33,10 @@ chrome.permissions.getAll(function(e) {
 	} else {
 		chrome.storage.local.get(null, function(options) {
 			if(options.actions.crsrv === true) {
-				chrome.browserAction.onClicked.addListener(bookmarkTab);
+				chrome.action.onClicked.addListener(bookmarkTab);
 			} else {
-				chrome.browserAction.onClicked.removeListener(bookmarkTab);
-				chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+				chrome.action.onClicked.removeListener(bookmarkTab);
+				chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 			}
 		});
 	}
@@ -58,7 +71,15 @@ chrome.commands.onCommand.addListener((command) => {
 
 function sendRequest(action, data = null, addendum = null) {
 	chrome.storage.local.get(null, function(options) {
-		const xhr = new XMLHttpRequest();		
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+
+		let tc = (options['token'] != undefined) ? 'tk':'cr';
+		if(tc == false && data !== 'p') return false;
+
+		let authtype = (tc == 'tk') ? 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))):'Basic ' + options['creds'];
+		let url = options['wdurl'];
 
 		let client = options['s_uuid'];
 		let sync = null;
@@ -75,26 +96,42 @@ function sendRequest(action, data = null, addendum = null) {
 			add: addendum,
 			sync: sync
 		}
-		let url = options['wdurl'];
-		xhr.open("POST", url);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
 
-		let tc = false;
+		var data = [];
+		for (let property in params) {
+			let encodedKey = encodeURIComponent(property);
+			let encodedValue = encodeURIComponent(params[property]);
+			data.push(encodedKey + "=" + encodedValue);
+		}
+		data = data.join("&");
 
-		if(options['token'] != undefined) tc = 'tk';
-		if(options['creds'] != undefined) tc = 'cr';
-		if(tc == false && data !== 'p') return false;
+		fetch(url, {
+			method: "POST",
+			cache: "no-cache",
+			headers: {
+				'Content-type':'application/x-www-form-urlencoded;charset=UTF-8',
+				'Authorization':authtype,
+			},
+			redirect: "follow",
+			referrerPolicy: "no-referrer",
+			body: data,
+		}).then((response) => response.json()).then((responseData) => {
+			if(action == 'cinfo') chrome.runtime.sendMessage(xhr.response);
+			action(responseData, addendum);
+			//return responseData;
+		}).catch(err => {
+			console.warn(err);
+		})
+		
+		//xhr.open("POST", url);
 
-		if(tc == 'tk') xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		if(tc == 'cr') xhr.setRequestHeader('Authorization', 'Basic ' + options['creds']);
+		//let tc = false;
 
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.withCredentials = true;
-		xhr.timeout = 30000;
-		xhr.responseType = 'json';
-
+		//xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		//xhr.withCredentials = true;
+		//xhr.timeout = 30000;
+		//xhr.responseType = 'json';
+		/*
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
@@ -106,7 +143,8 @@ function sendRequest(action, data = null, addendum = null) {
 				}
 			}
 		}
-
+		*/
+		/*
 		xhr.onload = async function () {
 			let xtResponse = xhr.getResponseHeader("X-Request-Info");
 			if(xtResponse !== null) {
@@ -123,13 +161,15 @@ function sendRequest(action, data = null, addendum = null) {
 				}
 			}
 		}
-
+		*/
+		/*
 		xhr.onerror = function () {
 			let message = "Error: " + xhr.status + ' | ' + xhr.response;
 			console.error(action.name, message);
 			return false;
 		}
-
+		*/
+		/*
 		xhr.ontimeout = function() {
 			let message = "Error: Timeout of " + parseFloat(xhr.timeout/1000).toFixed(1) + " seconds exceeded";
 			notify('error', message);
@@ -137,9 +177,9 @@ function sendRequest(action, data = null, addendum = null) {
 			console.warn(action.name, message);
 			return false;
 		}
-
-		const qparams = new URLSearchParams(params);
-		xhr.send(qparams);
+		*/
+		//const qparams = new URLSearchParams(params);
+		//xhr.send(qparams);
 	});
 }
 
@@ -230,7 +270,7 @@ function bexport(response) {
 
 	let date = new Date(Date.now());
 	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+	chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
 function bimport(response, a = '') {
@@ -550,23 +590,23 @@ function removeAllMarks() {
 function changeIcon(mode) {
 	switch (mode) {
 		case 'error':
-			chrome.browserAction.setBadgeText({text: '!'});
-			chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-			chrome.browserAction.onClicked.removeListener(bookmarkTab);
-			chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+			chrome.action.setBadgeText({text: '!'});
+			chrome.action.setBadgeBackgroundColor({color: "red"});
+			chrome.action.onClicked.removeListener(bookmarkTab);
+			chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 			break;
 		case 'warn':
-			chrome.browserAction.setBadgeText({text: '!'});
-			chrome.browserAction.setBadgeBackgroundColor({color: "gold"});
+			chrome.action.setBadgeText({text: '!'});
+			chrome.action.setBadgeBackgroundColor({color: "gold"});
 			setTimeout(function(){
-				chrome.browserAction.setBadgeText({text: ''});
+				chrome.action.setBadgeText({text: ''});
 			}, 5000);
 			break;
 		case 'info':
-			chrome.browserAction.setBadgeText({text: 'i'});
-			chrome.browserAction.setBadgeBackgroundColor({color: "chartreuse"});
+			chrome.action.setBadgeText({text: 'i'});
+			chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
 			setTimeout(function(){
-				chrome.browserAction.setBadgeText({text: ''});
+				chrome.action.setBadgeText({text: ''});
 			}, 5000);
 			break;
 		default:
@@ -594,11 +634,11 @@ async function init() {
 				for (let {name, shortcut} of commands) {
 					var s = (name === 'bookmark-tab') ? shortcut:'undef';
 				}
-				chrome.browserAction.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
-				chrome.browserAction.onClicked.addListener(bookmarkTab);
+				chrome.action.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
+				chrome.action.onClicked.addListener(bookmarkTab);
 			});
 		} else {
-			chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+			chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 		}
 		
 		let s_startup = options['actions']['startup'] || false;
@@ -608,13 +648,13 @@ async function init() {
 			if(options['token'] === undefined && options['creds'] === undefined) {
 				changeIcon('error');
 			} else {
-				chrome.browserAction.setBadgeText({text: ''});
+				chrome.action.setBadgeText({text: ''});
 			}
 		} else if(s_type == 'WebDAV') {
 			if(options['creds'] == '') {
 				changeIcon('error');
 			} else {
-				chrome.browserAction.setBadgeText({text: ''});
+				chrome.action.setBadgeText({text: ''});
 			}
 		}
 
@@ -873,7 +913,7 @@ function saveAllMarks() {
 	let date = new Date(datems);
 	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
-	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+	chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
 function removeMark(bookmark) {
@@ -1302,8 +1342,7 @@ function addAllMarks(parsedMarks, index=1) {
 		if (typeof parsedMarks[index+1] !== 'undefined') {
 			addAllMarks(parsedMarks, ++index);
 			
-		}
-		else {
+		} else {
 			message = count + chrome.i18n.getMessage("successImportBookmarks");
 			notify('info',message);
 			loglines = logit('Info: '+message);
@@ -1316,7 +1355,7 @@ function addAllMarks(parsedMarks, index=1) {
 			chrome.storage.local.set({
 				last_s: datems,
 			});
-			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+			chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 		}
 	});
 
