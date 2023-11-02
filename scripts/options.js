@@ -58,7 +58,6 @@ function checkForm2() {
 
 function gToken(e) {
 	e.preventDefault();
-	//let requesting = chrome.permissions.request({origins: [document.getElementById('wdurl').value]});
 	let tbt = document.getElementById('tbt').checked;
 	document.getElementById('lginl').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
