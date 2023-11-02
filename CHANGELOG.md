@@ -1,5 +1,13 @@
 ChangeLog
 =========
+v1.21.0 (2023-11-02)
+-------------------------
+- Changed to manifest v3
+- Removed WebDAV support
+- Using dev console as logfile
+- Fixed minor bugs
+
+
 v1.20.19 (2022-11-03)
 -------------------------
 - Fixed Android bug in options

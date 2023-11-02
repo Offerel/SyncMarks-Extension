@@ -65,20 +65,11 @@ function gToken(e) {
 	cdata = "action=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked + "&tbt=" + tbt;
 	let rnd = Math.floor((Math.random() * 100) + 1) + '.txt';
 	var url = document.getElementById('wdurl').value;
-	let method = '';
-
-	if(document.getElementById('php_webdav').checked) {
-		method = 'POST';
-	} else {
-		url = url.endsWith('/') ? url.slice(0, -1):url;
-		url = url + "/" + rnd;
-		method = 'PUT';
-	}
 
 	let creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
 
 	fetch(url, {
-		method: method,
+		method: 'POST',
 		cache: "no-cache",
 		headers: {
 			'Content-type': 'application/x-www-form-urlencoded',
@@ -212,14 +203,14 @@ function restoreOptions() {
 			if(options['s_type'] == 'PHP') {
 				gName();
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
-				document.getElementById("php_webdav").checked = true;
+				//document.getElementById("php_webdav").checked = true;
 				if(options['token'] === undefined && options['creds'] === undefined) {
 					chrome.runtime.sendMessage({action: "cinfo", data: 'p'});
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
 				document.getElementById("s_tabs").defaultChecked = (options['s_tabs'] == undefined) ? false:options['s_tabs'];
 			} else {
-				document.getElementById("php_webdav").checked = false;
+				//document.getElementById("php_webdav").checked = false;
 				if(options['creds'] === undefined) {
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
@@ -364,7 +355,7 @@ function localizeHtmlPage() {
         }
     }
 
-	document.getElementById('blbl').title = chrome.i18n.getMessage("backendType");
+	//document.getElementById('blbl').title = chrome.i18n.getMessage("backendType");
 	document.getElementById('oauto').title = chrome.i18n.getMessage("ManAuto");
 	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend") + "";
 }
@@ -372,9 +363,6 @@ function localizeHtmlPage() {
 function openTab(tabname) {
 	var x = document.getElementsByClassName("otabs");
 	let larea = document.getElementById("logarea");
-	if(larea.childNodes.length > 2) {
-		larea.removeChild(larea.childNodes[2]); 
-	}
 
 	for (var i = 0; i < x.length; i++) {
 		x[i].style.display = "none";
@@ -385,17 +373,6 @@ function openTab(tabname) {
 		e.classList.remove("abutton");
 	});
 	document.querySelector('button[data-val="'+ tabname.target.attributes['data-val'].value +'"]').classList.add("abutton");
-}
-
-function saveLog() {
-	var logfile = document.querySelector("#logarea body").innerText;
-	var element = document.createElement('a');
-	element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(logfile);
-	element.download = 'SyncMarks.log';
-	element.style.display = 'none';
-	document.body.appendChild(element);
-	element.click();
-	document.body.removeChild(element);
 }
 
 function cCreate() {
@@ -495,7 +472,7 @@ window.addEventListener('load', function () {
 
 	document.getElementById("nuser").addEventListener("input", checkForm2);
 	document.getElementById("npassword").addEventListener("input", checkForm2);
-	document.getElementById("php_webdav").addEventListener("change", switchBackend);
+	//document.getElementById("php_webdav").addEventListener("change", switchBackend);
 	document.getElementById('lgin').addEventListener("click", gToken);
 	document.getElementById("s_startup").addEventListener("change", saveOptions);
 	document.getElementById("s_create").addEventListener("change", saveOptions);
@@ -507,7 +484,6 @@ window.addEventListener('load', function () {
 	document.getElementById("s_auto").addEventListener("change", cAuto);
 	document.getElementById("cname").addEventListener("change", rName);
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
-	document.getElementById("logsave").addEventListener("click", saveLog);
 	document.querySelector('h1').addEventListener('click', function(){
 		window.open(document.getElementById('wdurl').value);
 	});
