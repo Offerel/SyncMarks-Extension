@@ -5,7 +5,7 @@ var clientL = [];
 var oMarks = [];
 var pTabs = [];
 var lastseen = null;
-
+  
 init();
 
 chrome.runtime.onMessage.addListener(
@@ -152,7 +152,7 @@ function sendRequest(action, data = null, addendum = null) {
 			if(action == 'cinfo') chrome.runtime.sendMessage(responseData);
 			action(responseData, addendum);
 		}).catch(err => {
-			console.error(err);
+			console.warn(err);
 		});
 	});
 }
