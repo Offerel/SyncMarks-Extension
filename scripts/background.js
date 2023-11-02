@@ -141,12 +141,13 @@ function sendRequest(action, data = null, addendum = null) {
 			},
 			redirect: "follow",
 			referrerPolicy: "no-referrer",
-			body: fdata,
+			body: fdata
 		}).then(response => {
-			response.json();
-			let xtResponse = response.headers.get('X-Request-Info');
-			if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
-		}).then((responseData) => {
+			let rStatus = response.status;
+			let xRinfo = response.headers.get("X-Request-Info");
+			if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
+			return response.json();
+		}).then(responseData => {
 			if(action == 'cinfo') chrome.runtime.sendMessage(responseData);
 			action(responseData, addendum);
 		}).catch(err => {
@@ -222,7 +223,6 @@ function gurls(response) {
 }
 
 function cinfo(response, a = '') {
-	console.log(response);
 	lastseen = response['lastseen'];
 	if(a == 'sync') {
 		doFullSync();
