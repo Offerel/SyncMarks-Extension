@@ -1,6 +1,3 @@
-const filename = 'bookmarks.json';
-const abrowser = typeof browser !== 'undefined';
-
 var dictOldIDsToNewIDs = { "-1": "-1" };
 var loglines = '';
 var debug = false;
@@ -32,14 +29,17 @@ chrome.runtime.onMessage.addListener(
 			case 'getDAVMarks':
 				getDAVMarks();
 				break;
-			case 'loglines':
-				loglines = logit(request.data);
-				break;
 			case 'saveAllMarks':
 				saveAllMarks();
 				break;
 			case 'exportPHPMarks':
 				exportPHPMarks();
+				break;
+			case 'loglines':
+				console.log(request.data);
+				break;
+			case 'changeIcon':
+				changeIcon(request.data);
 				break;
 			default:
 				return false;
@@ -92,6 +92,10 @@ chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
 
+function abrowser() {
+	return typeof browser !== 'undefined';
+}
+
 function sendRequest(action, data = null, addendum = null) {
 	chrome.storage.local.get(null, function(options) {
 		let tarr = {};
@@ -141,19 +145,8 @@ function sendRequest(action, data = null, addendum = null) {
 		}).then(response => {
 			response.json();
 			let xtResponse = response.headers.get('X-Request-Info');
-			//if((xtResponse !== '0') || (xtResponse !== null)) {
-				chrome.storage.local.set({token: xtResponse});
-			/*} else {
-				chrome.storage.local.remove('token');
-				let message = chrome.i18n.getMessage("optionsLoginError");
-				if(data !== 'p') notify('error', message);
-				changeIcon('error');
-				if(xhr.response.cInfo) {
-					chrome.runtime.sendMessage(xhr.response);
-				}
-			}
-			*/
-		} ).then((responseData) => {
+			if(xtResponse !== null) chrome.storage.local.set({token: xtResponse});
+		}).then((responseData) => {
 			if(action == 'cinfo') chrome.runtime.sendMessage(responseData);
 			action(responseData, addendum);
 		}).catch(err => {
@@ -194,13 +187,11 @@ function getclients(response) {
 						});
 					} catch {}
 				});
-				let cnt = response.length - 1;
-				loglines = logit("Info: List of " + cnt + " clients received successful.");
 			}
 		}
 	});
 
-	loglines = logit("Info: Get notifications for current client.");
+	console.log("Info: Get notifications for current client.");
 	sendRequest(gurls);
 }
 
@@ -212,25 +203,26 @@ function gurls(response) {
 	if(Array.isArray(response)) {
 		try {
 			response.forEach(function(notification) {
-				loglines = logit('Info: Received tab: <a href="' + notification.url + '">' + notification.url + '</a>');
+				console.log('Info: Received tab: <a href="' + notification.url + '">' + notification.url + '</a>');
 				openTab(notification.url,notification.nkey,notification.title);
 			});
 		} catch(error) {
-			loglines = logit(error);
+			console.warn(error);
 		}
-		loglines = logit("Info: List of " + response.length + " notifications received successful.");
+		console.log("Info: List of " + response.length + " notifications received successful.");
 	}
 
 	chrome.storage.local.get(null, async function(options) {
 		let s_startup = options['actions']['startup'] || false;
 		if(s_startup === true) {
-			loglines = logit("Info: Start Sync");
+			console.log("Info: Start Sync");
 			sendRequest(cinfo, null, 'sync');
 		}
 	});
 }
 
 function cinfo(response, a = '') {
+	console.log(response);
 	lastseen = response['lastseen'];
 	if(a == 'sync') {
 		doFullSync();
@@ -241,10 +233,10 @@ function cinfo(response, a = '') {
 
 function bexport(response) {
 	response = JSON.parse(response);
-	if(abrowser == false) response = JSON.parse(c2cm(JSON.stringify(response)));
+	if(abrowser() == false) response = JSON.parse(c2cm(JSON.stringify(response)));
 	count = 0;
 	
-	loglines = logit('Info: '+ response.length +' Bookmarks received from server');
+	console.log('Info: '+ response.length +' Bookmarks received from server');
 	importFull(response);
 
 	let date = new Date(Date.now());
@@ -256,10 +248,10 @@ function bexport(response) {
 function bimport(response, a = '') {
 	if(response == 1) {
 		message = chrome.i18n.getMessage("successExportBookmarks");
-		loglines = logit("Info: " + message);
+		console.log("Info: " + message);
 	} else {
 		message = chrome.i18n.getMessage("errorExportBookmarks");
-		loglines = logit("Error: "+ message + " " + response);
+		console.log("Error: "+ message + " " + response);
 	}
 }
 
@@ -343,7 +335,7 @@ function addmark(response, a = '') {
 				notify(Math.random().toString(16).substring(2, 10), response);
 			}
 
-			loglines = logit("Info: " + response);
+			console.log("Info: " + response);
 		}
 	});
 
@@ -357,26 +349,26 @@ function durl(response, a = '') {
 
 function editmark(response, a = '') {
 	if(response == 1) {
-		loglines = logit("Info: Bookmark edited successfully at the server");
+		console.log("Info: Bookmark edited successfully at the server");
 	} else {
 		message = "Error: Bookmark not edited at the server, please check the server logfile.";
-		loglines = logit(message);
+		console.warn(message);
 		notify('error',message);
 	}
 }
 
 function movemark(response, a = '') {
 	if(response == 1)
-		loglines = logit("Info: Bookmark moved successfully at the server");
+		console.log("Info: Bookmark moved successfully at the server");
 	else
-		loglines = logit("Error: Bookmark not moved at the server, response from server is: " + response);
+		console.warn("Error: Bookmark not moved at the server, response from server is: " + response);
 }
 
 function delmark(response, a = '') {
 	if(response == 1) {
-		loglines = logit("Info: Bookmark removed at the server");
+		console.log("Info: Bookmark removed at the server");
 	} else {
-		loglines = logit("Error: Bookmark not removed at the server, please check the server logfile");
+		console.warn("Error: Bookmark not removed at the server, please check the server logfile");
 	}
 
 	let datems = Date.now();
@@ -391,7 +383,7 @@ function sendTabs(response) {
 	response = parseInt(response);
 	if(response < 1) {
 		message = "Tabs could not be saved remotely, please check server log";
-		loglines = logit(message);
+		console.warn(message);
 		notify('error',message);
 	}
 }
@@ -490,7 +482,7 @@ function ccMenus() {
 							});
 						} catch {}
 					} catch(error) {
-						loglines = logit(error);
+						console.warn(error);
 					}
 				}
 			})
@@ -511,7 +503,7 @@ function bookmarkTab() {
 			"url": tabs[0].url,
 			"title": tabs[0].title,
 			"type": 'bookmark',
-			"folder": (abrowser === true) ? 'unfiled_____':2,  
+			"folder": (abrowser() === true) ? 'unfiled_____':2,  
 			"nfolder": 'More Bookmarks',
 			"added": new Date().valueOf()
 		});
@@ -524,20 +516,10 @@ function sendTab(element) {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		chrome.storage.local.get(null, function(options) {
 			let url = (element.target.url) ? element.target.url:tabs[0].url;
-			loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options['s_uuid']);
+			console.log("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options['s_uuid']);
 			sendRequest(getpurl, url, element.target.id);
 		});
 	});
-}
-
-function logit(message) {
-	if (message == '') return '';
-	var ndate = new Date();
-	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
-	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0)
-		notify('error',message);
-	//	console.info(message);
-	return logline;
 }
 
 function get_oMarks() {
@@ -549,7 +531,7 @@ function get_oMarks() {
 }
 
 function removeAllMarks() {
-	loglines = logit('Info: Try to remove all local bookmarks');
+	console.log('Info: Try to remove all local bookmarks');
 	try {
 		chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 		chrome.bookmarks.getTree(function(tree) {
@@ -562,7 +544,7 @@ function removeAllMarks() {
 		});
 		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 	} catch(error) {
-		loglines = logit(error);
+		console.warn(error);
 	} finally {
 		chrome.storage.local.set({last_s: 1});
 	}
@@ -597,11 +579,6 @@ function changeIcon(mode) {
 }
 
 async function init() {
-	loglines = logit("Info: AddOn version: " + chrome.runtime.getManifest().version);
-	loglines = logit("Info: "+navigator.userAgent);
-	chrome.runtime.getPlatformInfo(function(info){
-		loglines = logit("Info: Current architecture: "+info.arch+" | Current OS: "+info.os);
-	});
 	await get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, async function(options) {
@@ -640,14 +617,14 @@ async function init() {
 		}
 
 		if( s_startup === true && s_type.indexOf('PHP') === -1) {
-			loglines = logit("Info: Initiate WebDAV startup sync");
+			console.log("Info: Initiate WebDAV startup sync");
 			if(options['wdurl']) getDAVMarks();
 		} else if(s_type.indexOf('PHP') === 0) {
 			if(options['wdurl']) {
 				await ccMenus();
-				loglines = logit("Info: Get list of clients.");
+				console.log("Info: Get list of clients.");
 				sendRequest(getclients, null, null);
-				loglines = logit("Info: Init finished");
+				console.log("Info: Init finished");
 			}
 		}
 	});
@@ -720,7 +697,7 @@ function notificationSettings(id) {
 					if(tabInfo.length > 0) chrome.tabs.highlight({tabs: tabInfo[0].index});
 				});
 			} catch(error) {
-				loglines = logit(error);
+				console.warn(error);
 			}
 		}
 	}
@@ -760,7 +737,7 @@ function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
 			"message": message
 		});
 	} catch(error) {
-		loglines = logit(error);
+		console.warn(error);
 	}
 }
 
@@ -798,7 +775,7 @@ function onMovedCheck(id, bookmark) {
 						"nfolder": folder[0]['title'],
 						"url":bmark[0].url
 					});
-					loglines = logit("Info: Sending move request to server. Bookmark ID: " + id);
+					console.log("Info: Sending move request to server. Bookmark ID: " + id);
 					sendRequest(movemark, jsonMark);
 				});
 			});
@@ -823,7 +800,7 @@ function onChangedCheck(id, changeInfo) {
 					"index": bmark[0].index
 				});
 
-				loglines = logit("Info: Sending edit request to server. URL: "+ changeInfo.url);
+				console.log("Info: Sending edit request to server. URL: "+ changeInfo.url);
 				sendRequest(editmark, jsonMark);
 			});
 		}
@@ -846,7 +823,7 @@ function onRemovedCheck(id, bookmark) {
 }
 
 function exportPHPMarks(upl=[]) {
-	loglines = logit("Info: Send new local bookmarks to server");
+	console.log("Info: Send new local bookmarks to server");
 	let bookmarks = '';
 	let p = 0;
 
@@ -867,27 +844,27 @@ function exportPHPMarks(upl=[]) {
 }
 
 function saveAllMarks() {
-	loglines = logit("Info: Requesting all bookmarks from server");
+	console.log("Info: Requesting all bookmarks from server");
 	chrome.bookmarks.getTree(function(bmTree){
 		chrome.storage.local.get(null, function(options) {
 			const requestOptions = {
 				method: 'PUT',
 				headers: {
-					'X-Filename': filename,
+					'X-Filename': 'bookmarks.json',
 					'Authorization': 'Basic ' + btoa(options['creds'])
 				},
 				body: JSON.stringify(bmTree)
 			};
 
-			fetch(options['wdurl'] + "/" + filename, requestOptions)
+			fetch(options['wdurl'] + "/" + 'bookmarks.json', requestOptions)
 				.then(response => response.json())
 				.then(data => {
-					loglines = logit("Info: Bookmarks send successfully to WebDAV share");
+					console.log("Info: Bookmarks send successfully to WebDAV share");
 				})
 				.catch(err => {
 					message = chrome.i18n.getMessage("errorSaveBookmarks") + response.status + err;
 					notify('error',message);
-					loglines = logit("Info: " + message);
+					console.log("Info: " + message);
 					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 				});
 		});
@@ -909,7 +886,7 @@ function removeMark(bookmark) {
 		"title": bookmark.node.title
 	});
 	
-	loglines = logit("Info: Sending remove request to server: <a href='"+bookmark.node.url+"'>"+bookmark.node.url+"</a>");
+	console.log("Info: Sending remove request to server: <a href='"+bookmark.node.url+"'>"+bookmark.node.url+"</a>");
 	sendRequest(delmark, jsonMark);
 }
 
@@ -931,22 +908,22 @@ function sendMark(bookmark) {
 			"added": bookmark.dateAdded
 		});
 
-		loglines = logit("Info: Sending add request to server: <a href='"+bookmark.url+"'>"+bookmark.url+"</a>");
+		console.log("Info: Sending add request to server: <a href='"+bookmark.url+"'>"+bookmark.url+"</a>");
 		sendRequest(addmark, jsonMark);
 	});
 }
 
 async function doFullSync() {
-	loglines = logit("Info: Sync started.");
+	console.log("Info: Sync started.");
 	try {
 		chrome.storage.local.get(null, async function(options) {
 			if(options['s_type'] == 'PHP') {
-				loglines = logit('Info: Sending Sync request to server');
+				console.log('Info: Sending Sync request to server');
 				sendRequest(bexport, 'json');
 			}
 		});
 	} catch(error) {
-		loglines = logit(error);
+		console.warn(error);
 	} finally {
 		chrome.storage.local.set({last_s: 1});
 	}
@@ -1006,7 +983,7 @@ async function importFull(rMarks) {
 		
 		let rMark = {};
 
-		if(abrowser) {
+		if(abrowser()) {
 			rMark.index = parseInt(remoteMark.bmIndex);
 			rMark.parentId = localParentId;
 			rMark.title = remoteMark.bmTitle;
@@ -1059,7 +1036,7 @@ async function importFull(rMarks) {
 		let action = 0;
 		remoteMark = rMarks[index];
 
-		if((abrowser === true && !remoteMark.bmID.endsWith('_____')) || (abrowser === false && remoteMark.bmID.length > 1)) {
+		if((abrowser() === true && !remoteMark.bmID.endsWith('_____')) || (abrowser() === false && remoteMark.bmID.length > 1)) {
 			action = await checkMark(remoteMark, index);
 		} else {
 			action = 0;
@@ -1067,22 +1044,22 @@ async function importFull(rMarks) {
 		
 		switch (action) {
 			case 0:
-				loglines = logit('Debug: Ignore bookmark "'+remoteMark.bmID+'"');
+				console.log('Debug: Ignore bookmark "'+remoteMark.bmID+'"');
 				break;
 			case 1:
-				loglines = logit('Debug: Create bookmark "'+remoteMark.bmID+'"');
+				console.log('Debug: Create bookmark "'+remoteMark.bmID+'"');
 				await createMark(remoteMark);
 				break;
 			case 2:
-				loglines = logit('Debug: Move bookmark "'+remoteMark.bmID+'"');
+				console.log('Debug: Move bookmark "'+remoteMark.bmID+'"');
 				await iMoveMark(remoteMark);
 				break;
 			case 3:
-				loglines = logit('Debug: Existing Bookmark "'+remoteMark.bmID+'"');
+				console.log('Debug: Existing Bookmark "'+remoteMark.bmID+'"');
 				await iMoveMark(remoteMark);
 				break;
 			default:
-				loglines = logit('Debug: Unknown action for bookmark "'+remoteMark.bmID+'"');
+				console.log('Debug: Unknown action for bookmark "'+remoteMark.bmID+'"');
 				break;
 		}	
 	}
@@ -1141,18 +1118,18 @@ function moveBookmarkAsync(id, destination) {
 
 function getDAVMarks() {
 	chrome.storage.local.get(null, function(options) {
-		loglines = logit('Info: Requesting bookmarks from WebDAV Server');
+		console.log('Info: Requesting bookmarks from WebDAV Server');
 
 		const requestOptions = {
 			method: 'GET',
 			headers: {
-				'X-Filename': filename,
+				'X-Filename': 'bookmarks.json',
 				'Authorization': 'Basic ' + btoa(options['creds'])
 			},
 			body: JSON.stringify(bmTree)
 		};
 
-		fetch(options['wdurl'] + '/' + filename + '?t=' + Math.random(), requestOptions)
+		fetch(options['wdurl'] + '/' + 'bookmarks.json' + '?t=' + Math.random(), requestOptions)
 			.then(response => response.json())
 			.then(data => {
 				let DAVMarks = JSON.parse(data);
@@ -1166,7 +1143,7 @@ function getDAVMarks() {
 			.catch(err => {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + response.status + err;
 				notify('error',message);
-				loglines = logit('Error: '+message);
+				console.warn('Error: '+message);
 			});
 	});
 }
@@ -1191,7 +1168,7 @@ function importMarks(parsedMarks, index=0) {
     let bmtype = parsedMarks[index].bmType;
     let bmurl = parsedMarks[index].bmURL;
 
-	if(abrowser == true) {
+	if(abrowser() == true) {
 		var newParentId = (typeof bmparentId !== 'undefined' && bmparentId.substr(bmparentId.length - 2) == "__") ? bmparentId : dictOldIDsToNewIDs[bmparentId];
 		if(bmparentId == "root________") {
 			importMarks(parsedMarks, ++index);
@@ -1209,7 +1186,7 @@ function importMarks(parsedMarks, index=0) {
 	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 	chrome.bookmarks.onChanged.removeListener(onChangedCheck);
 
-	if(abrowser == true) {
+	if(abrowser() == true) {
 		chrome.bookmarks.create(
 			(bmtype == "folder" ?
 				{
@@ -1234,7 +1211,7 @@ function importMarks(parsedMarks, index=0) {
 				if (typeof parsedMarks[index+1] == 'undefined') {
 					message = count + chrome.i18n.getMessage("successImportBookmarks");
 					notify('info',message);
-					loglines = logit('Info: ' + message + ' Re-adding the listeners now');
+					console.log('Info: ' + message + ' Re-adding the listeners now');
 					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 					chrome.bookmarks.onMoved.addListener(onMovedCheck);
 					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
@@ -1270,7 +1247,7 @@ function importMarks(parsedMarks, index=0) {
 				} else {
 					message = parsedMarks.length + chrome.i18n.getMessage("successImportBookmarks");
 					notify('info',message);
-					loglines = logit('Info: ' + message + ' Re-adding the listeners now');
+					console.log('Info: ' + message + ' Re-adding the listeners now');
 					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 					chrome.bookmarks.onMoved.addListener(onMovedCheck);
 					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
@@ -1332,7 +1309,7 @@ function addAllMarks(parsedMarks, index=1) {
 		} else {
 			message = count + chrome.i18n.getMessage("successImportBookmarks");
 			notify('info',message);
-			loglines = logit('Info: '+message);
+			console.log('Info: '+message);
 			chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 			chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 			

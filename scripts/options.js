@@ -1,5 +1,3 @@
-//var background_page = chrome.extension.getBackgroundPage();
-
 chrome.runtime.onMessage.addListener((message, sender) => {
 	if(sender.id === chrome.runtime.id) {
 		if(message.ctype) {
@@ -63,101 +61,74 @@ function gToken(e) {
 	let tbt = document.getElementById('tbt').checked;
 	document.getElementById('lginl').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
-	let xhr = new XMLHttpRequest();
 	let wmessage = document.getElementById('wmessage');
 	cdata = "action=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked + "&tbt=" + tbt;
 	let rnd = Math.floor((Math.random() * 100) + 1) + '.txt';
-	var url = document.getElementById('wdurl').value;	
+	var url = document.getElementById('wdurl').value;
+	let method = '';
 
 	if(document.getElementById('php_webdav').checked) {
-		xhr.open("POST", url, true);
+		method = 'POST';
 	} else {
 		url = url.endsWith('/') ? url.slice(0, -1):url;
 		url = url + "/" + rnd;
-		xhr.open("PUT", url, true);
+		method = 'PUT';
 	}
 
-	var creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
-	xhr.setRequestHeader('Authorization', 'Basic ' + creds);
-	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	xhr.withCredentials = true;
-	xhr.onload = function () {
-		switch(xhr.status) {
-			case 404: 	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL");
-						wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorURL"));
-						break;
-			case 401:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorUser");
-						wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorUser"));
-						break;
-			case 200:	let rp = xhr.responseText;
-						let response = (rp.indexOf('<') === -1) ? JSON.parse(rp):'0';
-						if(typeof response.length === 'undefined' && response.token == undefined || response.token.length != 0) {
-							document.getElementById('lginl').classList.remove('loading');
-							document.getElementById('lginl').style.visibility = "hidden";
-							chrome.storage.local.set({
-								wdurl: document.getElementById('wdurl').value,
-								s_type: 'PHP',
-							});
+	let creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
 
-							if(tbt) {
-								chrome.storage.local.set({creds: creds});
-								chrome.storage.local.remove('token');
-							} else {
-								chrome.storage.local.set({token: response.token});
-								chrome.storage.local.remove('creds');
-							}
+	fetch(url, {
+		method: method,
+		cache: "no-cache",
+		headers: {
+			'Content-type': 'application/x-www-form-urlencoded',
+			'Authorization': 'Basic ' + creds,
+		},
+		redirect: "follow",
+		referrerPolicy: "no-referrer",
+		body: cdata,
+	}).then(response => response.json())
+	.then(responseData => {
+		document.getElementById('lginl').classList.remove('loading');
+		document.getElementById('lginl').style.visibility = "hidden";
+		chrome.storage.local.set({
+			wdurl: document.getElementById('wdurl').value,
+			s_type: 'PHP',
+		});
 
-							document.getElementById('cname').defaultValue = response.cname;
-						}
+		if(tbt) {
+			chrome.storage.local.set({creds: creds});
+			chrome.storage.local.remove('token');
+		} else {
+			chrome.storage.local.set({token: responseData.token});
+			chrome.storage.local.remove('creds');
+		}
 
-						if(response.message.indexOf('updated') == 7) {
-							wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
-							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";							
-						} else {
-							wmessage.textContent = 'Warning: '+ response.message;
-							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-							console.warn('Syncmarks Warning: '+ response.message);
-						}
-						
+		document.getElementById('cname').defaultValue = responseData.cname;
+
+		if(responseData.message.indexOf('updated') == 7) {
+			wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
+			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";							
+		} else {
+			wmessage.textContent = 'Warning: '+ responseData.message;
+			wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
+			chrome.runtime.sendMessage({action: "loglines", data: 'Syncmarks Warning: '+ responseData.message});
+		}
+	}).catch(err => {
+		wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
+		chrome.runtime.sendMessage({action: "loglines", data: err});
+		switch(response.status) {
+			case 404:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL") + err;
 						break;
-			case 201:	xhr.open("DELETE", url, true);
-						xhr.onload = function () {
-							let status = this.status;
-							if(status >= 200 || status < 300) {
-								document.getElementById('lginl').classList.remove('loading');
-								document.getElementById('lginl').style.visibility = "hidden";
-								chrome.storage.local.set({
-									wdurl: document.getElementById('wdurl').value,
-									creds: creds,
-									s_type: 'WebDAV',
-								});
-								document.getElementById('cname').defaultValue = response.cname;
-								chrome.storage.local.remove("token");
-							} else {
-								document.getElementById('lginl').classList.remove('loading');
-								chrome.storage.local.set({
-									wdurl: document.getElementById('wdurl').value,
-									creds: '',
-									s_type: 'WebDAV',
-								});
-								document.getElementById('cname').defaultValue = response.cname;
-								chrome.storage.local.remove("token");
-							}
-						}
-						xhr.send(cdata);
-						break;			
-			default:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorLogin") + xhr.status;
-						wmessage.style.cssText = "background-color: #ff7d52;";
-						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorLogin") + xhr.status);
+			case 401:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorUser") + err;
 						break;
-		} 
+			default:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorLogin") + response.status + err;
+		}
+		chrome.runtime.sendMessage({action: "loglines", data: 'Syncmarks Error: ' + wmessage.textContent});
 		wmessage.className = "show";
 		setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 3000);
 		chrome.runtime.sendMessage({action: "init"});
-	};
-	xhr.send(cdata);
+	});
 }
 
 function saveOptions(e) {
@@ -191,7 +162,6 @@ function saveOptions(e) {
 }
 
 function rName() {
-	//background_page.sendRequest(background_page.arename, this.value);
 	chrome.runtime.sendMessage({action: "arename", data: this.value});
 }
 
@@ -244,7 +214,6 @@ function restoreOptions() {
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
 				if(options['token'] === undefined && options['creds'] === undefined) {
-					//background_page.sendRequest(background_page.cinfo, 'p');
 					chrome.runtime.sendMessage({action: "cinfo", data: 'p'});
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
@@ -347,21 +316,17 @@ function importOptions() {
 
 function manualImport(e) {
 	e.preventDefault();
-	//if (this.id === 'iyes') background_page.removeAllMarks();
 	if (this.id === 'iyes') chrome.runtime.sendMessage({action: "removeAllMarks"});
 
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				//background_page.sendRequest(background_page.bexport, 'json');
 				chrome.runtime.sendMessage({action: "bexport", data: 'json'});
 			} else if (options['s_type'] == 'WebDAV') {
-				//background_page.getDAVMarks();
 				chrome.runtime.sendMessage({action: "getDAVMarks"});
 			}
 		});
 	} catch(error) {
-		//background_page.loglines = background_page.logit(error);
 		chrome.runtime.sendMessage({action: "loglines", data: error});
 	} finally {
 		document.getElementById("impdialog").style.display = "none";
@@ -371,17 +336,13 @@ function manualImport(e) {
 
 function manualExport(e) {
 	e.preventDefault();
-	//var background_page = chrome.extension.getBackgroundPage();
 	try {
 		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
-			//background_page.saveAllMarks();
 			chrome.runtime.sendMessage({action: "saveAllMarks"});
 		} else if (document.querySelector('input[name="stype"]:checked').value == 'PHP') {
-			//background_page.exportPHPMarks();
 			chrome.runtime.sendMessage({action: "exportPHPMarks"});
 		}
 	} catch(error) {
-		//background_page.loglines = background_page.logit(error);
 		chrome.runtime.sendMessage({action: "loglines", data: error})
 	} finally {
 		document.getElementById("expdialog").style.display = "none";
@@ -408,49 +369,11 @@ function localizeHtmlPage() {
 	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend") + "";
 }
 
-function filterLog() {
-	let larea = document.getElementById("logarea");
-	let debug = document.getElementById('logdebug').checked;
-	//let lines = background_page.loglines.split("\n");
-	let lines = chrome.runtime.sendMessage({action: "loglines", data: '-'}).split("\n");
-	let tlines = new Array();
-	let rlines = "";
-
-	if(larea.childNodes.length > 2) {
-		larea.removeChild(larea.childNodes[2]); 
-	}
-	
-	if(!debug) {
-		lines.forEach(function(line) {
-			if(line.indexOf("Debug:") === -1) tlines.push(line);
-		});
-		rlines = tlines.join("\n");
-	} else {
-		rlines = lines.join("\n");
-	}
-
-	var logp = new DOMParser().parseFromString(rlines, 'text/html').body;
-	larea.appendChild(logp);
-}
-
 function openTab(tabname) {
 	var x = document.getElementsByClassName("otabs");
 	let larea = document.getElementById("logarea");
 	if(larea.childNodes.length > 2) {
 		larea.removeChild(larea.childNodes[2]); 
-	}
-
-	if(tabname.target.innerText == 'Logfile') {
-		//console.log(background_page.loglines);
-		//let lines = background_page.loglines.split("\n");
-		let lines = chrome.runtime.sendMessage({action: "loglines", data: '-'}).split("\n");
-		let tlines = new Array();
-		lines.forEach(function(line, key) {
-			if(line.indexOf("Debug:") === -1) tlines.push(line);
-		});
-		let rlines = tlines.join("\n");
-		var logp = new DOMParser().parseFromString(rlines, 'text/html').body;
-		larea.appendChild(logp);
 	}
 
 	for (var i = 0; i < x.length; i++) {
@@ -473,20 +396,6 @@ function saveLog() {
 	document.body.appendChild(element);
 	element.click();
 	document.body.removeChild(element);
-}
-
-function clearLog() {
-	//background_page.loglines = '';
-	chrome.runtime.sendMessage({action: "loglines", data: ''})
-	let larea = document.getElementById("logarea");
-	if(larea.childNodes.length > 2) {
-		larea.removeChild(larea.childNodes[2]); 
-	}
-	if(tabname.target.innerText == 'Logfile') {
-		//var logp = new DOMParser().parseFromString(background_page.loglines, 'text/html').body;
-		var logp = new DOMParser().parseFromString(chrome.runtime.sendMessage({action: "loglines", data: ''}), 'text/html').body;
-		larea.appendChild(logp);
-	}
 }
 
 function cCreate() {
@@ -565,7 +474,6 @@ window.addEventListener('load', function () {
 		e.preventDefault();
 		document.getElementById("confinput").click();
 	});
-	document.getElementById("logdebug").addEventListener('change', filterLog);
 	document.getElementById("confinput").addEventListener('change', importOptions);
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
@@ -600,7 +508,6 @@ window.addEventListener('load', function () {
 	document.getElementById("cname").addEventListener("change", rName);
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 	document.getElementById("logsave").addEventListener("click", saveLog);
-	document.getElementById("logclear").addEventListener("click", clearLog);
 	document.querySelector('h1').addEventListener('click', function(){
 		window.open(document.getElementById('wdurl').value);
 	});
