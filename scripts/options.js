@@ -112,7 +112,7 @@ function gToken(e) {
 							document.getElementById('cname').defaultValue = response.cname;
 						}
 
-						if(response.message.indexOf('updated') == 7) {
+						if(responseData.message.indexOf('updated') == 7 || responseData.message.indexOf('registered') == 7) {
 							wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
 							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";							
 						} else {
