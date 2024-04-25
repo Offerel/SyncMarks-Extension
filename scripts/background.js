@@ -212,11 +212,13 @@ function gurls(response, a = '') {
 }
 
 function cinfo(response, a = '') {
-	lastseen = response['lastseen'];
-	if(a == 'sync') {
-		doFullSync();
-	} else {
-		chrome.runtime.sendMessage(response);
+	if(response !== null) {
+		lastseen =  response['lastseen'];
+		if(a == 'sync') {
+			doFullSync();
+		} else {
+			chrome.runtime.sendMessage(response);
+		}
 	}
 }
 

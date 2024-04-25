@@ -93,7 +93,6 @@ function gToken(e) {
 						break;
 			case 200:	let rp = xhr.responseText;
 						let response = (rp.indexOf('<') === -1) ? JSON.parse(rp):'0';
-						//if(typeof response.length === 'undefined' && response.token == undefined || response.token.length != 0) {
 						if(response.length > 0 && response.token == undefined || response.token.length != 0) {
 							document.getElementById('lginl').classList.remove('loading');
 							document.getElementById('lginl').style.visibility = "hidden";
@@ -113,7 +112,11 @@ function gToken(e) {
 							document.getElementById('cname').defaultValue = response.cname;
 						}
 
-						if(responseData.message.indexOf('updated') == 7 || responseData.message.indexOf('registered') == 7) {
+						if(typeof responseData === 'undefined') {
+							wmessage.textContent = 'Warning: Your endpoint seems to have the wrong URL';
+							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
+							console.warn('Syncmarks Warning: Your endpoint seems to have the wrong URL');
+						} else if(responseData.message.indexOf('updated') == 7 || responseData.message.indexOf('registered') == 7) {
 							wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
 							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";							
 						} else {
