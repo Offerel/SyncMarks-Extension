@@ -93,7 +93,8 @@ function gToken(e) {
 						break;
 			case 200:	let rp = xhr.responseText;
 						let response = (rp.indexOf('<') === -1) ? JSON.parse(rp):'0';
-						if(typeof response.length === 'undefined' && response.token == undefined || response.token.length != 0) {
+						//if(typeof response.length === 'undefined' && response.token == undefined || response.token.length != 0) {
+						if(response.length > 0 && response.token == undefined || response.token.length != 0) {
 							document.getElementById('lginl').classList.remove('loading');
 							document.getElementById('lginl').style.visibility = "hidden";
 							chrome.storage.local.set({
