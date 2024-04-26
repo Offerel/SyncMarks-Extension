@@ -1,5 +1,9 @@
 ChangeLog
 =========
+v1.20.20 (2024-04-26)
+-------------------------
+- Add check for correct backend url
+
 v1.20.19 (2022-11-03)
 -------------------------
 - Fixed Android bug in options
