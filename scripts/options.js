@@ -93,6 +93,7 @@ function gToken(e) {
 						break;
 			case 200:	let rp = xhr.responseText;
 						let response = (rp.indexOf('<') === -1) ? JSON.parse(rp):'0';
+						//if(typeof response.length === 'undefined' && response.token == undefined || response.token.length != 0) {
 						if(response.length > 0 && response.token == undefined || response.token.length != 0) {
 							document.getElementById('lginl').classList.remove('loading');
 							document.getElementById('lginl').style.visibility = "hidden";
@@ -112,17 +113,17 @@ function gToken(e) {
 							document.getElementById('cname').defaultValue = response.cname;
 						}
 
-						if(typeof responseData === 'undefined') {
-							wmessage.textContent = 'Warning: Your endpoint seems to have the wrong URL';
+						if(typeof response.message === 'undefined') {
+							wmessage.textContent = 'Warning: Your endpoint does not send a expected answer. Please check the URL';
 							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-							console.warn('Syncmarks Warning: Your endpoint seems to have the wrong URL');
-						} else if(responseData.message.indexOf('updated') == 7 || responseData.message.indexOf('registered') == 7) {
+							console.warn(wmessage.textContent);
+						} else  if(response.message.indexOf('updated') == 7 || response.message.indexOf('registered') == 7) {
 							wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
-							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";							
+							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
 						} else {
 							wmessage.textContent = 'Warning: '+ response.message;
 							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-							console.warn('Syncmarks Warning: '+ response.message);
+							console.warn(wmessage.textContent);
 						}
 						
 						break;
@@ -567,7 +568,7 @@ window.addEventListener('load', function () {
 	document.getElementById("crclose").addEventListener("click", function() {document.getElementById("crdialog").style.display = "none";});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
-	document.getElementById("wdurl").addEventListener("change", checkForm);
+	document.getElementById("wdurl").addEventListener("input", checkForm);
 	document.getElementById("lginl").addEventListener("click", function(e) {
 		e.preventDefault;
 		document.getElementById("nuser").defaultValue = '';
