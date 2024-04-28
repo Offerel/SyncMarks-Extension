@@ -15,9 +15,23 @@ chrome.runtime.onMessage.addListener((message, sender) => {
 			let tm = new Date(cInfo.tm * 1000).toLocaleString();
 			ipinfo.innerText = tm + ' | ' + cInfo.de + ' | ' + cInfo.co + ' | ' + cInfo.ct + ' | ' + cInfo.re + '\n' + cInfo.ua;
 			ip.appendChild(ipinfo);
+		} else if (message.type == 'bimport' ) {
+			let type = (message.text == "successExportBookmarks") ? "info":"error";
+			showMsg(chrome.i18n.getMessage(message.text), type);
+		} else if (message.type == 'bexport' ) {
+			let type = (message.text.includes("Bookmarks received")) ? "info":"error";
+			showMsg(message.text, type);
 		}
 	}
 });
+
+function showMsg(text, type) {
+	let wmessage = document.getElementById('wmessage');
+	wmessage.textContent = text;
+	wmessage.style.cssText = (type == 'info') ? "border-color: green; background-color: #98FB98;":"border-color: red; background-color: lightsalmon;";
+	wmessage.className = "show";
+	setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 3000);
+}
 
 function checkForm() {
 	if((document.getElementById('wdurl').value != '') && (document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue)) {
@@ -64,7 +78,6 @@ function gToken(e) {
 	document.getElementById('lginl').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
 	let xhr = new XMLHttpRequest();
-	let wmessage = document.getElementById('wmessage');
 	cdata = "action=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked + "&tbt=" + tbt;
 	let rnd = Math.floor((Math.random() * 100) + 1) + '.txt';
 	var url = document.getElementById('wdurl').value;	
@@ -83,17 +96,14 @@ function gToken(e) {
 	xhr.withCredentials = true;
 	xhr.onload = function () {
 		switch(xhr.status) {
-			case 404: 	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL");
-						wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorURL"));
+			case 404: 	console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorURL"));
+						showMsg(chrome.i18n.getMessage("optionsErrorURL"), 'error');
 						break;
-			case 401:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorUser");
-						wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorUser"));
+			case 401:	console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorUser"));
+						showMsg(chrome.i18n.getMessage("optionsErrorUser"), 'error');
 						break;
 			case 200:	let rp = xhr.responseText;
 						let response = (rp.indexOf('<') === -1) ? JSON.parse(rp):'0';
-						//if(typeof response.length === 'undefined' && response.token == undefined || response.token.length != 0) {
 						if(response.length > 0 && response.token == undefined || response.token.length != 0) {
 							document.getElementById('lginl').classList.remove('loading');
 							document.getElementById('lginl').style.visibility = "hidden";
@@ -114,16 +124,13 @@ function gToken(e) {
 						}
 
 						if(typeof response.message === 'undefined') {
-							wmessage.textContent = 'Warning: Your endpoint does not send a expected answer. Please check the URL';
-							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-							console.warn(wmessage.textContent);
+							showMsg('Your endpoint does not send a expected answer. Please check the URL', 'error');
+							console.warn('Your endpoint does not send a expected answer. Please check the URL');
 						} else  if(response.message.indexOf('updated') == 7 || response.message.indexOf('registered') == 7) {
-							wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
-							wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
+							showMsg(chrome.i18n.getMessage("optionsSuccessLogin"), 'info');
 						} else {
-							wmessage.textContent = 'Warning: '+ response.message;
-							wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-							console.warn(wmessage.textContent);
+							showMsg('Warning: '+ response.message, 'error');
+							console.warn(response.message);
 						}
 						
 						break;
@@ -153,13 +160,11 @@ function gToken(e) {
 						}
 						xhr.send(cdata);
 						break;			
-			default:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorLogin") + xhr.status;
-						wmessage.style.cssText = "background-color: #ff7d52;";
-						console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorLogin") + xhr.status);
+			default:	console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorLogin") + xhr.status);
+						showMsg(chrome.i18n.getMessage("optionsErrorLogin") + xhr.status, 'error');
 						break;
 		} 
-		wmessage.className = "show";
-		setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 3000);
+
 		background_page.init();
 	};
 	xhr.send(cdata);
@@ -167,12 +172,13 @@ function gToken(e) {
 
 function saveOptions(e) {
 	if(typeof e !== "undefined") e.preventDefault();
-	var wmessage = document.getElementById('wmessage');
-	wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
+
+	let text = chrome.i18n.getMessage("optionsSuccessLogin");
+	let type = 'info';
 
 	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
-		document.getElementById("wmessage").textContent = chrome.i18n.getMessage("optionsNotUsed");
-		wmessage.style.cssText = "border-color: darkorange; background-color: gold;";
+		text = chrome.i18n.getMessage("optionsNotUsed");
+		type = 'error';
 	}
 
 	chrome.storage.local.set({
@@ -190,9 +196,7 @@ function saveOptions(e) {
 		wdurl: document.getElementById("wdurl").value,
 	});
 
-	wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
-	wmessage.className = "show";
-	setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 5000);
+	showMsg(text, type);
 }
 
 function rName() {
@@ -211,12 +215,8 @@ function uuidv4() {
 
 function restoreOptions() {
 	chrome.storage.local.get(null, function(options) {
-		let wmessage = document.getElementById('wmessage');
 		if(options['wdurl'] == undefined) {
-			wmessage.textContent = chrome.i18n.getMessage("infoEmptyConfig");
-			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
-			wmessage.className = "show";
-			setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
+			showMsg(chrome.i18n.getMessage("infoEmptyConfig"), 'info');
 		}
 		document.querySelector("#wdurl").defaultValue = options['wdurl'] || "";		
 		
@@ -336,10 +336,7 @@ function importOptions() {
 		document.getElementById("s_auto").checked = (ioptions.actions.startup && ioptions.actions.create && ioptions.actions.change && ioptions.actions.remove) ? true:false;
 		document.getElementById("s_tabs").checked = ioptions.s_tabs;
 
-		wmessage.textContent = chrome.i18n.getMessage("optionsSuccessImport");
-		wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
-		wmessage.className = "show";
-		setTimeout(function(){wmessage.className = wmessage.className.replace("show", ""); }, 3000);
+		showMsg(chrome.i18n.getMessage("optionsSuccessImport"), 'info');
 	});
 	reader.readAsText(file);
 	document.getElementById("expimpdialog").style.display = "none";

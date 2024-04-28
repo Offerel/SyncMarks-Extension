@@ -228,20 +228,23 @@ function bexport(response) {
 	count = 0;
 	
 	loglines = logit('Info: '+ response.length +' Bookmarks received from server');
+	chrome.runtime.sendMessage({text:'' + response.length + ' Bookmarks received from server', type:'bexport'});
 	importFull(response);
 
 	let date = new Date(Date.now());
 	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined, doptions)});
 }
 
 function bimport(response, a = '') {
 	if(response == 1) {
 		message = chrome.i18n.getMessage("successExportBookmarks");
 		loglines = logit("Info: " + message);
+		chrome.runtime.sendMessage({text:"successExportBookmarks", type:'bimport'});
 	} else {
 		message = chrome.i18n.getMessage("errorExportBookmarks");
 		loglines = logit("Error: "+ message + " " + response);
+		chrome.runtime.sendMessage({text:"errorExportBookmarks", type:'bimport'});
 	}
 }
 
