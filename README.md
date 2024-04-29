@@ -1,9 +1,9 @@
 # SyncMarks Extension
-This is a Webextension for Browsers to sync and backup your bookmarks via PHP or WebDAV. You can simply install the AddOn for Firefox via [AMO](https://addons.mozilla.org/firefox/addon/syncmarks/) or for Microsoft Edge via [Edge Store](https://microsoftedge.microsoft.com/addons/detail/ffobakhdlfhmnnkmimkbnbmnplihhphg). The Addon will work also on other Chromium derivates, including [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser). You can use this plugin to export, import and sync your bookmarks to your backend (WebDAV share / or [SyncMarks-Webapp](/Offerel/SyncMarks-WebApp).
+This is a Webextension for Browsers to sync and backup your bookmarks via PHP or WebDAV. You can simply install the AddOn for Firefox via [AMO](https://addons.mozilla.org/firefox/addon/syncmarks/) or for Microsoft Edge via [Edge Store](https://microsoftedge.microsoft.com/addons/detail/ffobakhdlfhmnnkmimkbnbmnplihhphg). The Addon will work also on other Chromium derivates, including [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser). You can use this plugin to export, import and sync your bookmarks to your backend (WebDAV share / or [SyncMarks-Webapp](../../../../../Offerel/SyncMarks-WebApp).
 
 Currently there is no bookmark API for Firefox on Android available, but most other features should work there. The AddOns can be installed in Kiwi Browser.
 
-The bookmarks can be exported manually or automatically. There are corresponding options in the addon settings. The Export/Import process is compatible with Browser internal Sync. The bookmarks are also be compatible with the corresponding [Roundcube plugin](/Offerel/roundcube_syncmarks), so that they can also be used in Roundcube.
+The bookmarks can be exported manually or automatically. There are corresponding options in the addon settings. The Export/Import process is compatible with Browser internal Sync. The bookmarks are also be compatible with the corresponding [Roundcube plugin](../../../../../Offerel/roundcube_syncmarks), so that they can also be used in Roundcube.
 
 ## Issues
 Since the main repository is on Codeberg.org, please use the [issue tracker at Codeberg.org](https://codeberg.org/Offerel/SyncMarks-Extension/issues). Github.com is only a mirror for compatibility reason.
