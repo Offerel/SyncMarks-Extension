@@ -6,7 +6,7 @@ Currently there is no bookmark API for Firefox on Android available, but most ot
 The bookmarks can be exported manually or automatically. There are corresponding options in the addon settings. The Export/Import process is compatible with Browser internal Sync. The bookmarks are also be compatible with the corresponding [Roundcube plugin](/Offerel/roundcube_syncmarks), so that they can also be used in Roundcube.
 
 ## Issues
-Since the main repository is on Codeberg.org, please use the issue tracker at https://codeberg.org/Offerel/SyncMarks-Extension/issues. Github.com is only a mirror for compatibility reason.
+Since the main repository is on Codeberg.org, please use the [issue tracker at Codeberg.org](https://codeberg.org/Offerel/SyncMarks-Extension/issues). Github.com is only a mirror for compatibility reason.
 
 ## Used Permissions
 
