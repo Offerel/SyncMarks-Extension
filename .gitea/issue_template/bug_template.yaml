@@ -1,0 +1,41 @@
+name: Bug Report
+about: File a bug report
+title: '[Bug]: '
+body:
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Description
+      description: Please describe in detail, whats the problem
+      placeholder: ''
+      value: ''
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version of the plugin you find the issue?
+      placeholder: ex. v1.5.7
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      value: ''
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Chromium
+        - Safari
+        - Microsoft Edge
+  - type: textarea
+    id: browser-logs
+    attributes:
+      label: Log from the Browser Dev Console
+      description: Please copy and paste the out put of errors from the Dev Console. This will be automatically formatted into code.
+      render: shell
+    validations:
+      required: true

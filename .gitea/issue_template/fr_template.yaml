@@ -1,0 +1,35 @@
+name: Feature Request
+about: File a feature request
+title: '[FR]: '
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Current version
+      description: Whats the current version of the plugin where you are missing this feature?
+      placeholder: ex. v1.5.7
+    validations:
+      required: true
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: What?
+      description: Please describe in detail, what you want to have as feature
+      placeholder: ''
+      value: ''
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+      description: What is not possible, if this feature will not be added?
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Workaround
+      description: If you think there is a workaround, please let me know.
+    validations:
+      required: true
