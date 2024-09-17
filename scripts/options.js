@@ -79,7 +79,17 @@ function gToken(e) {
 	document.getElementById('lginl').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
 	let xhr = new XMLHttpRequest();
-	cdata = "action=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked + "&tbt=" + tbt;
+
+	const params = {
+		action: "checkClient",
+		client: document.getElementById('s_uuid').value,
+		data: {
+			usebasic: tbt
+		},
+		sync: document.getElementById('s_startup').checked
+	}
+
+	
 	let rnd = Math.floor((Math.random() * 100) + 1) + '.txt';
 	var url = document.getElementById('wdurl').value;	
 
@@ -93,7 +103,8 @@ function gToken(e) {
 
 	var creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
 	xhr.setRequestHeader('Authorization', 'Basic ' + creds);
-	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+			
 	xhr.withCredentials = true;
 	xhr.onload = function () {
 		switch(xhr.status) {
@@ -172,7 +183,8 @@ function gToken(e) {
 			}
 		)
 	};
-	xhr.send(cdata);
+
+	xhr.send(JSON.stringify(params));
 }
 
 function saveOptions(e) {
@@ -263,7 +275,14 @@ function restoreOptions() {
 				document.getElementById("php_webdav").checked = true;
 				if(options['token'] === undefined && options['creds'] === undefined) {
 					//chrome.runtime.getBackgroundPage().sendRequest(chrome.runtime.getBackgroundPage().cinfo, 'p');
-					chrome.runtime.getBackgroundPage().cinfo;
+					//chrome.runtime.getBackgroundPage().cinfo;
+
+					chrome.runtime.getBackgroundPage(
+						function(background){
+							background.cinfo();
+						}
+					)
+					
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
 				document.getElementById("s_tabs").defaultChecked = (options['s_tabs'] == undefined) ? false:options['s_tabs'];
