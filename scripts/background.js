@@ -20,10 +20,10 @@ chrome.permissions.getAll(function(e) {
 	} else {
 		chrome.storage.local.get(null, function(options) {
 			if(options.actions.crsrv === true) {
-				chrome.browserAction.onClicked.addListener(bookmarkTab);
+				chrome.action.onClicked.addListener(bookmarkTab);
 			} else {
-				chrome.browserAction.onClicked.removeListener(bookmarkTab);
-				chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+				chrome.action.onClicked.removeListener(bookmarkTab);
+				chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 			}
 		});
 	}
@@ -58,7 +58,7 @@ chrome.commands.onCommand.addListener((command) => {
 
 function sendRequest(action, data = null, addendum = null) {
 	chrome.storage.local.get(null, function(options) {
-		const xhr = new XMLHttpRequest();		
+		const xhr = new XMLHttpRequest();
 
 		let client = options['s_uuid'];
 		let sync = null;
@@ -75,7 +75,8 @@ function sendRequest(action, data = null, addendum = null) {
 			add: addendum,
 			sync: sync
 		}
-		let url = options['wdurl'];
+
+		let url = new URL(options['wdurl']);
 		xhr.open("POST", url);
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
@@ -90,7 +91,6 @@ function sendRequest(action, data = null, addendum = null) {
 		if(tc == 'tk') xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
 		if(tc == 'cr') xhr.setRequestHeader('Authorization', 'Basic ' + options['creds']);
 
-		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhr.withCredentials = true;
 		xhr.timeout = 30000;
 		xhr.responseType = 'json';
@@ -138,8 +138,14 @@ function sendRequest(action, data = null, addendum = null) {
 			return false;
 		}
 
-		const qparams = new URLSearchParams(params);
-		xhr.send(qparams);
+		if (url.searchParams.has('api')) {
+			xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+			xhr.send(JSON.stringify(params));
+		} else {
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			const qparams = new URLSearchParams(params);
+			xhr.send(qparams);
+		}
 	});
 }
 
@@ -233,7 +239,7 @@ function bexport(response) {
 
 	let date = new Date(Date.now());
 	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined, doptions)});
+	chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined, doptions)});
 }
 
 function bimport(response, a = '') {
@@ -428,7 +434,7 @@ function ccMenus() {
 			chrome.contextMenus.create({
 				id: "sm_settings",
 				title: chrome.i18n.getMessage("optionsSyncOptions"),
-				contexts: ["browser_action"]
+				contexts: ["action"]
 			})
 			
 			chrome.contextMenus.onClicked.addListener(info => {
@@ -555,23 +561,23 @@ function removeAllMarks() {
 function changeIcon(mode) {
 	switch (mode) {
 		case 'error':
-			chrome.browserAction.setBadgeText({text: '!'});
-			chrome.browserAction.setBadgeBackgroundColor({color: "red"});
-			chrome.browserAction.onClicked.removeListener(bookmarkTab);
-			chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+			chrome.action.setBadgeText({text: '!'});
+			chrome.action.setBadgeBackgroundColor({color: "red"});
+			chrome.action.onClicked.removeListener(bookmarkTab);
+			chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 			break;
 		case 'warn':
-			chrome.browserAction.setBadgeText({text: '!'});
-			chrome.browserAction.setBadgeBackgroundColor({color: "gold"});
+			chrome.action.setBadgeText({text: '!'});
+			chrome.action.setBadgeBackgroundColor({color: "gold"});
 			setTimeout(function(){
-				chrome.browserAction.setBadgeText({text: ''});
+				chrome.action.setBadgeText({text: ''});
 			}, 5000);
 			break;
 		case 'info':
-			chrome.browserAction.setBadgeText({text: 'i'});
-			chrome.browserAction.setBadgeBackgroundColor({color: "chartreuse"});
+			chrome.action.setBadgeText({text: 'i'});
+			chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
 			setTimeout(function(){
-				chrome.browserAction.setBadgeText({text: ''});
+				chrome.action.setBadgeText({text: ''});
 			}, 5000);
 			break;
 		default:
@@ -599,11 +605,11 @@ async function init() {
 				for (let {name, shortcut} of commands) {
 					var s = (name === 'bookmark-tab') ? shortcut:'undef';
 				}
-				chrome.browserAction.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
-				chrome.browserAction.onClicked.addListener(bookmarkTab);
+				chrome.action.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
+				chrome.action.onClicked.addListener(bookmarkTab);
 			});
 		} else {
-			chrome.browserAction.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+			chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 		}
 		
 		let s_startup = options['actions']['startup'] || false;
@@ -613,13 +619,13 @@ async function init() {
 			if(options['token'] === undefined && options['creds'] === undefined) {
 				changeIcon('error');
 			} else {
-				chrome.browserAction.setBadgeText({text: ''});
+				chrome.action.setBadgeText({text: ''});
 			}
 		} else if(s_type == 'WebDAV') {
 			if(options['creds'] == '') {
 				changeIcon('error');
 			} else {
-				chrome.browserAction.setBadgeText({text: ''});
+				chrome.action.setBadgeText({text: ''});
 			}
 		}
 
@@ -878,7 +884,7 @@ function saveAllMarks() {
 	let date = new Date(datems);
 	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.storage.local.set({last_s: datems});
-	chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+	chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
 function removeMark(bookmark) {
@@ -1321,7 +1327,7 @@ function addAllMarks(parsedMarks, index=1) {
 			chrome.storage.local.set({
 				last_s: datems,
 			});
-			chrome.browserAction.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+			chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 		}
 	});
 

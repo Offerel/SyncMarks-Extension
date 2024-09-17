@@ -1,4 +1,5 @@
-var background_page = chrome.extension.getBackgroundPage();
+//var background_page = chrome.extension.getBackgroundPage();
+//var background_page = runtime.getBackgroundPage();
 
 chrome.runtime.onMessage.addListener((message, sender) => {
 	if(sender.id === chrome.runtime.id) {
@@ -165,7 +166,11 @@ function gToken(e) {
 						break;
 		} 
 
-		background_page.init();
+		chrome.runtime.getBackgroundPage(
+			function(bgpage){
+				bgpage.init();
+			}
+		)
 	};
 	xhr.send(cdata);
 }
@@ -200,11 +205,20 @@ function saveOptions(e) {
 }
 
 function rName() {
-	background_page.sendRequest(background_page.arename, this.value);
+	let name = this.value;
+	chrome.runtime.getBackgroundPage(
+		function(background){
+			background.sendRequest(background.arename, name);
+		}
+	)
 }
 
 function gName() {
-	background_page.sendRequest(background_page.cinfo);
+	chrome.runtime.getBackgroundPage(
+		function(background){
+			background.cinfo();
+		}
+	)
 }
 
 function uuidv4() {
@@ -248,7 +262,8 @@ function restoreOptions() {
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
 				if(options['token'] === undefined && options['creds'] === undefined) {
-					background_page.sendRequest(background_page.cinfo, 'p');
+					//chrome.runtime.getBackgroundPage().sendRequest(chrome.runtime.getBackgroundPage().cinfo, 'p');
+					chrome.runtime.getBackgroundPage().cinfo;
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
 				document.getElementById("s_tabs").defaultChecked = (options['s_tabs'] == undefined) ? false:options['s_tabs'];
@@ -347,18 +362,18 @@ function importOptions() {
 
 function manualImport(e) {
 	e.preventDefault();
-	if (this.id === 'iyes') background_page.removeAllMarks();
+	if (this.id === 'iyes') chrome.runtime.getBackgroundPage().removeAllMarks();
 
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				background_page.sendRequest(background_page.bexport, 'json');
+				chrome.runtime.getBackgroundPage().sendRequest(chrome.runtime.getBackgroundPage().bexport, 'json');
 			} else if (options['s_type'] == 'WebDAV') {
-				background_page.getDAVMarks();
+				chrome.runtime.getBackgroundPage().getDAVMarks();
 			}
 		});
 	} catch(error) {
-		background_page.loglines = background_page.logit(error);
+		chrome.runtime.getBackgroundPage().loglines = chrome.runtime.getBackgroundPage().logit(error);
 	} finally {
 		document.getElementById("impdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
@@ -367,15 +382,16 @@ function manualImport(e) {
 
 function manualExport(e) {
 	e.preventDefault();
-	var background_page = chrome.extension.getBackgroundPage();
+	//var background_page = chrome.extension.getBackgroundPage();
+	//var background_page = runtime.getBackgroundPage();
 	try {
 		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
-			background_page.saveAllMarks();
+			chrome.runtime.getBackgroundPage().saveAllMarks();
 		} else if (document.querySelector('input[name="stype"]:checked').value == 'PHP') {
-			background_page.exportPHPMarks();
+			chrome.runtime.getBackgroundPage().exportPHPMarks();
 		}
 	} catch(error) {
-		background_page.loglines = background_page.logit(error);
+		chrome.runtime.getBackgroundPage().loglines = chrome.runtime.getBackgroundPage().logit(error);
 	} finally {
 		document.getElementById("expdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
@@ -404,7 +420,7 @@ function localizeHtmlPage() {
 function filterLog() {
 	let larea = document.getElementById("logarea");
 	let debug = document.getElementById('logdebug').checked;
-	let lines = background_page.loglines.split("\n");
+	let lines = chrome.runtime.getBackgroundPage().loglines.split("\n");
 	let tlines = new Array();
 	let rlines = "";
 
@@ -433,8 +449,8 @@ function openTab(tabname) {
 	}
 
 	if(tabname.target.innerText == 'Logfile') {
-		console.log(background_page.loglines);
-		let lines = background_page.loglines.split("\n");
+		console.log(chrome.runtime.getBackgroundPage().loglines);
+		let lines = chrome.runtime.getBackgroundPage().loglines.split("\n");
 		let tlines = new Array();
 		lines.forEach(function(line, key) {
 			if(line.indexOf("Debug:") === -1) tlines.push(line);
@@ -467,13 +483,13 @@ function saveLog() {
 }
 
 function clearLog() {
-	background_page.loglines = '';
+	chrome.runtime.getBackgroundPage().loglines = '';
 	let larea = document.getElementById("logarea");
 	if(larea.childNodes.length > 2) {
 		larea.removeChild(larea.childNodes[2]); 
 	}
 	if(tabname.target.innerText == 'Logfile') {
-		var logp = new DOMParser().parseFromString(background_page.loglines, 'text/html').body;
+		var logp = new DOMParser().parseFromString(chrome.runtime.getBackgroundPage().loglines, 'text/html').body;
 		larea.appendChild(logp);
 	}
 }

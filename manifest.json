@@ -5,9 +5,8 @@
       "scripts/background.js"
     ]
   },
-  "browser_action": {
-    "default_title": "__MSG_extensionName__",
-    "browser_style": true
+  "action": {
+    "default_title": "__MSG_extensionName__"
   },
   "commands": {
     "bookmark-tab": {
@@ -23,7 +22,7 @@
   "icons": {
     "48": "icons/bookmark.png"
   },
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "__MSG_extensionName__",
   "options_ui": {
     "open_in_tab": true,
@@ -31,13 +30,12 @@
   },
   "permissions": [
     "bookmarks",
-    "https://*/*",
     "storage",
     "notifications",
     "contextMenus"
   ],
-  "version": "1.20.20",
-  "web_accessible_resources": [
-    "icons/bookmark.png"
-  ]
+  "host_permissions": [
+    "https://*/*"
+  ],
+  "version": "1.21.0"
 }
