@@ -81,7 +81,7 @@ function gToken(e) {
 	let xhr = new XMLHttpRequest();
 
 	const params = {
-		action: "checkClient",
+		action: "clientCheck",
 		client: document.getElementById('s_uuid').value,
 		data: {
 			usebasic: tbt
@@ -220,7 +220,7 @@ function rName() {
 	let name = this.value;
 	chrome.runtime.getBackgroundPage(
 		function(background){
-			background.sendRequest(background.arename, name);
+			background.sendRequest(background.clientRename, name);
 		}
 	)
 }
@@ -228,7 +228,7 @@ function rName() {
 function gName() {
 	chrome.runtime.getBackgroundPage(
 		function(background){
-			background.cinfo();
+			background.clientInfo();
 		}
 	)
 }
@@ -274,12 +274,9 @@ function restoreOptions() {
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
 				if(options['token'] === undefined && options['creds'] === undefined) {
-					//chrome.runtime.getBackgroundPage().sendRequest(chrome.runtime.getBackgroundPage().cinfo, 'p');
-					//chrome.runtime.getBackgroundPage().cinfo;
-
 					chrome.runtime.getBackgroundPage(
 						function(background){
-							background.cinfo();
+							background.clientInfo();
 						}
 					)
 					

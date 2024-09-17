@@ -212,12 +212,12 @@ function gurls(response, a = '') {
 		let s_startup = options['actions']['startup'] || false;
 		if(s_startup === true) {
 			loglines = logit("Info: Start Sync");
-			sendRequest(cinfo, null, 'sync');
+			sendRequest(clientInfo, null, 'sync');
 		}
 	});
 }
 
-function cinfo(response, a = '') {
+function clientInfo(response, a = '') {
 	if(response !== null) {
 		lastseen =  response['lastseen'];
 		if(a == 'sync') {
@@ -374,7 +374,7 @@ function delmark(response, a = '') {
 	chrome.storage.local.set({last_s: datems});
 }
 
-function arename(response, a = '') {
+function clientRename(response, a = '') {
 	//
 }
 
