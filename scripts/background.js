@@ -147,99 +147,7 @@ function sendRequest(action, data = null, addendum = null) {
 		});
 	});
 }
-/*
-function sendRequest(action, data = null, addendum = null) {
-	chrome.storage.local.get(null, function(options) {
-		const xhr = new XMLHttpRequest();
-		let client = options['s_uuid'];
-		let sync = null;
 
-		if(action.name === 'addmark' && options['actions']['crsrv'] === true) {
-			client = 'bookmarkTab';
-			sync = false;
-		}
-
-		const params = {
-			action: action.name,
-			client: client,
-			data: data,
-			add: addendum,
-			sync: sync
-		}
-
-		let url = new URL(options['wdurl']);
-		xhr.open("POST", url);
-		let tarr = {};
-		tarr['client'] = options['s_uuid'];
-		tarr['token'] = options['token'];
-
-		let tc = false;
-
-		if(options['token'] != undefined) tc = 'tk';
-		if(options['creds'] != undefined) tc = 'cr';
-		if(tc == false && data !== 'p') return false;
-
-		if(tc == 'tk') xhr.setRequestHeader('Authorization', 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))));
-		if(tc == 'cr') xhr.setRequestHeader('Authorization', 'Basic ' + options['creds']);
-
-		xhr.withCredentials = true;
-		xhr.timeout = 30000;
-		xhr.responseType = 'json';
-
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState === 4) {
-				if (xhr.status === 200) {
-					action(xhr.response, addendum);
-				} else {
-					let message = `Error ${xhr.status}: ${xhr.statusText}`;
-					console.error(action.name, message);
-					return false;
-				}
-			}
-		}
-
-		xhr.onload = async function () {
-			let xtResponse = xhr.getResponseHeader("X-Request-Info");
-			if(xtResponse !== null) {
-				if(xtResponse !== '0') {
-					await chrome.storage.local.set({token: xtResponse});
-				} else {
-					chrome.storage.local.remove('token');
-					let message = chrome.i18n.getMessage("optionsLoginError");
-					if(data !== 'p') notify('error', message);
-					changeIcon('error');
-					if(xhr.response.cInfo) {
-						chrome.runtime.sendMessage(xhr.response);
-					}
-				}
-			}
-		}
-
-		xhr.onerror = function () {
-			let message = "Error: " + xhr.status + ' | ' + xhr.response;
-			console.error(action.name, message);
-			return false;
-		}
-
-		xhr.ontimeout = function() {
-			let message = "Error: Timeout of " + parseFloat(xhr.timeout/1000).toFixed(1) + " seconds exceeded";
-			notify('error', message);
-			loglines = logit(message);
-			console.warn(action.name, message);
-			return false;
-		}
-
-		if (url.searchParams.has('api')) {
-			xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-			xhr.send(JSON.stringify(params));
-		} else {
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			const qparams = new URLSearchParams(params);
-			xhr.send(qparams);
-		}
-	});
-}
-*/
 function clientList(response) {
 	chrome.storage.local.set({clist:response.clients});
 	chrome.permissions.getAll(function(e) {
@@ -282,8 +190,8 @@ function clientList(response) {
 	sendRequest(pushGet);
 }
 
-function pushURL(response, a = '') {
-	//
+function pushURL(response) {
+	if(response.error) console.error(response.error);
 }
 
 function pushGet(response) {
@@ -433,8 +341,8 @@ function addmark(response, a = '') {
 	chrome.storage.local.set({last_s: datems});
 }
 
-function durl(response, a = '') {
-	//
+function pushHide(response) {
+	if(response.error) console.error(response.error);
 }
 
 function editmark(response, a = '') {
@@ -465,8 +373,8 @@ function delmark(response, a = '') {
 	chrome.storage.local.set({last_s: datems});
 }
 
-function clientRename(response, a = '') {
-	//
+function clientRename(response) {
+	if(response.error) console.error(response.error);
 }
 
 function sendTabs(response) {
