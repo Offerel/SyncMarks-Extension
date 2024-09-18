@@ -11,6 +11,45 @@ var lastseen = null;
 
 init();
 
+chrome.runtime.onMessage.addListener(
+	function(request, sender, sendResponse) {
+		switch (request.action) {
+			case 'cinfo':
+				sendRequest(clientInfo, request.data);
+				break;
+			case 'init':
+				init();
+				break;
+			case 'arename':
+				sendRequest(clientRename, request.data);
+				break;
+			case 'removeAllMarks':
+				removeAllMarks();
+				break;
+			case 'bexport':
+				sendRequest(bookmarkExport, request.data);
+				break;
+			case 'getDAVMarks':
+				getDAVMarks();
+				break;
+			case 'saveAllMarks':
+				saveAllMarks();
+				break;
+			case 'exportPHPMarks':
+				exportPHPMarks();
+				break;
+			case 'loglines':
+				console.log(request.data);
+				break;
+			case 'changeIcon':
+				changeIcon(request.data);
+				break;
+			default:
+				return false;
+		}
+	}
+);
+
 chrome.permissions.getAll(function(e) {
 	if(e.permissions.includes('bookmarks')) {
 		chrome.bookmarks.onCreated.addListener(onCreatedCheck);
