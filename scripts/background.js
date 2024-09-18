@@ -150,11 +150,11 @@ function sendRequest(action, data = null, addendum = null) {
 }
 
 function clientList(response) {
-	chrome.storage.local.set({clist:response});
+	chrome.storage.local.set({clist:response.clients});
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
-			if(Array.isArray(response)) {
-				response.forEach(function(client){
+			if(Array.isArray(response.clients)) {
+				response.clients.forEach(function(client){
 					var ctitle = client.name ? client.name:client.id;
 					chrome.contextMenus.create({
 						title: ctitle,
@@ -181,31 +181,31 @@ function clientList(response) {
 						});
 					} catch {}
 				});
-				let cnt = response.length - 1;
+				let cnt = response.clients.length - 1;
 				loglines = logit("Info: List of " + cnt + " clients received successful.");
 			}
 		}
 	});
 
 	loglines = logit("Info: Get notifications for current client.");
-	sendRequest(gurls);
+	sendRequest(pushGet);
 }
 
 function pushURL(response, a = '') {
 	//
 }
 
-function gurls(response, a = '') {
-	if(Array.isArray(response)) {
+function pushGet(response) {
+	if(Array.isArray(response.notifications)) {
 		try {
-			response.forEach(function(notification) {
+			response.notifications.forEach(function(notification) {
 				loglines = logit('Info: Received tab: <a href="' + notification.url + '">' + notification.url + '</a>');
 				openTab(notification.url,notification.nkey,notification.title);
 			});
 		} catch(error) {
 			loglines = logit(error);
 		}
-		loglines = logit("Info: List of " + response.length + " notifications received successful.");
+		loglines = logit("Info: List of " + response.notifications.length + " notifications received successful.");
 	}
 
 	chrome.storage.local.get(null, async function(options) {
