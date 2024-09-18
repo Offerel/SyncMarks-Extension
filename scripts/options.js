@@ -75,8 +75,36 @@ function gToken(e) {
 	let tbt = document.getElementById('tbt').checked;
 	document.getElementById('lginl').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
-	let xhr = new XMLHttpRequest();
 
+	const params = {
+		action: "clientCheck",
+		client: document.getElementById('s_uuid').value,
+		data: {
+			usebasic: tbt
+		},
+		sync: document.getElementById('s_startup').checked
+	};
+
+	const url = document.getElementById('wdurl').value;
+	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
+	const myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json;charset=UTF-8");
+	myHeaders.append("Authorization", 'Basic ' + creds);
+
+	const myRequest = new Request(url, {
+		method: "POST",
+		body: JSON.stringify(params),
+		headers: myHeaders,
+	});
+
+	//const json = response.json();
+	//console.log(response.text);
+	//console.log(response.status);
+	const response = fetch(myRequest);
+	console.log(response.json());
+
+	/*
+	let xhr = new XMLHttpRequest();
 	const params = {
 		action: "clientCheck",
 		client: document.getElementById('s_uuid').value,
@@ -86,7 +114,6 @@ function gToken(e) {
 		sync: document.getElementById('s_startup').checked
 	}
 
-	
 	let rnd = Math.floor((Math.random() * 100) + 1) + '.txt';
 	var url = document.getElementById('wdurl').value;	
 
@@ -182,6 +209,7 @@ function gToken(e) {
 	};
 
 	xhr.send(JSON.stringify(params));
+	*/
 }
 
 function saveOptions(e) {

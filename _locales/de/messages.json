@@ -4,7 +4,7 @@
     "description": "Name der Erweiterung."
   },
   "extensionDescription": {
-    "message": "Synchronisieren Sie Lesezeichen über den eigenen Server",
+    "message": "Mit Hilfe dieser Erweiterung synchronisieren Sie Lesezeichen und Tabs mit einem selbstgehosteten Server.",
     "description": ""
   },  
   "optionsServerData": {

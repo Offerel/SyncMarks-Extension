@@ -4,7 +4,7 @@
     "description": "Name of the extension."
   },
   "extensionDescription": {
-    "message": "Synchronize bookmarks via your own server",
+    "message": "Use this extension to synchronize bookmarks and tabs with a self-hosted server.",
     "description": ""
   },  
   "optionsServerData": {

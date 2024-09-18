@@ -59,7 +59,6 @@ chrome.commands.onCommand.addListener((command) => {
 function sendRequest(action, data = null, addendum = null) {
 	chrome.storage.local.get(null, function(options) {
 		const xhr = new XMLHttpRequest();
-
 		let client = options['s_uuid'];
 		let sync = null;
 
