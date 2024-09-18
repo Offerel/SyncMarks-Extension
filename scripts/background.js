@@ -191,7 +191,7 @@ function getclients(response, a = '') {
 	sendRequest(gurls);
 }
 
-function getpurl(response, a = '') {
+function pushURL(response, a = '') {
 	//
 }
 
@@ -516,7 +516,7 @@ function sendTab(element) {
 		chrome.storage.local.get(null, function(options) {
 			let url = (element.target.url) ? element.target.url:tabs[0].url;
 			loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options['s_uuid']);
-			sendRequest(getpurl, url, element.target.id);
+			sendRequest(pushURL, url, element.target.id);
 		});
 	});
 }
