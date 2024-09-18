@@ -97,6 +97,59 @@ chrome.commands.onCommand.addListener((command) => {
 
 function sendRequest(action, data = null, addendum = null) {
 	chrome.storage.local.get(null, function(options) {
+		let tarr = {};
+		tarr['client'] = options['s_uuid'];
+		tarr['token'] = options['token'];
+
+		let tc = (options['token'] != undefined) ? 'tk':'cr';
+		if(tc == false && data !== 'p') return false;
+
+		let authtype = (tc == 'tk') ? 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))):'Basic ' + options['creds'];
+
+		let url = options['wdurl'];
+
+		let client = options['s_uuid'];
+		let sync = null;
+
+		if(action.name === 'addmark' && options['actions']['crsrv'] === true) {
+			client = 'bookmarkTab';
+			sync = false;
+		}
+
+		const params = {
+			action: action.name,
+			client: client,
+			data: data,
+			add: addendum,
+			sync: sync
+		}
+
+		fetch(url, {
+			method: "POST",
+			cache: "no-cache",
+			headers: {
+				'Content-type': 'application/json;charset=UTF-8',
+				'Authorization': authtype,
+			},
+			redirect: "follow",
+			referrerPolicy: "no-referrer",
+			body: JSON.stringify(params)
+		}).then(response => {
+			let rStatus = response.status;
+			let xRinfo = response.headers.get("X-Request-Info");
+			if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
+			return response.json();
+		}).then(responseData => {
+			if(action == 'clientInfo') chrome.runtime.sendMessage(responseData);
+			action(responseData, addendum);
+		}).catch(err => {
+			console.warn(err);
+		});
+	});
+}
+/*
+function sendRequest(action, data = null, addendum = null) {
+	chrome.storage.local.get(null, function(options) {
 		const xhr = new XMLHttpRequest();
 		let client = options['s_uuid'];
 		let sync = null;
@@ -186,7 +239,7 @@ function sendRequest(action, data = null, addendum = null) {
 		}
 	});
 }
-
+*/
 function clientList(response) {
 	chrome.storage.local.set({clist:response.clients});
 	chrome.permissions.getAll(function(e) {
