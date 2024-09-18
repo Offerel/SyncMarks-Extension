@@ -645,7 +645,7 @@ async function init() {
 function onTabActivated(tab){
 	pTabs.forEach(async function(pTab, index){
 		if(pTab.tID == tab.tabId) {
-			sendRequest(durl, pTab.nID);
+			sendRequest(pushHide, pTab.nID);
 			pTabs.splice(index,1);
 		}
 	});
@@ -745,7 +745,7 @@ function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
 		chrome.notifications.create(notid, {
 			"type": "basic",
 			"title": title,
-			"iconUrl": "icons/bookmark.png",
+			"iconUrl": "/icons/bookmark.png",
 			"message": message
 		});
 	} catch(error) {

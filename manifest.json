@@ -36,5 +36,15 @@
   "host_permissions": [
     "https://*/*"
   ],
-  "version": "1.21.0"
+  "version": "1.21.0",
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/bookmark.png"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
+    }
+  ]
 }
