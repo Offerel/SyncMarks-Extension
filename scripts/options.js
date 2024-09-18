@@ -87,21 +87,57 @@ function gToken(e) {
 
 	const url = document.getElementById('wdurl').value;
 	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
-	const myHeaders = new Headers();
-	myHeaders.append("Content-Type", "application/json;charset=UTF-8");
-	myHeaders.append("Authorization", 'Basic ' + creds);
+	const headers = new Headers();
+	headers.append("Content-Type", "application/json;charset=UTF-8");
+	headers.append("Authorization", 'Basic ' + creds);
 
-	const myRequest = new Request(url, {
+	const myRequest = fetch(url, {
 		method: "POST",
 		body: JSON.stringify(params),
-		headers: myHeaders,
-	});
+		headers: headers,
+		redirect: 'follow',
+		referrerPolicy: 'no-referrer',
+	}).then(response => response.json()).then(responseData => {
+		document.getElementById('lginl').classList.remove('loading');
+		document.getElementById('lginl').style.visibility = "hidden";
+		chrome.storage.local.set({
+			wdurl: document.getElementById('wdurl').value,
+			s_type: 'PHP',
+		});
 
-	//const json = response.json();
-	//console.log(response.text);
-	//console.log(response.status);
-	const response = fetch(myRequest);
-	console.log(response.json());
+		if(tbt) {
+			chrome.storage.local.set({creds: creds});
+			chrome.storage.local.remove('token');
+		} else {
+			chrome.storage.local.set({token: responseData.token});
+			chrome.storage.local.remove('creds');
+		}
+
+		document.getElementById('cname').defaultValue = responseData.cname;
+
+		if(responseData.message.indexOf('updated') == 7) {
+			wmessage.textContent = chrome.i18n.getMessage("optionsSuccessLogin");
+			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";							
+		} else {
+			wmessage.textContent = 'Warning: '+ responseData.message;
+			wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
+			chrome.runtime.sendMessage({action: "loglines", data: 'Syncmarks Warning: '+ responseData.message});
+		}
+	}).catch(err => {
+		wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
+		chrome.runtime.sendMessage({action: "loglines", data: err});
+		switch(response.status) {
+			case 404:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL") + err;
+						break;
+			case 401:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorUser") + err;
+						break;
+			default:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorLogin") + response.status + err;
+		}
+		chrome.runtime.sendMessage({action: "loglines", data: 'Syncmarks Error: ' + wmessage.textContent});
+		wmessage.className = "show";
+		setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 3000);
+		chrome.runtime.sendMessage({action: "init"});
+	});
 
 	/*
 	let xhr = new XMLHttpRequest();
