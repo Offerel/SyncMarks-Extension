@@ -1,6 +1,3 @@
-//var background_page = chrome.extension.getBackgroundPage();
-//var background_page = runtime.getBackgroundPage();
-
 chrome.runtime.onMessage.addListener((message, sender) => {
 	if(sender.id === chrome.runtime.id) {
 		if(message.ctype) {
@@ -178,8 +175,8 @@ function gToken(e) {
 		} 
 
 		chrome.runtime.getBackgroundPage(
-			function(bgpage){
-				bgpage.init();
+			function(background){
+				background.init();
 			}
 		)
 	};
@@ -228,7 +225,7 @@ function rName() {
 function gName() {
 	chrome.runtime.getBackgroundPage(
 		function(background){
-			background.clientInfo();
+			background.sendRequest(background.clientInfo);
 		}
 	)
 }
@@ -276,7 +273,7 @@ function restoreOptions() {
 				if(options['token'] === undefined && options['creds'] === undefined) {
 					chrome.runtime.getBackgroundPage(
 						function(background){
-							background.clientInfo();
+							background.sendRequest(background.clientInfo);
 						}
 					)
 					
@@ -378,18 +375,37 @@ function importOptions() {
 
 function manualImport(e) {
 	e.preventDefault();
-	if (this.id === 'iyes') chrome.runtime.getBackgroundPage().removeAllMarks();
+	if (this.id === 'iyes') {
+		chrome.runtime.getBackgroundPage(
+			function(background){
+				background.removeAllMarks();
+			}
+		)
+	}
 
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				chrome.runtime.getBackgroundPage().sendRequest(chrome.runtime.getBackgroundPage().bexport, 'json');
+				chrome.runtime.getBackgroundPage(
+					function(background){
+						background.sendRequest(background.bookmarkExport, 'json');
+					}
+				)
+				
 			} else if (options['s_type'] == 'WebDAV') {
-				chrome.runtime.getBackgroundPage().getDAVMarks();
+				chrome.runtime.getBackgroundPage(
+					function(background){
+						background.sendRequest(background.getDAVMarks);
+					}
+				)
 			}
 		});
 	} catch(error) {
-		chrome.runtime.getBackgroundPage().loglines = chrome.runtime.getBackgroundPage().logit(error);
+		chrome.runtime.getBackgroundPage(
+			function(background){
+				background.loglines(background.logit(error));
+			}
+		)
 	} finally {
 		document.getElementById("impdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
@@ -398,16 +414,26 @@ function manualImport(e) {
 
 function manualExport(e) {
 	e.preventDefault();
-	//var background_page = chrome.extension.getBackgroundPage();
-	//var background_page = runtime.getBackgroundPage();
 	try {
 		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
-			chrome.runtime.getBackgroundPage().saveAllMarks();
+			chrome.runtime.getBackgroundPage(
+				function(background){
+					background.saveAllMarks();
+				}
+			)
 		} else if (document.querySelector('input[name="stype"]:checked').value == 'PHP') {
-			chrome.runtime.getBackgroundPage().exportPHPMarks();
+			chrome.runtime.getBackgroundPage(
+				function(background){
+					background.exportPHPMarks();
+				}
+			)
 		}
 	} catch(error) {
-		chrome.runtime.getBackgroundPage().loglines = chrome.runtime.getBackgroundPage().logit(error);
+		chrome.runtime.getBackgroundPage(
+			function(background){
+				background.loglines(background.logit(error));
+			}
+		)
 	} finally {
 		document.getElementById("expdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
@@ -499,7 +525,11 @@ function saveLog() {
 }
 
 function clearLog() {
-	chrome.runtime.getBackgroundPage().loglines = '';
+	chrome.runtime.getBackgroundPage(
+		function(background){
+			background.loglines = '';
+		}
+	)
 	let larea = document.getElementById("logarea");
 	if(larea.childNodes.length > 2) {
 		larea.removeChild(larea.childNodes[2]); 

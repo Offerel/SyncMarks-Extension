@@ -149,7 +149,7 @@ function sendRequest(action, data = null, addendum = null) {
 	});
 }
 
-function getclients(response, a = '') {
+function clientList(response) {
 	chrome.storage.local.set({clist:response});
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
@@ -217,7 +217,7 @@ function gurls(response, a = '') {
 	});
 }
 
-function clientInfo(response, a = '') {
+function clientInfo(response, a) {
 	if(response !== null) {
 		lastseen =  response['lastseen'];
 		if(a == 'sync') {
@@ -228,7 +228,7 @@ function clientInfo(response, a = '') {
 	}
 }
 
-function bexport(response) {
+function bookmarkExport(response) {
 	response = JSON.parse(response);
 	if(abrowser == false) response = JSON.parse(c2cm(JSON.stringify(response)));
 	count = 0;
@@ -636,7 +636,7 @@ async function init() {
 			if(options['wdurl']) {
 				await ccMenus();
 				loglines = logit("Info: Get list of clients.");
-				sendRequest(getclients, null, null);
+				sendRequest(clientList, null, null);
 				loglines = logit("Info: Init finished");
 			}
 		}
@@ -930,7 +930,7 @@ async function doFullSync() {
 		chrome.storage.local.get(null, async function(options) {
 			if(options['s_type'] == 'PHP') {
 				loglines = logit('Info: Sending Sync request to server');
-				sendRequest(bexport, 'json');
+				sendRequest(bookmarkExport, 'json');
 			}
 		});
 	} catch(error) {
