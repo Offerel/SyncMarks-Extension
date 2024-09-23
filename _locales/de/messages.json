@@ -156,7 +156,7 @@
     "message": "Login Fehler: Bitte prüfe Benutzer und Passwort.",
     "description": "Login failed, wrong User."
   },
-  "optionsSuccessLogin": {
+  "optionsSuccessSave": {
     "message": "Optionen gespeichert.",
     "description": "Login failed, wrong User."
   },
@@ -173,7 +173,7 @@
     "description": ""
   },
   "optionsBeforeLogin": {
-    "message": "Bitte einmalig mit deinen Zugangsdaten einloggen, um einen Zugangscode zu erhalten.",
+    "message": "Bitte mit deinen Zugangsdaten einloggen, um einen Zugangscode zu erhalten.",
     "description": ""
   },
   "optionsWrongAData": {

@@ -155,8 +155,8 @@
     "message": "Login failed: Please check username and password.",
     "description": "Login failed, wrong User."
   },
-  "optionsSuccessLogin": {
-    "message": "Login successfully. Options saved.",
+  "optionsSuccessSave": {
+    "message": "Options saved.",
     "description": "Login successfully."
   },
   "optionsErrorLogin": {
@@ -172,7 +172,7 @@
     "description": ""
   },
   "optionsBeforeLogin": {
-    "message": "Please log in once with your access data to receive an access code.",
+    "message": "Please log in with your access data to receive an access code.",
     "description": ""
   },  
   "optionsWrongAData": {
