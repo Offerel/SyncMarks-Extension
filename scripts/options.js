@@ -20,17 +20,6 @@ chrome.runtime.onMessage.addListener((message, sender) => {
 			case 'bookmarkExport':
 				showMsg(message.text, (message.type === 'error') ? 'error':'info');
 				break;
-			case 'cInfo':
-				//let cInfo = JSON.parse(message.cInfo);
-				//let iBox = document.getElementById("lgini");
-				//let ip = document.getElementById('ipinfo');
-				//iBox.style.display = 'block';
-				//ip.innerText = cInfo.ip;
-				//let ipinfo = document.createElement('span');
-				//let tm = new Date(cInfo.tm * 1000).toLocaleString();
-				//ipinfo.innerText = tm + ' | ' + cInfo.de + ' | ' + cInfo.co + ' | ' + cInfo.ct + ' | ' + cInfo.re + '\n' + cInfo.ua;
-				//ip.appendChild(ipinfo);
-				break;
 			case 'rLoglines':
 				rLoglines(message.text);
 				break;

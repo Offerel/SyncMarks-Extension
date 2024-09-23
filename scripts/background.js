@@ -119,15 +119,6 @@ function sendRequest(action, data = null, addendum = null) {
 		if(action.name === 'bookmarkAdd' && options['actions']['crsrv'] === true) {
 			client = 'bookmarkTab';
 		}
-		/*
-		const params = {
-			action: action.name,
-			client: client,
-			data: data,
-			add: addendum,
-			sync: sync
-		}
-		*/
 
 		const params = {
 			action: action.name,
@@ -345,10 +336,9 @@ function toastMessage(mode, message) {
 }
 
 function bookmarkAdd(response) {
-	response = response.toString();
 	chrome.storage.local.get(null, async function(options) {
 		if(options['actions']['crsrv'] === true) {
-			if(response === "0") {
+			if(response.code === 200) {
 				response = "Bookmark added";
 				changeIcon('info');
 				mode = '0';
@@ -549,7 +539,7 @@ function bookmarkTab() {
 			"added": new Date().valueOf()
 		});
 
-		sendRequest(bookmarkAdd, jsonMark, '1');
+		sendRequest(bookmarkAdd, jsonMark);
 	});
 }
 
@@ -682,7 +672,7 @@ async function init() {
 			if(options['wdurl']) {
 				await ccMenus();
 				loglines = logit("Info: Get list of clients.");
-				sendRequest(clientList, null, null);
+				sendRequest(clientList);
 				loglines = logit("Info: Init finished");
 			}
 		}
