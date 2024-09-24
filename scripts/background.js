@@ -217,12 +217,14 @@ function clientInfo(response, tab = null) {
 	if(response !== null) {
 		lastseen =  response['lastseen'];
 
-		if (tab != null) chrome.runtime.sendMessage({task: clientInfo.name, type: 'success', cname: response['cname'], ctype: response['ctype'], cinfo: response['cinfo']});
-
-		chrome.storage.local.get(null, async function(options) {
-			let sync = options['actions']['startup'] || false;
-			if(sync) doFullSync();
-		});
+		if (tab != null) {
+			chrome.runtime.sendMessage({task: clientInfo.name, type: 'success', cname: response['cname'], ctype: response['ctype'], cinfo: response['cinfo']});
+		} else {
+			chrome.storage.local.get(null, async function(options) {
+				let sync = options['actions']['startup'] || false;
+				if(sync) doFullSync();
+			});
+		}
 	}
 }
 
