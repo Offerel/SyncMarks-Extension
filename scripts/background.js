@@ -816,24 +816,16 @@ function onMovedCheck(id, bookmark) {
 		} else if (s_change === true && s_type.indexOf('PHP') == 0) {
 			chrome.bookmarks.get(bookmark.parentId, function(folder) {
 				chrome.bookmarks.get(id, function(bmark) {
-					let jsonMark = JSON.stringify({
-						"id": id,
-						"index": bookmark.index,
-						"folderIndex": folder[0]['index'],
-						"folder": bookmark.parentId,
-						"nfolder": folder[0]['title'],
-						"url":bmark[0].url
-					});
-
 					let jMark = {
 						"id": id,
 						"index": bookmark.index,
 						"folderIndex": folder[0]['index'],
 						"folder": bookmark.parentId,
 						"nfolder": folder[0]['title'],
-						"url":bmark[0].url
+						"url":bmark[0].url,
+						"title":bmark[0].title
 					};
-					console.log("move");
+
 					loglines = logit("Info: Sending move request to server. Bookmark ID: " + id);
 					sendRequest(bookmarkMove, jMark);
 				});
