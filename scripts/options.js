@@ -1,6 +1,5 @@
 chrome.runtime.onMessage.addListener(
 	function(message, sender, sendResponse) {
-		console.log(message);
 		if(sender.id === chrome.runtime.id) {
 			switch (message.task) {
 				case 'clientInfo':
