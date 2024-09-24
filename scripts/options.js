@@ -519,6 +519,19 @@ function cAuto() {
 	saveOptions();
 }
 
+function requestHostPermission() {
+	url = document.getElementById('wdurl').value;
+	chrome.permissions.request({
+		origins: [url]
+	}, (granted) => {
+		if (granted) {
+			console.log("granted");
+		} else {
+			console.log("not granted");
+		}
+	});
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 window.addEventListener('load', function () {
@@ -562,6 +575,7 @@ window.addEventListener('load', function () {
 	document.getElementById("wdurl").addEventListener("input", checkForm);
 	document.getElementById("lginl").addEventListener("click", function(e) {
 		e.preventDefault;
+		requestHostPermission();
 		document.getElementById("nuser").defaultValue = '';
 		document.getElementById("npassword").defaultValue = '';
 		document.getElementById("crdialog").style.display = "block";

@@ -33,7 +33,7 @@
     "notifications",
     "contextMenus"
   ],
-  "host_permissions": [
+  "optional_host_permissions": [
     "https://*/*"
   ],
   "version": "1.21.0",
