@@ -13,45 +13,44 @@ init();
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
-		switch (request.action) {
-			case 'clientInfo':
-				sendRequest(clientInfo, request.data);
-				break;
-			case 'init':
-				init();
-				break;
-			case 'clientRename':
-				sendRequest(clientRename, request.data);
-				break;
-			case 'removeAllMarks':
-				removeAllMarks();
-				break;
-			case 'bookmarkExport':
-				sendRequest(bookmarkExport, request.data);
-				break;
-			case 'getDAVMarks':
-				getDAVMarks();
-				break;
-			case 'saveAllMarks':
-				saveAllMarks();
-				break;
-			case 'exportPHPMarks':
-				exportPHPMarks();
-				break;
-			case 'loglines':
-				console.log(request.data);
-				break;
-			case 'getLoglines':
-				const message = [];
-				message.text = loglines;
-				message.task = 'rLoglines';
-				chrome.runtime.sendMessage(message);
-				break;
-			case 'changeIcon':
-				changeIcon(request.data);
-				break;
-			default:
-				return false;
+		if(sender.id === chrome.runtime.id) {
+			switch (request.action) {
+				case 'clientInfo':
+					sendRequest(clientInfo, request.data, request.tab);
+					break;
+				case 'init':
+					init();
+					break;
+				case 'clientRename':
+					sendRequest(clientRename, request.data);
+					break;
+				case 'removeAllMarks':
+					removeAllMarks();
+					break;
+				case 'bookmarkExport':
+					sendRequest(bookmarkExport, request.data, request.tab);
+					break;
+				case 'getDAVMarks':
+					getDAVMarks();
+					break;
+				case 'saveAllMarks':
+					saveAllMarks();
+					break;
+				case 'exportPHPMarks':
+					exportPHPMarks();
+					break;
+				case 'loglines':
+					console.log(request.data);
+					break;
+				case 'getLoglines':
+					chrome.runtime.sendMessage({task: "rLoglines", text: loglines});
+					break;
+				case 'changeIcon':
+					changeIcon(request.data);
+					break;
+				default:
+					return false;
+			}
 		}
 	}
 );
@@ -101,7 +100,7 @@ chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
 
-function sendRequest(action, data = null, addendum = null) {
+function sendRequest(action, data = null, tab = null) {
 	chrome.storage.local.get(null, function(options) {
 		let tarr = {};
 		tarr['client'] = options['s_uuid'];
@@ -123,8 +122,7 @@ function sendRequest(action, data = null, addendum = null) {
 		const params = {
 			action: action.name,
 			client: client,
-			data: data,
-			add: addendum
+			data: data
 		}
 
 		Object.keys(params).forEach((k) => params[k] == null && delete params[k]);
@@ -145,7 +143,7 @@ function sendRequest(action, data = null, addendum = null) {
 			if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
 			return response.json();
 		}).then(responseData => {
-			action(responseData);
+			action(responseData, tab);
 		}).catch(err => {
 			console.warn(err);
 		});
@@ -211,32 +209,24 @@ function pushGet(response) {
 		loglines = logit("Info: List of " + response.notifications.length + " notifications received successful.");
 	}
 
-	chrome.storage.local.get(null, async function(options) {
-		let s_startup = options['actions']['startup'] || false;
-		if(s_startup === true) {
-			loglines = logit("Info: Start Sync");
-			sendRequest(clientInfo);
-		}
-	});
+	loglines = logit("Info: Start Sync");
+	sendRequest(clientInfo);
 }
 
-function clientInfo(response) {
+function clientInfo(response, tab = null) {
 	if(response !== null) {
 		lastseen =  response['lastseen'];
+
+		if (tab != null) chrome.runtime.sendMessage({task: clientInfo.name, type: 'success', cname: response['cname'], ctype: response['ctype'], cinfo: response['cinfo']});
+
 		chrome.storage.local.get(null, async function(options) {
 			let sync = options['actions']['startup'] || false;
-			if(sync) {
-				doFullSync();
-			} else {
-				response.type = 'success';
-				response.task = clientInfo.name;
-				chrome.runtime.sendMessage(response);
-			}
+			if(sync) doFullSync();
 		});
 	}
 }
 
-function bookmarkExport(response) {
+function bookmarkExport(response, tab = null) {
 	bookmarks = response.bookmarks;
 	const message = [];
 	if(abrowser == false) bookmarks = JSON.parse(c2cm(JSON.stringify(bookmarks)));
@@ -253,16 +243,11 @@ function bookmarkExport(response) {
 	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
 	chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined, doptions)});
 	
-	chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-		if (tabs[0].url !== undefined) {
-			chrome.runtime.sendMessage(message);
-		}
-	});
+	if (tab != null) chrome.runtime.sendMessage({task: message.task, type: message.type, text: message.text});
 }
 
 function bookmarkImport(response) {
 	const message = [];
-	message.task = bookmarkImport.name;
 
 	if(response.code == 200) {
 		loglines = logit("Info: " + message);
@@ -270,11 +255,11 @@ function bookmarkImport(response) {
 		message.type = 'success';
 	} else {
 		loglines = logit("Error: "+ message + " " + response.message);
-		message = chrome.i18n.getMessage("errorExportBookmarks");
+		message.text = chrome.i18n.getMessage("errorExportBookmarks");
 		message.type = 'error';
 	}
 
-	chrome.runtime.sendMessage(message);
+	chrome.runtime.sendMessage({task: bookmarkImport.name, type: message.type, text: message.text});
 }
 
 function toastMessage(mode, message) {
@@ -407,7 +392,7 @@ function clientRename(response) {
 		message.text = 'Client renamed';
 	}
 
-	chrome.runtime.sendMessage(message);
+	chrome.runtime.sendMessage({task: clientRename.name, type: message.type, text: '' + message.text});
 }
 
 function tabsSend(response) {

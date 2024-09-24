@@ -1,33 +1,39 @@
-chrome.runtime.onMessage.addListener((message, sender) => {
-	if(sender.id === chrome.runtime.id) {
-		switch (message.task) {
-			case 'clientInfo':
-				document.getElementById("cname").title = (message.cname) ? document.getElementById('s_uuid').value + " (" + message.ctype + ")":document.getElementById('s_uuid').value;
-				if(message !== null) document.getElementById("cname").defaultValue = (message.cname == document.getElementById('s_uuid').value) ? '':message.cname;
-				let iBox = document.getElementById("lgini");
-				let ip = document.getElementById('ipinfo');
-				iBox.style.display = 'block';
-				ip.innerText = message.cinfo.ip;
-				let ipinfo = document.createElement('span');
-				ipinfo.className = "iiinfo";
-				let tm = new Date(message.cinfo.tm * 1000).toLocaleString();
-				ipinfo.innerText = tm + '\n' + message.cinfo.de + ' | ' + message.cinfo.co + ' | ' + message.cinfo.ct + ' | ' + message.cinfo.re + '\n' + message.cinfo.ua;
-				ip.after(ipinfo);
-				break;
-			case 'bookmarkImport':
-				showMsg(chrome.i18n.getMessage(message.text), (message.type === 'error') ? 'error':'info');
-				break;
-			case 'bookmarkExport':
-				showMsg(message.text, (message.type === 'error') ? 'error':'info');
-				break;
-			case 'rLoglines':
-				rLoglines(message.text);
-				break;
-			default:
-				break;
+chrome.runtime.onMessage.addListener(
+	function(message, sender, sendResponse) {
+		console.log(message);
+		if(sender.id === chrome.runtime.id) {
+			switch (message.task) {
+				case 'clientInfo':
+					document.getElementById("cname").title = (message.cname) ? document.getElementById('s_uuid').value + " (" + message.ctype + ")":document.getElementById('s_uuid').value;
+					if(message !== null) document.getElementById("cname").defaultValue = (message.cname == document.getElementById('s_uuid').value) ? '':message.cname;
+					let iBox = document.getElementById("lgini");
+					let ip = document.getElementById('ipinfo');
+					iBox.style.display = 'block';
+					ip.innerText = message.cinfo.ip;
+					let ipinfo = document.createElement('span');
+					ipinfo.className = "iiinfo";
+					let tm = new Date(message.cinfo.tm * 1000).toLocaleString();
+					ipinfo.innerText = tm + '\n' + message.cinfo.de + ' | ' + message.cinfo.co + ' | ' + message.cinfo.ct + ' | ' + message.cinfo.re + '\n' + message.cinfo.ua;
+					ip.after(ipinfo);
+					break;
+				case 'bookmarkImport':
+					showMsg(chrome.i18n.getMessage(message.text), (message.type === 'error') ? 'error':'info');
+					break;
+				case 'bookmarkExport':
+					showMsg(message.text, (message.type === 'error') ? 'error':'info');
+					break;
+				case 'clientRename':
+					showMsg(message.text, (message.type === 'error') ? 'error':'info');
+					break;
+				case 'rLoglines':
+					rLoglines(message.text);
+					break;
+				default:
+					break;
+			}
 		}
 	}
-});
+);
 
 function showMsg(text, type) {
 	let wmessage = document.getElementById('wmessage');
@@ -174,7 +180,9 @@ function rName() {
 }
 
 function gName() {
-	chrome.runtime.sendMessage({action: "clientInfo"});
+	chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+		chrome.runtime.sendMessage({action: "clientInfo", tab: tabs[0]['id']});
+	});
 }
 
 function uuidv4() {
@@ -184,6 +192,10 @@ function uuidv4() {
 }
 
 function restoreOptions() {
+	chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+		chrome.runtime.sendMessage({action: "clientInfo", tab: tabs[0]['id']});
+	});
+
 	chrome.storage.local.get(null, function(options) {
 		if(options['wdurl'] == undefined) {
 			showMsg(chrome.i18n.getMessage("infoEmptyConfig"), 'info');
@@ -324,7 +336,9 @@ function manualImport(e) {
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json'});
+				chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+					chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
+				});
 				
 			} else if (options['s_type'] == 'WebDAV') {
 				chrome.runtime.sendMessage({action: "getDAVMarks"});
@@ -398,7 +412,6 @@ function filterLog() {
 }
 
 function rLoglines(loglines) {
-	console.log(loglines);
 	let larea = document.getElementById("logarea");
 	let lines = loglines.split("\n");
 	let tlines = new Array();
