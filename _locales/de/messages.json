@@ -80,7 +80,7 @@
     "description": "Remove Button Hint."
   },
   "optionsBTNImport": {
-    "message": "Sync",
+    "message": "Download",
     "description": ""
   },
   "optionsBTNImportHint": {
