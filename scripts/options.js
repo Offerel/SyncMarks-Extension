@@ -524,11 +524,8 @@ function requestHostPermission() {
 	chrome.permissions.request({
 		origins: [url]
 	}, (granted) => {
-		if (granted) {
-			console.log("granted");
-		} else {
-			console.log("not granted");
-		}
+		const message = (granted) ? 'Syncmarks Info: Access to ' + url + ' granted':'Syncmarks Warning: Access to ' + url + ' denied';
+		chrome.runtime.sendMessage({action: "loglines", data: message});
 	});
 }
 
