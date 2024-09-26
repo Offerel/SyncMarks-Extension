@@ -9,11 +9,16 @@ var oMarks = [];
 var pTabs = [];
 var lastseen = null;
 
-init();
+chrome.runtime.onStartup.addListener(async () => {
+	init();
+});
+
+if(abrowser) init();
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if(sender.id === chrome.runtime.id) {
+			console.warn("background on message", request);
 			switch (request.action) {
 				case 'clientInfo':
 					sendRequest(clientInfo, request.data, request.tab);
