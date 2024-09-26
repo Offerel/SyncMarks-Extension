@@ -1,69 +1,59 @@
-## ChangeLog
+# ChangeLog
+
+## v1.21.0 (2024-09-26)
+*   Migrated to manifest v3
+*   Added API changes
+*   Small fixes
 
 ## v1.20.20 (2024-04-28)
-
 *   Add check for correct backend url
 *   Optimized feedback messages
 
 ## v1.20.19 (2022-11-03)
-
 *   Fixed Android bug in options
 *   Fixed backup bug on Android
 *   Fixed tab sync bug on Android
 
 ## v1.20.18 (2022-11-03)
-
 *   Added tab sync function
 
 ## v1.20.16 (2022-10-24)
-
 *   Fixed Initial sync with empty parent folder
 
 ## v1.20.15 (2022-10-20)
-
 *   Added changeIcon function
 
 ## v1.20.14 (2022-09-14)
-
 *   Removed FindByID
 *   Fixed rare issue with empty URL in options
 
 ## v1.20.13 (2022-09-11)
-
 *   Fix in Options
 *   Fix delete bookmark
 
 ## v1.20.11 (2022-09-03)
-
 *   Fixed mobile detection
 
 ## v1.20.10 (2022-08-28)
-
 *   Added icon context menu
 
 ## v1.20.9 (2022-08-21)
-
 *   Change response
 
 ## v1.20.8 (2022-08-10)
-
 *   Added Fallback to BasicAuth
 
 ## v1.20.7 (2022-06-10)
-
 *   Added Debug Level to logfile
 
 ## v1.20.6 (2022-05-10)
-
 *   Changed browser detection
 *   Fixed toast/notification
 
 ## v1.20.5 (2022-05-06)
-
 *   Fix exporting bookmarks
 
 ## v1.20.3 (2022-05-05)
-
 *   Added toast
 *   Small Fixes
 
