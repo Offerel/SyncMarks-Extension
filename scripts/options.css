@@ -198,6 +198,25 @@ input:hover {
 #logclear {
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z' /%3E%3C/svg%3E");
 }
+.wdurl {
+    position: absolute;
+    top: 15px;
+    right: 1px;
+}
+#wdurl.valid {
+    border-color: green;
+}
+#wdurl.invalid {
+    border-color: red;
+}
+.wdurl.valid:after {
+    content: '✓';
+    color: green;
+}
+.wdurl.invalid:after {
+    content: '×';
+    color: red;
+}
 .cframe {
     width: calc(100% - 30px);
     border: 0;

@@ -43,14 +43,15 @@ function showMsg(text, type) {
 }
 
 function checkForm() {
-	if(document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue) {
+	let url = document.getElementById('wdurl');
+	if(url.value != url.defaultValue && !url.classList.contains('invalid')) {
 		document.getElementById("lginl").style.visibility = 'visible';
 		saveOptions();
 	}
 
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('bookmarks')) {
-			if(document.getElementById('wdurl').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
+			if(url.value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
 				document.getElementById('mdownload').disabled=false;
 				document.getElementById('mupload').disabled=false;
 			} else{
@@ -529,6 +530,27 @@ function requestHostPermission() {
 	});
 }
 
+function checkURL() {
+	let url = this;
+	var rawFile = new XMLHttpRequest();
+	rawFile.open("GET", url.value, true);
+	rawFile.onreadystatechange = function () {
+		if(rawFile.readyState === 4 && rawFile.status === 204) {
+			url.classList.add('valid');
+			url.nextElementSibling.classList.add('valid');
+			url.classList.remove('invalid');
+			url.nextElementSibling.classList.remove('invalid');
+		} else {
+			url.classList.add('invalid');
+			url.nextElementSibling.classList.add('invalid');
+			url.classList.remove('valid');
+			url.nextElementSibling.classList.remove('valid');
+		}
+	}
+	rawFile.setRequestHeader('X-Action', 'verify');
+    rawFile.send(null);
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 window.addEventListener('load', function () {
@@ -569,7 +591,8 @@ window.addEventListener('load', function () {
 	document.getElementById("crclose").addEventListener("click", function() {document.getElementById("crdialog").style.display = "none";});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
-	document.getElementById("wdurl").addEventListener("input", checkForm);
+	document.getElementById("wdurl").addEventListener("input", checkURL);
+	document.getElementById("wdurl").addEventListener("change", checkForm);
 	document.getElementById("lginl").addEventListener("click", function(e) {
 		e.preventDefault;
 		requestHostPermission();

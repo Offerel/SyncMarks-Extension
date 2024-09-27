@@ -7,6 +7,11 @@
   "action": {
     "default_title": "__MSG_extensionName__"
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "some-name@example.org"
+    }
+  },
   "commands": {
     "bookmark-tab": {
       "description": "__MSG_bookmarkTab__",
