@@ -65,8 +65,10 @@ chrome.permissions.getAll(function(e) {
 		chrome.bookmarks.onMoved.addListener(onMovedCheck);
 		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 		chrome.bookmarks.onChanged.addListener(onChangedCheck);
+		chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 	} else {
 		chrome.storage.local.get(null, function(options) {
+			console.log("inner");
 			if(options.actions.crsrv === true) {
 				chrome.action.onClicked.addListener(bookmarkTab);
 			} else {
@@ -610,7 +612,6 @@ function changeIcon(mode) {
 		default:
 			statement(s)
 	 }
-	
 }
 
 async function init() {
