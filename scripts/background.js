@@ -77,15 +77,7 @@ chrome.permissions.getAll(function(e) {
 			}
 		});
 	}
-});
 
-chrome.runtime.onInstalled.addListener(onInstalled);
-
-chrome.notifications.onClicked.addListener(notificationSettings);
-
-chrome.tabs.onActivated.addListener(onTabActivated)
-
-chrome.permissions.getAll(function(e) {
 	if(e.permissions.includes('contextMenus')) {
 		chrome.contextMenus.onClicked.addListener(function(itemData) {
 			if(itemData.menuItemId.includes("page_") || itemData.menuItemId.includes("tab_")) {
@@ -94,6 +86,7 @@ chrome.permissions.getAll(function(e) {
 					sendTab(tabData);
 				});
 			}
+
 			if(itemData.menuItemId.includes("link_")) {
 				let tabData = {target:{id:itemData.menuItemId.substring(5),url:itemData.linkUrl}};
 				sendTab(tabData);
@@ -101,6 +94,12 @@ chrome.permissions.getAll(function(e) {
 		});
 	}
 });
+
+chrome.runtime.onInstalled.addListener(onInstalled);
+
+chrome.notifications.onClicked.addListener(notificationSettings);
+
+chrome.tabs.onActivated.addListener(onTabActivated)
 
 chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
