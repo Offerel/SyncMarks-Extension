@@ -68,7 +68,6 @@ chrome.permissions.getAll(function(e) {
 		chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 	} else {
 		chrome.storage.local.get(null, function(options) {
-			console.log("inner");
 			if(options.actions.crsrv === true) {
 				chrome.action.onClicked.addListener(bookmarkTab);
 			} else {
@@ -236,9 +235,8 @@ function clientInfo(response, tab = null) {
 function bookmarkExport(response, tab = null) {
 	bookmarks = response.bookmarks;
 	const message = [];
-	if(abrowser == false) bookmarks = JSON.parse(c2cm(JSON.stringify(bookmarks)));
+	if(abrowser == false) bookmarks = c2cm(bookmarks);
 	count = 0;
-	
 	loglines = logit('Info: '+ bookmarks.length +' Bookmarks received from server');
 	message.text = '' + bookmarks.length + ' Bookmarks received from server';
 	message.type = 'success';
@@ -639,7 +637,7 @@ async function init() {
 			chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
 		}
 		
-		let s_startup = options['actions']['startup'] || false;
+		let sync = options['actions']['startup'] || false;
 		let s_type = options['s_type'] || "";
 
 		if(s_type == 'PHP') {
@@ -656,15 +654,17 @@ async function init() {
 			}
 		}
 
-		if( s_startup === true && s_type.indexOf('PHP') === -1) {
-			loglines = logit("Info: Initiate WebDAV startup sync");
-			if(options['wdurl']) getDAVMarks();
-		} else if(s_type.indexOf('PHP') === 0) {
-			if(options['wdurl']) {
-				await ccMenus();
-				loglines = logit("Info: Get list of clients.");
-				sendRequest(clientList);
-				loglines = logit("Info: Init finished");
+		if(sync) {
+			if(s_type == 'PHP') {
+				if(options['wdurl']) {
+					await ccMenus();
+					loglines = logit("Info: Get list of clients.");
+					sendRequest(clientList);
+					loglines = logit("Info: Init finished");
+				}
+			} else {
+				loglines = logit("Info: Initiate WebDAV startup sync");
+				if(options['wdurl']) getDAVMarks();
 			}
 		}
 	});
@@ -970,6 +970,7 @@ async function doFullSync() {
 }
 
 async function importFull(rMarks) {
+	loglines = logit("Info: Starting import");
 	const lMarks = [];
 	const dMarks = new Array();
 	const uMarks = new Array();
@@ -982,7 +983,7 @@ async function importFull(rMarks) {
 		});
 	}
 
-	lMarks.forEach(function(lmark) {		
+	lMarks.forEach(function(lmark) {
 		const duplicate = rMarks.some(element => element.bmTitle === lmark.title);
 		if (!duplicate) dMarks.push(lmark);
 	});
@@ -1058,8 +1059,12 @@ async function importFull(rMarks) {
 			localParentId = remoteMark.bmParentID;
 		} else {
 			let searchedID = remoteMark.bmParentID;
-			remoteParentFolderName = rMarks.filter(element => element.bmID == searchedID)[0].bmTitle;		
-			localParentId = (await searchBookmarkAsync({title: remoteParentFolderName}))[0].id;
+			remoteParentFolderName = rMarks.filter(element => element.bmID == searchedID)[0].bmTitle;
+			let result = (await searchBookmarkAsync({title: remoteParentFolderName}));
+			if(result.length == 0) 
+				return false;
+			else
+				localParentId = (await searchBookmarkAsync({title: remoteParentFolderName}))[0].id;
 		}
 
 		let destination = new Object();
@@ -1096,7 +1101,7 @@ async function importFull(rMarks) {
 				break;
 			case 3:
 				loglines = logit('Debug: Existing Bookmark "'+remoteMark.bmID+'"');
-				delete remoteMark.bmIndex;
+				//delete remoteMark.bmIndex;
 				await iMoveMark(remoteMark);
 				break;
 			default:
@@ -1108,7 +1113,7 @@ async function importFull(rMarks) {
 	let cDate = (lastseen == 0) ? Date.now():lastseen;
 	dMarks.forEach(lmark => {
 		if (lmark.id.endsWith('_____') || lmark.id.length < 2) {
-			// 
+			//
 		} else if (lmark.dateAdded >= cDate) {
 			uMarks.push(lmark);
 		} else {
@@ -1125,11 +1130,19 @@ async function importFull(rMarks) {
 }
 
 function c2cm(bookmarks) {
-	bookmarks = bookmarks.replace(/root________/g, '0');
-	bookmarks = bookmarks.replace(/toolbar_____/g, '1');
-	bookmarks = bookmarks.replace(/unfiled_____/g, '2');
-	bookmarks = bookmarks.replace(/mobile______/g, '3');
-	bookmarks = bookmarks.replace(/menu________/g, '2'); // 4, not exist in chromium
+	bookmarks.forEach((bookmark) => {
+		if(bookmark.bmID == "root________") bookmark.bmID = "0";
+		if(bookmark.bmParentID == "root________") bookmark.bmParentID = "0";
+		if(bookmark.bmID == "toolbar_____") bookmark.bmID = "1";
+		if(bookmark.bmParentID == "toolbar_____") bookmark.bmParentID = "1";
+		if(bookmark.bmID == "unfiled_____") bookmark.bmID = "2";
+		if(bookmark.bmParentID == "unfiled_____") bookmark.bmParentID = "2";
+		if(bookmark.bmID == "mobile______") bookmark.bmID = "3";
+		if(bookmark.bmParentID == "mobile______") bookmark.bmParentID = "3";
+		if(bookmark.bmID == "menu________") bookmark.bmID = "2";
+		if(bookmark.bmParentID == "menu________") bookmark.bmParentID = "2";
+	});
+
 	return bookmarks;
 }
 
