@@ -204,14 +204,18 @@ input:hover {
     right: 1px;
 }
 #wdurl.valid {
-    border-color: green;
+    border-color: limegreen;
+    background-color: honeydew;
+    color: green;
 }
 #wdurl.invalid {
-    border-color: red;
+    border-color: orangered;
+    background-color: bisque;
+    color: red;
 }
 .wdurl.valid:after {
     content: '✓';
-    color: green;
+    color: limegreen;
 }
 .wdurl.invalid:after {
     content: '×';

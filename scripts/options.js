@@ -1,3 +1,5 @@
+var timeout;
+
 chrome.runtime.onMessage.addListener(
 	function(message, sender, sendResponse) {
 		if(sender.id === chrome.runtime.id) {
@@ -11,8 +13,10 @@ chrome.runtime.onMessage.addListener(
 					ip.innerText = message.cinfo.ip;
 					let ipinfo = document.createElement('span');
 					ipinfo.className = "iiinfo";
+					ipinfo.id = "iiinfo";
 					let tm = new Date(message.cinfo.tm * 1000).toLocaleString();
 					ipinfo.innerText = tm + '\n' + message.cinfo.de + ' | ' + message.cinfo.co + ' | ' + message.cinfo.ct + ' | ' + message.cinfo.re + '\n' + message.cinfo.ua;
+					if(document.getElementById('iiinfo')) document.getElementById('iiinfo').remove();
 					ip.after(ipinfo);
 					break;
 				case 'bookmarkImport':
@@ -502,34 +506,35 @@ function cAuto() {
 }
 
 function requestHostPermission() {
-	const url = new URL(document.getElementById('wdurl').value);
 	const wdurl = document.getElementById('wdurl');
 	let newOrigin = new URL(wdurl.value).origin + '/*';
-	let orgOrigin = new URL(wdurl.defaultValue).origin + '/*';
 
-	if(newOrigin != orgOrigin) {
-		chrome.permissions.request({
-			origins: [newOrigin]
-		}, (granted) => {
-			const message = (granted) ? 'Syncmarks Info: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
-			chrome.runtime.sendMessage({action: "loglines", data: message});
-		});
-
-		chrome.permissions.remove({
-			origins: [orgOrigin]
-		}, (removed) => {
-			const message = (removed) ? 'Syncmarks Info: Access to ' + orgOrigin + ' removed':'Syncmarks Warning: Access to ' + orgOrigin + ' unchanged';
-			chrome.runtime.sendMessage({action: "loglines", data: message});
-		});
-	}
+	chrome.permissions.contains({origins:[newOrigin]},
+		(result) => {
+			if(!result) {
+				chrome.permissions.request({
+					origins: [newOrigin]
+				}, (granted) => {
+					const message = (granted) ? 'Syncmarks Info: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
+					chrome.runtime.sendMessage({action: "loglines", data: message});
+				});
+			}
+		}
+	);
 }
 
 function checkURL() {
 	let url = this;
-	var rawFile = new XMLHttpRequest();
-	rawFile.open("GET", url.value, true);
-	rawFile.onreadystatechange = function () {
-		if(rawFile.readyState === 4 && rawFile.status === 204) {
+	clearTimeout(timeout);
+
+	timeout = setTimeout(() => {
+		requestHostPermission();
+	}, 2000);
+	
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", url.value, true);
+	xhr.onreadystatechange = function () {
+		if(xhr.readyState === 4 && xhr.status === 204) {
 			url.classList.add('valid');
 			url.nextElementSibling.classList.add('valid');
 			url.classList.remove('invalid');
@@ -541,8 +546,8 @@ function checkURL() {
 			url.nextElementSibling.classList.remove('valid');
 		}
 	}
-	rawFile.setRequestHeader('X-Action', 'verify');
-    rawFile.send(null);
+	xhr.setRequestHeader('X-Action', 'verify');
+	xhr.send(null);
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);

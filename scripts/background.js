@@ -254,11 +254,11 @@ function bookmarkExport(response, tab = null) {
 	chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined, doptions)});
 	
 	if (tab != null) chrome.runtime.sendMessage({task: message.task, type: message.type, text: message.text});
+	loglines = logit('Info: Import finished');
 }
 
 function bookmarkImport(response) {
 	const message = [];
-
 	if(response.code == 200) {
 		loglines = logit("Info: " + message);
 		message.text = "successExportBookmarks";
@@ -794,8 +794,7 @@ function onCreatedCheck(id, bookmark) {
 
 		if(s_create === true && s_type.indexOf('PHP') == -1) {
 			saveAllMarks();
-		}
-		else if(s_create === true && s_type.indexOf('PHP') == 0) {
+		} else if(s_create === true && s_type.indexOf('PHP') == 0) {
 			sendMark(bookmark);
 		}
 	});	
