@@ -1,8 +1,9 @@
 # ChangeLog
 
-## v1.21.0 (2024-09-26)
+## v2.0.0 (2024-09-26)
 *   Migrated to manifest v3
 *   Added API changes
+*   Added option host permissions
 *   Small fixes
 
 ## v1.20.20 (2024-04-28)

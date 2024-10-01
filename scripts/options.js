@@ -521,13 +521,26 @@ function cAuto() {
 }
 
 function requestHostPermission() {
-	url = document.getElementById('wdurl').value;
-	chrome.permissions.request({
-		origins: [url]
-	}, (granted) => {
-		const message = (granted) ? 'Syncmarks Info: Access to ' + url + ' granted':'Syncmarks Warning: Access to ' + url + ' denied';
-		chrome.runtime.sendMessage({action: "loglines", data: message});
-	});
+	const url = new URL(document.getElementById('wdurl').value);
+	const wdurl = document.getElementById('wdurl');
+	let newOrigin = new URL(wdurl.value).origin + '/*';
+	let orgOrigin = new URL(wdurl.defaultValue).origin + '/*';
+
+	if(newOrigin != orgOrigin) {
+		chrome.permissions.request({
+			origins: [newOrigin]
+		}, (granted) => {
+			const message = (granted) ? 'Syncmarks Info: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
+			chrome.runtime.sendMessage({action: "loglines", data: message});
+		});
+
+		chrome.permissions.remove({
+			origins: [orgOrigin]
+		}, (removed) => {
+			const message = (removed) ? 'Syncmarks Info: Access to ' + orgOrigin + ' removed':'Syncmarks Warning: Access to ' + orgOrigin + ' unchanged';
+			chrome.runtime.sendMessage({action: "loglines", data: message});
+		});
+	}
 }
 
 function checkURL() {
