@@ -47,6 +47,11 @@ chrome.runtime.onMessage.addListener(
 					console.log(request.data);
 					break;
 				case 'getLoglines':
+					if(loglines.length == 0) loglines = logit("Info: No Log entry available");
+					chrome.runtime.sendMessage({task: "rLoglines", text: loglines});
+					break;
+				case 'emptyLoglines':
+					loglines = '';
 					chrome.runtime.sendMessage({task: "rLoglines", text: loglines});
 					break;
 				case 'changeIcon':

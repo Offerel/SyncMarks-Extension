@@ -4,6 +4,7 @@
 *   Migrated to manifest v3
 *   Added API changes
 *   Added option host permissions
+*   Added URL verify
 *   Small fixes
 
 ## v1.20.20 (2024-04-28)

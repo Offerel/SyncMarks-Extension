@@ -388,39 +388,32 @@ function localizeHtmlPage() {
 }
 
 function filterLog() {
-	let larea = document.getElementById("logarea");
-	let debug = document.getElementById('logdebug').checked;
-	let lines = chrome.runtime.getBackgroundPage().loglines.split("\n");
-	let tlines = new Array();
-	let rlines = "";
-
-	if(larea.childNodes.length > 2) {
-		larea.removeChild(larea.childNodes[2]); 
-	}
-	
-	if(!debug) {
-		lines.forEach(function(line) {
-			if(line.indexOf("Debug:") === -1) tlines.push(line);
-		});
-		rlines = tlines.join("\n");
-	} else {
-		rlines = lines.join("\n");
-	}
-
-	var logp = new DOMParser().parseFromString(rlines, 'text/html').body;
-	larea.appendChild(logp);
+	chrome.runtime.sendMessage({action: "getLoglines"});
 }
 
 function rLoglines(loglines) {
 	let larea = document.getElementById("logarea");
 	let lines = loglines.split("\n");
+	let debug = document.getElementById('logdebug').checked;
 	let tlines = new Array();
+
 	lines.forEach(function(line, key) {
-		if(line.indexOf("Debug:") === -1) tlines.push(line);
+		if(debug) {
+			tlines.push(line);
+		} else if(!debug && line.indexOf("Debug:") < 0) {
+			tlines.push(line);
+		}
 	});
+
 	let rlines = tlines.join("\n");
 	let logp = new DOMParser().parseFromString(rlines, 'text/html').body;
-	larea.appendChild(logp);
+
+	var existingLog=larea.querySelector('body');
+	if(existingLog) {
+		existingLog.replaceWith(logp);
+	} else {
+		larea.appendChild(logp);
+	}
 }
 
 function openTab(tabname) {
@@ -458,19 +451,7 @@ function saveLog() {
 }
 
 function clearLog() {
-	chrome.runtime.getBackgroundPage(
-		function(background){
-			background.loglines = '';
-		}
-	)
-	let larea = document.getElementById("logarea");
-	if(larea.childNodes.length > 2) {
-		larea.removeChild(larea.childNodes[2]); 
-	}
-	if(tabname.target.innerText == 'Logfile') {
-		var logp = new DOMParser().parseFromString(chrome.runtime.getBackgroundPage().loglines, 'text/html').body;
-		larea.appendChild(logp);
-	}
+	chrome.runtime.sendMessage({action: "emptyLoglines"});
 }
 
 function cCreate() {
