@@ -4,7 +4,7 @@
     "description": "Name der Erweiterung."
   },
   "extensionDescription": {
-    "message": "Synchronisieren Sie Lesezeichen über den eigenen Server",
+    "message": "Mit Hilfe dieser Erweiterung synchronisieren Sie Lesezeichen und Tabs mit einem selbstgehosteten Server.",
     "description": ""
   },  
   "optionsServerData": {
@@ -80,7 +80,7 @@
     "description": "Remove Button Hint."
   },
   "optionsBTNImport": {
-    "message": "Sync",
+    "message": "Download",
     "description": ""
   },
   "optionsBTNImportHint": {
@@ -156,7 +156,7 @@
     "message": "Login Fehler: Bitte prüfe Benutzer und Passwort.",
     "description": "Login failed, wrong User."
   },
-  "optionsSuccessLogin": {
+  "optionsSuccessSave": {
     "message": "Optionen gespeichert.",
     "description": "Login failed, wrong User."
   },
@@ -173,7 +173,7 @@
     "description": ""
   },
   "optionsBeforeLogin": {
-    "message": "Bitte einmalig mit deinen Zugangsdaten einloggen, um einen Zugangscode zu erhalten.",
+    "message": "Bitte mit deinen Zugangsdaten einloggen, um einen Zugangscode zu erhalten.",
     "description": ""
   },
   "optionsWrongAData": {

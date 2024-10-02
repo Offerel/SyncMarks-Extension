@@ -4,7 +4,7 @@
     "description": "Name of the extension."
   },
   "extensionDescription": {
-    "message": "Synchronize bookmarks via your own server",
+    "message": "Use this extension to synchronize bookmarks and tabs with a self-hosted server.",
     "description": ""
   },  
   "optionsServerData": {
@@ -80,7 +80,7 @@
     "description": "Remove Button Hint."
   },
   "optionsBTNImport": {
-    "message": "Sync",
+    "message": "Download",
     "description": ""
   },
   "optionsBTNImportHint": {
@@ -155,8 +155,8 @@
     "message": "Login failed: Please check username and password.",
     "description": "Login failed, wrong User."
   },
-  "optionsSuccessLogin": {
-    "message": "Login successfully. Options saved.",
+  "optionsSuccessSave": {
+    "message": "Options saved.",
     "description": "Login successfully."
   },
   "optionsErrorLogin": {
@@ -172,7 +172,7 @@
     "description": ""
   },
   "optionsBeforeLogin": {
-    "message": "Please log in once with your access data to receive an access code.",
+    "message": "Please log in with your access data to receive an access code.",
     "description": ""
   },  
   "optionsWrongAData": {

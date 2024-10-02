@@ -1,54 +1,61 @@
-var background_page = chrome.extension.getBackgroundPage();
+var timeout;
 
-chrome.runtime.onMessage.addListener((message, sender) => {
-	if(sender.id === chrome.runtime.id) {
-		if(message.ctype) {
-			document.getElementById("cname").title = (message.cname) ? document.getElementById('s_uuid').value + " (" + message.ctype + ")":document.getElementById('s_uuid').value;
-			if(message !== null) document.getElementById("cname").defaultValue = (message.cname == document.getElementById('s_uuid').value) ? '':message.cname;
-		} else if (message.cInfo) {
-			let cInfo = JSON.parse(message.cInfo);
-			let iBox = document.getElementById("lgini");
-			let ip = document.getElementById('ipinfo');
-			iBox.style.display = 'block';
-			ip.innerText = cInfo.ip;
-			let ipinfo = document.createElement('span');
-			let tm = new Date(cInfo.tm * 1000).toLocaleString();
-			ipinfo.innerText = tm + ' | ' + cInfo.de + ' | ' + cInfo.co + ' | ' + cInfo.ct + ' | ' + cInfo.re + '\n' + cInfo.ua;
-			ip.appendChild(ipinfo);
-		} else if (message.type == 'bimport' ) {
-			let type = (message.text == "successExportBookmarks") ? "info":"error";
-			showMsg(chrome.i18n.getMessage(message.text), type);
-		} else if (message.type == 'bexport' ) {
-			let type = (message.text.includes("Bookmarks received")) ? "info":"error";
-			showMsg(message.text, type);
+chrome.runtime.onMessage.addListener(
+	function(message, sender, sendResponse) {
+		if(sender.id === chrome.runtime.id) {
+			switch (message.task) {
+				case 'clientInfo':
+					document.getElementById("cname").title = (message.cname) ? document.getElementById('s_uuid').value + " (" + message.ctype + ")":document.getElementById('s_uuid').value;
+					if(message !== null) document.getElementById("cname").defaultValue = (message.cname == document.getElementById('s_uuid').value) ? '':message.cname;
+					let iBox = document.getElementById("lgini");
+					let ip = document.getElementById('ipinfo');
+					iBox.style.display = 'block';
+					ip.innerText = message.cinfo.ip;
+					let ipinfo = document.createElement('span');
+					ipinfo.className = "iiinfo";
+					ipinfo.id = "iiinfo";
+					let tm = new Date(message.cinfo.tm * 1000).toLocaleString();
+					ipinfo.innerText = tm + '\n' + message.cinfo.de + ' | ' + message.cinfo.co + ' | ' + message.cinfo.ct + ' | ' + message.cinfo.re + '\n' + message.cinfo.ua;
+					if(document.getElementById('iiinfo')) document.getElementById('iiinfo').remove();
+					ip.after(ipinfo);
+					break;
+				case 'bookmarkImport':
+					showMsg(chrome.i18n.getMessage(message.text), (message.type === 'error') ? 'error':'info');
+					break;
+				case 'bookmarkExport':
+					showMsg(message.text, (message.type === 'error') ? 'error':'info');
+					break;
+				case 'clientRename':
+					showMsg(message.text, (message.type === 'error') ? 'error':'info');
+					break;
+				case 'rLoglines':
+					rLoglines(message.text);
+					break;
+				default:
+					break;
+			}
 		}
 	}
-});
+);
 
 function showMsg(text, type) {
 	let wmessage = document.getElementById('wmessage');
 	wmessage.textContent = text;
 	wmessage.style.cssText = (type == 'info') ? "border-color: green; background-color: #98FB98;":"border-color: red; background-color: lightsalmon;";
 	wmessage.className = "show";
-	setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 3000);
+	setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 5000);
 }
 
 function checkForm() {
-	if((document.getElementById('wdurl').value != '') && (document.getElementById('wdurl').value != document.getElementById('wdurl').defaultValue)) {
+	let url = document.getElementById('wdurl');
+	if(url.value != url.defaultValue && !url.classList.contains('invalid')) {
 		document.getElementById("lginl").style.visibility = 'visible';
-		chrome.storage.local.set({
-			actions: {
-				crsrv:document.getElementById("b_action").checked
-			},	
-			s_type: document.querySelector('input[name="stype"]:checked').value,
-			s_uuid: document.getElementById("s_uuid").value,
-			wdurl: document.getElementById("wdurl").value,
-		});
+		saveOptions();
 	}
 
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('bookmarks')) {
-			if(document.getElementById('wdurl').value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
+			if(url.value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
 				document.getElementById('mdownload').disabled=false;
 				document.getElementById('mupload').disabled=false;
 			} else{
@@ -64,7 +71,7 @@ function checkForm() {
 	});	
 }
 
-function checkForm2() {
+function checkLoginForm() {
 	if(document.getElementById('nuser').value != '' && document.getElementById('npassword').value != '' ) {
 		document.getElementById('lgin').disabled = false;
 	} else {
@@ -77,103 +84,76 @@ function gToken(e) {
 	let tbt = document.getElementById('tbt').checked;
 	document.getElementById('lginl').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
-	let xhr = new XMLHttpRequest();
-	cdata = "action=tl&client=" + document.getElementById('s_uuid').value + "&s=" + document.getElementById('s_startup').checked + "&tbt=" + tbt;
-	let rnd = Math.floor((Math.random() * 100) + 1) + '.txt';
-	var url = document.getElementById('wdurl').value;	
 
-	if(document.getElementById('php_webdav').checked) {
-		xhr.open("POST", url, true);
-	} else {
-		url = url.endsWith('/') ? url.slice(0, -1):url;
-		url = url + "/" + rnd;
-		xhr.open("PUT", url, true);
-	}
-
-	var creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
-	xhr.setRequestHeader('Authorization', 'Basic ' + creds);
-	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	xhr.withCredentials = true;
-	xhr.onload = function () {
-		switch(xhr.status) {
-			case 404: 	console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorURL"));
-						showMsg(chrome.i18n.getMessage("optionsErrorURL"), 'error');
-						break;
-			case 401:	console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorUser"));
-						showMsg(chrome.i18n.getMessage("optionsErrorUser"), 'error');
-						break;
-			case 200:	let rp = xhr.responseText;
-						let response = (rp.indexOf('<') === -1) ? JSON.parse(rp):'0';
-						if(response.length > 0 && response.token == undefined || response.token.length != 0) {
-							document.getElementById('lginl').classList.remove('loading');
-							document.getElementById('lginl').style.visibility = "hidden";
-							chrome.storage.local.set({
-								wdurl: document.getElementById('wdurl').value,
-								s_type: 'PHP',
-							});
-
-							if(tbt) {
-								chrome.storage.local.set({creds: creds});
-								chrome.storage.local.remove('token');
-							} else {
-								chrome.storage.local.set({token: response.token});
-								chrome.storage.local.remove('creds');
-							}
-
-							document.getElementById('cname').defaultValue = response.cname;
-						}
-
-						if(typeof response.message === 'undefined') {
-							showMsg('Your endpoint does not send a expected answer. Please check the URL', 'error');
-							console.warn('Your endpoint does not send a expected answer. Please check the URL');
-						} else  if(response.message.indexOf('updated') == 7 || response.message.indexOf('registered') == 7) {
-							showMsg(chrome.i18n.getMessage("optionsSuccessLogin"), 'info');
-						} else {
-							showMsg('Warning: '+ response.message, 'error');
-							console.warn(response.message);
-						}
-						
-						break;
-			case 201:	xhr.open("DELETE", url, true);
-						xhr.onload = function () {
-							let status = this.status;
-							if(status >= 200 || status < 300) {
-								document.getElementById('lginl').classList.remove('loading');
-								document.getElementById('lginl').style.visibility = "hidden";
-								chrome.storage.local.set({
-									wdurl: document.getElementById('wdurl').value,
-									creds: creds,
-									s_type: 'WebDAV',
-								});
-								document.getElementById('cname').defaultValue = response.cname;
-								chrome.storage.local.remove("token");
-							} else {
-								document.getElementById('lginl').classList.remove('loading');
-								chrome.storage.local.set({
-									wdurl: document.getElementById('wdurl').value,
-									creds: '',
-									s_type: 'WebDAV',
-								});
-								document.getElementById('cname').defaultValue = response.cname;
-								chrome.storage.local.remove("token");
-							}
-						}
-						xhr.send(cdata);
-						break;			
-			default:	console.error('Syncmarks Error: '+chrome.i18n.getMessage("optionsErrorLogin") + xhr.status);
-						showMsg(chrome.i18n.getMessage("optionsErrorLogin") + xhr.status, 'error');
-						break;
-		} 
-
-		background_page.init();
+	const params = {
+		action: "clientCheck",
+		client: document.getElementById('s_uuid').value,
+		data: {
+			usebasic: tbt
+		},
+		sync: document.getElementById('s_startup').checked
 	};
-	xhr.send(cdata);
+
+	const url = document.getElementById('wdurl').value;
+	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
+	const headers = new Headers();
+	headers.append("Content-Type", "application/json;charset=UTF-8");
+	headers.append("Authorization", 'Basic ' + creds);
+
+	const myRequest = fetch(url + '?api=v1', {
+		method: "POST",
+		body: JSON.stringify(params),
+		headers: headers,
+		redirect: 'follow',
+		referrerPolicy: 'no-referrer',
+	}).then(response => response.json()).then(responseData => {
+		document.getElementById('lginl').classList.remove('loading');
+		document.getElementById('lginl').style.visibility = "hidden";
+		chrome.storage.local.set({
+			wdurl: document.getElementById('wdurl').value,
+			s_type: 'PHP',
+		});
+
+		if(tbt) {
+			chrome.storage.local.set({creds: creds});
+			chrome.storage.local.remove('token');
+		} else {
+			chrome.storage.local.set({token: responseData.token});
+			chrome.storage.local.remove('creds');
+		}
+
+		document.getElementById('cname').defaultValue = responseData.cname;
+		
+		if(responseData.message.indexOf('updated') !== -1 || responseData.message.indexOf('registered') !== -1) {
+			wmessage.textContent = responseData.message;
+			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
+		} else {
+			wmessage.textContent = 'Warning: '+ responseData.message;
+			wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
+			chrome.runtime.sendMessage({action: "loglines", data: 'Syncmarks Warning: '+ responseData.message});
+		}
+	}).catch(err => {
+		wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
+		chrome.runtime.sendMessage({action: "loglines", data: err});
+		switch(response.status) {
+			case 404:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL") + err;
+						break;
+			case 401:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorUser") + err;
+						break;
+			default:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorLogin") + response.status + err;
+		}
+		chrome.runtime.sendMessage({action: "loglines", data: 'Syncmarks Error: ' + wmessage.textContent});
+	});
+
+	wmessage.className = "show";
+	setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 5000);
+	chrome.runtime.sendMessage({action: "init"});
 }
 
 function saveOptions(e) {
 	if(typeof e !== "undefined") e.preventDefault();
 
-	let text = chrome.i18n.getMessage("optionsSuccessLogin");
+	let text = chrome.i18n.getMessage("optionsSuccessSave");
 	let type = 'info';
 
 	if(typeof last_sync === "undefined" || last_sync.toString().length <= 0) {
@@ -200,11 +180,13 @@ function saveOptions(e) {
 }
 
 function rName() {
-	background_page.sendRequest(background_page.arename, this.value);
+	chrome.runtime.sendMessage({action: "clientRename", data: this.value});
 }
 
 function gName() {
-	background_page.sendRequest(background_page.cinfo);
+	chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+		chrome.runtime.sendMessage({action: "clientInfo", tab: tabs[0]['id']});
+	});
 }
 
 function uuidv4() {
@@ -214,6 +196,10 @@ function uuidv4() {
 }
 
 function restoreOptions() {
+	chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+		chrome.runtime.sendMessage({action: "clientInfo", tab: tabs[0]['id']});
+	});
+
 	chrome.storage.local.get(null, function(options) {
 		if(options['wdurl'] == undefined) {
 			showMsg(chrome.i18n.getMessage("infoEmptyConfig"), 'info');
@@ -248,7 +234,7 @@ function restoreOptions() {
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
 				if(options['token'] === undefined && options['creds'] === undefined) {
-					background_page.sendRequest(background_page.cinfo, 'p');
+					chrome.runtime.sendMessage({action: "clientInfo"});
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
 				document.getElementById("s_tabs").defaultChecked = (options['s_tabs'] == undefined) ? false:options['s_tabs'];
@@ -347,18 +333,23 @@ function importOptions() {
 
 function manualImport(e) {
 	e.preventDefault();
-	if (this.id === 'iyes') background_page.removeAllMarks();
-
+	if (this.id === 'iyes') {
+		chrome.runtime.sendMessage({action: "removeAllMarks"});
+	}
+	
 	try {
 		chrome.storage.local.get(null, function(options) {
 			if(options['s_type'] == 'PHP') {
-				background_page.sendRequest(background_page.bexport, 'json');
+				chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+					chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
+				});
+				
 			} else if (options['s_type'] == 'WebDAV') {
-				background_page.getDAVMarks();
+				chrome.runtime.sendMessage({action: "getDAVMarks"});
 			}
 		});
 	} catch(error) {
-		background_page.loglines = background_page.logit(error);
+		chrome.runtime.sendMessage({action: "loglines", data: error});
 	} finally {
 		document.getElementById("impdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
@@ -367,15 +358,14 @@ function manualImport(e) {
 
 function manualExport(e) {
 	e.preventDefault();
-	var background_page = chrome.extension.getBackgroundPage();
 	try {
 		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
-			background_page.saveAllMarks();
+			chrome.runtime.sendMessage({action: "saveAllMarks"});
 		} else if (document.querySelector('input[name="stype"]:checked').value == 'PHP') {
-			background_page.exportPHPMarks();
+			chrome.runtime.sendMessage({action: "exportPHPMarks"});
 		}
 	} catch(error) {
-		background_page.loglines = background_page.logit(error);
+		chrome.runtime.sendMessage({action: "loglines", data: error});
 	} finally {
 		document.getElementById("expdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
@@ -402,48 +392,46 @@ function localizeHtmlPage() {
 }
 
 function filterLog() {
+	chrome.runtime.sendMessage({action: "getLoglines"});
+}
+
+function rLoglines(loglines) {
 	let larea = document.getElementById("logarea");
+	let lines = loglines.split("\n");
 	let debug = document.getElementById('logdebug').checked;
-	let lines = background_page.loglines.split("\n");
 	let tlines = new Array();
-	let rlines = "";
 
-	if(larea.childNodes.length > 2) {
-		larea.removeChild(larea.childNodes[2]); 
-	}
-	
-	if(!debug) {
-		lines.forEach(function(line) {
-			if(line.indexOf("Debug:") === -1) tlines.push(line);
-		});
-		rlines = tlines.join("\n");
+	lines.forEach(function(line, key) {
+		if(debug) {
+			tlines.push(line);
+		} else if(!debug && line.indexOf("Debug:") < 0) {
+			tlines.push(line);
+		}
+	});
+
+	let rlines = tlines.join("\n");
+	let logp = new DOMParser().parseFromString(rlines, 'text/html').body;
+
+	var existingLog=larea.querySelector('body');
+	if(existingLog) {
+		existingLog.replaceWith(logp);
 	} else {
-		rlines = lines.join("\n");
+		larea.appendChild(logp);
 	}
-
-	var logp = new DOMParser().parseFromString(rlines, 'text/html').body;
-	larea.appendChild(logp);
 }
 
 function openTab(tabname) {
-	var x = document.getElementsByClassName("otabs");
+	let x = document.getElementsByClassName("otabs");
 	let larea = document.getElementById("logarea");
+
 	if(larea.childNodes.length > 2) {
 		larea.removeChild(larea.childNodes[2]); 
 	}
 
 	if(tabname.target.innerText == 'Logfile') {
-		console.log(background_page.loglines);
-		let lines = background_page.loglines.split("\n");
-		let tlines = new Array();
-		lines.forEach(function(line, key) {
-			if(line.indexOf("Debug:") === -1) tlines.push(line);
-		});
-		let rlines = tlines.join("\n");
-		var logp = new DOMParser().parseFromString(rlines, 'text/html').body;
-		larea.appendChild(logp);
+		chrome.runtime.sendMessage({action: "getLoglines"});
 	}
-
+	
 	for (var i = 0; i < x.length; i++) {
 		x[i].style.display = "none";
 	}
@@ -467,15 +455,7 @@ function saveLog() {
 }
 
 function clearLog() {
-	background_page.loglines = '';
-	let larea = document.getElementById("logarea");
-	if(larea.childNodes.length > 2) {
-		larea.removeChild(larea.childNodes[2]); 
-	}
-	if(tabname.target.innerText == 'Logfile') {
-		var logp = new DOMParser().parseFromString(background_page.loglines, 'text/html').body;
-		larea.appendChild(logp);
-	}
+	chrome.runtime.sendMessage({action: "emptyLoglines"});
 }
 
 function cCreate() {
@@ -525,6 +505,51 @@ function cAuto() {
 	saveOptions();
 }
 
+function requestHostPermission() {
+	const wdurl = document.getElementById('wdurl');
+	let newOrigin = new URL(wdurl.value).origin + '/*';
+
+	chrome.permissions.contains({origins:[newOrigin]},
+		(result) => {
+			if(!result) {
+				chrome.permissions.request({
+					origins: [newOrigin]
+				}, (granted) => {
+					const message = (granted) ? 'Syncmarks Info: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
+					chrome.runtime.sendMessage({action: "loglines", data: message});
+				});
+			}
+		}
+	);
+}
+
+function checkURL() {
+	let url = this;
+	clearTimeout(timeout);
+
+	timeout = setTimeout(() => {
+		requestHostPermission();
+	}, 2000);
+	
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", url.value, true);
+	xhr.onreadystatechange = function () {
+		if(xhr.readyState === 4 && xhr.status === 204) {
+			url.classList.add('valid');
+			url.nextElementSibling.classList.add('valid');
+			url.classList.remove('invalid');
+			url.nextElementSibling.classList.remove('invalid');
+		} else {
+			url.classList.add('invalid');
+			url.nextElementSibling.classList.add('invalid');
+			url.classList.remove('valid');
+			url.nextElementSibling.classList.remove('valid');
+		}
+	}
+	xhr.setRequestHeader('X-Action', 'verify');
+	xhr.send(null);
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 window.addEventListener('load', function () {
@@ -565,17 +590,19 @@ window.addEventListener('load', function () {
 	document.getElementById("crclose").addEventListener("click", function() {document.getElementById("crdialog").style.display = "none";});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
-	document.getElementById("wdurl").addEventListener("input", checkForm);
+	document.getElementById("wdurl").addEventListener("input", checkURL);
+	document.getElementById("wdurl").addEventListener("change", checkForm);
 	document.getElementById("lginl").addEventListener("click", function(e) {
 		e.preventDefault;
+		requestHostPermission();
 		document.getElementById("nuser").defaultValue = '';
 		document.getElementById("npassword").defaultValue = '';
 		document.getElementById("crdialog").style.display = "block";
 		document.getElementById("nuser").focus();
 	});
 
-	document.getElementById("nuser").addEventListener("input", checkForm2);
-	document.getElementById("npassword").addEventListener("input", checkForm2);
+	document.getElementById("nuser").addEventListener("input", checkLoginForm);
+	document.getElementById("npassword").addEventListener("input", checkLoginForm);
 	document.getElementById("php_webdav").addEventListener("change", switchBackend);
 	document.getElementById('lgin').addEventListener("click", gToken);
 	document.getElementById("s_startup").addEventListener("change", saveOptions);
