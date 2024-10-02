@@ -4,13 +4,13 @@
     "service_worker": "scripts/background.js",
     "scripts": ["scripts/background.js"]
   },
-  "action": {
-    "default_title": "__MSG_extensionName__"
-  },
   "browser_specific_settings": {
     "gecko": {
-      "id": "some-name@example.org"
+      "id": "davmarks@example.org"
     }
+  },
+  "action": {
+    "default_title": "__MSG_extensionName__"
   },
   "commands": {
     "bookmark-tab": {
