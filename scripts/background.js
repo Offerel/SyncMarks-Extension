@@ -65,22 +65,20 @@ chrome.runtime.onMessage.addListener(
 );
 
 chrome.permissions.getAll(function(e) {
-	if(e.permissions.includes('bookmarks')) {
-		chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-		chrome.bookmarks.onMoved.addListener(onMovedCheck);
-		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-		chrome.bookmarks.onChanged.addListener(onChangedCheck);
-		chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
-	} else {
-		chrome.storage.local.get(null, function(options) {
-			if(options.actions.crsrv === true) {
-				chrome.action.onClicked.addListener(bookmarkTab);
-			} else {
-				chrome.action.onClicked.removeListener(bookmarkTab);
-				chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
-			}
-		});
-	}
+	chrome.storage.local.get(null, function(options) {
+		if(!options.actions.crsrv) {
+			chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+			chrome.bookmarks.onMoved.addListener(onMovedCheck);
+			chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+			chrome.bookmarks.onChanged.addListener(onChangedCheck);
+			chrome.action.onClicked.removeListener(bookmarkTab);
+			chrome.action.onClicked.addListener(function() {
+				chrome.runtime.openOptionsPage();
+			});
+		} else {
+			chrome.action.onClicked.addListener(bookmarkTab);
+		}
+	});
 
 	if(e.permissions.includes('contextMenus')) {
 		chrome.contextMenus.onClicked.addListener(function(itemData) {
@@ -133,7 +131,6 @@ function sendRequest(action, data = null, tab = null) {
 			client: client,
 			data: data
 		}
-
 		Object.keys(params).forEach((k) => params[k] == null && delete params[k]);
 
 		fetch(url + '?api=v1', {
@@ -338,7 +335,7 @@ function bookmarkAdd(response) {
 				changeIcon('info');
 				mode = '0';
 			} else {
-				response = response;
+				response = response.message;
 				changeIcon('warn');
 				mode = '1';
 			}
@@ -595,7 +592,9 @@ function changeIcon(mode) {
 			chrome.action.setBadgeText({text: '!'});
 			chrome.action.setBadgeBackgroundColor({color: "red"});
 			chrome.action.onClicked.removeListener(bookmarkTab);
-			chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+			chrome.action.onClicked.addListener(function() {
+				chrome.runtime.openOptionsPage();
+			});
 			break;
 		case 'warn':
 			chrome.action.setBadgeText({text: '!'});
@@ -630,7 +629,7 @@ async function init() {
 			return false;
 		}
 
-		if(options.actions.crsrv === true) {
+		if(options.actions.crsrv) {
 			chrome.commands.getAll((commands) => {
 				for (let {name, shortcut} of commands) {
 					var s = (name === 'bookmark-tab') ? shortcut:'undef';
@@ -639,7 +638,9 @@ async function init() {
 				chrome.action.onClicked.addListener(bookmarkTab);
 			});
 		} else {
-			chrome.action.onClicked.addListener(function() {chrome.runtime.openOptionsPage()});
+			chrome.action.onClicked.addListener(function() {
+				chrome.runtime.openOptionsPage();
+			});
 		}
 		
 		let sync = options['actions']['startup'] || false;

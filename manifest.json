@@ -36,12 +36,13 @@
     "bookmarks",
     "storage",
     "notifications",
-    "contextMenus"
+    "contextMenus",
+    "activeTab"
   ],
   "optional_host_permissions": [
     "https://*/*"
   ],
-  "version": "2.0.0",
+  "version": "2.0.1",
   "web_accessible_resources": [
     {
       "resources": [
