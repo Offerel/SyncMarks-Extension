@@ -1,5 +1,8 @@
 # ChangeLog
 
+## v2.0.2 (2024-10-12)
+- Fix Remove Bookmark
+
 ## v2.0.1 (2024-10-07)
 - Fix bookmarkTab/permission
 

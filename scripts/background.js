@@ -924,8 +924,8 @@ function saveAllMarks() {
 function removeMark(bookmark) {
 	let jsonMark = JSON.stringify({
 		"url": bookmark.node.url,
-		"folder": bookmark.node.parentId,
-		"index": bookmark.node.index,
+		"folder": bookmark.parentId,
+		"index": bookmark.index,
 		"type": bookmark.node.type,
 		"id": bookmark.node.id,
 		"title": bookmark.node.title
