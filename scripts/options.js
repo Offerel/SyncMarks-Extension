@@ -55,7 +55,7 @@ function checkForm() {
 
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('bookmarks')) {
-			if(url.value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
+			if(url.value != '' && document.getElementById("php_webdav").checked !== true){
 				document.getElementById('mdownload').disabled=false;
 				document.getElementById('mupload').disabled=false;
 			} else{
@@ -91,7 +91,7 @@ function gToken(e) {
 		data: {
 			usebasic: tbt
 		},
-		sync: document.getElementById('s_startup').checked
+		sync: document.getElementById('s_auto').checked
 	};
 
 	const url = document.getElementById('wdurl').value;
@@ -110,8 +110,8 @@ function gToken(e) {
 		document.getElementById('lginl').classList.remove('loading');
 		document.getElementById('lginl').style.visibility = "hidden";
 		chrome.storage.local.set({
-			wdurl: document.getElementById('wdurl').value,
-			s_type: 'PHP',
+			instance: document.getElementById('wdurl').value,
+			type: true,
 		});
 
 		if(tbt) {
@@ -153,6 +153,10 @@ function gToken(e) {
 function saveOptions(e) {
 	if(typeof e !== "undefined") e.preventDefault();
 
+	if(document.getElementById("b_action").checked) {
+		document.getElementById("s_auto").checked = false
+	}
+
 	let text = chrome.i18n.getMessage("optionsSuccessSave");
 	let type = 'info';
 
@@ -162,18 +166,15 @@ function saveOptions(e) {
 	}
 
 	chrome.storage.local.set({
-		actions: {
-			startup:document.getElementById("s_startup").checked,
-			create:document.getElementById("s_create").checked,
-			change:document.getElementById("s_change").checked,
-			remove:document.getElementById("s_remove").checked,
-			crsrv:document.getElementById("b_action").checked
+		sync: {
+			auto:document.getElementById("s_auto").checked,
+			manual:document.getElementById("b_action").checked
 		},
 
-		s_type: document.querySelector('input[name="stype"]:checked').value,
-		s_uuid: document.getElementById("s_uuid").value,
-		s_tabs: document.getElementById("s_tabs").checked,
-		wdurl: document.getElementById("wdurl").value,
+		type: document.getElementById("php_webdav").checked,
+		uuid: document.getElementById("s_uuid").value,
+		tabs: document.getElementById("s_tabs").checked,
+		instance: document.getElementById("wdurl").value,
 	});
 
 	showMsg(text, type);
@@ -201,35 +202,26 @@ function restoreOptions() {
 	});
 
 	chrome.storage.local.get(null, function(options) {
-		if(options['wdurl'] == undefined) {
+		if(options['instance'] == undefined) {
 			showMsg(chrome.i18n.getMessage("infoEmptyConfig"), 'info');
 		}
-		document.querySelector("#wdurl").defaultValue = options['wdurl'] || "";		
+		document.querySelector("#wdurl").defaultValue = options['instance'] || "";		
 		
-		if(options['s_uuid'] === undefined) {
+		if(options['uuid'] === undefined) {
 			let nuuid = uuidv4();
 			document.getElementById("s_uuid").defaultValue = nuuid;
 			document.getElementById("cname").placeholder = nuuid;
 		} else {
-			document.getElementById("s_uuid").defaultValue = options['s_uuid'];
-			document.getElementById("cname").placeholder = options['s_uuid'];
+			document.getElementById("s_uuid").defaultValue = options['uuid'];
+			document.getElementById("cname").placeholder = options['uuid'];
 		}
 
-		document.getElementById("s_startup").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['startup'];
-		document.getElementById("s_create").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['create'];
-		document.getElementById("s_change").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['change'];
-		document.getElementById("s_remove").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['remove'];
-		document.getElementById("b_action").defaultChecked = (options['actions'] == undefined) ? false:options['actions']['crsrv'];
-
-		if(document.getElementById("s_startup").checked && document.getElementById("s_create").checked && document.getElementById("s_change").checked && document.getElementById("s_remove").checked) {
-			document.getElementById("s_auto").defaultChecked = true;
-		} else {
-			document.getElementById("s_auto").defaultChecked = false;
-		}
+		document.getElementById("s_auto").defaultChecked = (options['sync'] == undefined) ? true:options['sync']['auto'];
+		document.getElementById("b_action").defaultChecked = (options['sync'] == undefined) ? false:options['sync']['manual'];
 		
-		if("s_type" in options) {		
-			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').defaultChecked = true;
-			if(options['s_type'] == 'PHP') {
+		if("type" in options) {		
+			if(options['type']) {
+				document.getElementById("php_webdav").defaultChecked = true;
 				gName();
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
@@ -237,7 +229,7 @@ function restoreOptions() {
 					chrome.runtime.sendMessage({action: "clientInfo"});
 					document.getElementById("lginl").style.visibility = 'visible';
 				}
-				document.getElementById("s_tabs").defaultChecked = (options['s_tabs'] == undefined) ? false:options['s_tabs'];
+				document.getElementById("s_tabs").defaultChecked = (options['tabs'] == undefined) ? false:options['tabs'];
 			} else {
 				document.getElementById("php_webdav").checked = false;
 				if(options['creds'] === undefined) {
@@ -249,7 +241,7 @@ function restoreOptions() {
 		
 		last_sync = options['last_sync'] || 0;
 		if(last_sync.toString().length > 0) {
-			document.querySelector("#s_startup").removeAttribute("disabled");
+			document.querySelector("#s_auto").removeAttribute("disabled");
 		}
 		
 		if(document.getElementById("wdurl").value.length > 4) document.getElementById("cexp").disabled = false;
@@ -294,33 +286,27 @@ function importOptions() {
 	let reader = new FileReader();
 	reader.addEventListener('load', function(e) {
 		let ioptions = JSON.parse(e.target.result);
-		
+
 		chrome.storage.local.set({
-			actions: {
-				startup:ioptions.actions.startup,
-				create:ioptions.actions.create,
-				change:ioptions.actions.change,
-				remove:ioptions.actions.remove
+			sync: {
+				auto:ioptions.sync.auto,
+				manual:ioptions.sync.manual
 			},
-			s_type: ioptions.s_type,
-			wdurl: ioptions.wdurl,
-			s_uuid: ioptions.s_uuid,
+			type: ioptions.type,
+			instance: ioptions.instance,
+			uuid: ioptions.uuid,
 		});
 
 		if(resCID) {
-			document.getElementById("cname").placeholder = ioptions.s_uuid;
-			document.getElementById("s_uuid").value = ioptions.s_uuid;
+			document.getElementById("cname").placeholder = ioptions.uuid;
+			document.getElementById("s_uuid").value = ioptions.uuid;
 			document.getElementById("lginl").style.visibility = 'hidden';
 		}
 
-		document.getElementById("wdurl").value = ioptions.wdurl;
-		document.getElementById("s_startup").checked = ioptions.actions.startup;
-		document.getElementById("s_create").checked = ioptions.actions.create;
-		document.getElementById("s_change").checked = ioptions.actions.change;
-		document.getElementById("s_remove").checked = ioptions.actions.remove;
-		document.getElementById("b_action").checked = ioptions.actions.crsrv;
-		document.getElementById("s_auto").checked = (ioptions.actions.startup && ioptions.actions.create && ioptions.actions.change && ioptions.actions.remove) ? true:false;
-		document.getElementById("s_tabs").checked = ioptions.s_tabs;
+		document.getElementById("wdurl").value = ioptions.instance;
+		document.getElementById("s_auto").checked = ioptions.sync.auto;
+		document.getElementById("b_action").checked = ioptions.sync.manual;
+		document.getElementById("s_tabs").checked = ioptions.tabs;
 
 		showMsg(chrome.i18n.getMessage("optionsSuccessImport"), 'info');
 	});
@@ -339,12 +325,12 @@ function manualImport(e) {
 	
 	try {
 		chrome.storage.local.get(null, function(options) {
-			if(options['s_type'] == 'PHP') {
+			if(options['type'] == true) {
 				chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
 					chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
 				});
 				
-			} else if (options['s_type'] == 'WebDAV') {
+			} else if (options['type'] == false) {
 				chrome.runtime.sendMessage({action: "getDAVMarks"});
 			}
 		});
@@ -359,9 +345,10 @@ function manualImport(e) {
 function manualExport(e) {
 	e.preventDefault();
 	try {
-		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
+		document.getElementById("php_webdav").checked
+		if(!document.getElementById("php_webdav").checked) {
 			chrome.runtime.sendMessage({action: "saveAllMarks"});
-		} else if (document.querySelector('input[name="stype"]:checked').value == 'PHP') {
+		} else if (document.getElementById("php_webdav").checked) {
 			chrome.runtime.sendMessage({action: "exportPHPMarks"});
 		}
 	} catch(error) {
@@ -458,56 +445,29 @@ function clearLog() {
 	chrome.runtime.sendMessage({action: "emptyLoglines"});
 }
 
-function cCreate() {
-	let crsrv = document.getElementById("b_action");
-	if(document.getElementById("s_create").checked) {
-		crsrv.checked = false;
-	} else {
-		crsrv.checked = true;
-	}
-}
-
 function switchBackend() {
 	let backendPHP = this.checked;
+
 	if(backendPHP) {
-		document.getElementById("php").checked = true;
-		document.getElementById("wdav").checked = false;
 		document.getElementById("blbl").innerText = "Server: PHP";
 		document.getElementById('cname').disabled = false;
 		document.getElementById('b_action').disabled = false;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'unset';
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = ''
 	} else {
-		document.getElementById("php").checked = false;
-		document.getElementById("wdav").checked = true;
 		document.getElementById("blbl").innerText = "Server: WebDAV";
 		document.getElementById('cname').disabled = true;
 		document.getElementById('b_action').disabled = true;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'none';
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = 'lightgrey'
 	}
-}
 
-function cAuto() {
-	if(document.getElementById("s_auto").checked) {
-		document.getElementById("b_action").checked = false;
-		document.getElementById("s_startup").checked = true;
-		document.getElementById("s_create").checked = true;
-		document.getElementById("s_change").checked = true;
-		document.getElementById("s_remove").checked = true;
-	} else {
-		document.getElementById("b_action").checked = true;
-		document.getElementById("s_startup").checked = false;
-		document.getElementById("s_create").checked = false;
-		document.getElementById("s_change").checked = false;
-		document.getElementById("s_remove").checked = false;
-	}
 	saveOptions();
 }
 
 function requestHostPermission() {
-	const wdurl = document.getElementById('wdurl');
-	let newOrigin = new URL(wdurl.value).origin + '/*';
+	const instance = document.getElementById('wdurl');
+	let newOrigin = new URL(instance.value).origin + '/*';
 
 	chrome.permissions.contains({origins:[newOrigin]},
 		(result) => {
@@ -605,14 +565,9 @@ window.addEventListener('load', function () {
 	document.getElementById("npassword").addEventListener("input", checkLoginForm);
 	document.getElementById("php_webdav").addEventListener("change", switchBackend);
 	document.getElementById('lgin').addEventListener("click", gToken);
-	document.getElementById("s_startup").addEventListener("change", saveOptions);
-	document.getElementById("s_create").addEventListener("change", saveOptions);
-	document.getElementById("s_create").addEventListener("change", cCreate);
-	document.getElementById("s_change").addEventListener("change", saveOptions);
-	document.getElementById("s_remove").addEventListener("change", saveOptions);
 	document.getElementById("b_action").addEventListener("change", saveOptions);
 	document.getElementById("s_tabs").addEventListener("change", saveOptions);
-	document.getElementById("s_auto").addEventListener("change", cAuto);
+	document.getElementById("s_auto").addEventListener("change", saveOptions);
 	document.getElementById("cname").addEventListener("change", rName);
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 	document.getElementById("logsave").addEventListener("click", saveLog);
