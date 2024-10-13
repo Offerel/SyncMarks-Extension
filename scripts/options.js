@@ -127,6 +127,7 @@ function gToken(e) {
 		if(responseData.message.indexOf('updated') !== -1 || responseData.message.indexOf('registered') !== -1) {
 			wmessage.textContent = responseData.message;
 			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
+			requestClientOptions(responseData.cOptions);
 		} else {
 			wmessage.textContent = 'Warning: '+ responseData.message;
 			wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
@@ -165,17 +166,19 @@ function saveOptions(e) {
 		type = 'error';
 	}
 
-	chrome.storage.local.set({
+	const cOptions = {
 		sync: {
 			auto:document.getElementById("s_auto").checked,
 			manual:document.getElementById("b_action").checked
 		},
-
 		type: document.getElementById("php_webdav").checked,
 		uuid: document.getElementById("s_uuid").value,
 		tabs: document.getElementById("s_tabs").checked,
-		instance: document.getElementById("wdurl").value,
-	});
+		instance: document.getElementById("wdurl").value
+	};
+
+	chrome.storage.local.set(cOptions);
+	chrome.runtime.sendMessage({action: "clientSendOptions", data: cOptions});
 
 	showMsg(text, type);
 }
@@ -287,15 +290,18 @@ function importOptions() {
 	reader.addEventListener('load', function(e) {
 		let ioptions = JSON.parse(e.target.result);
 
-		chrome.storage.local.set({
+		const cOptions = {
 			sync: {
 				auto:ioptions.sync.auto,
 				manual:ioptions.sync.manual
 			},
 			type: ioptions.type,
-			instance: ioptions.instance,
 			uuid: ioptions.uuid,
-		});
+			tabs: ioptions.tabs,
+			instance: ioptions.instance,
+		};
+
+		chrome.storage.local.set(cOptions);
 
 		if(resCID) {
 			document.getElementById("cname").placeholder = ioptions.uuid;
@@ -483,6 +489,39 @@ function requestHostPermission() {
 	);
 }
 
+function requestClientOptions(cOptions) {
+	if(cOptions !== undefined && cOptions.length > 0) {
+		select = document.getElementById('cimport');
+		cOptions.forEach((client) => {
+			var opt = document.createElement('option');
+			opt.value = client['cOptions'];
+			opt.innerHTML = client['cname'];
+			select.appendChild(opt);
+		});
+
+		document.getElementById('coptionsdialog').style.display = 'block';
+	}
+}
+
+function serverImport() {
+	let client = document.getElementById('cimport');
+	let jOptions = JSON.parse(client.value);
+
+	chrome.storage.local.get(null, function(options) {
+		chrome.runtime.sendMessage({action: "clientRM", data: options.uuid});
+	});
+
+	chrome.storage.local.set(jOptions);
+	document.getElementById("wdurl").value = jOptions.instance;
+	document.getElementById("cname").value = client.options[client.selectedIndex].text;
+	document.getElementById("s_auto").checked = jOptions.sync.auto;
+	document.getElementById("b_action").checked = jOptions.sync.manual;
+	document.getElementById("s_tabs").checked = jOptions.tabs;
+	document.getElementById("coptionsdialog").style.display = "none";
+	showMsg(chrome.i18n.getMessage("optionsSuccessImport"), 'info');
+	chrome.runtime.sendMessage({action: "init"});
+}
+
 function checkURL() {
 	let url = this;
 	clearTimeout(timeout);
@@ -528,6 +567,7 @@ window.addEventListener('load', function () {
 	var imodal = document.getElementById("impdialog");
 	var emodal = document.getElementById("expdialog");
 	var comodal = document.getElementById("expimpdialog");
+	var cmodal = document.getElementById("coptionsdialog");
 
 	localizeHtmlPage();
 
@@ -544,9 +584,12 @@ window.addEventListener('load', function () {
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
 	document.getElementById("ino").addEventListener("click", manualImport);
+	document.getElementById("coimport").addEventListener("click", serverImport);
+	document.getElementById("cochancel").addEventListener("click", function() {cmodal.style.display = "none";});
 	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";});
 	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";});
+	document.getElementById("oclose").addEventListener("click", function() {cmodal.style.display = "none";});
 	document.getElementById("crclose").addEventListener("click", function() {document.getElementById("crdialog").style.display = "none";});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});

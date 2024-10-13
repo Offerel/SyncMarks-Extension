@@ -28,6 +28,12 @@ chrome.runtime.onMessage.addListener(
 				case 'clientRename':
 					sendRequest(clientRename, request.data);
 					break;
+				case 'clientSendOptions':
+					sendRequest(clientSendOptions, request.data);
+					break;
+				case 'clientRemove':
+					sendRequest(clientRemove, request.data);
+					break;
 				case 'removeAllMarks':
 					removeAllMarks();
 					break;
@@ -154,6 +160,19 @@ function sendRequest(action, data = null, tab = null) {
 			console.warn(err);
 		});
 	});
+}
+
+function clientSendOptions(response) {
+	if(response.code == 200) {
+		loglines = logit("Info: " + response.message);
+	} else {
+		changeIcon('warn');
+		loglines = logit("Error: " + response.message);
+	}
+}
+
+function clientRemove(response) {
+	console.log(response);
 }
 
 function clientList(response) {
