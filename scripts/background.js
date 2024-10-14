@@ -72,7 +72,7 @@ chrome.runtime.onMessage.addListener(
 
 chrome.permissions.getAll(function(e) {
 	chrome.storage.local.get(null, function(options) {
-		if(!options.sync.manual) {
+		if(options.sync != undefined && !options.sync.manual) {
 			chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 			chrome.bookmarks.onMoved.addListener(onMovedCheck);
 			chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
@@ -115,6 +115,8 @@ chrome.commands.onCommand.addListener((command) => {
 
 function sendRequest(action, data = null, tab = null) {
 	chrome.storage.local.get(null, function(options) {
+		if(options.instance == undefined) return false;
+
 		let tarr = {};
 		tarr['client'] = options['uuid'];
 		tarr['token'] = options['token'];
@@ -128,7 +130,7 @@ function sendRequest(action, data = null, tab = null) {
 
 		let client = options['uuid'];
 
-		if(action.name === 'bookmarkAdd' && options['sync']['manual'] === true) {
+		if(action.name === 'bookmarkAdd' && options.sync != undefined && options.sync.manual) {
 			client = 'bookmarkTab';
 		}
 
@@ -348,7 +350,7 @@ function toastMessage(mode, message) {
 
 function bookmarkAdd(response) {
 	chrome.storage.local.get(null, async function(options) {
-		if(options['sync']['manual'] === true) {
+		if(options.sync != undefined && options.sync.manual) {
 			if(response.code === 200) {
 				response = "Bookmark added";
 				changeIcon('info');
@@ -649,8 +651,9 @@ async function init() {
 	await get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, async function(options) {
-		if(options['instance'] === undefined) {
+		if(options.instance == undefined) {
 			changeIcon('error');
+			console.error('instance undefined', options);
 			return false;
 		}
 
@@ -668,17 +671,19 @@ async function init() {
 			});
 		}
 		
-		let sync = options['sync']['auto'] || false;
-		let type = options['type'] || false;
+		let sync = options.sync.auto || false;
+		let type = options.type || false;
 
 		if(type == true) {
-			if(options['token'] === undefined && options['creds'] === undefined) {
+			if(options.token === undefined && options.creds === undefined) {
+				console.error('no token or creds')
 				changeIcon('error');
 			} else {
 				chrome.action.setBadgeText({text: ''});
 			}
 		} else if(type == false) {
-			if(options['creds'] == '') {
+			if(options.creds == '') {
+				console.error('creds empty')
 				changeIcon('error');
 			} else {
 				chrome.action.setBadgeText({text: ''});

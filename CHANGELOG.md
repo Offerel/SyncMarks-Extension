@@ -2,6 +2,7 @@
 
 ## v2.0.2 (2024-10-13)
 - Fix Remove Bookmark
+- Add support for store client settings on server
 
 ## v2.0.1 (2024-10-07)
 - Fix bookmarkTab/permission

@@ -10,14 +10,16 @@ chrome.runtime.onMessage.addListener(
 					let iBox = document.getElementById("lgini");
 					let ip = document.getElementById('ipinfo');
 					iBox.style.display = 'block';
-					ip.innerText = message.cinfo.ip;
-					let ipinfo = document.createElement('span');
-					ipinfo.className = "iiinfo";
-					ipinfo.id = "iiinfo";
-					let tm = new Date(message.cinfo.tm * 1000).toLocaleString();
-					ipinfo.innerText = tm + '\n' + message.cinfo.de + ' | ' + message.cinfo.co + ' | ' + message.cinfo.ct + ' | ' + message.cinfo.re + '\n' + message.cinfo.ua;
-					if(document.getElementById('iiinfo')) document.getElementById('iiinfo').remove();
-					ip.after(ipinfo);
+					if(message.cinfo != undefined) {
+						ip.innerText = message.cinfo.ip;
+						let ipinfo = document.createElement('span');
+						ipinfo.className = "iiinfo";
+						ipinfo.id = "iiinfo";
+						let tm = new Date(message.cinfo.tm * 1000).toLocaleString();
+						ipinfo.innerText = tm + '\n' + message.cinfo.de + ' | ' + message.cinfo.co + ' | ' + message.cinfo.ct + ' | ' + message.cinfo.re + '\n' + message.cinfo.ua;
+						if(document.getElementById('iiinfo')) document.getElementById('iiinfo').remove();
+						ip.after(ipinfo);
+					}
 					break;
 				case 'bookmarkImport':
 					showMsg(chrome.i18n.getMessage(message.text), (message.type === 'error') ? 'error':'info');
@@ -50,7 +52,6 @@ function checkForm() {
 	let url = document.getElementById('wdurl');
 	if(url.classList.contains('valid')) {
 		document.getElementById('blogin').disabled = false;
-		saveOptions();
 	}
 
 	chrome.permissions.getAll(function(e) {
@@ -108,18 +109,27 @@ function gToken(e) {
 		referrerPolicy: 'no-referrer',
 	}).then(response => response.json()).then(responseData => {
 		document.getElementById('blogin').classList.remove('loading');
-		chrome.storage.local.set({
-			instance: document.getElementById('wdurl').value,
-			type: true,
-		});
+
+		let cOptions = {
+			sync: {
+				auto:document.getElementById("s_auto").checked,
+				manual:document.getElementById("b_action").checked
+			},
+			type: document.getElementById("php_webdav").checked,
+			uuid: document.getElementById("s_uuid").value,
+			tabs: document.getElementById("s_tabs").checked,
+			instance: document.getElementById("wdurl").value
+		};
 
 		if(tbt) {
-			chrome.storage.local.set({creds: creds});
+			cOptions.creds = creds;
 			chrome.storage.local.remove('token');
 		} else {
-			chrome.storage.local.set({token: responseData.token});
+			cOptions.token = responseData.token;
 			chrome.storage.local.remove('creds');
 		}
+
+		chrome.storage.local.set(cOptions);
 
 		document.getElementById('cname').defaultValue = responseData.cname;
 		
@@ -147,7 +157,6 @@ function gToken(e) {
 
 	wmessage.className = "show";
 	setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 5000);
-	chrome.runtime.sendMessage({action: "init"});
 }
 
 function saveOptions(e) {
@@ -204,44 +213,44 @@ function restoreOptions() {
 	});
 
 	chrome.storage.local.get(null, function(options) {
-		if(options['instance'] == undefined) {
+		if(options.instance == undefined) {
 			showMsg(chrome.i18n.getMessage("infoEmptyConfig"), 'info');
 		}
-		document.querySelector("#wdurl").defaultValue = options['instance'] || "";		
+		document.querySelector("#wdurl").defaultValue = options.instance || "";
 		
-		if(options['uuid'] === undefined) {
+		if(options.uuid === undefined) {
 			let nuuid = uuidv4();
 			document.getElementById("s_uuid").defaultValue = nuuid;
 			document.getElementById("cname").placeholder = nuuid;
 		} else {
-			document.getElementById("s_uuid").defaultValue = options['uuid'];
-			document.getElementById("cname").placeholder = options['uuid'];
+			document.getElementById("s_uuid").defaultValue = options.uuid;
+			document.getElementById("cname").placeholder = options.uuid;
 		}
 
-		document.getElementById("s_auto").defaultChecked = (options['sync'] == undefined) ? true:options['sync']['auto'];
-		document.getElementById("b_action").defaultChecked = (options['sync'] == undefined) ? false:options['sync']['manual'];
+		document.getElementById("s_auto").defaultChecked = (options.sync == undefined) ? true:options.sync.auto;
+		document.getElementById("b_action").defaultChecked = (options.sync == undefined) ? false:options.sync.manual;
 		
 		if("type" in options) {		
-			if(options['type']) {
+			if(options.type != undefined) {
 				document.getElementById("php_webdav").defaultChecked = true;
 				gName();
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
-				if(options['token'] === undefined && options['creds'] === undefined) {
-					chrome.runtime.sendMessage({action: "clientInfo"});
+				if(options.token === undefined && options.creds === undefined) {
 					document.getElementById("blogin").disabled = false;
+					document.getElementById("blogin").style.backgroundColor = "red";
 				}
-				document.getElementById("s_tabs").defaultChecked = (options['tabs'] == undefined) ? false:options['tabs'];
+				document.getElementById("s_tabs").defaultChecked = (options.tabs == undefined) ? false:options.tabs;
 			} else {
 				document.getElementById("php_webdav").checked = false;
-				if(options['creds'] === undefined) {
+				if(options.creds === undefined) {
 					document.getElementById("blogin").disabled = false;
 				}
 				document.getElementById("s_tabs").defaultChecked = false;
 			}
 		}
 		
-		last_sync = options['last_sync'] || 0;
+		last_sync = options.last_sync || 0;
 		if(last_sync.toString().length > 0) {
 			document.querySelector("#s_auto").removeAttribute("disabled");
 		}
@@ -497,8 +506,9 @@ function requestHostPermission() {
 				chrome.permissions.request({
 					origins: [newOrigin]
 				}, (granted) => {
-					const message = (granted) ? 'Syncmarks Info: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
+					const message = (granted) ? 'Syncmarks: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
 					chrome.runtime.sendMessage({action: "loglines", data: message});
+					checkURL();
 				});
 			}
 		}
@@ -525,31 +535,46 @@ function requestClientOptions(cOptions, av = false) {
 
 function serverImport() {
 	let client = document.getElementById('cimport');
-	let jOptions = JSON.parse(client.value);
-
-	chrome.storage.local.get(null, function(options) {
-		chrome.runtime.sendMessage({action: "clientRM", data: options.uuid});
-	});
+	const ouuid = document.getElementById('s_uuid').value;
+	const url = document.getElementById('wdurl').value;
+	const jOptions = JSON.parse(client.value);
+	const nuuid = jOptions.uuid;
+	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
 
 	chrome.storage.local.set(jOptions);
-	document.getElementById("wdurl").value = jOptions.instance;
-	document.getElementById("cname").value = client.options[client.selectedIndex].text;
-	document.getElementById("s_auto").checked = jOptions.sync.auto;
-	document.getElementById("b_action").checked = jOptions.sync.manual;
-	document.getElementById("s_tabs").checked = jOptions.tabs;
-	document.getElementById("coptionsdialog").style.display = "none";
-	showMsg(chrome.i18n.getMessage("optionsSuccessImport"), 'info');
-	chrome.runtime.sendMessage({action: "init"});
+	
+	const params = {
+		action: 'clientRemove',
+		client: nuuid,
+		data: {
+			new: nuuid,
+			old: ouuid
+		}
+	}
+
+	fetch(url + '?api=v1', {
+		method: "POST",
+		cache: "no-cache",
+		headers: {
+			'Content-type': 'application/json;charset=UTF-8',
+			'Authorization': 'Basic ' + creds,
+		},
+		redirect: "follow",
+		referrerPolicy: "no-referrer",
+		body: JSON.stringify(params)
+	}).then(response => {
+		let xRinfo = response.headers.get("X-Request-Info");
+		if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
+		return response.json();
+	}).then(responseData => {
+		console.log(responseData);
+	}).catch(err => {
+		//console.warn(err);
+	});
 }
 
 function checkURL() {
-	let url = this;
-	clearTimeout(timeout);
-
-	timeout = setTimeout(() => {
-		requestHostPermission();
-	}, 2000);
-	
+	let url = document.getElementById('wdurl');
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", url.value, true);
 	xhr.onreadystatechange = function () {
@@ -558,11 +583,13 @@ function checkURL() {
 			url.nextElementSibling.classList.add('valid');
 			url.classList.remove('invalid');
 			url.nextElementSibling.classList.remove('invalid');
+			document.getElementById('blogin').disabled = false;
 		} else {
 			url.classList.add('invalid');
 			url.nextElementSibling.classList.add('invalid');
 			url.classList.remove('valid');
 			url.nextElementSibling.classList.remove('valid');
+			document.getElementById('blogin').disabled = true;
 		}
 	}
 	xhr.setRequestHeader('X-Action', 'verify');
@@ -618,7 +645,14 @@ window.addEventListener('load', function () {
 	document.getElementById("crclose").addEventListener("click", function() {document.getElementById("crdialog").style.display = "none";});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
-	document.getElementById("wdurl").addEventListener("input", checkURL);
+	document.getElementById("wdurl").addEventListener("input", function() {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => {
+			requestHostPermission();
+		}, 2000);
+
+		checkURL();
+	});
 	document.getElementById("wdurl").addEventListener("change", checkForm);
 	document.getElementById("blogin").addEventListener("click", function(e) {
 		e.preventDefault();
