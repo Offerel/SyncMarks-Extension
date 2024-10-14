@@ -14,6 +14,14 @@ input, button {
     border: 1px solid darkgray;
     outline: 0;
 }
+#wdurl {
+    display: inline-block;
+    width: calc(100% - 90px);
+}
+#blogin {
+    width: 75px;
+    min-height: 29px;
+}
 .btm {
 	width: 50%;
 	display: flow-root;
@@ -76,10 +84,9 @@ button#lgin {
     box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
     line-height: 1.3em;
 }
-#lginl.loading {
-    background: repeating-linear-gradient(-45deg, currentColor 0 15px,#ff9800 0 20px) left/200% 100%;
+#blogin.loading {
+    background: repeating-linear-gradient(-45deg, #3498db 0 15px, #2980b9 0 20px) left/200% 100%;
     animation: i3 4s infinite linear;
-    color: #f44336;
 }
 @keyframes i3 {
 	100% {background-position:right}
@@ -112,6 +119,7 @@ button {
 	position: relative;
 	display: inline-block;
 	transition: all 0.3s;
+	cursor: pointer;
 }
 button:hover:not(:disabled) {
 	background-color: #2980b9;
@@ -200,8 +208,8 @@ input:hover {
 }
 .wdurl {
     position: absolute;
-    top: 15px;
-    right: 1px;
+    top: 25px;
+    right: 85px;
 }
 #wdurl.valid {
     border-color: limegreen;
