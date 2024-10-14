@@ -31,6 +31,9 @@ chrome.runtime.onMessage.addListener(
 				case 'clientSendOptions':
 					sendRequest(clientSendOptions, request.data);
 					break;
+				case 'clientGetOptions':
+					sendRequest(clientGetOptions);
+					break;
 				case 'clientRemove':
 					sendRequest(clientRemove, request.data);
 					break;
@@ -173,8 +176,12 @@ function clientSendOptions(response) {
 	}
 }
 
+function clientGetOptions(response) {
+	chrome.runtime.sendMessage({task: "clientOptions", cOptions: response.cOptions});
+}
+
 function clientRemove(response) {
-	console.log(response);
+	//
 }
 
 function clientList(response) {

@@ -33,6 +33,9 @@ chrome.runtime.onMessage.addListener(
 				case 'rLoglines':
 					rLoglines(message.text);
 					break;
+				case 'clientOptions':
+					clientOptions(message.cOptions);
+					break;
 				default:
 					break;
 			}
@@ -515,6 +518,10 @@ function requestHostPermission() {
 	);
 }
 
+function clientOptions(cOptions) {
+	console.log(cOptions);
+}
+
 function requestClientOptions(cOptions, av = false) {
 	chrome.storage.local.get(null, function(options) {
 		if(cOptions !== undefined && cOptions.length > 0) {
@@ -626,7 +633,7 @@ window.addEventListener('load', function () {
 		e.preventDefault();
 		e.stopPropagation();
 		if(document.getElementById('loc_rem').checked) {
-			//
+			chrome.runtime.sendMessage({action: "clientGetOptions"});
 		} else {
 			document.getElementById("confinput").click();
 		}
