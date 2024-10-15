@@ -373,7 +373,7 @@ function bookmarkAdd(response) {
 			if(uastr.match(/mobile/i)) {
 				toastMessage(mode, response);
 			} else {
-				notify(Math.random().toString(16).substring(2, 10), response);
+				if(response.code !== 200) notify(Math.random().toString(16).substring(2, 10), response);
 			}
 
 			loglines = logit("Info: " + response);
