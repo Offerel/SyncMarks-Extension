@@ -34,7 +34,7 @@ chrome.runtime.onMessage.addListener(
 					rLoglines(message.text);
 					break;
 				case 'clientOptions':
-					clientOptions(message.cOptions);
+					requestClientOptions(message.cOptions, false);
 					break;
 				default:
 					break;
@@ -220,6 +220,7 @@ function restoreOptions() {
 			showMsg(chrome.i18n.getMessage("infoEmptyConfig"), 'info');
 		}
 		document.querySelector("#wdurl").defaultValue = options.instance || "";
+		checkURL();
 		
 		if(options.uuid === undefined) {
 			let nuuid = uuidv4();
@@ -518,10 +519,6 @@ function requestHostPermission() {
 	);
 }
 
-function clientOptions(cOptions) {
-	console.log(cOptions);
-}
-
 function requestClientOptions(cOptions, av = false) {
 	chrome.storage.local.get(null, function(options) {
 		if(cOptions !== undefined && cOptions.length > 0) {
@@ -574,7 +571,7 @@ function serverImport() {
 		if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
 		return response.json();
 	}).then(responseData => {
-		console.log(responseData);
+		chrome.runtime.sendMessage({action: "loglines", data: 'Info: Temporary client removed'});
 	}).catch(err => {
 		//console.warn(err);
 	});

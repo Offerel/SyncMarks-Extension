@@ -162,7 +162,7 @@ function sendRequest(action, data = null, tab = null) {
 		}).then(responseData => {
 			action(responseData, tab);
 		}).catch(err => {
-			console.warn(err);
+			loglines = logit("Error: " + err);
 		});
 	});
 }
@@ -227,7 +227,7 @@ function clientList(response) {
 }
 
 function pushURL(response) {
-	if(response.error) console.error(response.error);
+	if(response.error) loglines = logit("Error: " + response.error);
 }
 
 function pushGet(response) {
@@ -385,7 +385,7 @@ function bookmarkAdd(response) {
 }
 
 function pushHide(response) {
-	if(response.error) console.error(response.error);
+	if(response.error) loglines = logit("Error: " + response.error);
 }
 
 function bookmarkEdit(response) {
@@ -425,7 +425,7 @@ function bookmarkDel(response) {
 function clientRename(response) {
 	const message = [];
 	if(response.message) {
-		console.error(response.message);
+		loglines = logit("Error: " + response.message);
 		message.type = 'error';
 		message.text = response.message;
 	} else {
@@ -588,7 +588,7 @@ function logit(message) {
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0)
 		notify('error',message);
-	//	console.info(message);
+	//	console.warn(message);
 	return logline;
 }
 
@@ -660,7 +660,7 @@ async function init() {
 	chrome.storage.local.get(null, async function(options) {
 		if(options.instance == undefined) {
 			changeIcon('error');
-			console.error('instance undefined', options);
+			loglines = logit("Error: " + "Instance undefined");
 			return false;
 		}
 
@@ -683,15 +683,15 @@ async function init() {
 
 		if(type == true) {
 			if(options.token === undefined && options.creds === undefined) {
-				console.error('no token or creds')
 				changeIcon('error');
+				loglines = logit("Error: Login token missing");
 			} else {
 				chrome.action.setBadgeText({text: ''});
 			}
 		} else if(type == false) {
 			if(options.creds == '') {
-				console.error('creds empty')
 				changeIcon('error');
+				loglines = logit("Error: Login credentials missing");
 			} else {
 				chrome.action.setBadgeText({text: ''});
 			}
