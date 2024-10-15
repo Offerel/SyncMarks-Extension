@@ -317,5 +317,9 @@
   "optionsLastLogged": {
     "message": "Last logged in with",
     "description": ""
+  },
+  "optionsRestoreServer": {
+    "message": "The following clients can be restored from the server. Please select a client from the list or click on cancel to not use any of these clients.",
+    "description": ""
   }
 }

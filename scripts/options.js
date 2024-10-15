@@ -10,14 +10,16 @@ chrome.runtime.onMessage.addListener(
 					let iBox = document.getElementById("lgini");
 					let ip = document.getElementById('ipinfo');
 					iBox.style.display = 'block';
-					ip.innerText = message.cinfo.ip;
-					let ipinfo = document.createElement('span');
-					ipinfo.className = "iiinfo";
-					ipinfo.id = "iiinfo";
-					let tm = new Date(message.cinfo.tm * 1000).toLocaleString();
-					ipinfo.innerText = tm + '\n' + message.cinfo.de + ' | ' + message.cinfo.co + ' | ' + message.cinfo.ct + ' | ' + message.cinfo.re + '\n' + message.cinfo.ua;
-					if(document.getElementById('iiinfo')) document.getElementById('iiinfo').remove();
-					ip.after(ipinfo);
+					if(message.cinfo != undefined) {
+						ip.innerText = message.cinfo.ip;
+						let ipinfo = document.createElement('span');
+						ipinfo.className = "iiinfo";
+						ipinfo.id = "iiinfo";
+						let tm = new Date(message.cinfo.tm * 1000).toLocaleString();
+						ipinfo.innerText = tm + '\n' + message.cinfo.de + ' | ' + message.cinfo.co + ' | ' + message.cinfo.ct + ' | ' + message.cinfo.re + '\n' + message.cinfo.ua;
+						if(document.getElementById('iiinfo')) document.getElementById('iiinfo').remove();
+						ip.after(ipinfo);
+					}
 					break;
 				case 'bookmarkImport':
 					showMsg(chrome.i18n.getMessage(message.text), (message.type === 'error') ? 'error':'info');
@@ -30,6 +32,9 @@ chrome.runtime.onMessage.addListener(
 					break;
 				case 'rLoglines':
 					rLoglines(message.text);
+					break;
+				case 'clientOptions':
+					requestClientOptions(message.cOptions, false);
 					break;
 				default:
 					break;
@@ -48,14 +53,13 @@ function showMsg(text, type) {
 
 function checkForm() {
 	let url = document.getElementById('wdurl');
-	if(url.value != url.defaultValue && !url.classList.contains('invalid')) {
-		document.getElementById("lginl").style.visibility = 'visible';
-		saveOptions();
+	if(url.classList.contains('valid')) {
+		document.getElementById('blogin').disabled = false;
 	}
 
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('bookmarks')) {
-			if(url.value != '' && document.querySelector('input[name="stype"]:checked').value !== true){
+			if(url.value != '' && document.getElementById("php_webdav").checked){
 				document.getElementById('mdownload').disabled=false;
 				document.getElementById('mupload').disabled=false;
 			} else{
@@ -82,7 +86,7 @@ function checkLoginForm() {
 function gToken(e) {
 	e.preventDefault();
 	let tbt = document.getElementById('tbt').checked;
-	document.getElementById('lginl').classList.add('loading');
+	document.getElementById('blogin').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
 
 	const params = {
@@ -91,7 +95,7 @@ function gToken(e) {
 		data: {
 			usebasic: tbt
 		},
-		sync: document.getElementById('s_startup').checked
+		sync: document.getElementById('s_auto').checked
 	};
 
 	const url = document.getElementById('wdurl').value;
@@ -107,26 +111,35 @@ function gToken(e) {
 		redirect: 'follow',
 		referrerPolicy: 'no-referrer',
 	}).then(response => response.json()).then(responseData => {
-		document.getElementById('lginl').classList.remove('loading');
-		document.getElementById('lginl').style.visibility = "hidden";
-		chrome.storage.local.set({
-			wdurl: document.getElementById('wdurl').value,
-			s_type: 'PHP',
-		});
+		document.getElementById('blogin').classList.remove('loading');
+
+		let cOptions = {
+			sync: {
+				auto:document.getElementById("s_auto").checked,
+				manual:document.getElementById("b_action").checked
+			},
+			type: document.getElementById("php_webdav").checked,
+			uuid: document.getElementById("s_uuid").value,
+			tabs: document.getElementById("s_tabs").checked,
+			instance: document.getElementById("wdurl").value
+		};
 
 		if(tbt) {
-			chrome.storage.local.set({creds: creds});
+			cOptions.creds = creds;
 			chrome.storage.local.remove('token');
 		} else {
-			chrome.storage.local.set({token: responseData.token});
+			cOptions.token = responseData.token;
 			chrome.storage.local.remove('creds');
 		}
+
+		chrome.storage.local.set(cOptions);
 
 		document.getElementById('cname').defaultValue = responseData.cname;
 		
 		if(responseData.message.indexOf('updated') !== -1 || responseData.message.indexOf('registered') !== -1) {
 			wmessage.textContent = responseData.message;
 			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
+			requestClientOptions(responseData.cOptions);
 		} else {
 			wmessage.textContent = 'Warning: '+ responseData.message;
 			wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
@@ -147,11 +160,14 @@ function gToken(e) {
 
 	wmessage.className = "show";
 	setTimeout(function(){wmessage.className = wmessage.className.replace("show", "hide"); }, 5000);
-	chrome.runtime.sendMessage({action: "init"});
 }
 
 function saveOptions(e) {
 	if(typeof e !== "undefined") e.preventDefault();
+
+	if(document.getElementById("b_action").checked) {
+		document.getElementById("s_auto").checked = false
+	}
 
 	let text = chrome.i18n.getMessage("optionsSuccessSave");
 	let type = 'info';
@@ -161,20 +177,19 @@ function saveOptions(e) {
 		type = 'error';
 	}
 
-	chrome.storage.local.set({
-		actions: {
-			startup:document.getElementById("s_startup").checked,
-			create:document.getElementById("s_create").checked,
-			change:document.getElementById("s_change").checked,
-			remove:document.getElementById("s_remove").checked,
-			crsrv:document.getElementById("b_action").checked
+	const cOptions = {
+		sync: {
+			auto:document.getElementById("s_auto").checked,
+			manual:document.getElementById("b_action").checked
 		},
+		type: document.getElementById("php_webdav").checked,
+		uuid: document.getElementById("s_uuid").value,
+		tabs: document.getElementById("s_tabs").checked,
+		instance: document.getElementById("wdurl").value
+	};
 
-		s_type: document.querySelector('input[name="stype"]:checked').value,
-		s_uuid: document.getElementById("s_uuid").value,
-		s_tabs: document.getElementById("s_tabs").checked,
-		wdurl: document.getElementById("wdurl").value,
-	});
+	chrome.storage.local.set(cOptions);
+	chrome.runtime.sendMessage({action: "clientSendOptions", data: cOptions});
 
 	showMsg(text, type);
 }
@@ -201,55 +216,47 @@ function restoreOptions() {
 	});
 
 	chrome.storage.local.get(null, function(options) {
-		if(options['wdurl'] == undefined) {
+		if(options.instance == undefined) {
 			showMsg(chrome.i18n.getMessage("infoEmptyConfig"), 'info');
 		}
-		document.querySelector("#wdurl").defaultValue = options['wdurl'] || "";		
+		document.querySelector("#wdurl").defaultValue = options.instance || "";
+		checkURL();
 		
-		if(options['s_uuid'] === undefined) {
+		if(options.uuid === undefined) {
 			let nuuid = uuidv4();
 			document.getElementById("s_uuid").defaultValue = nuuid;
 			document.getElementById("cname").placeholder = nuuid;
 		} else {
-			document.getElementById("s_uuid").defaultValue = options['s_uuid'];
-			document.getElementById("cname").placeholder = options['s_uuid'];
+			document.getElementById("s_uuid").defaultValue = options.uuid;
+			document.getElementById("cname").placeholder = options.uuid;
 		}
 
-		document.getElementById("s_startup").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['startup'];
-		document.getElementById("s_create").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['create'];
-		document.getElementById("s_change").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['change'];
-		document.getElementById("s_remove").defaultChecked = (options['actions'] == undefined) ? true:options['actions']['remove'];
-		document.getElementById("b_action").defaultChecked = (options['actions'] == undefined) ? false:options['actions']['crsrv'];
-
-		if(document.getElementById("s_startup").checked && document.getElementById("s_create").checked && document.getElementById("s_change").checked && document.getElementById("s_remove").checked) {
-			document.getElementById("s_auto").defaultChecked = true;
-		} else {
-			document.getElementById("s_auto").defaultChecked = false;
-		}
+		document.getElementById("s_auto").defaultChecked = (options.sync == undefined) ? true:options.sync.auto;
+		document.getElementById("b_action").defaultChecked = (options.sync == undefined) ? false:options.sync.manual;
 		
-		if("s_type" in options) {		
-			document.querySelector('input[name="stype"][value="'+ options['s_type'] +'"]').defaultChecked = true;
-			if(options['s_type'] == 'PHP') {
+		if("type" in options) {		
+			if(options.type != undefined) {
+				document.getElementById("php_webdav").defaultChecked = true;
 				gName();
 				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
 				document.getElementById("php_webdav").checked = true;
-				if(options['token'] === undefined && options['creds'] === undefined) {
-					chrome.runtime.sendMessage({action: "clientInfo"});
-					document.getElementById("lginl").style.visibility = 'visible';
+				if(options.token === undefined && options.creds === undefined) {
+					document.getElementById("blogin").disabled = false;
+					document.getElementById("blogin").style.backgroundColor = "red";
 				}
-				document.getElementById("s_tabs").defaultChecked = (options['s_tabs'] == undefined) ? false:options['s_tabs'];
+				document.getElementById("s_tabs").defaultChecked = (options.tabs == undefined) ? false:options.tabs;
 			} else {
 				document.getElementById("php_webdav").checked = false;
-				if(options['creds'] === undefined) {
-					document.getElementById("lginl").style.visibility = 'visible';
+				if(options.creds === undefined) {
+					document.getElementById("blogin").disabled = false;
 				}
 				document.getElementById("s_tabs").defaultChecked = false;
 			}
 		}
 		
-		last_sync = options['last_sync'] || 0;
+		last_sync = options.last_sync || 0;
 		if(last_sync.toString().length > 0) {
-			document.querySelector("#s_startup").removeAttribute("disabled");
+			document.querySelector("#s_auto").removeAttribute("disabled");
 		}
 		
 		if(document.getElementById("wdurl").value.length > 4) document.getElementById("cexp").disabled = false;
@@ -267,25 +274,42 @@ function restoreOptions() {
 
 function exportOptions(e) {
 	e.preventDefault();
-	chrome.storage.local.get(null, function(options) {
-		delete options.clist;
-		delete options.token;
-		delete options.creds;
-		delete options.last_message;
-		delete options.pTabs;
+	let remote = document.getElementById('loc_rem').checked;
 
-		let confJSON = JSON.stringify(options);
-		let dString = new Date().toISOString().slice(0,10);
-		let nameStr = document.getElementById('cname').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-		var element = document.createElement('a');
-		element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(confJSON);
-		element.download = 'SyncMarks_' + nameStr + '_' + dString + '.json';
-		element.style.display = 'none';
-		document.body.appendChild(element);
-		element.click();
-		document.body.removeChild(element);
+	if(remote) {
+		const cOptions = {
+			sync: {
+				auto:document.getElementById("s_auto").checked,
+				manual:document.getElementById("b_action").checked
+			},
+			type: document.getElementById("php_webdav").checked,
+			uuid: document.getElementById("s_uuid").value,
+			tabs: document.getElementById("s_tabs").checked,
+			instance: document.getElementById("wdurl").value
+		};
+		chrome.runtime.sendMessage({action: "clientSendOptions", data: cOptions});
 		document.getElementById('expimpdialog').style.display = 'none';
-	});
+	} else {
+		chrome.storage.local.get(null, function(options) {
+			delete options.clist;
+			delete options.token;
+			delete options.creds;
+			delete options.last_message;
+			delete options.pTabs;
+	
+			let confJSON = JSON.stringify(options);
+			let dString = new Date().toISOString().slice(0,10);
+			let nameStr = document.getElementById('cname').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+			var element = document.createElement('a');
+			element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(confJSON);
+			element.download = 'SyncMarks_' + nameStr + '_' + dString + '.json';
+			element.style.display = 'none';
+			document.body.appendChild(element);
+			element.click();
+			document.body.removeChild(element);
+			document.getElementById('expimpdialog').style.display = 'none';
+		});
+	}
 }
 
 function importOptions() {
@@ -294,33 +318,30 @@ function importOptions() {
 	let reader = new FileReader();
 	reader.addEventListener('load', function(e) {
 		let ioptions = JSON.parse(e.target.result);
-		
-		chrome.storage.local.set({
-			actions: {
-				startup:ioptions.actions.startup,
-				create:ioptions.actions.create,
-				change:ioptions.actions.change,
-				remove:ioptions.actions.remove
+
+		const cOptions = {
+			sync: {
+				auto:ioptions.sync.auto,
+				manual:ioptions.sync.manual
 			},
-			s_type: ioptions.s_type,
-			wdurl: ioptions.wdurl,
-			s_uuid: ioptions.s_uuid,
-		});
+			type: ioptions.type,
+			uuid: ioptions.uuid,
+			tabs: ioptions.tabs,
+			instance: ioptions.instance,
+		};
+
+		chrome.storage.local.set(cOptions);
 
 		if(resCID) {
-			document.getElementById("cname").placeholder = ioptions.s_uuid;
-			document.getElementById("s_uuid").value = ioptions.s_uuid;
-			document.getElementById("lginl").style.visibility = 'hidden';
+			document.getElementById("cname").placeholder = ioptions.uuid;
+			document.getElementById("s_uuid").value = ioptions.uuid;
+			document.getElementById("blogin").disabled = true;
 		}
 
-		document.getElementById("wdurl").value = ioptions.wdurl;
-		document.getElementById("s_startup").checked = ioptions.actions.startup;
-		document.getElementById("s_create").checked = ioptions.actions.create;
-		document.getElementById("s_change").checked = ioptions.actions.change;
-		document.getElementById("s_remove").checked = ioptions.actions.remove;
-		document.getElementById("b_action").checked = ioptions.actions.crsrv;
-		document.getElementById("s_auto").checked = (ioptions.actions.startup && ioptions.actions.create && ioptions.actions.change && ioptions.actions.remove) ? true:false;
-		document.getElementById("s_tabs").checked = ioptions.s_tabs;
+		document.getElementById("wdurl").value = ioptions.instance;
+		document.getElementById("s_auto").checked = ioptions.sync.auto;
+		document.getElementById("b_action").checked = ioptions.sync.manual;
+		document.getElementById("s_tabs").checked = ioptions.tabs;
 
 		showMsg(chrome.i18n.getMessage("optionsSuccessImport"), 'info');
 	});
@@ -339,12 +360,12 @@ function manualImport(e) {
 	
 	try {
 		chrome.storage.local.get(null, function(options) {
-			if(options['s_type'] == 'PHP') {
+			if(options['type'] == true) {
 				chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
 					chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
 				});
 				
-			} else if (options['s_type'] == 'WebDAV') {
+			} else if (options['type'] == false) {
 				chrome.runtime.sendMessage({action: "getDAVMarks"});
 			}
 		});
@@ -359,9 +380,10 @@ function manualImport(e) {
 function manualExport(e) {
 	e.preventDefault();
 	try {
-		if(document.querySelector('input[name="stype"]:checked').value == 'WebDAV') {
+		document.getElementById("php_webdav").checked
+		if(!document.getElementById("php_webdav").checked) {
 			chrome.runtime.sendMessage({action: "saveAllMarks"});
-		} else if (document.querySelector('input[name="stype"]:checked').value == 'PHP') {
+		} else if (document.getElementById("php_webdav").checked) {
 			chrome.runtime.sendMessage({action: "exportPHPMarks"});
 		}
 	} catch(error) {
@@ -458,56 +480,29 @@ function clearLog() {
 	chrome.runtime.sendMessage({action: "emptyLoglines"});
 }
 
-function cCreate() {
-	let crsrv = document.getElementById("b_action");
-	if(document.getElementById("s_create").checked) {
-		crsrv.checked = false;
-	} else {
-		crsrv.checked = true;
-	}
-}
-
 function switchBackend() {
 	let backendPHP = this.checked;
+
 	if(backendPHP) {
-		document.getElementById("php").checked = true;
-		document.getElementById("wdav").checked = false;
 		document.getElementById("blbl").innerText = "Server: PHP";
 		document.getElementById('cname').disabled = false;
 		document.getElementById('b_action').disabled = false;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'unset';
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = ''
 	} else {
-		document.getElementById("php").checked = false;
-		document.getElementById("wdav").checked = true;
 		document.getElementById("blbl").innerText = "Server: WebDAV";
 		document.getElementById('cname').disabled = true;
 		document.getElementById('b_action').disabled = true;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'none';
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = 'lightgrey'
 	}
-}
 
-function cAuto() {
-	if(document.getElementById("s_auto").checked) {
-		document.getElementById("b_action").checked = false;
-		document.getElementById("s_startup").checked = true;
-		document.getElementById("s_create").checked = true;
-		document.getElementById("s_change").checked = true;
-		document.getElementById("s_remove").checked = true;
-	} else {
-		document.getElementById("b_action").checked = true;
-		document.getElementById("s_startup").checked = false;
-		document.getElementById("s_create").checked = false;
-		document.getElementById("s_change").checked = false;
-		document.getElementById("s_remove").checked = false;
-	}
 	saveOptions();
 }
 
 function requestHostPermission() {
-	const wdurl = document.getElementById('wdurl');
-	let newOrigin = new URL(wdurl.value).origin + '/*';
+	const instance = document.getElementById('wdurl');
+	let newOrigin = new URL(instance.value).origin + '/*';
 
 	chrome.permissions.contains({origins:[newOrigin]},
 		(result) => {
@@ -515,22 +510,80 @@ function requestHostPermission() {
 				chrome.permissions.request({
 					origins: [newOrigin]
 				}, (granted) => {
-					const message = (granted) ? 'Syncmarks Info: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
+					const message = (granted) ? 'Syncmarks: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
 					chrome.runtime.sendMessage({action: "loglines", data: message});
+					checkURL();
 				});
 			}
 		}
 	);
 }
 
-function checkURL() {
-	let url = this;
-	clearTimeout(timeout);
+function requestClientOptions(cOptions, av = false) {
+	chrome.storage.local.get(null, function(options) {
+		if(cOptions !== undefined && cOptions.length > 0) {
+			select = document.getElementById('cimport');
 
-	timeout = setTimeout(() => {
-		requestHostPermission();
-	}, 2000);
+			cOptions.forEach((client) => {
+				var opt = document.createElement('option');
+				opt.value = client['cOptions'];
+				opt.innerHTML = client['cname'];
+				select.appendChild(opt);
+				if(options.uuid == client['cid']) av = true;
+			});
 	
+			if(!av) document.getElementById('coptionsdialog').style.display = 'block';
+		}
+	});
+}
+
+function serverImport() {
+	const restoreClientID = confirm(chrome.i18n.getMessage("infoRestoreID"));
+	let client = document.getElementById('cimport');
+	const ouuid = document.getElementById('s_uuid').value;
+	const url = document.getElementById('wdurl').value;
+	const jOptions = JSON.parse(client.value);
+	const nuuid = jOptions.uuid;
+	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
+
+	if(restoreClientID) {
+		const params = {
+			action: 'clientRemove',
+			client: nuuid,
+			data: {
+				new: nuuid,
+				old: ouuid
+			}
+		}
+	
+		fetch(url + '?api=v1', {
+			method: "POST",
+			cache: "no-cache",
+			headers: {
+				'Content-type': 'application/json;charset=UTF-8',
+				'Authorization': 'Basic ' + creds,
+			},
+			redirect: "follow",
+			referrerPolicy: "no-referrer",
+			body: JSON.stringify(params)
+		}).then(response => {
+			let xRinfo = response.headers.get("X-Request-Info");
+			if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
+			return response.json();
+		}).then(responseData => {
+			chrome.runtime.sendMessage({action: "loglines", data: 'Info: Temporary client removed'});
+		}).catch(err => {
+			//console.warn(err);
+		});
+	} else {
+		delete jOptions.uuid;
+	}
+
+	chrome.storage.local.set(jOptions);
+}
+
+function checkURL() {
+	let url = document.getElementById('wdurl');
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", url.value, true);
 	xhr.onreadystatechange = function () {
@@ -539,11 +592,13 @@ function checkURL() {
 			url.nextElementSibling.classList.add('valid');
 			url.classList.remove('invalid');
 			url.nextElementSibling.classList.remove('invalid');
+			document.getElementById('blogin').disabled = false;
 		} else {
 			url.classList.add('invalid');
 			url.nextElementSibling.classList.add('invalid');
 			url.classList.remove('valid');
 			url.nextElementSibling.classList.remove('valid');
+			document.getElementById('blogin').disabled = true;
 		}
 	}
 	xhr.setRequestHeader('X-Action', 'verify');
@@ -568,6 +623,7 @@ window.addEventListener('load', function () {
 	var imodal = document.getElementById("impdialog");
 	var emodal = document.getElementById("expdialog");
 	var comodal = document.getElementById("expimpdialog");
+	var cmodal = document.getElementById("coptionsdialog");
 
 	localizeHtmlPage();
 
@@ -577,23 +633,39 @@ window.addEventListener('load', function () {
 	document.getElementById("cexp").addEventListener("click", exportOptions);
 	document.getElementById("cimp").addEventListener("click", function(e){
 		e.preventDefault();
-		document.getElementById("confinput").click();
+		e.stopPropagation();
+		if(document.getElementById('loc_rem').checked) {
+			chrome.runtime.sendMessage({action: "clientGetOptions"});
+		} else {
+			document.getElementById("confinput").click();
+		}
 	});
 	document.getElementById("logdebug").addEventListener('change', filterLog);
 	document.getElementById("confinput").addEventListener('change', importOptions);
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
 	document.getElementById("ino").addEventListener("click", manualImport);
+	document.getElementById("coimport").addEventListener("click", serverImport);
+	document.getElementById("cochancel").addEventListener("click", function() {cmodal.style.display = "none";});
 	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";});
 	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";});
+	document.getElementById("oclose").addEventListener("click", function() {cmodal.style.display = "none";});
 	document.getElementById("crclose").addEventListener("click", function() {document.getElementById("crdialog").style.display = "none";});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
-	document.getElementById("wdurl").addEventListener("input", checkURL);
+	document.getElementById("wdurl").addEventListener("input", function() {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => {
+			requestHostPermission();
+		}, 2000);
+
+		checkURL();
+	});
 	document.getElementById("wdurl").addEventListener("change", checkForm);
-	document.getElementById("lginl").addEventListener("click", function(e) {
-		e.preventDefault;
+	document.getElementById("blogin").addEventListener("click", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
 		requestHostPermission();
 		document.getElementById("nuser").defaultValue = '';
 		document.getElementById("npassword").defaultValue = '';
@@ -605,14 +677,9 @@ window.addEventListener('load', function () {
 	document.getElementById("npassword").addEventListener("input", checkLoginForm);
 	document.getElementById("php_webdav").addEventListener("change", switchBackend);
 	document.getElementById('lgin').addEventListener("click", gToken);
-	document.getElementById("s_startup").addEventListener("change", saveOptions);
-	document.getElementById("s_create").addEventListener("change", saveOptions);
-	document.getElementById("s_create").addEventListener("change", cCreate);
-	document.getElementById("s_change").addEventListener("change", saveOptions);
-	document.getElementById("s_remove").addEventListener("change", saveOptions);
 	document.getElementById("b_action").addEventListener("change", saveOptions);
 	document.getElementById("s_tabs").addEventListener("change", saveOptions);
-	document.getElementById("s_auto").addEventListener("change", cAuto);
+	document.getElementById("s_auto").addEventListener("change", saveOptions);
 	document.getElementById("cname").addEventListener("change", rName);
 	document.querySelectorAll(".tab-button").forEach(function(e){ e.addEventListener("click", openTab);});
 	document.getElementById("logsave").addEventListener("click", saveLog);

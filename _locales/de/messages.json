@@ -325,5 +325,9 @@
   "optionsLastLogged": {
     "message": "Zuletzt eingeloggt mit",
     "description": ""
+  },
+  "optionsRestoreServer": {
+    "message": "Folgende Clients können vom Server wiederhergestellt werden. Bitte wähle einen Client aus der Liste aus oder klicke auf abbrechen, um keinen dieser Client zu verwenden.",
+    "description": ""
   }
 }
