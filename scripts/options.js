@@ -538,6 +538,7 @@ function requestClientOptions(cOptions, av = false) {
 }
 
 function serverImport() {
+	const restoreClientID = confirm(chrome.i18n.getMessage("infoRestoreID"));
 	let client = document.getElementById('cimport');
 	const ouuid = document.getElementById('s_uuid').value;
 	const url = document.getElementById('wdurl').value;
@@ -545,36 +546,40 @@ function serverImport() {
 	const nuuid = jOptions.uuid;
 	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
 
-	chrome.storage.local.set(jOptions);
-	
-	const params = {
-		action: 'clientRemove',
-		client: nuuid,
-		data: {
-			new: nuuid,
-			old: ouuid
+	if(restoreClientID) {
+		const params = {
+			action: 'clientRemove',
+			client: nuuid,
+			data: {
+				new: nuuid,
+				old: ouuid
+			}
 		}
+	
+		fetch(url + '?api=v1', {
+			method: "POST",
+			cache: "no-cache",
+			headers: {
+				'Content-type': 'application/json;charset=UTF-8',
+				'Authorization': 'Basic ' + creds,
+			},
+			redirect: "follow",
+			referrerPolicy: "no-referrer",
+			body: JSON.stringify(params)
+		}).then(response => {
+			let xRinfo = response.headers.get("X-Request-Info");
+			if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
+			return response.json();
+		}).then(responseData => {
+			chrome.runtime.sendMessage({action: "loglines", data: 'Info: Temporary client removed'});
+		}).catch(err => {
+			//console.warn(err);
+		});
+	} else {
+		delete jOptions.uuid;
 	}
 
-	fetch(url + '?api=v1', {
-		method: "POST",
-		cache: "no-cache",
-		headers: {
-			'Content-type': 'application/json;charset=UTF-8',
-			'Authorization': 'Basic ' + creds,
-		},
-		redirect: "follow",
-		referrerPolicy: "no-referrer",
-		body: JSON.stringify(params)
-	}).then(response => {
-		let xRinfo = response.headers.get("X-Request-Info");
-		if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
-		return response.json();
-	}).then(responseData => {
-		chrome.runtime.sendMessage({action: "loglines", data: 'Info: Temporary client removed'});
-	}).catch(err => {
-		//console.warn(err);
-	});
+	chrome.storage.local.set(jOptions);
 }
 
 function checkURL() {
