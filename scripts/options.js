@@ -360,12 +360,12 @@ function manualImport(e) {
 	
 	try {
 		chrome.storage.local.get(null, function(options) {
-			if(options['type'] == true) {
+			if(options.type == true) {
 				chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
 					chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
 				});
 				
-			} else if (options['type'] == false) {
+			} else if (options.type == false) {
 				chrome.runtime.sendMessage({action: "getDAVMarks"});
 			}
 		});
@@ -503,7 +503,6 @@ function switchBackend() {
 function requestHostPermission() {
 	const instance = document.getElementById('wdurl');
 	let newOrigin = new URL(instance.value).origin + '/*';
-
 	chrome.permissions.contains({origins:[newOrigin]},
 		(result) => {
 			if(!result) {

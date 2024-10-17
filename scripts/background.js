@@ -118,20 +118,18 @@ chrome.commands.onCommand.addListener((command) => {
 
 function sendRequest(action, data = null, tab = null) {
 	chrome.storage.local.get(null, function(options) {
-		if(options.instance == undefined) return false;
+		if(options.instance == undefined || options.instance.length < 4) return false;
 
 		let tarr = {};
-		tarr['client'] = options['uuid'];
-		tarr['token'] = options['token'];
+		tarr['client'] = options.uuid;
+		tarr['token'] = options.token;
 
-		let tc = (options['token'] != undefined) ? 'tk':'cr';
+		let tc = (options.token != undefined) ? 'tk':'cr';
 		if(tc == false && data !== 'p') return false;
 
-		let authtype = (tc == 'tk') ? 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))):'Basic ' + options['creds'];
-
-		let url = options['instance'];
-
-		let client = options['uuid'];
+		let authtype = (tc == 'tk') ? 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))):'Basic ' + options.creds;
+		let url = options.instance;
+		let client = options.uuid;
 
 		if(action.name === 'bookmarkAdd' && options.sync != undefined && options.sync.manual) {
 			client = 'bookmarkTab';
@@ -170,6 +168,10 @@ function sendRequest(action, data = null, tab = null) {
 function clientSendOptions(response) {
 	if(response.code == 200) {
 		loglines = logit("Info: " + response.message);
+		chrome.action.setBadgeText({text: ''});
+		chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
+		chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName")});
+		changeIcon('info');
 	} else {
 		changeIcon('warn');
 		loglines = logit("Error: " + response.message);
@@ -255,7 +257,7 @@ function clientInfo(response, tab = null) {
 			chrome.runtime.sendMessage({task: clientInfo.name, type: 'success', cname: response['cname'], ctype: response['ctype'], cinfo: response['cinfo']});
 		} else {
 			chrome.storage.local.get(null, async function(options) {
-				let sync = options['sync']['auto'] || false;
+				let sync = options.sync.auto || false;
 				if(sync) doFullSync();
 			});
 		}
@@ -431,6 +433,7 @@ function clientRename(response) {
 	} else {
 		message.type = 'success';
 		message.text = 'Client renamed';
+		changeIcon('info');
 	}
 
 	chrome.runtime.sendMessage({task: clientRename.name, type: message.type, text: '' + message.text});
@@ -496,11 +499,13 @@ function ccMenus() {
 			})
 			
 			chrome.contextMenus.onClicked.addListener(info => {
-				if (info.menuItemId == "sm_settings") chrome.runtime.openOptionsPage();
+				if (info.menuItemId == "sm_settings") {
+					chrome.runtime.openOptionsPage();
+				}
 			})
 			
 			chrome.storage.local.get(null, function(options) {
-				if(options['type'] == true) {
+				if(options.type) {
 					if(options.sync.manual === true) {
 						chrome.commands.getAll((commands) => {
 							for (let {name, shortcut} of commands) {
@@ -577,7 +582,7 @@ function sendTab(element) {
 				target: element.target.id
 			};
 
-			loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options['uuid']);
+			loglines = logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options.uuid);
 			sendRequest(pushURL, data);
 		});
 	});
@@ -587,8 +592,9 @@ function logit(message) {
 	var ndate = new Date();
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0)
-		notify('error',message);
-	//	console.warn(message);
+		//notify('error',message);
+		chrome.action.setTitle({title: message});
+		//console.warn(message);
 	return logline;
 }
 
@@ -640,6 +646,7 @@ function changeIcon(mode) {
 		case 'info':
 			chrome.action.setBadgeText({text: 'i'});
 			chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
+			chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName")});
 			setTimeout(function(){
 				chrome.action.setBadgeText({text: ''});
 			}, 5000);
@@ -660,7 +667,7 @@ async function init() {
 	chrome.storage.local.get(null, async function(options) {
 		if(options.instance == undefined) {
 			changeIcon('error');
-			loglines = logit("Error: " + "Instance undefined");
+			loglines = logit("Error: Instance undefined");
 			return false;
 		}
 
@@ -697,17 +704,15 @@ async function init() {
 			}
 		}
 
-		if(sync) {
-			if(type == true) {
-				if(options['instance']) {
-					await ccMenus();
-					loglines = logit("Info: Get list of clients.");
-					sendRequest(clientList);
-					loglines = logit("Info: Init finished");
-				}
+		if(options.instance) {
+			if(type) {
+				await ccMenus();
+				loglines = logit("Info: Get list of clients.");
+				sendRequest(clientList);
+				loglines = logit("Info: Init finished");
 			} else {
 				loglines = logit("Info: Initiate WebDAV startup sync");
-				if(options['instance']) getDAVMarks();
+				getDAVMarks();
 			}
 		}
 	});
@@ -850,8 +855,8 @@ function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
 function onCreatedCheck(id, bookmark) {
 	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
-		var sync = options['sync']['auto'] || false;
-		var type = options['type'] || false;
+		var sync = options.sync.auto || false;
+		var type = options.type || false;
 
 		if(sync && type == false) {
 			saveAllMarks();
@@ -864,8 +869,8 @@ function onCreatedCheck(id, bookmark) {
 function onMovedCheck(id, bookmark) {
 	get_oMarks();
 	chrome.storage.local.get(null, async function(options) {
-		var sync = options['sync']['auto'] || false;
-		var type = options['type'] || false;
+		var sync = options.sync.auto || false;
+		var type = options.type || false;
 		
 		if(sync && type == false) {
 			saveAllMarks();
@@ -893,8 +898,8 @@ function onMovedCheck(id, bookmark) {
 function onChangedCheck(id, changeInfo) {
 	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
-		var sync = options['sync']['auto'] || false;
-		var type = options['type'] || false;
+		var sync = options.sync.auto || false;
+		var type = options.type || false;
 		
 		if(sync && type == false) {
 			saveAllMarks();
@@ -916,8 +921,8 @@ function onChangedCheck(id, changeInfo) {
 
 function onRemovedCheck(id, bookmark) {
 	chrome.storage.local.get(null, async function(options) {
-		var sync = options['sync']['auto'] || false;
-		var type = options['type'] || false;
+		var sync = options.sync.auto || false;
+		var type = options.type || false;
 
 		if(sync && type == false) {
 			chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
@@ -956,10 +961,10 @@ function saveAllMarks() {
 		var bookmarks = JSON.stringify(bmTree);
 		var xhr = new XMLHttpRequest();
 		chrome.storage.local.get(null, function(options) {
-			xhr.open("PUT", options['instance'] + "/" + filename, true);
+			xhr.open("PUT", options.instance + "/" + filename, true);
 			xhr.withCredentials = true;
 			xhr.setRequestHeader('X-Filename', filename);
-			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['creds']));
+			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options.creds));
 			xhr.onload = function () {
 				if( xhr.status < 200 || xhr.status > 226) {
 					message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
@@ -1025,7 +1030,7 @@ async function doFullSync() {
 	loglines = logit("Info: Sync started.");
 	try {
 		chrome.storage.local.get(null, async function(options) {
-			if(options['type'] == true) {
+			if(options.type == true) {
 				loglines = logit('Info: Sending Sync request to server');
 				sendRequest(bookmarkExport, 'json');
 			}
@@ -1241,10 +1246,10 @@ function moveBookmarkAsync(id, destination) {
 function getDAVMarks() {
 	chrome.storage.local.get(null, function(options) {
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', options['instance'] + '/' + filename + '?t=' + Math.random(), true);
+		xhr.open('GET', options.instance + '/' + filename + '?t=' + Math.random(), true);
 		xhr.withCredentials = true;
 		xhr.setRequestHeader('X-Filename', filename);
-		xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options['creds']));
+		xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options.creds));
 		xhr.onload = function () {		
 			if( xhr.status != 200 ) {
 				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;

@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v2.0.3 (2024-10-17)
+- Fix open Options Page
+- Fix Client restore
+
 ## v2.0.2 (2024-10-15)
 - Fix Remove Bookmark
 - Add support for store/restore client settings from server
