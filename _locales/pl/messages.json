@@ -40,5 +40,203 @@
     },
     "optionsAuto": {
         "message": "Automatyczna synchronizacja"
+    },
+    "optionsBeforeExport": {
+        "message": "Wszystkie zakładki są usuwane na serwerze przed eksportem. Następnie nowe zakładki są eksportowane na serwer.\n\nCzy zdalne zakładki powinny zostać usunięte przed eksportem?"
+    },
+    "errorGetBookmarks": {
+        "message": "Wystąpił błąd podczas pobierania zakładek z serwera. Odpowiedź statusu to: "
+    },
+    "optionsBTNImportHint": {
+        "message": "Przywracanie z serwera, nadpisywanie lokalnych zakładek."
+    },
+    "optionsNotUsed": {
+        "message": "Można teraz synchronizować zakładki z serwera."
+    },
+    "optionsLoginError": {
+        "message": "Błąd logowania: Zaloguj się ponownie"
+    },
+    "infoRestoreID": {
+        "message": "Czy chcesz przywrócić identyfikator klienta?"
+    },
+    "optionsCreate": {
+        "message": "Utwórz"
+    },
+    "optionsChange": {
+        "message": "Zmiana"
+    },
+    "optionsRemove": {
+        "message": "Usunąć"
+    },
+    "optionsManualActions": {
+        "message": "Działania ręczne"
+    },
+    "optionsBTNRemove": {
+        "message": "Usunąć"
+    },
+    "optionsBTNRemoveHint": {
+        "message": "Spowoduje to usunięcie wszystkich lokalnych zakładek!"
+    },
+    "optionsBTNImport": {
+        "message": "Pobierz"
+    },
+    "optionsBTNSaveHint": {
+        "message": "Zapisz ustawienia"
+    },
+    "optionsBTNSettingsHint": {
+        "message": "Ustawienia kopii zapasowej"
+    },
+    "optionsBTNExport": {
+        "message": "Przesyłanie"
+    },
+    "optionsBTNExportHint": {
+        "message": "Nadpisanie wszystkich zakładek na serwerze."
+    },
+    "optionsBTNSave": {
+        "message": "Zapisz"
+    },
+    "optionsBTNSettings": {
+        "message": "Ustawienia"
+    },
+    "optionsBTNStore": {
+        "message": "Zapisz"
+    },
+    "optionsBTNRestore": {
+        "message": "Przywracanie"
+    },
+    "optionsBTNClear": {
+        "message": "Usuń"
+    },
+    "optionsDebugLog": {
+        "message": "Dziennik debugowania"
+    },
+    "optionsBTNAdvSet": {
+        "message": "Ustawienia zaawansowane"
+    },
+    "optionsBTNYes": {
+        "message": "Tak"
+    },
+    "optionsBTNNo": {
+        "message": "Nie"
+    },
+    "optionsBTNCancel": {
+        "message": "Anuluj"
+    },
+    "optionsErrorURL": {
+        "message": "Logowanie nie powiodło się: Sprawdź adres URL WebDAV. Powinien on mieć postać"
+    },
+    "optionsErrorUser": {
+        "message": "Logowanie nie powiodło się: Sprawdź nazwę użytkownika i hasło."
+    },
+    "optionsSuccessSave": {
+        "message": "Zapisane opcje."
+    },
+    "optionsErrorLogin": {
+        "message": "Logowanie nie powiodło się: Stan: "
+    },
+    "optionsBeforeCImpExp": {
+        "message": "Tutaj można zapisać lub przywrócić bieżące ustawienia."
+    },
+    "optionsBeforeLogin": {
+        "message": "Zaloguj się przy użyciu danych dostępu, aby otrzymać kod dostępu."
+    },
+    "optionsWrongAData": {
+        "message": "Błąd logowania. Zaloguj się ponownie"
+    },
+    "optionsSuccessImport": {
+        "message": "Pomyślny import."
+    },
+    "optionsBeforeImport": {
+        "message": "Czy wszystkie lokalne zakładki powinny zostać usunięte przed importem?"
+    },
+    "optionsInfoRemove": {
+        "message": "Po kontynuowaniu wszystkie bieżące zakładki zostaną usunięte.\n\nCzy na pewno chcesz usunąć wszystkie lokalne zakładki?"
+    },
+    "popupBTNOptions": {
+        "message": "Opcje"
+    },
+    "popupNoSync": {
+        "message": "Nie przeprowadzono jeszcze synchronizacji uruchamiania."
+    },
+    "popupImportConfirm": {
+        "message": "Zakładki zapisane na serwerze zostały dodane. Czy na pewno?"
+    },
+    "errorSaveBookmarks": {
+        "message": "Wystąpił błąd podczas zapisywania wszystkich zakładek. Odpowiedź statusu to: "
+    },
+    "errorSaveSingleBookmarks": {
+        "message": "Wystąpił błąd podczas zapisywania zakładki w PHP. Odpowiedź statusu to: "
+    },
+    "errorExportBookmarks": {
+        "message": "Wystąpił problem z eksportem zakładek."
+    },
+    "errorImportBookmark": {
+        "message": "Wystąpił błąd podczas importowania zakładki: "
+    },
+    "errorRemoveBookmark": {
+        "message": "Wystąpił błąd podczas usuwania zakładki."
+    },
+    "errorEditBookmark": {
+        "message": "Wystąpił błąd podczas edycji zakładki na serwerze."
+    },
+    "errorMoveBookmark": {
+        "message": "Wystąpił błąd przenoszenia zakładki na serwerze PHP. Odpowiedź statusu to: "
+    },
+    "successExportBookmarks": {
+        "message": "Lokalne zakładki zostały pomyślnie dodane na serwerze."
+    },
+    "successImportBookmarks": {
+        "message": " zaimportowanych zakładek/folderów."
+    },
+    "internalError": {
+        "message": "Wystąpił błąd wewnętrzny. Wiadomość brzmiała: "
+    },
+    "infoNewClient": {
+        "message": "Ta przeglądarka jest nowym klientem i jest teraz zarejestrowana na serwerze."
+    },
+    "infoNoChange": {
+        "message": "0 dodanych, przeniesionych lub usuniętych zakładek podczas ostatniej synchronizacji."
+    },
+    "infoChanges": {
+        "message": " zmian na serwerze od ostatniej synchronizacji."
+    },
+    "infoEmptyConfig": {
+        "message": "Konfiguracja jest pusta. Skonfiguruj dodatek przed użyciem."
+    },
+    "sendPage": {
+        "message": "Wyślij stronę"
+    },
+    "sendTab": {
+        "message": "Karta Wyślij"
+    },
+    "sendLink": {
+        "message": "Wyślij łącze"
+    },
+    "sendLinkNot": {
+        "message": "Nie można wysłać linku."
+    },
+    "sendLinkYes": {
+        "message": "Link został pomyślnie wysłany."
+    },
+    "openBackend": {
+        "message": "Otwarty serwer"
+    },
+    "bookmarkTab": {
+        "message": "Zakładka bezpośrednio na serwerze"
+    },
+    "backendType": {
+        "message": "Wybór między PHP a serwerem WebDAV"
+    },
+    "ManAuto": {
+        "message": "Aktywacja automatycznej synchronizacji"
+    },
+    "toBackend": {
+        "message": "Wyślij zakładkę bezpośrednio i ręcznie na serwer"
+    },
+    "optionsLastLogged": {
+        "message": "Ostatnio zalogowany za pomocą"
+    },
+    "optionsRestoreServer": {
+        "message": "Następujący klienci mogą zostać przywróceni z serwera. Wybierz klienta z listy lub kliknij Anuluj, aby nie używać żadnego z tych klientów."
     }
 }
