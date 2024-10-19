@@ -1,1 +1,44 @@
-{}
+{
+    "extensionDescription": {
+        "message": "Rozszerzenie to umożliwia synchronizację zakładek i kart z samodzielnie obsługiwanym serwerem."
+    },
+    "optionsStartup": {
+        "message": "Uruchomienie"
+    },
+    "optionsStartupHint": {
+        "message": "Można to włączyć po „Importuj” lub „Usuń"
+    },
+    "optionsShowLog": {
+        "message": "Pokaż plik dziennika"
+    },
+    "extensionName": {
+        "message": "SyncMarks"
+    },
+    "optionsServerData": {
+        "message": "Dane serwera"
+    },
+    "optionsServerType": {
+        "message": "Sztuka serwera"
+    },
+    "optionsServerURL": {
+        "message": "Adres URL serwera"
+    },
+    "optionsUsername": {
+        "message": "Nazwa użytkownika"
+    },
+    "optionsUsernameHint": {
+        "message": "Nazwa użytkownika"
+    },
+    "optionsPassword": {
+        "message": "hasło"
+    },
+    "optionsPasswordHint": {
+        "message": "hasło"
+    },
+    "optionsSyncOptions": {
+        "message": "Opcje synchronizacji"
+    },
+    "optionsAuto": {
+        "message": "Automatyczna synchronizacja"
+    }
+}
