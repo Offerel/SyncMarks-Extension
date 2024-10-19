@@ -3,6 +3,7 @@
 ## v2.0.3 (2024-10-17)
 - Fix open Options Page
 - Fix Client restore
+- Fix request host permissions
 
 ## v2.0.2 (2024-10-15)
 - Fix Remove Bookmark
