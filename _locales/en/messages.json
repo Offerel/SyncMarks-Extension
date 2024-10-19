@@ -5,99 +5,43 @@
   },
   "extensionDescription": {
     "message": "Use this extension to synchronize bookmarks and tabs with a self-hosted server.",
-    "description": ""
-  },  
-  "optionsServerData": {
-    "message": "Server Data",
-    "description": "Server Data."
-  },  
-  "optionsServerType": {
-    "message": "Server type",
-    "description": "Server type."
-  },  
-  "optionsShowLog": {
-    "message": "Show Log",
-    "description": "Show Logfile."
-  },  
+    "description": "Description for the extension"
+  },
   "optionsServerURL": {
     "message": "Server URL",
     "description": ""
-  },  
+  },
   "optionsUsername": {
     "message": "Username",
-    "description": "Username."
-  },  
-  "optionsUsernameHint": {
-    "message": "username",
     "description": "Username."
   },
   "optionsPassword": {
     "message": "Password",
     "description": "Password."
   },
-  "optionsPasswordHint": {
-    "message": "password",
-    "description": "Password."
-  },
   "optionsSyncOptions": {
-    "message": "Sync Options",
-    "description": "Sync Options."
+    "message": "Options",
+    "description": "Syncmark Options"
   },
   "optionsAuto": {
     "message": "Automatic synchronization",
-    "description": ""
-  },
-  "optionsStartup": {
-    "message": "Startup",
-    "description": "Browser startup."
-  },
-  "optionsStartupHint": {
-    "message": "You can enable this after 'Import' or 'Remove'",
-    "description": "Browser startup hint."
-  },
-  "optionsCreate": {
-    "message": "Create",
-    "description": "Bookmark create."
-  },
-  "optionsChange": {
-    "message": "Change",
-    "description": "Bookmark change."
-  },
-  "optionsRemove": {
-    "message": "Remove",
-    "description": "Bookmark remove."
-  },
-  "optionsManualActions": {
-    "message": "Manual Actions",
-    "description": "Manual Actions."
-  },
-  "optionsBTNRemove": {
-    "message": "Remove",
-    "description": "Remove Button."
-  },
-  "optionsBTNRemoveHint": {
-    "message": "This removes all your local bookmarks!",
-    "description": "Remove Button Hint."
+    "description": "Automatic synchronization"
   },
   "optionsBTNImport": {
     "message": "Download",
-    "description": ""
+    "description": "Download Bookmarks"
   },
   "optionsBTNImportHint": {
     "message": "Restore from server, overwrite local bookmarks.",
     "description": "Import Button Hint."
   },
-  "optionsBTNSaveHint": {
-    "message": "Save settings",
-    "description": ""
-  },
   "optionsBTNSettingsHint": {
     "message": "Backup settings",
-    "description": ""
+    "description": "Backup settings"
   },
   "optionsBTNExport": {
     "message": "Upload",
-    "description": ""
+    "description": "Upload Bookmarks"
   },
   "optionsBTNExportHint": {
     "message": "Overwrite all bookmarks on the server.",
@@ -109,27 +53,23 @@
   },
   "optionsBTNSettings": {
     "message": "Settings",
-    "description": ""
+    "description": "Settings"
   },
   "optionsBTNStore": {
     "message": "Store",
-    "description": ""
+    "description": "Store the settings"
   },
   "optionsBTNRestore": {
     "message": "Restore",
-    "description": ""
+    "description": "Re-Store the settings"
   },
   "optionsBTNClear": {
     "message": "Delete",
-    "description": ""
+    "description": "Clear the logfile"
   },
   "optionsDebugLog": {
     "message": "Debug Log",
-    "description": ""
-  },
-  "optionsBTNAdvSet": {
-    "message": "Advanced Settings",
-    "description": ""
+    "description": "Show also debug messages"
   },
   "optionsBTNYes": {
     "message": "Yes",
@@ -169,30 +109,31 @@
   },
   "optionsBeforeCImpExp": {
     "message": "Here you can store or restore your current settings.",
-    "description": ""
+    "description": "Description to store the settings"
   },
   "optionsBeforeLogin": {
-    "message": "Please log in with your access data to receive an access code.",
-    "description": ""
+    "message": "Please log in with your credentials to receive an access code.",
+    "description": "Hint before login"
   },  
   "optionsWrongAData": {
     "message": "Login error. Please log in again",
-    "description": ""
+    "description": "Login error"
   },
   "infoRestoreID": {
     "message": "Do you want to restore the Client ID?",
-    "description": ""
+    "description": "Question if you want to restore the client id"
   },  
   "optionsSuccessImport": {
     "message": "Import successfully.",
-    "description": ""
-  },  "optionsBeforeImport": { 
+    "description": "Message on succesfull import"
+  },
+  "optionsBeforeImport": { 
     "message": "Should all local bookmarks be deleted before import?",
     "description": "Message before importing."
   },
   "optionsBeforeExport": { 
     "message": "All bookmarks are deleted at the server before exporting. Afterwards the new bookmarks are exported to the server.\n\nShould the remote bookmarks be deleted before the export?",
-    "description": ""
+    "description": "Description that all remote bookmarks are deleted"
   },
   "optionsInfoRemove": {
     "message": "When you continue, all your current bookmarks are removed.\n\nAre you sure to delete all local bookmarks?",
@@ -218,22 +159,18 @@
     "message": "There was some error saving all bookmarks. The status response is: ",
     "description": "http error when saving bookmarks."
   },
-  
   "errorSaveSingleBookmarks": {
     "message": "There was a error saving the bookmark to PHP. The status response is: ",
     "description": "http error when saving single bookmark."
   },
-  
   "errorExportBookmarks": {
     "message": "There was a problem exporting the bookmarks.",
     "description": "Error when exporting bookmarks."
   },
-  
   "errorImportBookmark": {
     "message": "There was a error importing the bookmark: ",
     "description": "Error when import bookmark."
   },
-  
   "errorRemoveBookmark": {
     "message": "There was some error removing the bookmark.",
     "description": "Error removing bookmark with PHP."
@@ -276,50 +213,46 @@
   },
   "sendPage": {
     "message": "Send Page",
-    "description": ""
+    "description": "Context Menu entry"
   },
   "sendTab": {
     "message": "Send Tab",
-    "description": ""
+    "description": "Context Menu entry"
   },
   "sendLink": {
     "message": "Send Link",
-    "description": ""
+    "description": "Context Menu entry"
   },
   "sendLinkNot": {
     "message": "Link could not be send.",
-    "description": ""
+    "description": "Error message on server failure"
   },
   "sendLinkYes": {
     "message": "Link successfully send.",
-    "description": ""
-  },
-  "openBackend": {
-    "message": "Open server",
-    "description": ""
+    "description": "Message after send the link"
   },
   "bookmarkTab": {
     "message": "Bookmark direct to server",
-    "description": ""
+    "description": "Bookmark to server without autosync"
   },
   "backendType": {
     "message": "Choose between PHP and WebDAV server",
-    "description": ""
+    "description": "Choose backend"
   },
   "ManAuto": {
     "message": "Activate automatic synchronization",
-    "description": ""
+    "description": "Enable autosync"
   },
   "toBackend": {
     "message": "Send Bookmark directly and manual to the server",
-    "description": ""
+    "description": "Send bookmark to server"
   },
   "optionsLastLogged": {
     "message": "Last logged in with",
-    "description": ""
+    "description": "Last logged in info"
   },
   "optionsRestoreServer": {
     "message": "The following clients can be restored from the server. Please select a client from the list or click on cancel to not use any of these clients.",
-    "description": ""
+    "description": "Restoring a client"
   }
 }

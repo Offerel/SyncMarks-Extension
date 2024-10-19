@@ -6,36 +6,16 @@
   "extensionDescription": {
     "message": "Mit Hilfe dieser Erweiterung synchronisieren Sie Lesezeichen und Tabs mit einem selbstgehosteten Server.",
     "description": ""
-  },  
-  "optionsServerData": {
-    "message": "Daten des Servers",
-    "description": "Server Data."
-  },  
-  "optionsServerType": {
-    "message": "Server Art",
-    "description": "Server type."
-  },  
-  "optionsShowLog": {
-    "message": "Zeige Logfile an",
-    "description": "Show Logfile."
-  },  
+  },
   "optionsServerURL": {
     "message": "Server URL",
-    "description": ""
+    "description": "URL to the backend"
   },  
   "optionsUsername": {
     "message": "Benutzer",
     "description": "Username."
-  },  
-   "optionsUsernameHint": {
-    "message": "Benutzername",
-    "description": "Username."
   },
   "optionsPassword": {
-    "message": "Passwort",
-    "description": "Password."
-  },
-  "optionsPasswordHint": {
     "message": "Passwort",
     "description": "Password."
   },
@@ -47,37 +27,9 @@
     "message": "Automatische Synchronisation",
     "description": ""
   },
-   "optionsStartup": {
-    "message": "Browser Start",
-    "description": "Browser startup."
-  },
-  "optionsStartupHint": {
-    "message": "Bitte zuerst 'Importieren' oder bestehende Bookmarks 'Löschen'",
-    "description": "Browser startup hint."
-  },
-  "optionsCreate": {
-    "message": "Erstellen",
-    "description": "Bookmark create."
-  },
-  "optionsChange": {
-    "message": "Ändern",
-    "description": "Bookmark change."
-  },
-  "optionsRemove": {
-    "message": "Entfernen",
-    "description": "Bookmark remove."
-  },
   "optionsManualActions": {
     "message": "Manuelle Funktionen",
     "description": "Manual Actions."
-  },
-  "optionsBTNRemove": {
-    "message": "Löschen",
-    "description": "Remove Button."
-  },
-  "optionsBTNRemoveHint": {
-    "message": "Alle lokalen Bookmarks werden gelöscht!",
-    "description": "Remove Button Hint."
   },
   "optionsBTNImport": {
     "message": "Download",
@@ -86,10 +38,6 @@
   "optionsBTNImportHint": {
     "message": "Wiederherstellen vom Server, überschreiben der lokalen Bookmarks.",
     "description": "Import Button Hint."
-  },
-  "optionsBTNSaveHint": {
-    "message": "Speichern der Einstellungen",
-    "description": ""
   },
   "optionsBTNSettingsHint": {
     "message": "Backup der Einstellungen",
@@ -125,10 +73,6 @@
   },
   "optionsDebugLog": {
     "message": "Debug Log",
-    "description": ""
-  },
-  "optionsBTNAdvSet": {
-    "message": "Erweiterte Einstellungen",
     "description": ""
   },
   "optionsBTNYes": {
