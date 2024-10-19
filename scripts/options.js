@@ -503,19 +503,13 @@ function switchBackend() {
 function requestHostPermission() {
 	const instance = document.getElementById('wdurl');
 	let newOrigin = new URL(instance.value).origin + '/*';
-	chrome.permissions.contains({origins:[newOrigin]},
-		(result) => {
-			if(!result) {
-				chrome.permissions.request({
-					origins: [newOrigin]
-				}, (granted) => {
-					const message = (granted) ? 'Syncmarks: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
-					chrome.runtime.sendMessage({action: "loglines", data: message});
-					checkURL();
-				});
-			}
-		}
-	);
+	chrome.permissions.request({
+		origins: [newOrigin]
+	}, (granted) => {
+		const message = (granted) ? 'Syncmarks: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
+		chrome.runtime.sendMessage({action: "loglines", data: message});
+		checkURL();
+	});
 }
 
 function requestClientOptions(cOptions, av = false) {
