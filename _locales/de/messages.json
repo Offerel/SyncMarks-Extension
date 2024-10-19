@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "extensionName": {
     "message": "SyncMarks",
     "description": "Name der Erweiterung."
@@ -11,7 +10,7 @@
   "optionsServerURL": {
     "message": "Server URL",
     "description": "URL to the backend"
-  },  
+  },
   "optionsUsername": {
     "message": "Benutzer",
     "description": "Username."
