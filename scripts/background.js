@@ -287,11 +287,11 @@ function bookmarkExport(response, tab = null) {
 function bookmarkImport(response) {
 	const message = [];
 	if(response.code == 200) {
-		loglines = logit("Info: " + message);
+		loglines = logit("Info: " + response.message);
 		message.text = "successExportBookmarks";
 		message.type = 'success';
 	} else {
-		loglines = logit("Error: "+ message + " " + response.message);
+		loglines = logit("Error: "+ response.message);
 		message.text = chrome.i18n.getMessage("errorExportBookmarks");
 		message.type = 'error';
 	}
@@ -358,27 +358,31 @@ function toastMessage(mode, message) {
 }
 
 function bookmarkAdd(response) {
+	let text = '';
+	let type = '';
 	chrome.storage.local.get(null, async function(options) {
 		if(options.sync != undefined && options.sync.manual) {
 			if(response.code === 200) {
-				response = "Bookmark added";
+				text = "Bookmark added";
 				changeIcon('info');
 				mode = '0';
+				type = 'Info';
 			} else {
-				response = response.message;
+				text = response.message;
 				changeIcon('warn');
 				mode = '1';
+				type = 'Error';
 			}
 
 			let uastr = navigator.userAgent.toLowerCase();
 			
 			if(uastr.match(/mobile/i)) {
-				toastMessage(mode, response);
+				toastMessage(mode, response.message);
 			} else {
-				if(response.code !== 200) notify(Math.random().toString(16).substring(2, 10), response);
+				if(response.code !== 200) notify(Math.random().toString(16).substring(2, 10), text);
 			}
 
-			loglines = logit("Info: " + response);
+			loglines = logit(type + ": " + text);
 		}
 	});
 
@@ -404,7 +408,7 @@ function bookmarkMove(response) {
 	if(response['code'] == 200)
 		loglines = logit("Info: Bookmark moved successfully at the server");
 	else
-		loglines = logit("Error: Bookmark not moved at the server, response from server is: " + response);
+		loglines = logit("Error: Bookmark not moved on server. " + response[`message`]);
 }
 
 function bookmarkDel(response) {
@@ -440,9 +444,9 @@ function clientRename(response) {
 }
 
 function tabsSend(response) {
-	response = parseInt(response['tabs']);
-	if(response < 1) {
-		message = "Tabs could not be saved remotely, please check server log";
+	let test = parseInt(response['tabs']);
+	if(test < 1) {
+		let message = "Tabs could not be saved remotely, please check server log";
 		loglines = logit(message);
 		notify('error',message);
 	}
