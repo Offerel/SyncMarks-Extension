@@ -155,7 +155,14 @@ function sendRequest(action, data = null, tab = null) {
 		}).then(response => {
 			let rStatus = response.status;
 			let xRinfo = response.headers.get("X-Request-Info");
-			if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
+			if (xRinfo != null) {
+				if(xRinfo == 0) {
+					chrome.storage.local.remove('token');
+					changeIcon('error');
+				} else {
+					chrome.storage.local.set({token:xRinfo});
+				}
+			}
 			return response.json();
 		}).then(responseData => {
 			action(responseData, tab);
@@ -265,7 +272,7 @@ function clientInfo(response, tab = null) {
 }
 
 function bookmarkExport(response, tab = null) {
-	bookmarks = response.bookmarks;
+	let bookmarks = response.bookmarks;
 	const message = [];
 	if(abrowser == false) bookmarks = c2cm(bookmarks);
 	count = 0;

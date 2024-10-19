@@ -133,6 +133,13 @@ function gToken(e) {
 		}
 
 		chrome.storage.local.set(cOptions);
+		document.getElementById('blogin').removeAttribute('style')
+		chrome.action.setBadgeText({text: 'i'});
+		chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
+		chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName")});
+		setTimeout(function(){
+			chrome.action.setBadgeText({text: ''});
+		}, 5000);
 
 		document.getElementById('cname').defaultValue = responseData.cname;
 		

@@ -1,6 +1,7 @@
 # ChangeLog
 ## v2.0.4 (2024-10-19)
 - Fix response object
+- Remove token on invalid token
 
 ## v2.0.3 (2024-10-17)
 - Fix open Options Page
