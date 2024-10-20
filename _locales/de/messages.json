@@ -104,7 +104,7 @@
         "message": "Hier kannst du deine bestehenden Einstellungen sichern oder wiederherstellen."
     },
     "optionsBeforeLogin": {
-        "message": "Bitte mit deinen Zugangsdaten einloggen, um einen Zugangscode zu erhalten."
+        "message": "Bitte melden Sie sich mit Ihren Zugangsdaten an, um Zugang zu Ihren Lesezeichen zu erhalten"
     },
     "optionsWrongAData": {
         "message": "Login Error. Bitte erneut einloggen"
@@ -225,12 +225,39 @@
         "message": "Automatische Synchronisation aktivieren"
     },
     "toBackend": {
-        "message": "Bookmark manuell direkt an Server senden"
+        "message": "Schick Bookmark direkt manual zum Server"
     },
     "optionsLastLogged": {
         "message": "Zuletzt eingeloggt mit"
     },
     "optionsRestoreServer": {
         "message": "Folgende Clients können vom Server wiederhergestellt werden. Bitte wähle einen Client aus der Liste aus oder klicke auf abbrechen, um keinen dieser Client zu verwenden."
+    },
+    "optionsChangelog": {
+        "message": "Änderungen"
+    },
+    "optionsLogin": {
+        "message": "Login"
+    },
+    "optionsLogfile": {
+        "message": "Logdatei"
+    },
+    "optionsClientName": {
+        "message": "Client Name"
+    },
+    "optionsBackendSyncmarks": {
+        "message": "Syncmarks Server"
+    },
+    "optionsTabs": {
+        "message": "Tabs"
+    },
+    "optionsLegendServer": {
+        "message": "Server"
+    },
+    "optionsLegendBookmarks": {
+        "message": "Bookmarks"
+    },
+    "optionsBTNBackup": {
+        "message": "Backup"
     }
 }
