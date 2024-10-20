@@ -1,277 +1,236 @@
 {
-  "extensionName": {
-    "message": "SyncMarks",
-    "description": "Name der Erweiterung."
-  },
-  "extensionDescription": {
-    "message": "Mit Hilfe dieser Erweiterung synchronisieren Sie Lesezeichen und Tabs mit einem selbstgehosteten Server.",
-    "description": ""
-  },
-  "optionsServerURL": {
-    "message": "Server URL",
-    "description": "URL to the backend"
-  },
-  "optionsUsername": {
-    "message": "Benutzer",
-    "description": "Username."
-  },
-  "optionsPassword": {
-    "message": "Passwort",
-    "description": "Password."
-  },
-  "optionsSyncOptions": {
-    "message": "Optionen",
-    "description": "Sync Options."
-  },
-   "optionsAuto": {
-    "message": "Automatische Synchronisation",
-    "description": ""
-  },
-  "optionsManualActions": {
-    "message": "Manuelle Funktionen",
-    "description": "Manual Actions."
-  },
-  "optionsBTNImport": {
-    "message": "Download",
-    "description": ""
-  },
-  "optionsBTNImportHint": {
-    "message": "Wiederherstellen vom Server, überschreiben der lokalen Bookmarks.",
-    "description": "Import Button Hint."
-  },
-  "optionsBTNSettingsHint": {
-    "message": "Backup der Einstellungen",
-    "description": ""
-  },
-  "optionsBTNExport": {
-    "message": "Upload",
-    "description": ""
-  },
-  "optionsBTNExportHint": {
-    "message": "Überschreiben aller Bookmarks auf dem Server.",
-    "description": "Export Button Hint."
-  },
-  "optionsBTNSave": {
-    "message": "Speichern",
-    "description": "Save Button."
-  },
-  "optionsBTNSettings": {
-    "message": "Einstellungen",
-    "description": ""
-  },
-  "optionsBTNStore": {
-    "message": "Sichern",
-    "description": ""
-  },
-  "optionsBTNRestore": {
-    "message": "Wiederherstellen",
-    "description": ""
-  },
-  "optionsBTNClear": {
-    "message": "Löschen",
-    "description": ""
-  },
-  "optionsDebugLog": {
-    "message": "Debug Log",
-    "description": ""
-  },
-  "optionsBTNYes": {
-    "message": "Ja",
-    "description": "Yes Button."
-  },
-
-  "optionsBTNNo": {
-    "message": "Nein",
-    "description": "No Button."
-  },
-  "optionsBTNCancel": {
-    "message": "Abbrechen",
-    "description": "Cancel Button."
-  },
-  "optionsNotUsed": {
-    "message": "Du kannst nun alle Bookmarks vom Server Synchronisieren.",
-    "description": "Not used hint."
-  },  
-  "optionsErrorURL": {
-    "message": "Login Fehler: Bitte prüfe den URL. Dieser sollte im Format https://servername/folder sein.",
-    "description": "Login failed, wrong URL."
-  },  
-  "optionsErrorUser": {
-    "message": "Login Fehler: Bitte prüfe Benutzer und Passwort.",
-    "description": "Login failed, wrong User."
-  },
-  "optionsSuccessSave": {
-    "message": "Optionen gespeichert.",
-    "description": "Login failed, wrong User."
-  },
-  "optionsErrorLogin": {
-    "message": "Login Fehler: Status: ",
-    "description": "Login failed, unknown state."
-  },
-  "optionsLoginError": {
-    "message": "Login Fehler: Bitte erneut einloggen",
-    "description": ""
-  },
-  "optionsBeforeCImpExp": {
-    "message": "Hier kannst du deine bestehenden Einstellungen sichern oder wiederherstellen.",
-    "description": ""
-  },
-  "optionsBeforeLogin": {
-    "message": "Bitte mit deinen Zugangsdaten einloggen, um einen Zugangscode zu erhalten.",
-    "description": ""
-  },
-  "optionsWrongAData": {
-    "message": "Login Error. Bitte erneut einloggen",
-    "description": ""
-  },
-  "infoRestoreID": {
-    "message": "Soll die Client ID wiederhergestellt werden?",
-    "description": ""
-  },
-  "optionsSuccessImport": {
-    "message": "Import erfolgreich.",
-    "description": ""
-  },
-  "optionsBeforeImport": {
-    "message": "Sollen alle lokalen Bookmarks vor dem Import gelöscht werden?",
-    "description": "Message before importing."
-  },
-  "optionsBeforeExport": {
-    "message": "Vor dem Export werden alle Bookmarks auf dem Server gelöscht. Danach werden die neuen Bookmarks zum Server exportiert.\n\nSollen die Bookmarks vor dem Export auf dem Server gelöscht werden?",
-    "description": ""
-  },
-  "optionsInfoRemove": {
-    "message": "Wenn du fortfährst, werden alle deine aktuellen Bookmarks entfernt.\n\nSollen alle lokalen Bookmarks gelöscht werden?",
-    "description": "Login failed, unknown state."
-  },
-  "popupBTNOptions": {
-    "message": "Optionen",
-    "description": "Options Button."
-  },
-  "popupNoSync": {
-    "message": "Bisher wurde kein Sync beim Start durchgeführt.",
-    "description": "No startup sync done yet.."
-  },  
-  "popupImportConfirm": {
-	"message": "Die Bookmarks werden nun vom Server übernommen. Bist du sicher?",
-    "description": "ImportConfirm"
-  },
-  
-  "errorGetBookmarks": {
-    "message": "Es gab einen Fehler beim Abrufen der Bookmarks vom Server. Der Antwortcode vom Server lautet: ",
-    "description": "http Fehler beim Abrufen der Bookmarks."
-  },
-  
-  "errorSaveBookmarks": {
-    "message": "Es gab einen Fehler beim Speichern aller Bookmarks. Die Rückmeldung lautet: ",
-    "description": "http error beim Speichern der Bookmarks."
-  },
-  
-  "errorSaveSingleBookmarks": {
-    "message": "Es gab einen Fehler beim Speichern des Bookmarks auf dem PHP Server. Die Rückmeldung lautet: ",
-    "description": "http error when saving single bookmark."
-  },
-  
-  "errorExportBookmarks": {
-    "message": "Es gab einen Fehler beim Export der Bookmarks.",
-    "description": "Fehler beim exportieren der Bookmarks."
-  },
-  
-  "errorImportBookmark": {
-    "message": "Es gab einen Fehler beim Import des Bookmarks: ",
-    "description": "Error when import bookmark."
-  },
-  
-  "errorRemoveBookmark": {
-    "message": "Es gab einen Fehler beim Entfernen des Bookmarks.",
-    "description": "Fehler beim Entfernen des Bookmarks mit PHP."
-  },
-
-  "errorEditBookmark": {
-    "message": "Es gab einen Fehler beim Ändern des Bookmarks auf dem Server.",
-    "description": ""
-  },
-  
-  "errorMoveBookmark": {
-    "message": "Es gab einen Fehler beim Verschieben des Bookmarks auf dem PHP-Server. Die Rückmeldung lautet: ",
-    "description": "Fehler beim Verschieben des Bookmarks."
-  },
-  
-  "successExportBookmarks": {
-    "message": "Lokale Bookmarks erfolgreich auf dem Server hinzugefügt.",
-    "description": "Alle Bookmarks erfolgreich exportiert."
-  },
-    
-  "successImportBookmarks": {
-    "message": " Bookmark/Ordner importiert.",
-    "description": "Count bookmarks imported."
-  },
-  "internalError": {
-    "message": "Ein interner Fehler ist aufgetreten. Die Meldung lautet: ",
-    "description": "Interner Fehler."
-  },
-  "infoNewClient": {
-    "message": "Dieser Browser ist ein neuer Client und wurde auf dem Server registriert.",
-    "description": "New Client, unknown to the server."
-  },
-  "infoNoChange": {
-    "message": "Keine Bookmarks hinzugefügt, verschoben oder gelöscht bei der letzten Synchronisation.",
-    "description": "Meldung, wenn sich auf dem Server keine Daten verändert haben."
-  },
-  "infoChanges": {
-    "message": " Änderungen auf dem Server seit dem letzten Sync.",
-    "description": "Message if no data has changed on the server."
-  },
-  "infoEmptyConfig": {
-    "message": "Keine Konfigurationsdaten gefunden. Bitte konfiguriere das AddOn vor der ersten Verwendung.",
-    "description": "Message if extension is not configured yet."
-  },
-  "sendPage": {
-    "message": "Seite senden",
-    "description": ""
-  },
-  "sendTab": {
-    "message": "Tab senden",
-    "description": ""
-  },
-  "sendLink": {
-    "message": "Link senden",
-    "description": ""
-  },
-  "sendLinkNot": {
-    "message": "Link konnte nicht versendet werden.",
-    "description": ""
-  },
-  "sendLinkYes": {
-    "message": "Link erfolgreich versendet.",
-    "description": ""
-  },
-  "openBackend": {
-    "message": "Öffne Server",
-    "description": ""
-  },
-  "bookmarkTab": {
-    "message": "Bookmark direkt zu Server",
-    "description": ""
-  },
-  "backendType": {
-    "message": "Wähle zwischen PHP und WebDAV Server",
-    "description": ""
-  },
-  "ManAuto": {
-    "message": "Automatische Synchronisation aktivieren",
-    "description": ""
-  },
-  "toBackend": {
-    "message": "Bookmark manuell direkt an Server senden",
-    "description": ""
-  },
-  "optionsLastLogged": {
-    "message": "Zuletzt eingeloggt mit",
-    "description": ""
-  },
-  "optionsRestoreServer": {
-    "message": "Folgende Clients können vom Server wiederhergestellt werden. Bitte wähle einen Client aus der Liste aus oder klicke auf abbrechen, um keinen dieser Client zu verwenden.",
-    "description": ""
-  }
+    "extensionName": {
+        "message": "SyncMarks",
+        "description": "Name der Erweiterung."
+    },
+    "extensionDescription": {
+        "message": "Mit Hilfe dieser Erweiterung synchronisieren Sie Lesezeichen und Tabs mit einem selbstgehosteten Server."
+    },
+    "optionsServerURL": {
+        "message": "Server URL",
+        "description": "URL to the backend"
+    },
+    "optionsUsername": {
+        "message": "Benutzer",
+        "description": "Username."
+    },
+    "optionsPassword": {
+        "message": "Passwort",
+        "description": "Password."
+    },
+    "optionsSyncOptions": {
+        "message": "Optionen",
+        "description": "Sync Options."
+    },
+    "optionsAuto": {
+        "message": "Automatische Synchronisation"
+    },
+    "optionsManualActions": {
+        "message": "Manuelle Funktionen",
+        "description": "Manual Actions."
+    },
+    "optionsBTNImport": {
+        "message": "Download"
+    },
+    "optionsBTNImportHint": {
+        "message": "Wiederherstellen vom Server, überschreiben der lokalen Bookmarks.",
+        "description": "Import Button Hint."
+    },
+    "optionsBTNSettingsHint": {
+        "message": "Backup der Einstellungen"
+    },
+    "optionsBTNExport": {
+        "message": "Upload"
+    },
+    "optionsBTNExportHint": {
+        "message": "Überschreiben aller Bookmarks auf dem Server.",
+        "description": "Export Button Hint."
+    },
+    "optionsBTNSave": {
+        "message": "Speichern",
+        "description": "Save Button."
+    },
+    "optionsBTNSettings": {
+        "message": "Einstellungen"
+    },
+    "optionsBTNStore": {
+        "message": "Sichern"
+    },
+    "optionsBTNRestore": {
+        "message": "Wiederherstellen"
+    },
+    "optionsBTNClear": {
+        "message": "Löschen"
+    },
+    "optionsDebugLog": {
+        "message": "Debug Log"
+    },
+    "optionsBTNYes": {
+        "message": "Ja",
+        "description": "Yes Button."
+    },
+    "optionsBTNNo": {
+        "message": "Nein",
+        "description": "No Button."
+    },
+    "optionsBTNCancel": {
+        "message": "Abbrechen",
+        "description": "Cancel Button."
+    },
+    "optionsNotUsed": {
+        "message": "Du kannst nun alle Bookmarks vom Server Synchronisieren.",
+        "description": "Not used hint."
+    },
+    "optionsErrorURL": {
+        "message": "Login Fehler: Bitte prüfe den URL. Dieser sollte im Format https://servername/folder sein",
+        "description": "Login failed, wrong URL."
+    },
+    "optionsErrorUser": {
+        "message": "Login Fehler: Bitte prüfe Benutzer und Passwort.",
+        "description": "Login failed, wrong User."
+    },
+    "optionsSuccessSave": {
+        "message": "Optionen gespeichert.",
+        "description": "Login failed, wrong User."
+    },
+    "optionsErrorLogin": {
+        "message": "Login Fehler: Status: ",
+        "description": "Login failed, unknown state."
+    },
+    "optionsLoginError": {
+        "message": "Login Fehler: Bitte erneut einloggen"
+    },
+    "optionsBeforeCImpExp": {
+        "message": "Hier kannst du deine bestehenden Einstellungen sichern oder wiederherstellen."
+    },
+    "optionsBeforeLogin": {
+        "message": "Bitte mit deinen Zugangsdaten einloggen, um einen Zugangscode zu erhalten."
+    },
+    "optionsWrongAData": {
+        "message": "Login Error. Bitte erneut einloggen"
+    },
+    "infoRestoreID": {
+        "message": "Soll die Client ID wiederhergestellt werden?"
+    },
+    "optionsSuccessImport": {
+        "message": "Import erfolgreich."
+    },
+    "optionsBeforeImport": {
+        "message": "Sollen alle lokalen Bookmarks vor dem Import gelöscht werden?",
+        "description": "Message before importing."
+    },
+    "optionsBeforeExport": {
+        "message": "Vor dem Export werden alle Bookmarks auf dem Server gelöscht. Danach werden die neuen Bookmarks zum Server exportiert.\n\nSollen die Bookmarks vor dem Export auf dem Server gelöscht werden?"
+    },
+    "optionsInfoRemove": {
+        "message": "Wenn du fortfährst, werden alle deine aktuellen Bookmarks entfernt.\n\nSollen alle lokalen Bookmarks gelöscht werden?",
+        "description": "Login failed, unknown state."
+    },
+    "popupBTNOptions": {
+        "message": "Optionen",
+        "description": "Options Button."
+    },
+    "popupNoSync": {
+        "message": "Bisher wurde kein Sync beim Start durchgeführt.",
+        "description": "No startup sync done yet.."
+    },
+    "popupImportConfirm": {
+        "message": "Die Bookmarks werden nun vom Server übernommen. Bist du sicher?",
+        "description": "ImportConfirm"
+    },
+    "errorGetBookmarks": {
+        "message": "Es gab einen Fehler beim Abrufen der Bookmarks vom Server. Der Antwortcode vom Server lautet: ",
+        "description": "http Fehler beim Abrufen der Bookmarks."
+    },
+    "errorSaveBookmarks": {
+        "message": "Es gab einen Fehler beim Speichern aller Bookmarks. Die Rückmeldung lautet: ",
+        "description": "http error beim Speichern der Bookmarks."
+    },
+    "errorSaveSingleBookmarks": {
+        "message": "Es gab einen Fehler beim Speichern des Bookmarks auf dem PHP Server. Die Rückmeldung lautet: ",
+        "description": "http error when saving single bookmark."
+    },
+    "errorExportBookmarks": {
+        "message": "Es gab einen Fehler beim Export der Bookmarks.",
+        "description": "Fehler beim exportieren der Bookmarks."
+    },
+    "errorImportBookmark": {
+        "message": "Es gab einen Fehler beim Import des Bookmarks: ",
+        "description": "Error when import bookmark."
+    },
+    "errorRemoveBookmark": {
+        "message": "Es gab einen Fehler beim Entfernen des Bookmarks.",
+        "description": "Fehler beim Entfernen des Bookmarks mit PHP."
+    },
+    "errorEditBookmark": {
+        "message": "Es gab einen Fehler beim Ändern des Bookmarks auf dem Server."
+    },
+    "errorMoveBookmark": {
+        "message": "Es gab einen Fehler beim Verschieben des Bookmarks auf dem PHP-Server. Die Rückmeldung lautet: ",
+        "description": "Fehler beim Verschieben des Bookmarks."
+    },
+    "successExportBookmarks": {
+        "message": "Lokale Bookmarks erfolgreich auf dem Server hinzugefügt.",
+        "description": "Alle Bookmarks erfolgreich exportiert."
+    },
+    "successImportBookmarks": {
+        "message": " Bookmark/Ordner importiert.",
+        "description": "Count bookmarks imported."
+    },
+    "internalError": {
+        "message": "Ein interner Fehler ist aufgetreten. Die Meldung lautet: ",
+        "description": "Interner Fehler."
+    },
+    "infoNewClient": {
+        "message": "Dieser Browser ist ein neuer Client und wurde auf dem Server registriert.",
+        "description": "New Client, unknown to the server."
+    },
+    "infoNoChange": {
+        "message": "Keine Bookmarks hinzugefügt, verschoben oder gelöscht bei der letzten Synchronisation.",
+        "description": "Meldung, wenn sich auf dem Server keine Daten verändert haben."
+    },
+    "infoChanges": {
+        "message": " Änderungen auf dem Server seit dem letzten Sync.",
+        "description": "Message if no data has changed on the server."
+    },
+    "infoEmptyConfig": {
+        "message": "Keine Konfigurationsdaten gefunden. Bitte konfiguriere das AddOn vor der ersten Verwendung.",
+        "description": "Message if extension is not configured yet."
+    },
+    "sendPage": {
+        "message": "Seite senden"
+    },
+    "sendTab": {
+        "message": "Tab senden"
+    },
+    "sendLink": {
+        "message": "Link senden"
+    },
+    "sendLinkNot": {
+        "message": "Link konnte nicht versendet werden."
+    },
+    "sendLinkYes": {
+        "message": "Link erfolgreich versendet."
+    },
+    "openBackend": {
+        "message": "Öffne Server"
+    },
+    "bookmarkTab": {
+        "message": "Bookmark direkt zu Server"
+    },
+    "backendType": {
+        "message": "Wähle zwischen PHP und WebDAV Server"
+    },
+    "ManAuto": {
+        "message": "Automatische Synchronisation aktivieren"
+    },
+    "toBackend": {
+        "message": "Bookmark manuell direkt an Server senden"
+    },
+    "optionsLastLogged": {
+        "message": "Zuletzt eingeloggt mit"
+    },
+    "optionsRestoreServer": {
+        "message": "Folgende Clients können vom Server wiederhergestellt werden. Bitte wähle einen Client aus der Liste aus oder klicke auf abbrechen, um keinen dieser Client zu verwenden."
+    }
 }
