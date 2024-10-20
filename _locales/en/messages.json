@@ -228,7 +228,7 @@
     "description": "Client Name label in options"
   },
   "optionsBackendSyncmarks": {
-    "message": "Server: PHP",
+    "message": "Syncmarks Server",
     "description": "Syncmark Server backend"
   },
   "optionsTabs": {

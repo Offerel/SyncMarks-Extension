@@ -85,16 +85,12 @@ function checkLoginForm() {
 
 function gToken(e) {
 	e.preventDefault();
-	let tbt = document.getElementById('tbt').checked;
 	document.getElementById('blogin').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
 
 	const params = {
 		action: "clientCheck",
 		client: document.getElementById('s_uuid').value,
-		data: {
-			usebasic: tbt
-		},
 		sync: document.getElementById('s_auto').checked
 	};
 
@@ -118,13 +114,14 @@ function gToken(e) {
 				auto:document.getElementById("s_auto").checked,
 				manual:document.getElementById("b_action").checked
 			},
+			name: document.getElementById("cname").checked,
 			type: document.getElementById("php_webdav").checked,
 			uuid: document.getElementById("s_uuid").value,
 			tabs: document.getElementById("s_tabs").checked,
 			instance: document.getElementById("wdurl").value
 		};
 
-		if(tbt) {
+		if(!cOptions.type) {
 			cOptions.creds = creds;
 			chrome.storage.local.remove('token');
 		} else {
@@ -189,6 +186,7 @@ function saveOptions(e) {
 			auto:document.getElementById("s_auto").checked,
 			manual:document.getElementById("b_action").checked
 		},
+		name: document.getElementById("cname").checked,
 		type: document.getElementById("php_webdav").checked,
 		uuid: document.getElementById("s_uuid").value,
 		tabs: document.getElementById("s_tabs").checked,
@@ -235,7 +233,7 @@ function restoreOptions() {
 			document.getElementById("cname").placeholder = nuuid;
 		} else {
 			document.getElementById("s_uuid").defaultValue = options.uuid;
-			document.getElementById("cname").placeholder = options.uuid;
+			document.getElementById("cname").placeholder = options.name;
 		}
 
 		document.getElementById("s_auto").defaultChecked = (options.sync == undefined) ? true:options.sync.auto;
@@ -289,6 +287,7 @@ function exportOptions(e) {
 				auto:document.getElementById("s_auto").checked,
 				manual:document.getElementById("b_action").checked
 			},
+			name: document.getElementById("cname").checked,
 			type: document.getElementById("php_webdav").checked,
 			uuid: document.getElementById("s_uuid").value,
 			tabs: document.getElementById("s_tabs").checked,
@@ -331,6 +330,7 @@ function importOptions() {
 				auto:ioptions.sync.auto,
 				manual:ioptions.sync.manual
 			},
+			name: ioptions.name,
 			type: ioptions.type,
 			uuid: ioptions.uuid,
 			tabs: ioptions.tabs,

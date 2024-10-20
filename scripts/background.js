@@ -1439,7 +1439,6 @@ function addAllMarks(parsedMarks, index=1) {
 
 		if (typeof parsedMarks[index+1] !== 'undefined') {
 			addAllMarks(parsedMarks, ++index);
-			
 		}
 		else {
 			message = count + chrome.i18n.getMessage("successImportBookmarks");
