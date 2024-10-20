@@ -138,7 +138,7 @@
         "message": "Tutaj można zapisać lub przywrócić bieżące ustawienia."
     },
     "optionsBeforeLogin": {
-        "message": "Zaloguj się przy użyciu danych dostępu, aby otrzymać kod dostępu."
+        "message": "Zaloguj się przy użyciu danych dostępu, aby otrzymać kod dostępu"
     },
     "optionsWrongAData": {
         "message": "Błąd logowania. Zaloguj się ponownie"
@@ -231,12 +231,39 @@
         "message": "Aktywacja automatycznej synchronizacji"
     },
     "toBackend": {
-        "message": "Wyślij zakładkę bezpośrednio i ręcznie na serwer"
+        "message": "Wyślij zakładkę bezpośrednio ręcznie na serwer"
     },
     "optionsLastLogged": {
         "message": "Ostatnio zalogowany za pomocą"
     },
     "optionsRestoreServer": {
         "message": "Następujący klienci mogą zostać przywróceni z serwera. Wybierz klienta z listy lub kliknij Anuluj, aby nie używać żadnego z tych klientów."
+    },
+    "optionsLogfile": {
+        "message": "Plik dziennika"
+    },
+    "optionsChangelog": {
+        "message": "Dziennik zmian"
+    },
+    "optionsLogin": {
+        "message": "Logowanie"
+    },
+    "optionsClientName": {
+        "message": "Nazwa klienta"
+    },
+    "optionsBackendSyncmarks": {
+        "message": "Serwer Syncmarks"
+    },
+    "optionsLegendServer": {
+        "message": "Serwer"
+    },
+    "optionsBTNBackup": {
+        "message": "Kopia zapasowa"
+    },
+    "optionsLegendBookmarks": {
+        "message": "Zakładki"
+    },
+    "optionsTabs": {
+        "message": "Karta"
     }
 }
