@@ -418,6 +418,9 @@ function localizeHtmlPage() {
 	document.getElementById('blbl').title = chrome.i18n.getMessage("backendType");
 	document.getElementById('oauto').title = chrome.i18n.getMessage("ManAuto");
 	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend") + "";
+	document.getElementById('nuser').placeholder = chrome.i18n.getMessage("optionsUsername");
+	document.getElementById('npassword').placeholder = chrome.i18n.getMessage("optionsPassword");
+	document.getElementById('title').innerText = chrome.i18n.getMessage("extensionName") + " - " + chrome.i18n.getMessage("optionsBTNSettings");
 }
 
 function filterLog() {
@@ -647,6 +650,11 @@ window.addEventListener('load', function () {
 	document.getElementById("ino").addEventListener("click", manualImport);
 	document.getElementById("coimport").addEventListener("click", serverImport);
 	document.getElementById("cochancel").addEventListener("click", function() {cmodal.style.display = "none";});
+	document.getElementById("lchancel").addEventListener("click", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		document.getElementById("crdialog").style.display = "none";
+	});
 	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";});
 	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";});
