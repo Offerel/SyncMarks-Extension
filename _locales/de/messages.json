@@ -53,9 +53,6 @@
     "optionsBTNSettings": {
         "message": "Einstellungen"
     },
-    "optionsBTNStore": {
-        "message": "Sichern"
-    },
     "optionsBTNRestore": {
         "message": "Wiederherstellen"
     },
@@ -101,7 +98,7 @@
         "message": "Login Fehler: Bitte erneut einloggen"
     },
     "optionsBeforeCImpExp": {
-        "message": "Hier kannst du deine bestehenden Einstellungen sichern oder wiederherstellen."
+        "message": "Hier kannst du deine bestehenden Client Einstellungen vom Server wiederherstellen."
     },
     "optionsBeforeLogin": {
         "message": "Bitte melden Sie sich mit Ihren Zugangsdaten an, um Zugang zu Ihren Lesezeichen zu erhalten"
@@ -110,7 +107,7 @@
         "message": "Login Error. Bitte erneut einloggen"
     },
     "infoRestoreID": {
-        "message": "Soll die Client ID wiederhergestellt werden?"
+        "message": "Soll der alte Client auf dem Server entfernt werden, um Synchronisations Probleme zu vermeiden?"
     },
     "optionsSuccessImport": {
         "message": "Import erfolgreich."
@@ -219,7 +216,7 @@
         "message": "Bookmark direkt zu Server"
     },
     "backendType": {
-        "message": "Wähle zwischen PHP und WebDAV Server"
+        "message": "Wähle zwischen Syncmarks und WebDAV Server"
     },
     "ManAuto": {
         "message": "Automatische Synchronisation aktivieren"

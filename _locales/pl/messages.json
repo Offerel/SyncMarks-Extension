@@ -57,7 +57,7 @@
         "message": "Błąd logowania: Zaloguj się ponownie"
     },
     "infoRestoreID": {
-        "message": "Czy chcesz przywrócić identyfikator klienta?"
+        "message": "Czy stary klient powinien zostać usunięty z serwera, aby uniknąć problemów z synchronizacją?"
     },
     "optionsCreate": {
         "message": "Utwórz"
@@ -98,9 +98,6 @@
     "optionsBTNSettings": {
         "message": "Ustawienia"
     },
-    "optionsBTNStore": {
-        "message": "Zabezpieczyć"
-    },
     "optionsBTNRestore": {
         "message": "Przywracanie"
     },
@@ -135,7 +132,7 @@
         "message": "Logowanie nie powiodło się: Stan: "
     },
     "optionsBeforeCImpExp": {
-        "message": "Tutaj można zapisać lub przywrócić bieżące ustawienia."
+        "message": "W tym miejscu można przywrócić istniejące ustawienia klienta z serwera."
     },
     "optionsBeforeLogin": {
         "message": "Zaloguj się przy użyciu danych dostępu, aby otrzymać kod dostępu"
@@ -225,7 +222,7 @@
         "message": "Zakładka bezpośrednio na serwerze"
     },
     "backendType": {
-        "message": "Wybór między PHP a serwerem WebDAV"
+        "message": "Wybór między Syncmarks a serwerem WebDAV"
     },
     "ManAuto": {
         "message": "Aktywacja automatycznej synchronizacji"

@@ -395,12 +395,13 @@ button:not(:disabled) {
 	text-align: left;
 }
 #cimport {
-    width: 100%;
-    height: 32px;
-    border-radius: 5px;
-    outline: 0;
-    border-color: darkgray;
-    margin-top: 10px;
+	width: 100%;
+	height: 32px;
+	border-radius: 5px;
+	outline: 0;
+	border-color: darkgray;
+	margin-top: 10px;
+	border-width: thin;
 }
 #changelog {
 	overflow: auto;

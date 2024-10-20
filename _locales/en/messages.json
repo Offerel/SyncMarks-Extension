@@ -55,10 +55,6 @@
     "message": "Settings",
     "description": "Settings button"
   },
-  "optionsBTNStore": {
-    "message": "Store",
-    "description": "Store the settings"
-  },
   "optionsBTNRestore": {
     "message": "Restore",
     "description": "Re-Store the settings"
@@ -104,7 +100,7 @@
     "description": "Login failed, unknown state"
   },
   "optionsBeforeCImpExp": {
-    "message": "Here you can store or restore your current settings.",
+    "message": "Here you can restore your existing client settings from the server.",
     "description": "Description to store the settings"
   },
   "optionsBeforeLogin": {
@@ -116,8 +112,8 @@
     "description": "Login error message"
   },
   "infoRestoreID": {
-    "message": "Do you want to restore the Client ID?",
-    "description": "Question if you want to restore the client id"
+    "message": "Should the old client be removed from the server to avoid synchronization problems?",
+    "description": "Question if you want to remove old client id from the server"
   },
   "optionsSuccessImport": {
     "message": "Import successfully.",
@@ -192,7 +188,7 @@
     "description": "Bookmark to server without autosync"
   },
   "backendType": {
-    "message": "Choose between PHP and WebDAV server",
+    "message": "Choose between Syncmarks and WebDAV server",
     "description": "Choose backend"
   },
   "ManAuto": {

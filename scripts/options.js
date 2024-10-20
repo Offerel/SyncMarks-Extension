@@ -114,7 +114,7 @@ function gToken(e) {
 				auto:document.getElementById("s_auto").checked,
 				manual:document.getElementById("b_action").checked
 			},
-			name: document.getElementById("cname").checked,
+			name: document.getElementById("cname").value,
 			type: document.getElementById("php_webdav").checked,
 			uuid: document.getElementById("s_uuid").value,
 			tabs: document.getElementById("s_tabs").checked,
@@ -186,7 +186,7 @@ function saveOptions(e) {
 			auto:document.getElementById("s_auto").checked,
 			manual:document.getElementById("b_action").checked
 		},
-		name: document.getElementById("cname").checked,
+		name: document.getElementById("cname").value,
 		type: document.getElementById("php_webdav").checked,
 		uuid: document.getElementById("s_uuid").value,
 		tabs: document.getElementById("s_tabs").checked,
@@ -264,7 +264,6 @@ function restoreOptions() {
 			document.querySelector("#s_auto").removeAttribute("disabled");
 		}
 		
-		if(document.getElementById("wdurl").value.length > 4) document.getElementById("cexp").disabled = false;
 		checkForm();
 		
 		chrome.commands.getAll((commands) => {
@@ -275,88 +274,6 @@ function restoreOptions() {
 		});
 		
 	});
-}
-
-function exportOptions(e) {
-	e.preventDefault();
-	let remote = document.getElementById('loc_rem').checked;
-
-	if(remote) {
-		const cOptions = {
-			sync: {
-				auto:document.getElementById("s_auto").checked,
-				manual:document.getElementById("b_action").checked
-			},
-			name: document.getElementById("cname").checked,
-			type: document.getElementById("php_webdav").checked,
-			uuid: document.getElementById("s_uuid").value,
-			tabs: document.getElementById("s_tabs").checked,
-			instance: document.getElementById("wdurl").value
-		};
-		chrome.runtime.sendMessage({action: "clientSendOptions", data: cOptions});
-		document.getElementById('expimpdialog').style.display = 'none';
-	} else {
-		chrome.storage.local.get(null, function(options) {
-			delete options.clist;
-			delete options.token;
-			delete options.creds;
-			delete options.last_message;
-			delete options.pTabs;
-	
-			let confJSON = JSON.stringify(options);
-			let dString = new Date().toISOString().slice(0,10);
-			let nameStr = document.getElementById('cname').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-			var element = document.createElement('a');
-			element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(confJSON);
-			element.download = 'SyncMarks_' + nameStr + '_' + dString + '.json';
-			element.style.display = 'none';
-			document.body.appendChild(element);
-			element.click();
-			document.body.removeChild(element);
-			document.getElementById('expimpdialog').style.display = 'none';
-		});
-	}
-}
-
-function importOptions() {
-	let resCID = confirm(chrome.i18n.getMessage("infoRestoreID"));
-	let file = document.getElementById("confinput").files[0];
-	let reader = new FileReader();
-	reader.addEventListener('load', function(e) {
-		let ioptions = JSON.parse(e.target.result);
-
-		const cOptions = {
-			sync: {
-				auto:ioptions.sync.auto,
-				manual:ioptions.sync.manual
-			},
-			name: ioptions.name,
-			type: ioptions.type,
-			uuid: ioptions.uuid,
-			tabs: ioptions.tabs,
-			instance: ioptions.instance,
-		};
-
-		chrome.storage.local.set(cOptions);
-
-		if(resCID) {
-			document.getElementById("cname").placeholder = ioptions.uuid;
-			document.getElementById("s_uuid").value = ioptions.uuid;
-			document.getElementById("blogin").disabled = true;
-		}
-
-		document.getElementById("wdurl").value = ioptions.instance;
-		document.getElementById("s_auto").checked = ioptions.sync.auto;
-		document.getElementById("b_action").checked = ioptions.sync.manual;
-		document.getElementById("s_tabs").checked = ioptions.tabs;
-
-		showMsg(chrome.i18n.getMessage("optionsSuccessImport"), 'info');
-	});
-	reader.readAsText(file);
-	document.getElementById("expimpdialog").style.display = "none";
-	
-	setTimeout(() => {  if(resCID) { gName(); } }, 200);
-	setTimeout(() => {  checkForm(); }, 200);
 }
 
 function manualImport(e) {
@@ -526,7 +443,7 @@ function requestClientOptions(cOptions, av = false) {
 	chrome.storage.local.get(null, function(options) {
 		if(cOptions !== undefined && cOptions.length > 0) {
 			select = document.getElementById('cimport');
-
+			select.length = 0;
 			cOptions.forEach((client) => {
 				var opt = document.createElement('option');
 				opt.value = client['cOptions'];
@@ -541,21 +458,31 @@ function requestClientOptions(cOptions, av = false) {
 }
 
 function serverImport() {
-	const restoreClientID = confirm(chrome.i18n.getMessage("infoRestoreID"));
-	let client = document.getElementById('cimport');
-	const ouuid = document.getElementById('s_uuid').value;
+	//const remove_OldID = confirm(chrome.i18n.getMessage("infoRestoreID"));
+	//let client = document.getElementById('cimport');
+	const current_uuid = document.getElementById('s_uuid').value;
 	const url = document.getElementById('wdurl').value;
-	const jOptions = JSON.parse(client.value);
-	const nuuid = jOptions.uuid;
+	const restored_Options = JSON.parse(document.getElementById('cimport').value);
+	const restored_uuid = restored_Options.uuid;
 	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
 
-	if(restoreClientID) {
+	document.getElementById('cname').value = restored_Options.name;
+	document.getElementById('php_webdav').checked = restored_Options.type;
+	document.getElementById("s_tabs").checked = restored_Options.tabs;
+	document.getElementById("s_auto").checked = restored_Options.sync.auto;
+	document.getElementById("b_action").checked = restored_Options.sync.manual;
+
+	document.getElementById("coptionsdialog").style.display = "none";
+
+	saveOptions();
+/*
+	if(confirm(chrome.i18n.getMessage("infoRestoreID"))) {
 		const params = {
 			action: 'clientRemove',
-			client: nuuid,
+			client: current_uuid,
 			data: {
-				new: nuuid,
-				old: ouuid
+				new: current_uuid,
+				old: restored_uuid
 			}
 		}
 	
@@ -574,15 +501,12 @@ function serverImport() {
 			if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
 			return response.json();
 		}).then(responseData => {
-			chrome.runtime.sendMessage({action: "loglines", data: 'Info: Temporary client removed'});
+			chrome.runtime.sendMessage({action: "loglines", data: 'Info: Old client removed'});
 		}).catch(err => {
 			//console.warn(err);
 		});
-	} else {
-		delete jOptions.uuid;
 	}
-
-	chrome.storage.local.set(jOptions);
+*/
 }
 
 function checkURL() {
@@ -633,27 +557,35 @@ window.addEventListener('load', function () {
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
 	document.getElementById("econf").addEventListener("click", function() {comodal.style.display = "block"});
 	document.getElementById("cclose").addEventListener("click", function() {comodal.style.display = "none";});
-	document.getElementById("cexp").addEventListener("click", exportOptions);
 	document.getElementById("cimp").addEventListener("click", function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		if(document.getElementById('loc_rem').checked) {
-			chrome.runtime.sendMessage({action: "clientGetOptions"});
-		} else {
-			document.getElementById("confinput").click();
-		}
+		comodal.style.display = "none";
+		chrome.runtime.sendMessage({action: "clientGetOptions"});
 	});
 	document.getElementById("logdebug").addEventListener('change', filterLog);
-	document.getElementById("confinput").addEventListener('change', importOptions);
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
 	document.getElementById("ino").addEventListener("click", manualImport);
-	document.getElementById("coimport").addEventListener("click", serverImport);
-	document.getElementById("cochancel").addEventListener("click", function() {cmodal.style.display = "none";});
+	document.getElementById("coimport").addEventListener("click", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		serverImport();
+	});
+	document.getElementById("cochancel").addEventListener("click", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		cmodal.style.display = "none";
+	});
 	document.getElementById("lchancel").addEventListener("click", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		document.getElementById("crdialog").style.display = "none";
+	});
+	document.getElementById("imchancel").addEventListener("click", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		document.getElementById("expimpdialog").style.display = "none";
 	});
 	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";});
