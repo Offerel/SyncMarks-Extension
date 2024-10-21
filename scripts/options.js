@@ -59,7 +59,7 @@ function checkForm() {
 
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('bookmarks')) {
-			if(url.value != '' && document.getElementById("php_webdav").checked){
+			if(url.value != ''){
 				document.getElementById('mdownload').disabled=false;
 				document.getElementById('mupload').disabled=false;
 			} else{
@@ -115,19 +115,13 @@ function gToken(e) {
 				manual:document.getElementById("b_action").checked
 			},
 			name: document.getElementById("cname").value,
-			type: document.getElementById("php_webdav").checked,
 			uuid: document.getElementById("s_uuid").value,
 			tabs: document.getElementById("s_tabs").checked,
 			instance: document.getElementById("wdurl").value
 		};
 
-		if(!cOptions.type) {
-			cOptions.creds = creds;
-			chrome.storage.local.remove('token');
-		} else {
-			cOptions.token = responseData.token;
-			chrome.storage.local.remove('creds');
-		}
+		cOptions.token = responseData.token;
+		chrome.storage.local.remove('creds');
 
 		chrome.storage.local.set(cOptions);
 		document.getElementById('blogin').removeAttribute('style')
@@ -187,7 +181,6 @@ function saveOptions(e) {
 			manual:document.getElementById("b_action").checked
 		},
 		name: document.getElementById("cname").value,
-		type: document.getElementById("php_webdav").checked,
 		uuid: document.getElementById("s_uuid").value,
 		tabs: document.getElementById("s_tabs").checked,
 		instance: document.getElementById("wdurl").value
@@ -239,26 +232,14 @@ function restoreOptions() {
 		document.getElementById("s_auto").defaultChecked = (options.sync == undefined) ? true:options.sync.auto;
 		document.getElementById("b_action").defaultChecked = (options.sync == undefined) ? false:options.sync.manual;
 		
-		if("type" in options) {		
-			if(options.type != undefined) {
-				document.getElementById("php_webdav").defaultChecked = true;
-				gName();
-				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
-				document.getElementById("php_webdav").checked = true;
-				if(options.token === undefined && options.creds === undefined) {
-					document.getElementById("blogin").disabled = false;
-					document.getElementById("blogin").style.backgroundColor = "red";
-				}
-				document.getElementById("s_tabs").defaultChecked = (options.tabs == undefined) ? false:options.tabs;
-			} else {
-				document.getElementById("php_webdav").checked = false;
-				if(options.creds === undefined) {
-					document.getElementById("blogin").disabled = false;
-				}
-				document.getElementById("s_tabs").defaultChecked = false;
-			}
+		gName();
+		document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
+		if(options.token === undefined && options.creds === undefined) {
+			document.getElementById("blogin").disabled = false;
+			document.getElementById("blogin").style.backgroundColor = "red";
 		}
-		
+		document.getElementById("s_tabs").defaultChecked = (options.tabs == undefined) ? false:options.tabs;
+	
 		last_sync = options.last_sync || 0;
 		if(last_sync.toString().length > 0) {
 			document.querySelector("#s_auto").removeAttribute("disabled");
@@ -283,15 +264,8 @@ function manualImport(e) {
 	}
 	
 	try {
-		chrome.storage.local.get(null, function(options) {
-			if(options.type == true) {
-				chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-					chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
-				});
-				
-			} else if (options.type == false) {
-				chrome.runtime.sendMessage({action: "getDAVMarks"});
-			}
+		chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+			chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
 		});
 	} catch(error) {
 		chrome.runtime.sendMessage({action: "loglines", data: error});
@@ -304,12 +278,7 @@ function manualImport(e) {
 function manualExport(e) {
 	e.preventDefault();
 	try {
-		document.getElementById("php_webdav").checked
-		if(!document.getElementById("php_webdav").checked) {
-			chrome.runtime.sendMessage({action: "saveAllMarks"});
-		} else if (document.getElementById("php_webdav").checked) {
-			chrome.runtime.sendMessage({action: "exportPHPMarks"});
-		}
+		chrome.runtime.sendMessage({action: "exportPHPMarks"});
 	} catch(error) {
 		chrome.runtime.sendMessage({action: "loglines", data: error});
 	} finally {
@@ -332,9 +301,7 @@ function localizeHtmlPage() {
         }
     }
 
-	document.getElementById('blbl').title = chrome.i18n.getMessage("backendType");
 	document.getElementById('oauto').title = chrome.i18n.getMessage("ManAuto");
-	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend") + "";
 	document.getElementById('nuser').placeholder = chrome.i18n.getMessage("optionsUsername");
 	document.getElementById('npassword').placeholder = chrome.i18n.getMessage("optionsPassword");
 	document.getElementById('title').innerText = chrome.i18n.getMessage("extensionName") + " - " + chrome.i18n.getMessage("optionsBTNSettings");
@@ -417,7 +384,6 @@ function switchBackend() {
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'unset';
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = ''
 	} else {
-		document.getElementById("blbl").innerText = "WebDAV";
 		document.getElementById('cname').disabled = true;
 		document.getElementById('b_action').disabled = true;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'none';
@@ -468,7 +434,6 @@ function serverImport() {
 	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
 
 	document.getElementById('cname').value = (selectedText != restored_Options.name) ? selectedText:restored_Options.name;
-	document.getElementById('php_webdav').checked = restored_Options.type;
 	document.getElementById("s_tabs").checked = restored_Options.tabs;
 	document.getElementById("s_auto").checked = restored_Options.sync.auto;
 	document.getElementById("b_action").checked = restored_Options.sync.manual;
@@ -513,7 +478,6 @@ function serverImport() {
 
 function checkURL() {
 	let url = document.getElementById('wdurl');
-	//let type = document.getElementById("php_webdav").checked;
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", url.value, true);
 	xhr.onreadystatechange = function () {
@@ -618,7 +582,6 @@ window.addEventListener('load', function () {
 
 	document.getElementById("nuser").addEventListener("input", checkLoginForm);
 	document.getElementById("npassword").addEventListener("input", checkLoginForm);
-	document.getElementById("php_webdav").addEventListener("change", switchBackend);
 	document.getElementById('lgin').addEventListener("click", gToken);
 	document.getElementById("b_action").addEventListener("change", saveOptions);
 	document.getElementById("s_tabs").addEventListener("change", saveOptions);

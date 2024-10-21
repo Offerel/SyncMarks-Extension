@@ -43,12 +43,6 @@ chrome.runtime.onMessage.addListener(
 				case 'bookmarkExport':
 					sendRequest(bookmarkExport, request.data, request.tab);
 					break;
-				case 'getDAVMarks':
-					getDAVMarks();
-					break;
-				case 'saveAllMarks':
-					saveAllMarks();
-					break;
 				case 'exportPHPMarks':
 					exportPHPMarks();
 					break;
@@ -516,47 +510,45 @@ function ccMenus() {
 			})
 			
 			chrome.storage.local.get(null, function(options) {
-				if(options.type) {
-					if(options.sync.manual === true) {
-						chrome.commands.getAll((commands) => {
-							for (let {name, shortcut} of commands) {
-								var s = (name === 'bookmark-tab') ? shortcut:'undef';
-							}
-							chrome.contextMenus.create({
-								title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
-								type: "normal",
-								contexts: ["page"],
-								id: "smark"
-							});
-						});
-					}
-					
-					try{
+				if(options.sync.manual === true) {
+					chrome.commands.getAll((commands) => {
+						for (let {name, shortcut} of commands) {
+							var s = (name === 'bookmark-tab') ? shortcut:'undef';
+						}
 						chrome.contextMenus.create({
-							title: chrome.i18n.getMessage("sendPage"),
+							title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
 							type: "normal",
 							contexts: ["page"],
-							id: "ssendpage"
+							id: "smark"
 						});
+					});
+				}
+				
+				try{
+					chrome.contextMenus.create({
+						title: chrome.i18n.getMessage("sendPage"),
+						type: "normal",
+						contexts: ["page"],
+						id: "ssendpage"
+					});
 
+					chrome.contextMenus.create({
+						title: chrome.i18n.getMessage("sendLink"),
+						type: "normal",
+						contexts: ["link"],
+						id: "ssendlink"
+					});
+
+					try{
 						chrome.contextMenus.create({
-							title: chrome.i18n.getMessage("sendLink"),
+							title: chrome.i18n.getMessage("sendTab"),
 							type: "normal",
-							contexts: ["link"],
-							id: "ssendlink"
+							contexts: ["tab"],
+							id: "ssendtab"
 						});
-
-						try{
-							chrome.contextMenus.create({
-								title: chrome.i18n.getMessage("sendTab"),
-								type: "normal",
-								contexts: ["tab"],
-								id: "ssendtab"
-							});
-						} catch {}
-					} catch(error) {
-						loglines = logit(error);
-					}
+					} catch {}
+				} catch(error) {
+					loglines = logit(error);
 				}
 			})
 		}
@@ -699,32 +691,18 @@ async function init() {
 		let sync = options.sync.auto || false;
 		let type = options.type || false;
 
-		if(type == true) {
-			if(options.token === undefined && options.creds === undefined) {
-				changeIcon('error');
-				loglines = logit("Error: Login token missing");
-			} else {
-				chrome.action.setBadgeText({text: ''});
-			}
-		} else if(type == false) {
-			if(options.creds == '') {
-				changeIcon('error');
-				loglines = logit("Error: Login credentials missing");
-			} else {
-				chrome.action.setBadgeText({text: ''});
-			}
+		if(options.token === undefined && options.creds === undefined) {
+			changeIcon('error');
+			loglines = logit("Error: Login token missing");
+		} else {
+			chrome.action.setBadgeText({text: ''});
 		}
 
 		if(options.instance) {
-			if(type) {
-				await ccMenus();
-				loglines = logit("Info: Get list of clients.");
-				sendRequest(clientList);
-				loglines = logit("Info: Init finished");
-			} else {
-				loglines = logit("Info: Initiate WebDAV startup sync");
-				getDAVMarks();
-			}
+			await ccMenus();
+			loglines = logit("Info: Get list of clients.");
+			sendRequest(clientList);
+			loglines = logit("Info: Init finished");
 		}
 	});
 }
@@ -816,14 +794,11 @@ function onInstalled(details){
 function migrateOptions() {
 	chrome.storage.local.get(null, function(options) {
 		if(options['wdurl'] != undefined) {
-			type = (options.s_type == 'PHP') ? true:false;
-
 			chrome.storage.local.set({
 				sync: {
 					auto:options.actions.startup,
 					manual:options.actions.crsrv
 				},
-				type: type,
 				uuid: options.s_uuid,
 				tabs: options.s_tabs,
 				instance: options.wdurl
@@ -867,13 +842,7 @@ function onCreatedCheck(id, bookmark) {
 	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
 		var sync = options.sync.auto || false;
-		var type = options.type || false;
-
-		if(sync && type == false) {
-			saveAllMarks();
-		} else if(sync && type == true) {
-			sendMark(bookmark);
-		}
+		if(sync) sendMark(bookmark);
 	});	
 }
 
@@ -881,11 +850,8 @@ function onMovedCheck(id, bookmark) {
 	get_oMarks();
 	chrome.storage.local.get(null, async function(options) {
 		var sync = options.sync.auto || false;
-		var type = options.type || false;
 		
-		if(sync && type == false) {
-			saveAllMarks();
-		} else if (sync && type == true) {
+		if (sync) {
 			chrome.bookmarks.get(bookmark.parentId, function(folder) {
 				chrome.bookmarks.get(id, function(bmark) {
 					let jMark = {
@@ -910,11 +876,8 @@ function onChangedCheck(id, changeInfo) {
 	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
 		var sync = options.sync.auto || false;
-		var type = options.type || false;
 		
-		if(sync && type == false) {
-			saveAllMarks();
-		} else if(sync && type == true) {
+		if(sync) {
 			chrome.bookmarks.get(id, function(bmark) {
 				let jsonMark = {
 					"url": bmark[0].url,
@@ -933,12 +896,8 @@ function onChangedCheck(id, changeInfo) {
 function onRemovedCheck(id, bookmark) {
 	chrome.storage.local.get(null, async function(options) {
 		var sync = options.sync.auto || false;
-		var type = options.type || false;
 
-		if(sync && type == false) {
-			chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-			saveAllMarks();
-		} else if (sync && type == true) {
+		if (sync) {
 			await removeMark(bookmark);
 			await get_oMarks();
 		}
@@ -964,37 +923,6 @@ function exportPHPMarks(upl=[]) {
 	
 	let datems = Date.now();
 	chrome.storage.local.set({last_s: datems});
-}
-
-function saveAllMarks() {
-	loglines = logit("Info: Requesting all bookmarks from server");
-	chrome.bookmarks.getTree(function(bmTree){
-		var bookmarks = JSON.stringify(bmTree);
-		var xhr = new XMLHttpRequest();
-		chrome.storage.local.get(null, function(options) {
-			xhr.open("PUT", options.instance + "/" + filename, true);
-			xhr.withCredentials = true;
-			xhr.setRequestHeader('X-Filename', filename);
-			xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options.creds));
-			xhr.onload = function () {
-				if( xhr.status < 200 || xhr.status > 226) {
-					message = chrome.i18n.getMessage("errorSaveBookmarks") + xhr.status;
-					notify('error',message);
-					loglines = logit("Info: "+message);
-					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-				}
-				else {
-					loglines = logit("Info: Bookmarks send successfully to WebDAV share");
-				}
-			}
-			xhr.send(bookmarks);
-		});
-	});
-	let datems = Date.now();
-	let date = new Date(datems);
-	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-	chrome.storage.local.set({last_s: datems});
-	chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
 }
 
 function removeMark(bookmark) {
@@ -1041,10 +969,8 @@ async function doFullSync() {
 	loglines = logit("Info: Sync started.");
 	try {
 		chrome.storage.local.get(null, async function(options) {
-			if(options.type == true) {
-				loglines = logit('Info: Sending Sync request to server');
-				sendRequest(bookmarkExport, 'json');
-			}
+			loglines = logit('Info: Sending Sync request to server');
+			sendRequest(bookmarkExport, 'json');
 		});
 	} catch(error) {
 		loglines = logit(error);
@@ -1252,46 +1178,6 @@ function moveBookmarkAsync(id, destination) {
 	return new Promise(function(fulfill, reject) {
 		chrome.bookmarks.move(id, destination, fulfill);
 	});
-}
-
-function getDAVMarks() {
-	chrome.storage.local.get(null, function(options) {
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', options.instance + '/' + filename + '?t=' + Math.random(), true);
-		xhr.withCredentials = true;
-		xhr.setRequestHeader('X-Filename', filename);
-		xhr.setRequestHeader('Authorization', 'Basic ' + btoa(options.creds));
-		xhr.onload = function () {		
-			if( xhr.status != 200 ) {
-				message = chrome.i18n.getMessage("errorGetBookmarks") + xhr.status;
-				notify('error',message);
-				loglines = logit('Error: '+message);
-			}
-			else {
-				let DAVMarks = JSON.parse(xhr.responseText);
-				chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-				chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-				pMarks = [];
-				let parsedMarks = parseMarks(DAVMarks, index=0);
-				count = 0;
-				addAllMarks(parsedMarks);			
-			}
-		}
-		loglines = logit('Info: Requesting bookmarks from WebDAV Server');
-		xhr.send();
-	});
-}
-
-function parseMarks(DAVMarks, level=0) {
-	pMarks.push(DAVMarks[level]);
-	let findex = 0;
-	if(DAVMarks[level].children) {
-		DAVMarks[level].children.forEach(function() {
-			parseMarks(DAVMarks[level].children, findex)
-			findex++;
-		});
-	}
-	return pMarks;
 }
 
 function importMarks(parsedMarks, index=0) {
