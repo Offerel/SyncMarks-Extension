@@ -1,4 +1,20 @@
 # ChangeLog
+## v2.1.0 (2024-10-21)
+- Removed WebDAV Support
+- Added Polish translation
+- Added Weblate as translation plattform
+- Updated Readme
+- Fix defect token
+- Fix client Restore
+
+## v2.0.4 (2024-10-19)
+- Fix response object
+- Remove token on invalid token
+
+## v2.0.3 (2024-10-17)
+- Fix open Options Page
+- Fix Client restore
+- Fix request host permissions
 
 ## v2.0.2 (2024-10-15)
 - Fix Remove Bookmark

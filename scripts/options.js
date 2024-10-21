@@ -59,7 +59,7 @@ function checkForm() {
 
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('bookmarks')) {
-			if(url.value != '' && document.getElementById("php_webdav").checked){
+			if(url.value != ''){
 				document.getElementById('mdownload').disabled=false;
 				document.getElementById('mupload').disabled=false;
 			} else{
@@ -85,16 +85,12 @@ function checkLoginForm() {
 
 function gToken(e) {
 	e.preventDefault();
-	let tbt = document.getElementById('tbt').checked;
 	document.getElementById('blogin').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
 
 	const params = {
 		action: "clientCheck",
 		client: document.getElementById('s_uuid').value,
-		data: {
-			usebasic: tbt
-		},
 		sync: document.getElementById('s_auto').checked
 	};
 
@@ -114,25 +110,24 @@ function gToken(e) {
 		document.getElementById('blogin').classList.remove('loading');
 
 		let cOptions = {
-			sync: {
-				auto:document.getElementById("s_auto").checked,
-				manual:document.getElementById("b_action").checked
-			},
-			type: document.getElementById("php_webdav").checked,
+			sync: document.getElementById("s_auto").checked,
+			direct: document.getElementById("b_action").checked,
+			name: document.getElementById("cname").value,
 			uuid: document.getElementById("s_uuid").value,
 			tabs: document.getElementById("s_tabs").checked,
 			instance: document.getElementById("wdurl").value
 		};
 
-		if(tbt) {
-			cOptions.creds = creds;
-			chrome.storage.local.remove('token');
-		} else {
-			cOptions.token = responseData.token;
-			chrome.storage.local.remove('creds');
-		}
+		cOptions.token = responseData.token;
 
 		chrome.storage.local.set(cOptions);
+		document.getElementById('blogin').removeAttribute('style')
+		chrome.action.setBadgeText({text: 'i'});
+		chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
+		chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName")});
+		setTimeout(function(){
+			chrome.action.setBadgeText({text: ''});
+		}, 5000);
 
 		document.getElementById('cname').defaultValue = responseData.cname;
 		
@@ -163,10 +158,28 @@ function gToken(e) {
 }
 
 function saveOptions(e) {
-	if(typeof e !== "undefined") e.preventDefault();
-
-	if(document.getElementById("b_action").checked) {
-		document.getElementById("s_auto").checked = false
+	if(typeof e !== "undefined") {
+		e.preventDefault();
+		if(e.srcElement.id === 's_auto' && e.srcElement.checked) {
+			document.getElementById("b_action").checked = false;
+			document.getElementById("b_action").disabled = true;
+			document.getElementById("s_tabs").disabled = false;
+		} else if (e.srcElement.id === 's_auto' && !e.srcElement.checked) {
+			document.getElementById("b_action").disabled = false;
+			document.getElementById("s_tabs").checked = false;
+			document.getElementById("s_tabs").disabled = true;
+		}
+	
+		if(e.srcElement.id === 's_tabs' && e.srcElement.checked) {
+			document.getElementById("s_auto").checked = true;
+		}
+	
+		if(e.srcElement.id === 'b_action' && e.srcElement.checked) {
+			document.getElementById("s_auto").checked = false;
+			document.getElementById("s_tabs").disabled = true;
+		} else if(e.srcElement.id === 'b_action' && !e.srcElement.checked) {
+			document.getElementById("s_tabs").disabled = false;
+		}
 	}
 
 	let text = chrome.i18n.getMessage("optionsSuccessSave");
@@ -178,11 +191,9 @@ function saveOptions(e) {
 	}
 
 	const cOptions = {
-		sync: {
-			auto:document.getElementById("s_auto").checked,
-			manual:document.getElementById("b_action").checked
-		},
-		type: document.getElementById("php_webdav").checked,
+		sync: document.getElementById("s_auto").checked,
+		direct: document.getElementById("b_action").checked,
+		name: document.getElementById("cname").value,
 		uuid: document.getElementById("s_uuid").value,
 		tabs: document.getElementById("s_tabs").checked,
 		instance: document.getElementById("wdurl").value
@@ -228,128 +239,35 @@ function restoreOptions() {
 			document.getElementById("cname").placeholder = nuuid;
 		} else {
 			document.getElementById("s_uuid").defaultValue = options.uuid;
-			document.getElementById("cname").placeholder = options.uuid;
+			document.getElementById("cname").placeholder = options.name;
 		}
 
-		document.getElementById("s_auto").defaultChecked = (options.sync == undefined) ? true:options.sync.auto;
-		document.getElementById("b_action").defaultChecked = (options.sync == undefined) ? false:options.sync.manual;
+		document.getElementById("s_auto").defaultChecked = options.sync;
+		document.getElementById("b_action").defaultChecked = options.direct;
 		
-		if("type" in options) {		
-			if(options.type != undefined) {
-				document.getElementById("php_webdav").defaultChecked = true;
-				gName();
-				document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
-				document.getElementById("php_webdav").checked = true;
-				if(options.token === undefined && options.creds === undefined) {
-					document.getElementById("blogin").disabled = false;
-					document.getElementById("blogin").style.backgroundColor = "red";
-				}
-				document.getElementById("s_tabs").defaultChecked = (options.tabs == undefined) ? false:options.tabs;
-			} else {
-				document.getElementById("php_webdav").checked = false;
-				if(options.creds === undefined) {
-					document.getElementById("blogin").disabled = false;
-				}
-				document.getElementById("s_tabs").defaultChecked = false;
-			}
+		gName();
+		document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
+		if(options.token === undefined) {
+			document.getElementById("blogin").disabled = false;
+			document.getElementById("blogin").style.backgroundColor = "red";
 		}
-		
+		document.getElementById("s_tabs").defaultChecked = (options.tabs == undefined) ? false:options.tabs;
+	
 		last_sync = options.last_sync || 0;
 		if(last_sync.toString().length > 0) {
 			document.querySelector("#s_auto").removeAttribute("disabled");
 		}
 		
-		if(document.getElementById("wdurl").value.length > 4) document.getElementById("cexp").disabled = false;
 		checkForm();
 		
 		chrome.commands.getAll((commands) => {
 			for (let {name, shortcut} of commands) {
 				var s = (name === 'bookmark-tab') ? shortcut:'undef';
 			}
-			document.getElementById("obmd").title = document.getElementById("obmd").title + ` (${s})`;
+			document.getElementById("obmd").title = chrome.i18n.getMessage('bookmarkTab') + ` (${s})`;
 		});
 		
 	});
-}
-
-function exportOptions(e) {
-	e.preventDefault();
-	let remote = document.getElementById('loc_rem').checked;
-
-	if(remote) {
-		const cOptions = {
-			sync: {
-				auto:document.getElementById("s_auto").checked,
-				manual:document.getElementById("b_action").checked
-			},
-			type: document.getElementById("php_webdav").checked,
-			uuid: document.getElementById("s_uuid").value,
-			tabs: document.getElementById("s_tabs").checked,
-			instance: document.getElementById("wdurl").value
-		};
-		chrome.runtime.sendMessage({action: "clientSendOptions", data: cOptions});
-		document.getElementById('expimpdialog').style.display = 'none';
-	} else {
-		chrome.storage.local.get(null, function(options) {
-			delete options.clist;
-			delete options.token;
-			delete options.creds;
-			delete options.last_message;
-			delete options.pTabs;
-	
-			let confJSON = JSON.stringify(options);
-			let dString = new Date().toISOString().slice(0,10);
-			let nameStr = document.getElementById('cname').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-			var element = document.createElement('a');
-			element.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(confJSON);
-			element.download = 'SyncMarks_' + nameStr + '_' + dString + '.json';
-			element.style.display = 'none';
-			document.body.appendChild(element);
-			element.click();
-			document.body.removeChild(element);
-			document.getElementById('expimpdialog').style.display = 'none';
-		});
-	}
-}
-
-function importOptions() {
-	let resCID = confirm(chrome.i18n.getMessage("infoRestoreID"));
-	let file = document.getElementById("confinput").files[0];
-	let reader = new FileReader();
-	reader.addEventListener('load', function(e) {
-		let ioptions = JSON.parse(e.target.result);
-
-		const cOptions = {
-			sync: {
-				auto:ioptions.sync.auto,
-				manual:ioptions.sync.manual
-			},
-			type: ioptions.type,
-			uuid: ioptions.uuid,
-			tabs: ioptions.tabs,
-			instance: ioptions.instance,
-		};
-
-		chrome.storage.local.set(cOptions);
-
-		if(resCID) {
-			document.getElementById("cname").placeholder = ioptions.uuid;
-			document.getElementById("s_uuid").value = ioptions.uuid;
-			document.getElementById("blogin").disabled = true;
-		}
-
-		document.getElementById("wdurl").value = ioptions.instance;
-		document.getElementById("s_auto").checked = ioptions.sync.auto;
-		document.getElementById("b_action").checked = ioptions.sync.manual;
-		document.getElementById("s_tabs").checked = ioptions.tabs;
-
-		showMsg(chrome.i18n.getMessage("optionsSuccessImport"), 'info');
-	});
-	reader.readAsText(file);
-	document.getElementById("expimpdialog").style.display = "none";
-	
-	setTimeout(() => {  if(resCID) { gName(); } }, 200);
-	setTimeout(() => {  checkForm(); }, 200);
 }
 
 function manualImport(e) {
@@ -359,15 +277,8 @@ function manualImport(e) {
 	}
 	
 	try {
-		chrome.storage.local.get(null, function(options) {
-			if(options['type'] == true) {
-				chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-					chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
-				});
-				
-			} else if (options['type'] == false) {
-				chrome.runtime.sendMessage({action: "getDAVMarks"});
-			}
+		chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+			chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
 		});
 	} catch(error) {
 		chrome.runtime.sendMessage({action: "loglines", data: error});
@@ -380,12 +291,7 @@ function manualImport(e) {
 function manualExport(e) {
 	e.preventDefault();
 	try {
-		document.getElementById("php_webdav").checked
-		if(!document.getElementById("php_webdav").checked) {
-			chrome.runtime.sendMessage({action: "saveAllMarks"});
-		} else if (document.getElementById("php_webdav").checked) {
-			chrome.runtime.sendMessage({action: "exportPHPMarks"});
-		}
+		chrome.runtime.sendMessage({action: "exportPHPMarks"});
 	} catch(error) {
 		chrome.runtime.sendMessage({action: "loglines", data: error});
 	} finally {
@@ -408,9 +314,11 @@ function localizeHtmlPage() {
         }
     }
 
-	document.getElementById('blbl').title = chrome.i18n.getMessage("backendType");
 	document.getElementById('oauto').title = chrome.i18n.getMessage("ManAuto");
-	document.getElementById('obmd').title = chrome.i18n.getMessage("toBackend") + "";
+	document.getElementById('nuser').placeholder = chrome.i18n.getMessage("optionsUsername");
+	document.getElementById('npassword').placeholder = chrome.i18n.getMessage("optionsPassword");
+	document.getElementById('title').innerText = chrome.i18n.getMessage("extensionName") + " - " + chrome.i18n.getMessage("optionsBTNSettings");
+	document.getElementById('obmc').title = chrome.i18n.getMessage("optionsTabsHint");
 }
 
 function filterLog() {
@@ -484,13 +392,12 @@ function switchBackend() {
 	let backendPHP = this.checked;
 
 	if(backendPHP) {
-		document.getElementById("blbl").innerText = "Server: PHP";
+		document.getElementById("blbl").innerText = chrome.i18n.getMessage("backendType");
 		document.getElementById('cname').disabled = false;
 		document.getElementById('b_action').disabled = false;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'unset';
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = ''
 	} else {
-		document.getElementById("blbl").innerText = "Server: WebDAV";
 		document.getElementById('cname').disabled = true;
 		document.getElementById('b_action').disabled = true;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'none';
@@ -503,27 +410,20 @@ function switchBackend() {
 function requestHostPermission() {
 	const instance = document.getElementById('wdurl');
 	let newOrigin = new URL(instance.value).origin + '/*';
-
-	chrome.permissions.contains({origins:[newOrigin]},
-		(result) => {
-			if(!result) {
-				chrome.permissions.request({
-					origins: [newOrigin]
-				}, (granted) => {
-					const message = (granted) ? 'Syncmarks: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
-					chrome.runtime.sendMessage({action: "loglines", data: message});
-					checkURL();
-				});
-			}
-		}
-	);
+	chrome.permissions.request({
+		origins: [newOrigin]
+	}, (granted) => {
+		const message = (granted) ? 'Syncmarks: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
+		chrome.runtime.sendMessage({action: "loglines", data: message});
+		checkURL();
+	});
 }
 
 function requestClientOptions(cOptions, av = false) {
 	chrome.storage.local.get(null, function(options) {
 		if(cOptions !== undefined && cOptions.length > 0) {
 			select = document.getElementById('cimport');
-
+			select.length = 0;
 			cOptions.forEach((client) => {
 				var opt = document.createElement('option');
 				opt.value = client['cOptions'];
@@ -538,48 +438,56 @@ function requestClientOptions(cOptions, av = false) {
 }
 
 function serverImport() {
-	const restoreClientID = confirm(chrome.i18n.getMessage("infoRestoreID"));
-	let client = document.getElementById('cimport');
-	const ouuid = document.getElementById('s_uuid').value;
+	const current_uuid = document.getElementById('s_uuid').value;
 	const url = document.getElementById('wdurl').value;
-	const jOptions = JSON.parse(client.value);
-	const nuuid = jOptions.uuid;
+	const clientSelect = document.getElementById("cimport");
+	const restored_Options = JSON.parse(clientSelect.value);
+	let selectedText = clientSelect.options[clientSelect.selectedIndex].text;
+
+	const restored_uuid = restored_Options.uuid;
 	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
 
-	if(restoreClientID) {
-		const params = {
-			action: 'clientRemove',
-			client: nuuid,
-			data: {
-				new: nuuid,
-				old: ouuid
-			}
-		}
-	
-		fetch(url + '?api=v1', {
-			method: "POST",
-			cache: "no-cache",
-			headers: {
-				'Content-type': 'application/json;charset=UTF-8',
-				'Authorization': 'Basic ' + creds,
-			},
-			redirect: "follow",
-			referrerPolicy: "no-referrer",
-			body: JSON.stringify(params)
-		}).then(response => {
-			let xRinfo = response.headers.get("X-Request-Info");
-			if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
-			return response.json();
-		}).then(responseData => {
-			chrome.runtime.sendMessage({action: "loglines", data: 'Info: Temporary client removed'});
-		}).catch(err => {
-			//console.warn(err);
-		});
-	} else {
-		delete jOptions.uuid;
-	}
+	document.getElementById('cname').value = (selectedText != restored_Options.name) ? selectedText:restored_Options.name;
+	document.getElementById("s_tabs").checked = restored_Options.tabs;
+	document.getElementById("s_auto").checked = restored_Options.sync;
+	document.getElementById("b_action").checked = restored_Options.direct;
 
-	chrome.storage.local.set(jOptions);
+	document.getElementById("coptionsdialog").style.display = "none";
+
+	saveOptions();
+
+	setTimeout(() => {
+		if(confirm(chrome.i18n.getMessage("infoRestoreID"))) {
+			const params = {
+				action: 'clientRemove',
+				client: current_uuid,
+				data: {
+					new: current_uuid,
+					old: restored_uuid
+				}
+			}
+		
+			fetch(url + '?api=v1', {
+				method: "POST",
+				cache: "no-cache",
+				headers: {
+					'Content-type': 'application/json;charset=UTF-8',
+					'Authorization': 'Basic ' + creds,
+				},
+				redirect: "follow",
+				referrerPolicy: "no-referrer",
+				body: JSON.stringify(params)
+			}).then(response => {
+				let xRinfo = response.headers.get("X-Request-Info");
+				if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
+				return response.json();
+			}).then(responseData => {
+				chrome.runtime.sendMessage({action: "loglines", data: 'Info: Old client removed'});
+			}).catch(err => {
+				//console.warn(err);
+			});
+		}
+	}, 500);
 }
 
 function checkURL() {
@@ -630,23 +538,36 @@ window.addEventListener('load', function () {
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
 	document.getElementById("econf").addEventListener("click", function() {comodal.style.display = "block"});
 	document.getElementById("cclose").addEventListener("click", function() {comodal.style.display = "none";});
-	document.getElementById("cexp").addEventListener("click", exportOptions);
 	document.getElementById("cimp").addEventListener("click", function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		if(document.getElementById('loc_rem').checked) {
-			chrome.runtime.sendMessage({action: "clientGetOptions"});
-		} else {
-			document.getElementById("confinput").click();
-		}
+		comodal.style.display = "none";
+		chrome.runtime.sendMessage({action: "clientGetOptions"});
 	});
 	document.getElementById("logdebug").addEventListener('change', filterLog);
-	document.getElementById("confinput").addEventListener('change', importOptions);
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
 	document.getElementById("ino").addEventListener("click", manualImport);
-	document.getElementById("coimport").addEventListener("click", serverImport);
-	document.getElementById("cochancel").addEventListener("click", function() {cmodal.style.display = "none";});
+	document.getElementById("coimport").addEventListener("click", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		serverImport();
+	});
+	document.getElementById("cochancel").addEventListener("click", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		cmodal.style.display = "none";
+	});
+	document.getElementById("lchancel").addEventListener("click", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		document.getElementById("crdialog").style.display = "none";
+	});
+	document.getElementById("imchancel").addEventListener("click", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		document.getElementById("expimpdialog").style.display = "none";
+	});
 	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";});
 	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";});
@@ -675,7 +596,6 @@ window.addEventListener('load', function () {
 
 	document.getElementById("nuser").addEventListener("input", checkLoginForm);
 	document.getElementById("npassword").addEventListener("input", checkLoginForm);
-	document.getElementById("php_webdav").addEventListener("change", switchBackend);
 	document.getElementById('lgin').addEventListener("click", gToken);
 	document.getElementById("b_action").addEventListener("change", saveOptions);
 	document.getElementById("s_tabs").addEventListener("change", saveOptions);
