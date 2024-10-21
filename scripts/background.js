@@ -69,7 +69,7 @@ chrome.runtime.onMessage.addListener(
 
 chrome.permissions.getAll(function(e) {
 	chrome.storage.local.get(null, function(options) {
-		if(options.sync != undefined && !options.sync.manual) {
+		if(options.sync && !options.direct) {
 			chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 			chrome.bookmarks.onMoved.addListener(onMovedCheck);
 			chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
@@ -118,14 +118,11 @@ function sendRequest(action, data = null, tab = null) {
 		tarr['client'] = options.uuid;
 		tarr['token'] = options.token;
 
-		let tc = (options.token != undefined) ? 'tk':'cr';
-		if(tc == false && data !== 'p') return false;
-
-		let authtype = (tc == 'tk') ? 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr))):'Basic ' + options.creds;
+		let authtype = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr)));
 		let url = options.instance;
 		let client = options.uuid;
 
-		if(action.name === 'bookmarkAdd' && options.sync != undefined && options.sync.manual) {
+		if(action.name === 'bookmarkAdd' && options.sync && options.direct) {
 			client = 'bookmarkTab';
 		}
 
@@ -258,7 +255,7 @@ function clientInfo(response, tab = null) {
 			chrome.runtime.sendMessage({task: clientInfo.name, type: 'success', cname: response['cname'], ctype: response['ctype'], cinfo: response['cinfo']});
 		} else {
 			chrome.storage.local.get(null, async function(options) {
-				let sync = options.sync.auto || false;
+				let sync = options.sync || false;
 				if(sync) doFullSync();
 			});
 		}
@@ -362,7 +359,7 @@ function bookmarkAdd(response) {
 	let text = '';
 	let type = '';
 	chrome.storage.local.get(null, async function(options) {
-		if(options.sync != undefined && options.sync.manual) {
+		if(options.direct) {
 			if(response.code === 200) {
 				text = "Bookmark added";
 				changeIcon('info');
@@ -510,7 +507,7 @@ function ccMenus() {
 			})
 			
 			chrome.storage.local.get(null, function(options) {
-				if(options.sync.manual === true) {
+				if(options.direct) {
 					chrome.commands.getAll((commands) => {
 						for (let {name, shortcut} of commands) {
 							var s = (name === 'bookmark-tab') ? shortcut:'undef';
@@ -674,7 +671,7 @@ async function init() {
 			return false;
 		}
 
-		if(options.sync.manual) {
+		if(options.direct) {
 			chrome.commands.getAll((commands) => {
 				for (let {name, shortcut} of commands) {
 					var s = (name === 'bookmark-tab') ? shortcut:'undef';
@@ -687,11 +684,8 @@ async function init() {
 				chrome.runtime.openOptionsPage();
 			});
 		}
-		
-		let sync = options.sync.auto || false;
-		let type = options.type || false;
 
-		if(options.token === undefined && options.creds === undefined) {
+		if(options.token === undefined) {
 			changeIcon('error');
 			loglines = logit("Error: Login token missing");
 		} else {
@@ -793,17 +787,18 @@ function onInstalled(details){
 
 function migrateOptions() {
 	chrome.storage.local.get(null, function(options) {
-		if(options['wdurl'] != undefined) {
+		if(options.wdurl != undefined) {
 			chrome.storage.local.set({
-				sync: {
-					auto:options.actions.startup,
-					manual:options.actions.crsrv
-				},
+				sync: options.actions.startup,
+				direct: options.actions.crsrv,
 				uuid: options.s_uuid,
 				tabs: options.s_tabs,
 				instance: options.wdurl
 			});
 		}
+
+		if(options.sync.manual != undefined) chrome.storage.local.set({direct: options.sync.manual});
+		if(options.sync.auto != undefined) chrome.storage.local.set({sync: options.sync.auto});
 	});
 }
 
@@ -841,7 +836,7 @@ function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
 function onCreatedCheck(id, bookmark) {
 	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
-		var sync = options.sync.auto || false;
+		var sync = options.sync || false;
 		if(sync) sendMark(bookmark);
 	});	
 }
@@ -849,7 +844,7 @@ function onCreatedCheck(id, bookmark) {
 function onMovedCheck(id, bookmark) {
 	get_oMarks();
 	chrome.storage.local.get(null, async function(options) {
-		var sync = options.sync.auto || false;
+		var sync = options.sync || false;
 		
 		if (sync) {
 			chrome.bookmarks.get(bookmark.parentId, function(folder) {
@@ -875,7 +870,7 @@ function onMovedCheck(id, bookmark) {
 function onChangedCheck(id, changeInfo) {
 	get_oMarks();
 	chrome.storage.local.get(null, function(options) {
-		var sync = options.sync.auto || false;
+		var sync = options.sync || false;
 		
 		if(sync) {
 			chrome.bookmarks.get(id, function(bmark) {
@@ -895,7 +890,7 @@ function onChangedCheck(id, changeInfo) {
 
 function onRemovedCheck(id, bookmark) {
 	chrome.storage.local.get(null, async function(options) {
-		var sync = options.sync.auto || false;
+		var sync = options.sync || false;
 
 		if (sync) {
 			await removeMark(bookmark);

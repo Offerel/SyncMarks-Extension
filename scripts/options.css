@@ -399,9 +399,8 @@ button:not(:disabled) {
 	height: 32px;
 	border-radius: 5px;
 	outline: 0;
-	border-color: darkgray;
 	margin-top: 10px;
-	border-width: thin;
+	border: 1px solid darkgray;
 }
 #changelog {
 	overflow: auto;

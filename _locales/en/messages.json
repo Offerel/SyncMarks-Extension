@@ -83,10 +83,6 @@
     "message": "You can now synchronize bookmarks from the server.",
     "description": "Hint that you can now sync bookmarks"
   },  
-  "optionsErrorURL": {
-    "message": "Login failed: Please check the WebDAV URL. It should be in a form like https://servername/folder",
-    "description": "Login failed, wrong URL"
-  },  
   "optionsErrorUser": {
     "message": "Login failed: Please check username and password.",
     "description": "Login failed, wrong User"
@@ -187,10 +183,6 @@
     "message": "Bookmark direct to server",
     "description": "Bookmark to server without autosync"
   },
-  "backendType": {
-    "message": "Choose between Syncmarks and WebDAV server",
-    "description": "Choose backend"
-  },
   "ManAuto": {
     "message": "Activate automatic synchronization",
     "description": "Enable autosync"
@@ -230,6 +222,10 @@
   "optionsTabs": {
     "message": "Tabs",
     "description": "Enable \"Synchronize open tabs\" in options"
+  },
+  "optionsTabsHint": {
+    "message": "Synchronize open tabs between the clients",
+    "description": "Tooltip text for syncing tabs"
   },
   "optionsLegendServer": {
     "message": "Server",

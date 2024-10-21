@@ -248,6 +248,9 @@
     "optionsTabs": {
         "message": "Tabs"
     },
+    "optionsTabsHint": {
+        "message": "Synchronize open tabs between the clients"
+    },
     "optionsLegendServer": {
         "message": "Server"
     },

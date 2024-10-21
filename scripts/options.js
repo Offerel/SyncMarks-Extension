@@ -110,10 +110,8 @@ function gToken(e) {
 		document.getElementById('blogin').classList.remove('loading');
 
 		let cOptions = {
-			sync: {
-				auto:document.getElementById("s_auto").checked,
-				manual:document.getElementById("b_action").checked
-			},
+			sync: document.getElementById("s_auto").checked,
+			direct: document.getElementById("b_action").checked,
 			name: document.getElementById("cname").value,
 			uuid: document.getElementById("s_uuid").value,
 			tabs: document.getElementById("s_tabs").checked,
@@ -121,7 +119,6 @@ function gToken(e) {
 		};
 
 		cOptions.token = responseData.token;
-		chrome.storage.local.remove('creds');
 
 		chrome.storage.local.set(cOptions);
 		document.getElementById('blogin').removeAttribute('style')
@@ -161,10 +158,28 @@ function gToken(e) {
 }
 
 function saveOptions(e) {
-	if(typeof e !== "undefined") e.preventDefault();
-
-	if(document.getElementById("b_action").checked) {
-		document.getElementById("s_auto").checked = false
+	if(typeof e !== "undefined") {
+		e.preventDefault();
+		if(e.srcElement.id === 's_auto' && e.srcElement.checked) {
+			document.getElementById("b_action").checked = false;
+			document.getElementById("b_action").disabled = true;
+			document.getElementById("s_tabs").disabled = false;
+		} else if (e.srcElement.id === 's_auto' && !e.srcElement.checked) {
+			document.getElementById("b_action").disabled = false;
+			document.getElementById("s_tabs").checked = false;
+			document.getElementById("s_tabs").disabled = true;
+		}
+	
+		if(e.srcElement.id === 's_tabs' && e.srcElement.checked) {
+			document.getElementById("s_auto").checked = true;
+		}
+	
+		if(e.srcElement.id === 'b_action' && e.srcElement.checked) {
+			document.getElementById("s_auto").checked = false;
+			document.getElementById("s_tabs").disabled = true;
+		} else if(e.srcElement.id === 'b_action' && !e.srcElement.checked) {
+			document.getElementById("s_tabs").disabled = false;
+		}
 	}
 
 	let text = chrome.i18n.getMessage("optionsSuccessSave");
@@ -176,10 +191,8 @@ function saveOptions(e) {
 	}
 
 	const cOptions = {
-		sync: {
-			auto:document.getElementById("s_auto").checked,
-			manual:document.getElementById("b_action").checked
-		},
+		sync: document.getElementById("s_auto").checked,
+		direct: document.getElementById("b_action").checked,
 		name: document.getElementById("cname").value,
 		uuid: document.getElementById("s_uuid").value,
 		tabs: document.getElementById("s_tabs").checked,
@@ -229,12 +242,12 @@ function restoreOptions() {
 			document.getElementById("cname").placeholder = options.name;
 		}
 
-		document.getElementById("s_auto").defaultChecked = (options.sync == undefined) ? true:options.sync.auto;
-		document.getElementById("b_action").defaultChecked = (options.sync == undefined) ? false:options.sync.manual;
+		document.getElementById("s_auto").defaultChecked = options.sync;
+		document.getElementById("b_action").defaultChecked = options.direct;
 		
 		gName();
 		document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
-		if(options.token === undefined && options.creds === undefined) {
+		if(options.token === undefined) {
 			document.getElementById("blogin").disabled = false;
 			document.getElementById("blogin").style.backgroundColor = "red";
 		}
@@ -251,7 +264,7 @@ function restoreOptions() {
 			for (let {name, shortcut} of commands) {
 				var s = (name === 'bookmark-tab') ? shortcut:'undef';
 			}
-			document.getElementById("obmd").title = document.getElementById("obmd").title + ` (${s})`;
+			document.getElementById("obmd").title = chrome.i18n.getMessage('bookmarkTab') + ` (${s})`;
 		});
 		
 	});
@@ -305,6 +318,7 @@ function localizeHtmlPage() {
 	document.getElementById('nuser').placeholder = chrome.i18n.getMessage("optionsUsername");
 	document.getElementById('npassword').placeholder = chrome.i18n.getMessage("optionsPassword");
 	document.getElementById('title').innerText = chrome.i18n.getMessage("extensionName") + " - " + chrome.i18n.getMessage("optionsBTNSettings");
+	document.getElementById('obmc').title = chrome.i18n.getMessage("optionsTabsHint");
 }
 
 function filterLog() {
@@ -435,8 +449,8 @@ function serverImport() {
 
 	document.getElementById('cname').value = (selectedText != restored_Options.name) ? selectedText:restored_Options.name;
 	document.getElementById("s_tabs").checked = restored_Options.tabs;
-	document.getElementById("s_auto").checked = restored_Options.sync.auto;
-	document.getElementById("b_action").checked = restored_Options.sync.manual;
+	document.getElementById("s_auto").checked = restored_Options.sync;
+	document.getElementById("b_action").checked = restored_Options.direct;
 
 	document.getElementById("coptionsdialog").style.display = "none";
 
