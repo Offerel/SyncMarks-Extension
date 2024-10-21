@@ -215,10 +215,6 @@
     "message": "Client Name",
     "description": "Client Name label in options"
   },
-  "optionsBackendSyncmarks": {
-    "message": "Syncmarks Server",
-    "description": "Syncmark Server backend"
-  },
   "optionsTabs": {
     "message": "Tabs",
     "description": "Enable \"Synchronize open tabs\" in options"
