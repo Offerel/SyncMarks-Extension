@@ -262,5 +262,8 @@
     },
     "optionsTabs": {
         "message": "Karta"
+    },
+    "optionsTabsHint": {
+        "message": "Synchronizacja otwartych kart między klientami"
     }
 }
