@@ -458,15 +458,16 @@ function requestClientOptions(cOptions, av = false) {
 }
 
 function serverImport() {
-	//const remove_OldID = confirm(chrome.i18n.getMessage("infoRestoreID"));
-	//let client = document.getElementById('cimport');
 	const current_uuid = document.getElementById('s_uuid').value;
 	const url = document.getElementById('wdurl').value;
-	const restored_Options = JSON.parse(document.getElementById('cimport').value);
+	const clientSelect = document.getElementById("cimport");
+	const restored_Options = JSON.parse(clientSelect.value);
+	let selectedText = clientSelect.options[clientSelect.selectedIndex].text;
+
 	const restored_uuid = restored_Options.uuid;
 	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
 
-	document.getElementById('cname').value = restored_Options.name;
+	document.getElementById('cname').value = (selectedText != restored_Options.name) ? selectedText:restored_Options.name;
 	document.getElementById('php_webdav').checked = restored_Options.type;
 	document.getElementById("s_tabs").checked = restored_Options.tabs;
 	document.getElementById("s_auto").checked = restored_Options.sync.auto;
@@ -475,38 +476,39 @@ function serverImport() {
 	document.getElementById("coptionsdialog").style.display = "none";
 
 	saveOptions();
-/*
-	if(confirm(chrome.i18n.getMessage("infoRestoreID"))) {
-		const params = {
-			action: 'clientRemove',
-			client: current_uuid,
-			data: {
-				new: current_uuid,
-				old: restored_uuid
+
+	setTimeout(() => {
+		if(confirm(chrome.i18n.getMessage("infoRestoreID"))) {
+			const params = {
+				action: 'clientRemove',
+				client: current_uuid,
+				data: {
+					new: current_uuid,
+					old: restored_uuid
+				}
 			}
+		
+			fetch(url + '?api=v1', {
+				method: "POST",
+				cache: "no-cache",
+				headers: {
+					'Content-type': 'application/json;charset=UTF-8',
+					'Authorization': 'Basic ' + creds,
+				},
+				redirect: "follow",
+				referrerPolicy: "no-referrer",
+				body: JSON.stringify(params)
+			}).then(response => {
+				let xRinfo = response.headers.get("X-Request-Info");
+				if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
+				return response.json();
+			}).then(responseData => {
+				chrome.runtime.sendMessage({action: "loglines", data: 'Info: Old client removed'});
+			}).catch(err => {
+				//console.warn(err);
+			});
 		}
-	
-		fetch(url + '?api=v1', {
-			method: "POST",
-			cache: "no-cache",
-			headers: {
-				'Content-type': 'application/json;charset=UTF-8',
-				'Authorization': 'Basic ' + creds,
-			},
-			redirect: "follow",
-			referrerPolicy: "no-referrer",
-			body: JSON.stringify(params)
-		}).then(response => {
-			let xRinfo = response.headers.get("X-Request-Info");
-			if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
-			return response.json();
-		}).then(responseData => {
-			chrome.runtime.sendMessage({action: "loglines", data: 'Info: Old client removed'});
-		}).catch(err => {
-			//console.warn(err);
-		});
-	}
-*/
+	}, 500);
 }
 
 function checkURL() {
