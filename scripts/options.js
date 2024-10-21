@@ -411,13 +411,13 @@ function switchBackend() {
 	let backendPHP = this.checked;
 
 	if(backendPHP) {
-		document.getElementById("blbl").innerText = "Server: PHP";
+		document.getElementById("blbl").innerText = chrome.i18n.getMessage("backendType");
 		document.getElementById('cname').disabled = false;
 		document.getElementById('b_action').disabled = false;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'unset';
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = ''
 	} else {
-		document.getElementById("blbl").innerText = "Server: WebDAV";
+		document.getElementById("blbl").innerText = "WebDAV";
 		document.getElementById('cname').disabled = true;
 		document.getElementById('b_action').disabled = true;
 		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'none';
@@ -513,6 +513,7 @@ function serverImport() {
 
 function checkURL() {
 	let url = document.getElementById('wdurl');
+	//let type = document.getElementById("php_webdav").checked;
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", url.value, true);
 	xhr.onreadystatechange = function () {
