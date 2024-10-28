@@ -12,22 +12,22 @@
     },
     "optionsUsername": {
         "message": "Benutzer",
-        "description": "Username."
+        "description": "Username"
     },
     "optionsPassword": {
         "message": "Passwort",
-        "description": "Password."
+        "description": "Password"
     },
     "optionsSyncOptions": {
         "message": "Optionen",
-        "description": "Sync Options."
+        "description": "Sync Options"
     },
     "optionsAuto": {
         "message": "Automatische Synchronisation"
     },
     "optionsManualActions": {
         "message": "Manuelle Funktionen",
-        "description": "Manual Actions."
+        "description": "Manual Actions"
     },
     "optionsBTNImport": {
         "message": "Download"
