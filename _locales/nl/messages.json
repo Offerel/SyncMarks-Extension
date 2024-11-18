@@ -1,0 +1,179 @@
+{
+    "extensionDescription": {
+        "message": "Met behulp van deze extensie kunt u uw bladwijzers en tabbladen synchroniseren naar uw eigen server."
+    },
+    "infoRestoreID": {
+        "message": "Dient de oude client verwijderd te worden om synchronisatieproblemen te voorkomen?"
+    },
+    "optionsErrorUser": {
+        "message": "Het inloggen is mislukt: controleer uw gebruikersnaam en wachtwoord."
+    },
+    "optionsBeforeExport": {
+        "message": "Alle bladwijzers op de server worden voorafgaand aan het exporteren verwijderd. Nadien kunnen de nieuwe worden geëxporteerd naar de server.\n\nWeet u zeker dat u alle serverbladwijzers wilt verwijderen?"
+    },
+    "optionsDebugLog": {
+        "message": "Foutopsporingslogboek"
+    },
+    "extensionName": {
+        "message": "SyncMarks"
+    },
+    "optionsServerURL": {
+        "message": "Server-url"
+    },
+    "optionsUsername": {
+        "message": "Gebruikersnaam"
+    },
+    "optionsPassword": {
+        "message": "Wachtwoord"
+    },
+    "optionsSyncOptions": {
+        "message": "Instellingen"
+    },
+    "optionsAuto": {
+        "message": "Automatisch synchroniseren"
+    },
+    "optionsBTNImport": {
+        "message": "Downloaden"
+    },
+    "optionsBTNImportHint": {
+        "message": "Herstel vanaf de server en overschrijf lokale bladwijzers."
+    },
+    "optionsBTNSettingsHint": {
+        "message": "Reservekopie-instellingen"
+    },
+    "optionsBTNExport": {
+        "message": "Uploaden"
+    },
+    "optionsBTNExportHint": {
+        "message": "Overschrijf alle bladwijzers op de server."
+    },
+    "optionsBTNSave": {
+        "message": "Opslaan"
+    },
+    "optionsBTNSettings": {
+        "message": "Instellingen"
+    },
+    "optionsBTNRestore": {
+        "message": "Herstellen"
+    },
+    "optionsBTNClear": {
+        "message": "Verwijderen"
+    },
+    "optionsBTNYes": {
+        "message": "Ja"
+    },
+    "optionsBTNNo": {
+        "message": "Nee"
+    },
+    "optionsBTNCancel": {
+        "message": "Annuleren"
+    },
+    "optionsNotUsed": {
+        "message": "De bladwijzersynchronisatie kan beginnen."
+    },
+    "optionsSuccessSave": {
+        "message": "De instellingen zijn opgeslagen."
+    },
+    "optionsErrorLogin": {
+        "message": "Het inloggen is mislukt - status: "
+    },
+    "optionsBeforeCImpExp": {
+        "message": "Hier kunt u de clientinstellingen herstellen vanaf de server."
+    },
+    "optionsBeforeLogin": {
+        "message": "Log in op uw account om toegang tot uw bladwijzers te verkrijgen"
+    },
+    "optionsWrongAData": {
+        "message": "Het inloggen is mislukt - probeer het opnieuw"
+    },
+    "optionsSuccessImport": {
+        "message": "Het importeren is voltooid."
+    },
+    "optionsBeforeImport": {
+        "message": "Dienen alle lokale bladwijzers voorafgaand aan het importeren verwijderd te worden?"
+    },
+    "optionsInfoRemove": {
+        "message": "Als u doorgaat, worden al uw huidige bladwijzers verwijderd.\n\nWeet u zeker dat u alle lokale bladwijzers wilt verwijderen?"
+    },
+    "popupBTNOptions": {
+        "message": "Instellingen"
+    },
+    "errorGetBookmarks": {
+        "message": "Er is een fout opgetreden tijdens het ophalen van de bladwijzers. Het statusantwoord is "
+    },
+    "errorSaveBookmarks": {
+        "message": "Er is een fout opgetreden tijdens het opslaan. Het statusantwoord is "
+    },
+    "errorExportBookmarks": {
+        "message": "Er is een probleem opgetreden tijdens het exporteren."
+    },
+    "successExportBookmarks": {
+        "message": "De lokale bladwijzers zijn geëxporteerd naar de server."
+    },
+    "successImportBookmarks": {
+        "message": " bladwijzers/mappen geïmporteerd."
+    },
+    "infoNewClient": {
+        "message": "Deze browser is nieuw en daarom geregistreerd op de server."
+    },
+    "infoEmptyConfig": {
+        "message": "Er zijn geen instellingen. Stel de extensie in alvorens deze te gebruiken."
+    },
+    "sendPage": {
+        "message": "Pagina versturen"
+    },
+    "sendTab": {
+        "message": "Tabblad versturen"
+    },
+    "sendLink": {
+        "message": "Link versturen"
+    },
+    "sendLinkNot": {
+        "message": "De link kan niet worden verstuurd."
+    },
+    "sendLinkYes": {
+        "message": "De link is verstuurd."
+    },
+    "bookmarkTab": {
+        "message": "Bladwijzer naar server versturen"
+    },
+    "ManAuto": {
+        "message": "Automatische synchronisatie inschakelen"
+    },
+    "toBackend": {
+        "message": "Bladwijzer direct naar server versturen"
+    },
+    "optionsLastLogged": {
+        "message": "Laatst ingelogd met"
+    },
+    "optionsRestoreServer": {
+        "message": "De volgende clients kunnen worden hersteld vanaf de server. Kies een client uit de lijst of klik op annuleren om geen van de clients te kiezen."
+    },
+    "optionsLogfile": {
+        "message": "Logboek"
+    },
+    "optionsChangelog": {
+        "message": "Wijzigingslog"
+    },
+    "optionsLogin": {
+        "message": "Inloggen"
+    },
+    "optionsClientName": {
+        "message": "Clientnaam"
+    },
+    "optionsTabs": {
+        "message": "Tabbladen"
+    },
+    "optionsTabsHint": {
+        "message": "Geopende tabbladen synchroniseren tussen clients"
+    },
+    "optionsLegendServer": {
+        "message": "Server"
+    },
+    "optionsLegendBookmarks": {
+        "message": "Bladwijzers"
+    },
+    "optionsBTNBackup": {
+        "message": "Reservekopie"
+    }
+}
