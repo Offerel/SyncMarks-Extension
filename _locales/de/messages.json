@@ -11,7 +11,7 @@
         "description": "URL to the backend"
     },
     "optionsUsername": {
-        "message": "Benutzer",
+        "message": "Benutzername",
         "description": "Username"
     },
     "optionsPassword": {
@@ -87,7 +87,7 @@
         "description": "Login failed, wrong User."
     },
     "optionsSuccessSave": {
-        "message": "Optionen gespeichert.",
+        "message": "Option gespeichert.",
         "description": "Login failed, wrong User."
     },
     "optionsErrorLogin": {
@@ -110,7 +110,7 @@
         "message": "Soll der alte Client auf dem Server entfernt werden, um Synchronisations Probleme zu vermeiden?"
     },
     "optionsSuccessImport": {
-        "message": "Import erfolgreich."
+        "message": "Import gelungen."
     },
     "optionsBeforeImport": {
         "message": "Sollen alle lokalen Bookmarks vor dem Import gelöscht werden?",
