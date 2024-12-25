@@ -1,6 +1,6 @@
 # ChangeLog
 ## v2.1.1 (2024-12-25)
-- Added Chinese (Hanscript) translation
+- Added Chinese (Han Script) translation
 - Added Dutch translation
 - Firefox fix for requesting host permission
 
