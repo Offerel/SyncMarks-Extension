@@ -1,5 +1,11 @@
 {
+  "name": "__MSG_extensionName__",
+  "description": "__MSG_extensionDescription__",
+  "homepage_url": "https://codeberg.org/Offerel/SyncMarks-Extension",
+  "version": "2.1.1",
   "author": "Offerel",
+  "manifest_version": 3,
+  "default_locale": "en",
   "background": {
     "service_worker": "scripts/background.js",
     "scripts": ["scripts/background.js"]
@@ -20,14 +26,9 @@
       }
     }
   },
-  "default_locale": "en",
-  "description": "__MSG_extensionDescription__",
-  "homepage_url": "https://codeberg.org/Offerel/SyncMarks-Extension",
   "icons": {
     "48": "icons/bookmark.png"
   },
-  "manifest_version": 3,
-  "name": "__MSG_extensionName__",
   "options_ui": {
     "open_in_tab": true,
     "page": "scripts/options.html"
@@ -42,7 +43,6 @@
   "optional_host_permissions": [
     "https://*/*"
   ],
-  "version": "2.1.0",
   "web_accessible_resources": [
     {
       "resources": [

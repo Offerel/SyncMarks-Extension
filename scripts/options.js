@@ -583,6 +583,10 @@ window.addEventListener('load', function () {
 
 		checkURL();
 	});
+	document.getElementById("wdurl").addEventListener("blur", function() {
+		requestHostPermission();
+		checkURL();
+	});
 	document.getElementById("wdurl").addEventListener("change", checkForm);
 	document.getElementById("blogin").addEventListener("click", function(e) {
 		e.preventDefault();

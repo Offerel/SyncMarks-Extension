@@ -1,0 +1,179 @@
+{
+    "infoEmptyConfig": {
+        "message": "配置为空，请在使用前配置插件。"
+    },
+    "optionsBTNCancel": {
+        "message": "取消"
+    },
+    "optionsBeforeLogin": {
+        "message": "请使用您的凭据登录以接收访问您的书签"
+    },
+    "optionsBTNImportHint": {
+        "message": "从服务器恢复，覆盖本地书签。"
+    },
+    "optionsErrorUser": {
+        "message": "登录失败：请检查用户名和密码。"
+    },
+    "optionsBeforeExport": {
+        "message": "导出前，服务器上的所有书签都会删除。之后，新书签会导出到服务器。\n\n导出前是否应删除远程书签？"
+    },
+    "optionsRestoreServer": {
+        "message": "可从服务器恢复以下客户端。请从列表中选择一个客户端，或单击“取消”以不使用任何这些客户端。"
+    },
+    "extensionName": {
+        "message": "SyncMarks"
+    },
+    "extensionDescription": {
+        "message": "使用此扩展可将书签和标签页与自托管服务器同步。"
+    },
+    "optionsServerURL": {
+        "message": "服务器 URL"
+    },
+    "optionsUsername": {
+        "message": "用户名"
+    },
+    "optionsPassword": {
+        "message": "密码"
+    },
+    "optionsSyncOptions": {
+        "message": "选项"
+    },
+    "optionsAuto": {
+        "message": "自动同步"
+    },
+    "optionsBTNImport": {
+        "message": "下载"
+    },
+    "optionsBTNSettingsHint": {
+        "message": "备份设置"
+    },
+    "optionsBTNExport": {
+        "message": "上传"
+    },
+    "optionsBTNExportHint": {
+        "message": "覆盖服务器上的所有书签。"
+    },
+    "optionsBTNSave": {
+        "message": "保存"
+    },
+    "optionsBTNSettings": {
+        "message": "设置"
+    },
+    "optionsBTNRestore": {
+        "message": "恢复"
+    },
+    "optionsBTNClear": {
+        "message": "删除"
+    },
+    "optionsDebugLog": {
+        "message": "调试日志"
+    },
+    "optionsBTNYes": {
+        "message": "是"
+    },
+    "optionsBTNNo": {
+        "message": "否"
+    },
+    "optionsNotUsed": {
+        "message": "您现在可以从服务器同步书签。"
+    },
+    "optionsSuccessSave": {
+        "message": "选项已保存。"
+    },
+    "optionsErrorLogin": {
+        "message": "登录失败， 状态： "
+    },
+    "optionsBeforeCImpExp": {
+        "message": "您可以在此处从服务器恢复现有的客户端设置。"
+    },
+    "optionsWrongAData": {
+        "message": "登录错误。请重新登录"
+    },
+    "infoRestoreID": {
+        "message": "是否应从服务器中移除旧客户端以避免同步问题？"
+    },
+    "optionsSuccessImport": {
+        "message": "导入成功。"
+    },
+    "optionsBeforeImport": {
+        "message": "导入前是否应删除所有本地书签？"
+    },
+    "optionsInfoRemove": {
+        "message": "如果继续，将会移除所有当前书签。\n\n是否确定要删除所有本地书签？"
+    },
+    "popupBTNOptions": {
+        "message": "选项"
+    },
+    "errorGetBookmarks": {
+        "message": "从服务器检索书签时出错。状态响应为： "
+    },
+    "errorSaveBookmarks": {
+        "message": "保存所有书签时出错。状态响应为： "
+    },
+    "errorExportBookmarks": {
+        "message": "导出书签时出现问题。"
+    },
+    "successExportBookmarks": {
+        "message": "本地书签已成功添加到服务器。"
+    },
+    "successImportBookmarks": {
+        "message": " 书签/文件夹已导入。"
+    },
+    "infoNewClient": {
+        "message": "此浏览器是新客户端，现已在服务器上注册。"
+    },
+    "sendPage": {
+        "message": "发送页面"
+    },
+    "sendTab": {
+        "message": "发送标签页"
+    },
+    "sendLink": {
+        "message": "发送链接"
+    },
+    "sendLinkNot": {
+        "message": "无法发送链接。"
+    },
+    "sendLinkYes": {
+        "message": "链接发送成功。"
+    },
+    "bookmarkTab": {
+        "message": "直接添加书签到服务器"
+    },
+    "ManAuto": {
+        "message": "激活自动同步"
+    },
+    "toBackend": {
+        "message": "手动将书签直接发送到服务器"
+    },
+    "optionsLogfile": {
+        "message": "日志文件"
+    },
+    "optionsChangelog": {
+        "message": "更新日志"
+    },
+    "optionsLastLogged": {
+        "message": "最后登录的是"
+    },
+    "optionsLogin": {
+        "message": "登录"
+    },
+    "optionsClientName": {
+        "message": "客户端名称"
+    },
+    "optionsTabs": {
+        "message": "标签页"
+    },
+    "optionsTabsHint": {
+        "message": "在客户端之间同步打开的标签页"
+    },
+    "optionsLegendServer": {
+        "message": "服务器"
+    },
+    "optionsLegendBookmarks": {
+        "message": "书签"
+    },
+    "optionsBTNBackup": {
+        "message": "备份"
+    }
+}

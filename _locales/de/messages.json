@@ -11,23 +11,23 @@
         "description": "URL to the backend"
     },
     "optionsUsername": {
-        "message": "Benutzer",
-        "description": "Username."
+        "message": "Benutzername",
+        "description": "Username"
     },
     "optionsPassword": {
         "message": "Passwort",
-        "description": "Password."
+        "description": "Password"
     },
     "optionsSyncOptions": {
         "message": "Optionen",
-        "description": "Sync Options."
+        "description": "Sync Options"
     },
     "optionsAuto": {
         "message": "Automatische Synchronisation"
     },
     "optionsManualActions": {
         "message": "Manuelle Funktionen",
-        "description": "Manual Actions."
+        "description": "Manual Actions"
     },
     "optionsBTNImport": {
         "message": "Download"
@@ -87,7 +87,7 @@
         "description": "Login failed, wrong User."
     },
     "optionsSuccessSave": {
-        "message": "Optionen gespeichert.",
+        "message": "Option gespeichert.",
         "description": "Login failed, wrong User."
     },
     "optionsErrorLogin": {
@@ -110,7 +110,7 @@
         "message": "Soll der alte Client auf dem Server entfernt werden, um Synchronisations Probleme zu vermeiden?"
     },
     "optionsSuccessImport": {
-        "message": "Import erfolgreich."
+        "message": "Import gelungen."
     },
     "optionsBeforeImport": {
         "message": "Sollen alle lokalen Bookmarks vor dem Import gelöscht werden?",

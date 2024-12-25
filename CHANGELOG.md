@@ -1,4 +1,9 @@
 # ChangeLog
+## v2.1.1 (2024-12-25)
+- Added Chinese (Han Script) translation
+- Added Dutch translation
+- Firefox fix for requesting host permission
+
 ## v2.1.0 (2024-10-21)
 - Removed WebDAV Support
 - Added Polish translation
