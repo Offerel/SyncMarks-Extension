@@ -1,4 +1,6 @@
 # ChangeLog
+## v2.1.2 (2024-12-25)
+
 ## v2.1.1 (2024-12-25)
 - Added Chinese (Han Script) translation
 - Added Dutch translation
