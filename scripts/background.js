@@ -1,13 +1,16 @@
-const filename = "bookmarks.json";
 const abrowser = typeof browser !== 'undefined';
 
 var dictOldIDsToNewIDs = { "-1": "-1" };
 var loglines = '';
 var debug = false;
-var clientL = [];
 var oMarks = [];
 var pTabs = [];
 var lastseen = null;
+
+const pingInterval = setInterval(() => {
+	chrome.runtime.getPlatformInfo;
+	self.serviceWorker.postMessage('keep');
+}, 29000);
 
 chrome.runtime.onStartup.addListener(async () => {
 	init();
@@ -797,8 +800,10 @@ function migrateOptions() {
 			});
 		}
 
-		if(options.sync.manual != undefined) chrome.storage.local.set({direct: options.sync.manual});
-		if(options.sync.auto != undefined) chrome.storage.local.set({sync: options.sync.auto});
+		if(options.sync != undefined) {
+			chrome.storage.local.set({direct: options.sync.manual});
+			chrome.storage.local.set({sync: options.sync.auto});
+		}
 	});
 }
 
@@ -922,7 +927,7 @@ function exportPHPMarks(upl=[]) {
 
 function removeMark(bookmark) {
 	chrome.bookmarks.get(bookmark.parentId, async function(parent) {
-		let jsonMark = JSON.stringify({
+		let jsonMark = {
 			"url": bookmark.node.url,
 			"folder": bookmark.parentId,
 			"nfolder": parent[0]['title'],
@@ -930,7 +935,7 @@ function removeMark(bookmark) {
 			"type": bookmark.node.type,
 			"id": bookmark.node.id,
 			"title": bookmark.node.title
-		});
+		};
 
 		loglines = logit("Info: Sending remove request to server: <a href='"+bookmark.node.url+"'>"+bookmark.node.url+"</a>");
 		sendRequest(bookmarkDel, jsonMark);
