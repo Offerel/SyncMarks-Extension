@@ -24,9 +24,9 @@ chrome.runtime.onMessage.addListener(
 				case 'clientInfo':
 					sendRequest(clientInfo, request.data, request.tab);
 					break;
-				case 'init':
+				/*case 'init':
 					init();
-					break;
+					break; */
 				case 'clientRename':
 					sendRequest(clientRename, request.data);
 					break;
@@ -663,9 +663,9 @@ function changeIcon(mode) {
 
 async function init() {
 	loglines = logit("Info: AddOn version: " + chrome.runtime.getManifest().version);
-	loglines = logit("Info: "+navigator.userAgent);
+	loglines = logit("Info: " + navigator.userAgent);
 	chrome.runtime.getPlatformInfo(function(info){
-		loglines = logit("Info: Current architecture: "+info.arch+" | Current OS: "+info.os);
+		loglines = logit("Info: Current architecture: " + info.arch + " | Current OS: " + info.os);
 	});
 	await get_oMarks();
 	chrome.storage.local.set({last_message: ""});

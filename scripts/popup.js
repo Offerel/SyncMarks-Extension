@@ -1,9 +1,12 @@
 var clone;
 document.addEventListener("DOMContentLoaded", function(event) {
 	chrome.storage.local.get(null, function(options) {
-		let tarr = {};
-		tarr['client'] = options.uuid;
-		tarr['token'] = options.token;
+		let tarr = {
+			client:options.uuid,
+			token:options.token
+		};
+		//tarr['client'] = options.uuid;
+		//tarr['token'] = options.token;
 		let authtype = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr)));
 		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
 			method: "GET",
@@ -15,13 +18,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}).then(response => {
 			let xRinfo = response.headers.get("X-Request-Info");
 			if (xRinfo != null) {
-				if(xRinfo == 0) {
-					chrome.storage.local.remove('token');
-					chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
-					console.error('token removed');
-				} else {
-					chrome.storage.local.set({token:xRinfo});
-				}
+				chrome.storage.local.set({token:xRinfo});
 			}
 			return response.text();
 		}).then(html => {
