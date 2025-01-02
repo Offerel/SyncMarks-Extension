@@ -7,8 +7,8 @@
   "manifest_version": 3,
   "default_locale": "en",
   "background": {
-    "service_worker": "scripts/background.js",
-    "scripts": ["scripts/background.js"]
+    "service_worker": "scripts/background.min.js",
+    "scripts": ["scripts/background.min.js"]
   },
   "browser_specific_settings": {
     "gecko": {

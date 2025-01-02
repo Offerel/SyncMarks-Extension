@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		tarr['client'] = options.uuid;
 		tarr['token'] = options.token;
 		let authtype = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr)));
-		fetch(options.instance, {
+		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
 			method: "GET",
 			cache: "no-cache",
 			referrerPolicy: "no-referrer",

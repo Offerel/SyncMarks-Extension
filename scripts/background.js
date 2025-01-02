@@ -1,5 +1,4 @@
 const abrowser = typeof browser !== 'undefined';
-
 var dictOldIDsToNewIDs = { "-1": "-1" };
 var loglines = '';
 var debug = false;
