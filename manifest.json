@@ -16,7 +16,8 @@
     }
   },
   "action": {
-    "default_title": "__MSG_extensionName__"
+    "default_title": "__MSG_extensionName__",
+    "default_popup": "scripts/popup.html"
   },
   "commands": {
     "bookmark-tab": {

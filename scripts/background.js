@@ -10,7 +10,7 @@ var lastseen = null;
 const pingInterval = setInterval(() => {
 	chrome.runtime.getPlatformInfo;
 	self.serviceWorker.postMessage('keep');
-}, 29000);
+}, 20000);
 
 chrome.runtime.onStartup.addListener(async () => {
 	init();
