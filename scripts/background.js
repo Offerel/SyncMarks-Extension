@@ -676,21 +676,21 @@ async function init() {
 			loglines = logit("Error: Instance undefined");
 			return false;
 		}
-
+		/*
 		if(options.direct) {
 			chrome.commands.getAll((commands) => {
 				for (let {name, shortcut} of commands) {
 					var s = (name === 'bookmark-tab') ? shortcut:'undef';
 				}
 				chrome.action.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
-				//chrome.action.onClicked.addListener(bookmarkTab);
+				chrome.action.onClicked.addListener(bookmarkTab);
 			});
-		} //else {
-		//	chrome.action.onClicked.addListener(function() {
-		//		chrome.runtime.openOptionsPage();
-		//	});
-		//}
-
+		} else {
+			chrome.action.onClicked.addListener(function() {
+				chrome.runtime.openOptionsPage();
+			});
+		}
+		*/
 		if(options.token === undefined) {
 			changeIcon('error');
 			loglines = logit("Error: Login token missing");
