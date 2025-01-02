@@ -10,34 +10,32 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			cache: "no-cache",
 			referrerPolicy: "no-referrer",
 			headers: {
-			//	'Content-type': 'application/json;charset=UTF-8',
 				'Authorization': authtype,
 			}
-			//body: JSON.stringify(params)
 		}).then(response => {
 			let xRinfo = response.headers.get("X-Request-Info");
 			if (xRinfo != null) {
 				if(xRinfo == 0) {
 					chrome.storage.local.remove('token');
-					//changeIcon('error');
+					chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
 					console.error('token removed');
 				} else {
 					chrome.storage.local.set({token:xRinfo});
-					console.log(xRinfo);
 				}
 			}
 			return response.text();
 		}).then(html => {
-			console.log(html)
 			let parser = new DOMParser();
 			let doc = parser.parseFromString(html, "text/html")
 			document.getElementById('bookmarks').innerHTML = doc.getElementById('bookmarks').innerHTML;
 	
 			addClick();
+			urlExists();
 	
 			clone = document.getElementById('bookmarks').cloneNode(true);
 		}).catch(err => {
 			console.error(err);
+			chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
 		});
 	});
 
@@ -47,7 +45,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	});
 
 	document.getElementById("addbm").addEventListener('click', e => {
-		bookmarkTab();
+		chrome.runtime.sendMessage({action: "bookmarkTab"});
+		window.close();
 	});
 });
 
@@ -85,20 +84,26 @@ function addClick() {
 	});
 }
 
-function bookmarkTab() {
+function urlExists() {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		let jsonMark = JSON.stringify({ 
-			"id": Math.random().toString(24).substring(2, 12),
-			"url": tabs[0].url,
-			"title": tabs[0].title,
-			"type": 'bookmark',
-			"folder": (abrowser === true) ? 'unfiled_____':2,  
-			"nfolder": 'More Bookmarks',
-			"added": new Date().valueOf()
-		});
+		let tabURL = tabs[0].url;
+		let urlExists = false;
+		let bookmarks = document.querySelectorAll('.file');
 
-		console.log(jsonMark);
+		for (let i = 0; i < bookmarks.length; i++) {
+			bmURL = bookmarks[i].children[0].dataset.url;
+			if(tabURL === bmURL) {
+				urlExists = true;
+				break;
+			}
+		}
 
-		//sendRequest(bookmarkAdd, jsonMark);
+		if(urlExists) {
+			document.getElementById('svgfilled').style.display = 'inline';
+			document.getElementById('svgoutline').style.display = 'none';
+		} else {
+			document.getElementById('svgfilled').style.display = 'none';
+			document.getElementById('svgoutline').style.display = 'inline';
+		}
 	});
 }

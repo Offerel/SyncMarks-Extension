@@ -63,6 +63,9 @@ chrome.runtime.onMessage.addListener(
 				case 'changeIcon':
 					changeIcon(request.data);
 					break;
+				case 'bookmarkTab':
+					bookmarkTab();
+					break;
 				default:
 					return false;
 			}
