@@ -80,13 +80,13 @@ chrome.permissions.getAll(function(e) {
 			chrome.bookmarks.onMoved.addListener(onMovedCheck);
 			chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 			chrome.bookmarks.onChanged.addListener(onChangedCheck);
-			chrome.action.onClicked.removeListener(bookmarkTab);
-			chrome.action.onClicked.addListener(function() {
-				chrome.runtime.openOptionsPage();
-			});
-		} else {
-			chrome.action.onClicked.addListener(bookmarkTab);
-		}
+			//chrome.action.onClicked.removeListener(bookmarkTab);
+			//chrome.action.onClicked.addListener(function() {
+			//	chrome.runtime.openOptionsPage();
+			//});
+		} //else {
+			//chrome.action.onClicked.addListener(bookmarkTab);
+		//}
 	});
 
 	if(e.permissions.includes('contextMenus')) {
@@ -637,10 +637,10 @@ function changeIcon(mode) {
 		case 'error':
 			chrome.action.setBadgeText({text: '!'});
 			chrome.action.setBadgeBackgroundColor({color: "red"});
-			chrome.action.onClicked.removeListener(bookmarkTab);
-			chrome.action.onClicked.addListener(function() {
-				chrome.runtime.openOptionsPage();
-			});
+			//chrome.action.onClicked.removeListener(bookmarkTab);
+			//chrome.action.onClicked.addListener(function() {
+			//	chrome.runtime.openOptionsPage();
+			//});
 			break;
 		case 'warn':
 			chrome.action.setBadgeText({text: '!'});
@@ -683,13 +683,13 @@ async function init() {
 					var s = (name === 'bookmark-tab') ? shortcut:'undef';
 				}
 				chrome.action.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
-				chrome.action.onClicked.addListener(bookmarkTab);
+				//chrome.action.onClicked.addListener(bookmarkTab);
 			});
-		} else {
-			chrome.action.onClicked.addListener(function() {
-				chrome.runtime.openOptionsPage();
-			});
-		}
+		} //else {
+		//	chrome.action.onClicked.addListener(function() {
+		//		chrome.runtime.openOptionsPage();
+		//	});
+		//}
 
 		if(options.token === undefined) {
 			changeIcon('error');
