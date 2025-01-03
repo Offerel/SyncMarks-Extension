@@ -184,3 +184,46 @@ button > svg:hover {
 #bookmarks li input:checked + ol > li:last-child {
 	margin: 0 0 .063em;
 }
+#pwamessage {
+    visibility: hidden;
+    width: 90%;
+    background-color: transparent;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    padding: 3px 6px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 40px;
+    font-size: 16px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    transform: translateX(-50%);
+    transition: opacity 2s;
+    opacity: 0;
+}
+#pwamessage.show {
+    visibility: visible;
+    opacity: 1;
+}
+#pwamessage.error {
+    background-color: #f2dede;
+    border-color: #eda6b2;
+    color: #D8000C;
+}
+#pwamessage.warn {
+    background-color: #FEEFB3;
+    color: #9F6000;
+    border-color: #eea236;
+}
+#pwamessage.success {
+    background-color: #DFF2BF;
+    color: #270;
+    border-color: #a2dfa2;
+}
+#pwamessage.info {
+    background-color: #BEF;
+    color: #059;
+    border-color: #74d6f3;
+}

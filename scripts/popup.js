@@ -1,19 +1,18 @@
 var clone;
 document.addEventListener("DOMContentLoaded", function(event) {
 	chrome.storage.local.get(null, function(options) {
-		let tarr = {
+		let btoken = {
 			client:options.uuid,
 			token:options.token
 		};
-		//tarr['client'] = options.uuid;
-		//tarr['token'] = options.token;
-		let authtype = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr)));
+		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(btoken)));
+
 		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
 			method: "GET",
 			cache: "no-cache",
 			referrerPolicy: "no-referrer",
 			headers: {
-				'Authorization': authtype,
+				'Authorization': authheader,
 			}
 		}).then(response => {
 			let xRinfo = response.headers.get("X-Request-Info");
@@ -45,6 +44,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		chrome.runtime.sendMessage({action: "bookmarkTab"});
 		window.close();
 	});
+});
+
+chrome.storage.local.get(null, function(options) {
+	console.log(options);
+	
+	if(options.popup !== undefined) {
+		pwaMessage(options.popup.message, options.popup.mode);
+	}
+	
 });
 
 search.addEventListener('input', function(e) {
@@ -103,4 +111,13 @@ function urlExists() {
 			document.getElementById('svgoutline').style.display = 'inline';
 		}
 	});
+}
+
+function pwaMessage(message, state) {
+	let mdiv = document.getElementById("pwamessage");
+	mdiv.innerText = message;
+	mdiv.className = 'show ' + state;
+	setTimeout(function(){
+		mdiv.classList.toggle("show");
+	}, 10000);
 }

@@ -24,9 +24,6 @@ chrome.runtime.onMessage.addListener(
 				case 'clientInfo':
 					sendRequest(clientInfo, request.data, request.tab);
 					break;
-				/*case 'init':
-					init();
-					break; */
 				case 'clientRename':
 					sendRequest(clientRename, request.data);
 					break;
@@ -79,13 +76,7 @@ chrome.permissions.getAll(function(e) {
 			chrome.bookmarks.onMoved.addListener(onMovedCheck);
 			chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 			chrome.bookmarks.onChanged.addListener(onChangedCheck);
-			//chrome.action.onClicked.removeListener(bookmarkTab);
-			//chrome.action.onClicked.addListener(function() {
-			//	chrome.runtime.openOptionsPage();
-			//});
-		} //else {
-			//chrome.action.onClicked.addListener(bookmarkTab);
-		//}
+		}
 	});
 
 	if(e.permissions.includes('contextMenus')) {
@@ -119,11 +110,12 @@ function sendRequest(action, data = null, tab = null) {
 	chrome.storage.local.get(null, function(options) {
 		if(options.instance == undefined || options.instance.length < 4) return false;
 
-		let tarr = {};
-		tarr['client'] = options.uuid;
-		tarr['token'] = options.token;
+		let btoken = {
+			client:options.uuid,
+			token:options.token
+		};
 
-		let authtype = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(tarr)));
+		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(btoken)));
 		let url = options.instance;
 		let client = options.uuid;
 
@@ -143,7 +135,7 @@ function sendRequest(action, data = null, tab = null) {
 			cache: "no-cache",
 			headers: {
 				'Content-type': 'application/json;charset=UTF-8',
-				'Authorization': authtype,
+				'Authorization': authheader,
 			},
 			redirect: "follow",
 			referrerPolicy: "no-referrer",
@@ -155,6 +147,14 @@ function sendRequest(action, data = null, tab = null) {
 				if(xRinfo == 0) {
 					chrome.storage.local.remove('token');
 					changeIcon('error');
+
+					chrome.storage.local.set({
+						popup: {
+							message:'Token removed',
+							mode:'error'
+						}
+					});
+
 				} else {
 					chrome.storage.local.set({token:xRinfo});
 				}
@@ -175,8 +175,20 @@ function clientSendOptions(response) {
 		chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
 		chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName")});
 		changeIcon('info');
+		chrome.storage.local.set({
+			popup: {
+				message:response.message,
+				mode:'success'
+			}
+		});
 	} else {
 		changeIcon('warn');
+		chrome.storage.local.set({
+			popup: {
+				message:response.message,
+				mode:'warn'
+			}
+		});
 		loglines = logit("Error: " + response.message);
 	}
 }
@@ -373,6 +385,12 @@ function bookmarkAdd(response) {
 			} else {
 				text = response.message;
 				changeIcon('warn');
+				chrome.storage.local.set({
+					popup: {
+						message:response.message,
+						mode:'warn'
+					}
+				});
 				mode = '1';
 				type = 'Error';
 			}
@@ -422,9 +440,21 @@ function bookmarkDel(response) {
 		case 204:
 			changeIcon('warn');
 			loglines = logit("Warn: " +  + response['message']);
+			chrome.storage.local.set({
+				popup: {
+					message:response['message'],
+					mode:'warn'
+				}
+			});
 		default:
 			changeIcon('error');
 			loglines = logit("Error: " +  + response['message']);
+			chrome.storage.local.set({
+				popup: {
+					message:response['message'],
+					mode:'error'
+				}
+			});
 	  }
 
 	let datems = Date.now();
@@ -598,7 +628,14 @@ function logit(message) {
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0)
 		//notify('error',message);
-		chrome.action.setTitle({title: message});
+		//chrome.action.setTitle({title: message});
+		changeIcon('error');
+		chrome.storage.local.set({
+			popup: {
+				message:message,
+				mode:'error'
+			}
+		});
 		//console.warn(message);
 	return logline;
 }
@@ -636,10 +673,6 @@ function changeIcon(mode) {
 		case 'error':
 			chrome.action.setBadgeText({text: '!'});
 			chrome.action.setBadgeBackgroundColor({color: "red"});
-			//chrome.action.onClicked.removeListener(bookmarkTab);
-			//chrome.action.onClicked.addListener(function() {
-			//	chrome.runtime.openOptionsPage();
-			//});
 			break;
 		case 'warn':
 			chrome.action.setBadgeText({text: '!'});
@@ -672,26 +705,24 @@ async function init() {
 	chrome.storage.local.get(null, async function(options) {
 		if(options.instance == undefined) {
 			changeIcon('error');
+			chrome.storage.local.set({
+				popup: {
+					message:"Instance undefined",
+					mode:'error'
+				}
+			});
 			loglines = logit("Error: Instance undefined");
 			return false;
 		}
-		/*
-		if(options.direct) {
-			chrome.commands.getAll((commands) => {
-				for (let {name, shortcut} of commands) {
-					var s = (name === 'bookmark-tab') ? shortcut:'undef';
-				}
-				chrome.action.setTitle({title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`});
-				chrome.action.onClicked.addListener(bookmarkTab);
-			});
-		} else {
-			chrome.action.onClicked.addListener(function() {
-				chrome.runtime.openOptionsPage();
-			});
-		}
-		*/
+
 		if(options.token === undefined) {
 			changeIcon('error');
+			chrome.storage.local.set({
+				popup: {
+					message:"Login token missing",
+					mode:'error'
+				}
+			});
 			loglines = logit("Error: Login token missing");
 		} else {
 			chrome.action.setBadgeText({text: ''});
