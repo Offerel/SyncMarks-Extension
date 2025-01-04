@@ -1,5 +1,3 @@
-var timeout;
-
 chrome.runtime.onMessage.addListener(
 	function(message, sender, sendResponse) {
 		if(sender.id === chrome.runtime.id) {
@@ -575,14 +573,6 @@ window.addEventListener('load', function () {
 	document.getElementById("crclose").addEventListener("click", function() {document.getElementById("crdialog").style.display = "none";});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
-	document.getElementById("wdurl").addEventListener("input", function() {
-		clearTimeout(timeout);
-		timeout = setTimeout(() => {
-			requestHostPermission();
-		}, 2000);
-
-		checkURL();
-	});
 	document.getElementById("wdurl").addEventListener("blur", function() {
 		requestHostPermission();
 		checkURL();

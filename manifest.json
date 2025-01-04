@@ -2,13 +2,13 @@
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
   "homepage_url": "https://codeberg.org/Offerel/SyncMarks-Extension",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "author": "Offerel",
   "manifest_version": 3,
   "default_locale": "en",
   "background": {
-    "service_worker": "scripts/background.js",
-    "scripts": ["scripts/background.js"]
+    "service_worker": "scripts/background.min.js",
+    "scripts": ["scripts/background.min.js"]
   },
   "browser_specific_settings": {
     "gecko": {
@@ -16,7 +16,8 @@
     }
   },
   "action": {
-    "default_title": "__MSG_extensionName__"
+    "default_title": "__MSG_extensionName__",
+    "default_popup": "scripts/popup.html"
   },
   "commands": {
     "bookmark-tab": {

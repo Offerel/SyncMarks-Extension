@@ -1,4 +1,9 @@
 # ChangeLog
+## v2.1.2 (2025-01-02)
+- Added PopUp
+- Removed action chaos
+- Fix delete bookmark
+
 ## v2.1.1 (2024-12-25)
 - Added Chinese (Han Script) translation
 - Added Dutch translation
