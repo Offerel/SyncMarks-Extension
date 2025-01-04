@@ -1,11 +1,5 @@
 var clone;
 chrome.storage.local.get(null, function(options) {
-	/*
-	let btoken = {
-		client:options.uuid,
-		token:options.token
-	};
-	*/
 	let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
 		client:options.uuid,
 		token:options.token

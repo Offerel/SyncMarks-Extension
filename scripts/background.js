@@ -628,7 +628,6 @@ function logit(message) {
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0) {
 		//notify('error',message);
-		//chrome.action.setTitle({title: message});
 		changeIcon('error');
 		chrome.storage.local.set({
 			popup: {
@@ -636,7 +635,7 @@ function logit(message) {
 				mode:'error'
 			}
 		});
-		//console.warn(message);
+		//console.error(message);
 	}
 	return logline;
 }
