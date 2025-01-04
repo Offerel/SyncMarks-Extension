@@ -1,56 +1,54 @@
 var clone;
-document.addEventListener("DOMContentLoaded", function(event) {
-	chrome.storage.local.get(null, function(options) {
-		let btoken = {
-			client:options.uuid,
-			token:options.token
-		};
-		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(btoken)));
+chrome.storage.local.get(null, function(options) {
+	/*
+	let btoken = {
+		client:options.uuid,
+		token:options.token
+	};
+	*/
+	let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
+		client:options.uuid,
+		token:options.token
+	})));
 
-		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
-			method: "GET",
-			cache: "no-cache",
-			referrerPolicy: "no-referrer",
-			headers: {
-				'Authorization': authheader,
-			}
-		}).then(response => {
-			let xRinfo = response.headers.get("X-Request-Info");
-			if (xRinfo != null) {
-				chrome.storage.local.set({token:xRinfo});
-			}
-			return response.text();
-		}).then(html => {
-			let parser = new DOMParser();
-			let doc = parser.parseFromString(html, "text/html")
-			document.getElementById('bookmarks').innerHTML = doc.getElementById('bookmarks').innerHTML;
-	
-			addClick();
-			urlExists();
-	
-			clone = document.getElementById('bookmarks').cloneNode(true);
-		}).catch(err => {
-			console.error(err);
-			chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
-		});
-	});
+	fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
+		method: "GET",
+		cache: "no-cache",
+		referrerPolicy: "no-referrer",
+		headers: {
+			'Authorization': authheader,
+		}
+	}).then(response => {
+		let xRinfo = response.headers.get("X-Request-Info");
+		if (xRinfo != null) {
+			chrome.storage.local.set({token:xRinfo});
+		}
+		return response.text();
+	}).then(html => {
+		let parser = new DOMParser();
+		let doc = parser.parseFromString(html, "text/html")
+		document.getElementById('bookmarks').innerHTML = doc.getElementById('bookmarks').innerHTML;
 
-	search = document.getElementById("search");
-	document.getElementById("settings").addEventListener('click', e => {
-		chrome.runtime.openOptionsPage();
-	});
+		addClick();
+		urlExists();
 
-	document.getElementById("addbm").addEventListener('click', e => {
-		chrome.runtime.sendMessage({action: "bookmarkTab"});
-		window.close();
+		clone = document.getElementById('bookmarks').cloneNode(true);
+	}).catch(err => {
+		console.error(err);
+		chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
 	});
 });
 
-chrome.storage.local.get(null, function(options) {
-	console.log(options);
-	
+search = document.getElementById("search");
+document.getElementById("settings").addEventListener('click', function() {
+	chrome.runtime.openOptionsPage();
+});
+
+document.getElementById("addbm").addEventListener('click', addBookmark);
+
+chrome.storage.local.get(null, function(options) {	
 	if(options.popup !== undefined) {
-		pwaMessage(options.popup.message, options.popup.mode);
+		popupMessage(options.popup.message, options.popup.mode);
 	}
 	
 });
@@ -113,11 +111,31 @@ function urlExists() {
 	});
 }
 
-function pwaMessage(message, state) {
-	let mdiv = document.getElementById("pwamessage");
+function popupMessage(message, state) {
+	let mdiv = document.getElementById('popupMessage');
 	mdiv.innerText = message;
 	mdiv.className = 'show ' + state;
 	setTimeout(function(){
-		mdiv.classList.toggle("show");
+		mdiv.classList.remove('show');
+		chrome.storage.local.remove('popup');
+		chrome.action.setBadgeText({text: ''});
 	}, 10000);
+}
+
+function addBookmark() {
+	chrome.storage.local.get(null, function(options) {
+		if(options.direct) {
+			chrome.runtime.sendMessage({action: "bookmarkTab"});
+			window.close();
+		} else {
+			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+				let createBookmark = chrome.bookmarks.create({
+					title: tabs[0].title,
+					url: tabs[0].url,
+				}, function(newFolder) {
+					window.close();
+				});
+			});
+		}
+	});
 }

@@ -56,13 +56,19 @@ body {
     padding: 0;
     border: 0;
 }
+#toolbar button:disabled {
+    cursor: auto;
+}
 button > svg {
     width: 20px;
     height: 20px;
     color: white;
 }
-button > svg:hover {
+button:not([disabled]) > svg:hover {
     color: #96caf5;
+}
+button:disabled > svg {
+    color: cornflowerblue;
 }
 #settings {
     left: 10px;
@@ -184,7 +190,7 @@ button > svg:hover {
 #bookmarks li input:checked + ol > li:last-child {
 	margin: 0 0 .063em;
 }
-#pwamessage {
+#popupMessage {
     visibility: hidden;
     width: 90%;
     background-color: transparent;
@@ -203,26 +209,26 @@ button > svg:hover {
     transition: opacity 2s;
     opacity: 0;
 }
-#pwamessage.show {
+#popupMessage.show {
     visibility: visible;
     opacity: 1;
 }
-#pwamessage.error {
+#popupMessage.error {
     background-color: #f2dede;
     border-color: #eda6b2;
     color: #D8000C;
 }
-#pwamessage.warn {
+#popupMessage.warn {
     background-color: #FEEFB3;
     color: #9F6000;
     border-color: #eea236;
 }
-#pwamessage.success {
+#popupMessage.success {
     background-color: #DFF2BF;
     color: #270;
     border-color: #a2dfa2;
 }
-#pwamessage.info {
+#popupMessage.info {
     background-color: #BEF;
     color: #059;
     border-color: #74d6f3;

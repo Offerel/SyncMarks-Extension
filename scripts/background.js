@@ -626,17 +626,18 @@ function sendTab(element) {
 function logit(message) {
 	var ndate = new Date();
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
-	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0)
+	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0) {
 		//notify('error',message);
 		//chrome.action.setTitle({title: message});
 		changeIcon('error');
 		chrome.storage.local.set({
 			popup: {
-				message:message,
+				message: message,
 				mode:'error'
 			}
 		});
 		//console.warn(message);
+	}
 	return logline;
 }
 
