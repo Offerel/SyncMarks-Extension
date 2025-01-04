@@ -1,4 +1,7 @@
 # ChangeLog
+## v2.1.3 (2025-01-04)
+- Fix CSS
+
 ## v2.1.2 (2025-01-02)
 - Added PopUp
 - Removed action chaos
