@@ -314,64 +314,6 @@ function bookmarkImport(response) {
 	chrome.runtime.sendMessage({task: bookmarkImport.name, type: message.type, text: message.text});
 }
 
-function toastMessage(mode, message) {
-	let url = chrome.runtime.getURL('icons/bookmark.png');
-
-	if(mode == '0') {
-		color = '#45740d';
-		bg = 'rgb(167 241 82)';
-	} else {
-		color = 'white';
-		bg = 'rgb(233 81 61)';
-	}
-
-	chrome.tabs.executeScript({code: `(function() {
-		let toast = document.createElement('div');
-		toast.id = 'htoast';
-		let style = document.createElement('style');
-		document.head.appendChild(style);
-		style.sheet.insertRule(\`
-			#htoast {
-				position: fixed;
-				bottom: -3em;
-				z-index: 100;
-				left: 50%;
-				color: `+color+`;
-				background-color: `+bg+`;
-				padding: 0.3em 0.5em .3em 3.5em;
-				border-radius: 0.4em;
-				opacity: 0;
-				transform: translateX(-50%);
-				width: max-content;
-				max-width: 75%;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				box-shadow: rgb(0 0 0 / 50%) 0 0 0.3em 0;
-				transition: opacity 0.5s, bottom 0.5s, top 0.3s;
-				line-height: 2em;
-				font-family: sans-serif;
-				background-image: url(`+url+`);
-				background-repeat: no-repeat;
-				background-size: 2em;
-				background-position-x: .7em;
-				background-position-y: .3em;
-			}
-		\`);
-		style.sheet.insertRule(\`
-			.stoast {
-				bottom: 3em !important;
-				opacity: 1 !important;
-			}
-		\`);
-		toast.innerText = '` + message + `';
-		document.body.appendChild(toast);
-		setTimeout(function() {toast.classList.add('stoast')}, 5);
-		setTimeout(function() {toast.className = ''}, 3000);
-		setTimeout(function() {toast.remove(); style.remove();}, 3500);
-	})()`});
-}
-
 function bookmarkAdd(response) {
 	let text = '';
 	let type = '';
@@ -394,14 +336,8 @@ function bookmarkAdd(response) {
 				mode = '1';
 				type = 'Error';
 			}
-
-			let uastr = navigator.userAgent.toLowerCase();
 			
-			if(uastr.match(/mobile/i)) {
-				toastMessage(mode, response.message);
-			} else {
-				if(response.code !== 200) notify(Math.random().toString(16).substring(2, 10), text);
-			}
+			if(response.code !== 200) notify(Math.random().toString(16).substring(2, 10), text);
 
 			loglines = logit(type + ": " + text);
 		}

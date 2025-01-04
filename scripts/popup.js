@@ -20,8 +20,10 @@ chrome.storage.local.get(null, function(options) {
 		return response.text();
 	}).then(html => {
 		let parser = new DOMParser();
-		let doc = parser.parseFromString(html, "text/html")
-		document.getElementById('bookmarks').innerHTML = doc.getElementById('bookmarks').innerHTML;
+		let doc = parser.parseFromString(html, "text/html");
+		let bookmarks = document.getElementById('bookmarks');
+		clone = doc.getElementById('bookmarks').cloneNode(true);
+		while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
 
 		addClick();
 		urlExists();
@@ -56,7 +58,7 @@ search.addEventListener('input', function(e) {
 		cSearch();
 		addClick();
 	} else {
-		bdiv.innerHTML = '';
+		while(bdiv.firstChild) bdiv.removeChild(bdiv.firstChild);
 		bookmarks.forEach(bookmark => {
 			bdiv.appendChild(bookmark);
 			if(bookmark.innerText.toUpperCase().includes(filter.toUpperCase()) || bookmark.firstChild.dataset.url.toUpperCase().includes(filter.toUpperCase())) {
@@ -70,7 +72,10 @@ search.addEventListener('input', function(e) {
 });
 
 function cSearch() {
-	document.getElementById('bookmarks').innerHTML = clone.innerHTML;
+	let bookmarks = document.getElementById('bookmarks');
+	while(bookmarks.firstChild) bookmarks.removeChild(bookmarks.firstChild);
+	while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
+	clone = bookmarks.cloneNode(true);
 }
 
 function addClick() {

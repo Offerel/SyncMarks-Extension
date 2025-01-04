@@ -425,7 +425,7 @@ function requestClientOptions(cOptions, av = false) {
 			cOptions.forEach((client) => {
 				var opt = document.createElement('option');
 				opt.value = client['cOptions'];
-				opt.innerHTML = client['cname'];
+				opt.innerText = client['cname']
 				select.appendChild(opt);
 				if(options.uuid == client['cid']) av = true;
 			});
