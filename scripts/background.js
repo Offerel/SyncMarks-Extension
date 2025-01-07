@@ -202,6 +202,7 @@ function clientRemove(response) {
 }
 
 function clientList(response) {
+	chrome.storage.local.remove('clist');
 	chrome.storage.local.set({clist:response.clients});
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
@@ -465,18 +466,6 @@ function ccMenus() {
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
 			chrome.contextMenus.removeAll();
-			chrome.contextMenus.create({
-				id: "sm_settings",
-				title: chrome.i18n.getMessage("optionsSyncOptions"),
-				contexts: ["action"]
-			})
-			
-			chrome.contextMenus.onClicked.addListener(info => {
-				if (info.menuItemId == "sm_settings") {
-					chrome.runtime.openOptionsPage();
-				}
-			})
-			
 			chrome.storage.local.get(null, function(options) {
 				if(options.direct) {
 					chrome.commands.getAll((commands) => {
