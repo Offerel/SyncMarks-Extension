@@ -2,7 +2,7 @@
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
   "homepage_url": "https://codeberg.org/Offerel/SyncMarks-Extension",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "author": "Offerel",
   "manifest_version": 3,
   "default_locale": "en",
@@ -12,8 +12,11 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "davmarks@example.org"
-    }
+      "id": "davmarks@example.org",
+      "id": "{5867da09-41f2-42c3-be19-c17bc7cbccec}",
+      "strict_min_version": "128.*"
+    },
+    "gecko_android": {}
   },
   "action": {
     "default_title": "__MSG_extensionName__",
