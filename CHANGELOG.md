@@ -2,6 +2,7 @@
 ## v2.1.5 (2025-01-07)
 - Removed option for action
 - Changed Extension ID
+- Fix Clientlist
 
 ## v2.1.4 (2025-01-04)
 - Fix innerHTML

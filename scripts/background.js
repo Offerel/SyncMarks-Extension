@@ -202,6 +202,7 @@ function clientRemove(response) {
 }
 
 function clientList(response) {
+	chrome.storage.local.remove('clist');
 	chrome.storage.local.set({clist:response.clients});
 	chrome.permissions.getAll(function(e) {
 		if(e.permissions.includes('contextMenus')) {
