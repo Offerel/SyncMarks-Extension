@@ -7,34 +7,27 @@ Currently there is no bookmark API for Firefox on Android available, but most ot
 The bookmarks can be synced manually or automatically. There are corresponding options in the addon settings. The sync process is compatible with Browser internal Sync.
 
 ## Contribution
-### Find issues
-If you want to help, there are several things you can do for me. If you find a bug, please use the issue tracker and create a report so that I can fix it.
+### Finding issues
+If you want to help, there are several things you can do for me. If you find a bug, please use the [issue tracker](https://codeberg.org/Offerel/SyncMarks-Extension/issues) and create a report so that I can fix it. Github.com is only a mirror for compatibility reason.
 
 ### Translate
 You can also contribute to the translation. This is very easy to do via Weblate. Some languages are already predefined, but you can add more languages at any time.
 [![Translation status](https://translate.codeberg.org/widget/syncmarks/browser-extension/multi-auto.svg)](https://translate.codeberg.org/engage/syncmarks/)
 
-## Issue Tracker
-Since the main repository is on Codeberg.org, please use the [issue tracker at Codeberg.org](https://codeberg.org/Offerel/SyncMarks-Extension/issues). Github.com is only a mirror for compatibility reason.
 
 ## Used Permissions
-
-There are some permissions needed.
+There are some permissions needed for the Extension, to work properly.
 
 ### Read and modify bookmarks
-
 Since you export and import all your bookmarks, the AddOn needs access to them. Currently this API is supported on the desktop and on Kiwi on mobile. If the Mozilla implements this finally on mobile, it will work there to.
 
 ### Storage
-
 This is to save the AddOn options. 
 
 ### Notifications
-
 The AddOn uses notifications to alert you about error occured or to notify you about pushes send from other clients.
 
 ### Context menus
-
 On desktop you can right click on a empty space at the page or on a link and can push this link as notification to other clients, including the Webapp. Since this API is not available on mobile, you can't use this feature there. On mobile you can use the toolbar button to send a page as notification.
  
 ## Current open issues

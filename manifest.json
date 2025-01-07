@@ -13,8 +13,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "davmarks@example.org",
-      "id": "{5867da09-41f2-42c3-be19-c17bc7cbccec}",
-      "strict_min_version": "128.*"
+      "strict_min_version": "128.0"
     },
     "gecko_android": {}
   },
