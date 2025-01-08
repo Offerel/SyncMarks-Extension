@@ -65,6 +65,7 @@ function checkForm() {
 				document.getElementById('mupload').disabled=true;
 			}
 		} else {
+			showMsg(chrome.i18n.getMessage(optionsBAPIHint), 'info');
 			document.getElementById('mdownload').disabled=true;
 			document.getElementById('mupload').disabled=true;
 			document.getElementById('s_auto').checked = false;

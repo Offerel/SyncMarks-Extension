@@ -234,5 +234,8 @@
   "optionsBTNBackup": {
     "message": "Backup",
     "description": "Backup button in options"
+  },
+  "optionsBAPIHint": {
+      "message": "The Bookmark API is not supported in this browser. Automatic synchronization is therefore deactivated."
   }
 }

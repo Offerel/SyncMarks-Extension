@@ -259,5 +259,8 @@
     },
     "optionsBTNBackup": {
         "message": "Backup"
+    },
+    "optionsBAPIHint": {
+        "message": "Die Bookmark API wird in diesem Browser nicht unterstützt. Die Automatische Synchronisation wird daher deaktiviert."
     }
 }
