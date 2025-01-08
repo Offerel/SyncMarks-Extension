@@ -175,5 +175,8 @@
     },
     "optionsBTNBackup": {
         "message": "备份"
+    },
+    "optionsBAPIHint": {
+        "message": "此浏览器不支持书签 API。因此，自动同步功能已停用。"
     }
 }
