@@ -131,7 +131,7 @@ function addBookmark() {
 				let createBookmark = chrome.bookmarks.create({
 					title: tabs[0].title,
 					url: tabs[0].url,
-				}, function(newFolder) {
+				}, function(newE) {
 					window.close();
 				});
 			});
