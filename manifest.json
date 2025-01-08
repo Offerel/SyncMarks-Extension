@@ -15,7 +15,9 @@
       "id": "davmarks@example.org",
       "strict_min_version": "128.0"
     },
-    "gecko_android": {}
+    "gecko_android": {
+      "strict_min_version": "128.0"
+    }
   },
   "action": {
     "default_title": "__MSG_extensionName__",

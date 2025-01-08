@@ -1,92 +1,93 @@
 html {
-    width: 320px;
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 }
 body {
-    border: 0;
-    margin: 0;
-    padding: 0;
-    height: 490px;
+	border: 0;
+	margin: 0;
+	padding: 0;
+	height: 490px;
+	width: 320px;
+	font-size: 100%;
 }
 #svgfilled {
-    display: none;
-    color: gold;
+	display: none;
+	color: gold;
 }
 #toolbar {
-    background-color: #0879d9;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 40px;
+	background-color: #0879d9;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 40px;
 }
 #search {
-    border: 1px solid transparent;
-    outline: 0;
-    line-height: 20px;
-    border-radius: 20px;
-    top: 7px;
-    position: absolute;
-    right: 40px;
-    left: 40px;
-    padding: 0 10px 0 25px;
-    background-color: #0e62a9;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%230879d9' d='M416 208c0 45.9-14.9 88.3-40 122.7l126.6 126.7c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0s208 93.1 208 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-size: 15px;
-    background-position: 5px;
-    color: #0e62a9;
+	border: 1px solid transparent;
+	outline: 0;
+	line-height: 2.5em;
+	border-radius: 20px;
+	top: 7px;
+	position: absolute;
+	right: 3.5em;
+	left: 3.5em;
+	padding: 0 10px 0 25px;
+	background-color: #0e62a9;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%230879d9' d='M416 208c0 45.9-14.9 88.3-40 122.7l126.6 126.7c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0s208 93.1 208 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-size: 15px;
+	background-position: 5px;
+	color: #0e62a9;
 }
 #search:hover {
-    background-color: #96caf5;
+	background-color: #96caf5;
 }
 #search:focus {
-    border: 1px solid blue !important;
-    outline: 0 !important;
-    background-color: #96caf5;
+	border: 1px solid blue !important;
+	outline: 0 !important;
+	background-color: #96caf5;
 }
 #toolbar button {
-    outline: 0;
-    top: 7px;
-    position: absolute;
-    background-color: transparent;
-    cursor: pointer;
-    margin: 0;
-    padding: 0;
-    border: 0;
+	outline: 0;
+	top: .8em;
+	position: absolute;
+	background-color: transparent;
+	cursor: pointer;
+	margin: 0;
+	padding: 0;
+	border: 0;
 }
 #toolbar button:disabled {
-    cursor: auto;
+	cursor: auto;
 }
 button > svg {
-    width: 20px;
-    height: 20px;
-    color: white;
+	height: 2em;
+	color: white;
 }
 button:not([disabled]) > svg:hover {
-    color: #96caf5;
+	color: #96caf5;
 }
 button:disabled > svg {
-    color: cornflowerblue;
+	color: cornflowerblue;
 }
 #settings {
-    left: 10px;
+	left: 10px;
 }
 #addbm {
-    right: 10px;
+	right: 10px;
 }
 #bookmarks {
-    background-color: #eef3fa;
-    white-space: nowrap;
-    overflow-x: hidden;
-    overflow-y: auto;
-    top: 40px;
-    bottom: 0px;
-    position: absolute;
-    width: 100%;
-    padding: 5px 0px;
-	font-size: 1.1em;
+	background-color: #eef3fa;
+	white-space: nowrap;
+	overflow-x: hidden;
+	overflow-y: auto;
+	top: 3em;
+	bottom: 0;
+	position: absolute;
+	width: 100%;
+	padding: 5px 0;
+	font-size: 1em;
+	font-family: Sans-serif;
 }
 #bookmarks ol.tree {
 	padding: 0 0 0 20px;
@@ -96,9 +97,9 @@ button:disabled > svg {
 	margin-left: 29px !important;
 }
 #bookmarks li {
-    position: relative;
-    margin: 0 20px;
-    list-style: none;
+	position: relative;
+	margin: 0 20px;
+	list-style: none;
 }
 #bookmarks li.file {
 	margin-left: -2px !important;
@@ -122,7 +123,7 @@ button:disabled > svg {
 	-o-user-select: none !important;
 	user-select: none !important;
 	max-width: fit-content;
-    cursor: pointer;
+	cursor: pointer;
 }
 #bookmarks li input {
 	position: absolute;
@@ -137,8 +138,8 @@ button:disabled > svg {
 }
 #bookmarks li input + ol {
 	background: transparent;
-    background-size: 13px;
-    background-position: 38px -2px;
+	background-size: 13px;
+	background-position: 38px -2px;
 	margin: -.938em 0 0 -44px;
 	height: 1em;
 	text-overflow: ellipsis;
@@ -166,10 +167,11 @@ button:disabled > svg {
 	background-color: unset;
 	height: unset;
 	border-bottom: unset;
-	padding: 0px 5px 0px 28px;
+	padding: 0 5px 0 35px;
 	margin-left: -5px;
 	border-radius: 3px;
 	user-select: none;
+	position: relative;
 }
 #bookmarks :not(.mainFolder) ol {
 	position: unset;
@@ -178,10 +180,10 @@ button:disabled > svg {
 	margin-bottom: unset !important;
 }
 #bookmarks li input:checked + ol {
-    margin: -1.25em 0 0 -40px;
-    padding: 1.563em 0 0 65px;
+	margin: -1.25em 0 0 -40px;
+	padding: 1.563em 0 0 65px;
 	height: auto;
-    background-position: 38px 2px;
+	background-position: 38px 2px;
 }
 #bookmarks li input:checked + ol > li {
 	display: block;
@@ -191,45 +193,45 @@ button:disabled > svg {
 	margin: 0 0 .063em;
 }
 #popupMessage {
-    visibility: hidden;
-    width: 90%;
-    background-color: transparent;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    color: white;
-    text-align: center;
-    border-radius: 5px;
-    padding: 3px 6px;
-    position: fixed;
-    z-index: 1;
-    left: 50%;
-    bottom: 40px;
-    font-size: 16px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    transform: translateX(-50%);
-    transition: opacity 2s;
-    opacity: 0;
+	visibility: hidden;
+	width: 90%;
+	background-color: transparent;
+	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+	color: white;
+	text-align: center;
+	border-radius: 5px;
+	padding: 3px 6px;
+	position: fixed;
+	z-index: 1;
+	left: 50%;
+	bottom: 40px;
+	font-size: 16px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	transform: translateX(-50%);
+	transition: opacity 2s;
+	opacity: 0;
 }
 #popupMessage.show {
-    visibility: visible;
-    opacity: 1;
+	visibility: visible;
+	opacity: 1;
 }
 #popupMessage.error {
-    background-color: #f2dede;
-    border-color: #eda6b2;
-    color: #D8000C;
+	background-color: #f2dede;
+	border-color: #eda6b2;
+	color: #D8000C;
 }
 #popupMessage.warn {
-    background-color: #FEEFB3;
-    color: #9F6000;
-    border-color: #eea236;
+	background-color: #FEEFB3;
+	color: #9F6000;
+	border-color: #eea236;
 }
 #popupMessage.success {
-    background-color: #DFF2BF;
-    color: #270;
-    border-color: #a2dfa2;
+	background-color: #DFF2BF;
+	color: #270;
+	border-color: #a2dfa2;
 }
 #popupMessage.info {
-    background-color: #BEF;
-    color: #059;
-    border-color: #74d6f3;
+	background-color: #BEF;
+	color: #059;
+	border-color: #74d6f3;
 }

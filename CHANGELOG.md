@@ -1,8 +1,9 @@
 # ChangeLog
-## v2.1.5 (2025-01-07)
+## v2.1.5 (2025-01-08)
+- Add info to options, when bookmark API is unsupported
 - Removed option for action
-- Changed Extension ID
 - Fix Clientlist
+- Fix popup layout in Firefox
 
 ## v2.1.4 (2025-01-04)
 - Fix innerHTML

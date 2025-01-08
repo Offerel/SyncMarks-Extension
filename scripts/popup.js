@@ -42,11 +42,10 @@ document.getElementById("settings").addEventListener('click', function() {
 
 document.getElementById("addbm").addEventListener('click', addBookmark);
 
-chrome.storage.local.get(null, function(options) {	
+chrome.storage.local.get(null, function(options) {
 	if(options.popup !== undefined) {
 		popupMessage(options.popup.message, options.popup.mode);
 	}
-	
 });
 
 search.addEventListener('input', function(e) {
@@ -123,18 +122,20 @@ function popupMessage(message, state) {
 
 function addBookmark() {
 	chrome.storage.local.get(null, function(options) {
-		if(options.direct) {
-			chrome.runtime.sendMessage({action: "bookmarkTab"});
-			window.close();
-		} else {
-			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-				let createBookmark = chrome.bookmarks.create({
-					title: tabs[0].title,
-					url: tabs[0].url,
-				}, function(newE) {
-					window.close();
+		chrome.permissions.getAll(function(e) {
+			if(options.direct || !e.permissions.includes('bookmarks')) {
+				chrome.runtime.sendMessage({action: "bookmarkTab"});
+				window.close();
+			} else {
+				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+					let createBookmark = chrome.bookmarks.create({
+						title: tabs[0].title,
+						url: tabs[0].url,
+					}, function(newE) {
+						window.close();
+					});
 				});
-			});
-		}
+			}
+		});
 	});
 }
