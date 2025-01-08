@@ -265,5 +265,8 @@
     },
     "optionsTabsHint": {
         "message": "Synchronizacja otwartych kart między klientami"
+    },
+    "optionsBAPIHint": {
+        "message": "Interfejs API zakładek nie jest obsługiwany w tej przeglądarce. Automatyczna synchronizacja jest zatem wyłączona."
     }
 }
