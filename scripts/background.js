@@ -1,4 +1,4 @@
-const abrowser = typeof browser !== 'undefined';
+const mozilla = typeof browser !== 'undefined';
 var dictOldIDsToNewIDs = { "-1": "-1" };
 var loglines = '';
 var debug = false;
@@ -6,16 +6,18 @@ var oMarks = [];
 var pTabs = [];
 var lastseen = null;
 
-const pingInterval = setInterval(() => {
-	chrome.runtime.getPlatformInfo;
-	self.serviceWorker.postMessage('keep');
-}, 20000);
-
 chrome.runtime.onStartup.addListener(async () => {
 	init();
 });
 
-if(abrowser) init();
+if(mozilla === true) {
+	init();
+} else {
+	const pingInterval = setInterval(() => {
+		chrome.runtime.getPlatformInfo;
+		self.serviceWorker.postMessage('keep');
+	}, 20000);
+}
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
@@ -283,7 +285,7 @@ function clientInfo(response, tab = null) {
 function bookmarkExport(response, tab = null) {
 	let bookmarks = response.bookmarks;
 	const message = [];
-	if(abrowser == false) bookmarks = c2cm(bookmarks);
+	if(mozilla === false) bookmarks = c2cm(bookmarks);
 	count = 0;
 	loglines = logit('Info: '+ bookmarks.length +' Bookmarks received from server');
 	message.text = '' + bookmarks.length + ' Bookmarks received from server';
@@ -525,7 +527,7 @@ function bookmarkTab() {
 			"url": tabs[0].url,
 			"title": tabs[0].title,
 			"type": 'bookmark',
-			"folder": (abrowser === true) ? 'unfiled_____':2,  
+			"folder": (mozilla === true) ? 'unfiled_____':2,  
 			"nfolder": 'More Bookmarks',
 			"added": new Date().valueOf()
 		});
@@ -990,7 +992,7 @@ async function importFull(rMarks) {
 		
 		let rMark = {};
 
-		if(abrowser) {
+		if(mozilla) {
 			rMark.index = parseInt(remoteMark.bmIndex);
 			rMark.parentId = localParentId;
 			rMark.title = remoteMark.bmTitle;
@@ -1047,7 +1049,7 @@ async function importFull(rMarks) {
 		let action = 0;
 		remoteMark = rMarks[index];
 		
-		if((abrowser === true && !remoteMark.bmID.endsWith('_____')) || (abrowser === false && remoteMark.bmID.length > 1)) {
+		if((mozilla === true && !remoteMark.bmID.endsWith('_____')) || (mozilla === false && remoteMark.bmID.length > 1)) {
 			action = await checkMark(remoteMark, index);
 		} else {
 			action = 0;
@@ -1144,7 +1146,7 @@ function importMarks(parsedMarks, index=0) {
     let bmtype = parsedMarks[index].bmType;
     let bmurl = parsedMarks[index].bmURL;
 
-	if(abrowser == true) {
+	if(mozilla === true) {
 		var newParentId = (typeof bmparentId !== 'undefined' && bmparentId.substr(bmparentId.length - 2) == "__") ? bmparentId : dictOldIDsToNewIDs[bmparentId];
 		if(bmparentId == "root________") {
 			importMarks(parsedMarks, ++index);
@@ -1162,7 +1164,7 @@ function importMarks(parsedMarks, index=0) {
 	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 	chrome.bookmarks.onChanged.removeListener(onChangedCheck);
 
-	if(abrowser == true) {
+	if(mozilla === true) {
 		chrome.bookmarks.create(
 			(bmtype == "folder" ?
 				{
