@@ -215,14 +215,8 @@
     "bookmarkTab": {
         "message": "Bookmark direkt zu Server"
     },
-    "backendType": {
-        "message": "Wähle zwischen Syncmarks und WebDAV Server"
-    },
     "ManAuto": {
         "message": "Automatische Synchronisation aktivieren"
-    },
-    "toBackend": {
-        "message": "Schick Bookmark direkt manual zum Server"
     },
     "optionsLastLogged": {
         "message": "Zuletzt eingeloggt mit"

@@ -123,7 +123,7 @@ function popupMessage(message, state) {
 function addBookmark() {
 	chrome.storage.local.get(null, function(options) {
 		chrome.permissions.getAll(function(e) {
-			if(options.direct || !e.permissions.includes('bookmarks')) {
+			if(options.sync === false || e.permissions.includes('bookmarks') === false) {
 				chrome.runtime.sendMessage({action: "bookmarkTab"});
 				window.close();
 			} else {

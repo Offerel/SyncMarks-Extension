@@ -66,11 +66,7 @@ function checkForm() {
 			}
 		} else {
 			showMsg(chrome.i18n.getMessage(optionsBAPIHint), 'info');
-			let cOptions = {
-				sync: false,
-				direct: document.getElementById("b_action").checked
-			};
-			chrome.storage.local.set(cOptions);
+			chrome.storage.local.set({sync: false});
 			document.getElementById('mdownload').disabled=true;
 			document.getElementById('mupload').disabled=true;
 			document.getElementById('s_auto').checked = false;
@@ -115,7 +111,6 @@ function gToken(e) {
 
 		let cOptions = {
 			sync: document.getElementById("s_auto").checked,
-			direct: document.getElementById("b_action").checked,
 			name: document.getElementById("cname").value,
 			uuid: document.getElementById("s_uuid").value,
 			tabs: document.getElementById("s_tabs").checked,
@@ -165,24 +160,14 @@ function saveOptions(e) {
 	if(typeof e !== "undefined") {
 		e.preventDefault();
 		if(e.srcElement.id === 's_auto' && e.srcElement.checked) {
-			document.getElementById("b_action").checked = false;
-			document.getElementById("b_action").disabled = true;
 			document.getElementById("s_tabs").disabled = false;
 		} else if (e.srcElement.id === 's_auto' && !e.srcElement.checked) {
-			document.getElementById("b_action").disabled = false;
 			document.getElementById("s_tabs").checked = false;
 			document.getElementById("s_tabs").disabled = true;
 		}
 	
 		if(e.srcElement.id === 's_tabs' && e.srcElement.checked) {
 			document.getElementById("s_auto").checked = true;
-		}
-	
-		if(e.srcElement.id === 'b_action' && e.srcElement.checked) {
-			document.getElementById("s_auto").checked = false;
-			document.getElementById("s_tabs").disabled = true;
-		} else if(e.srcElement.id === 'b_action' && !e.srcElement.checked) {
-			document.getElementById("s_tabs").disabled = false;
 		}
 	}
 
@@ -196,7 +181,6 @@ function saveOptions(e) {
 
 	const cOptions = {
 		sync: document.getElementById("s_auto").checked,
-		direct: document.getElementById("b_action").checked,
 		name: document.getElementById("cname").value,
 		uuid: document.getElementById("s_uuid").value,
 		tabs: document.getElementById("s_tabs").checked,
@@ -234,6 +218,7 @@ function restoreOptions() {
 		if(options.instance == undefined) {
 			showMsg(chrome.i18n.getMessage("infoEmptyConfig"), 'info');
 		}
+
 		document.querySelector("#wdurl").defaultValue = options.instance || "";
 		checkURL();
 		
@@ -247,7 +232,7 @@ function restoreOptions() {
 		}
 
 		document.getElementById("s_auto").defaultChecked = options.sync;
-		document.getElementById("b_action").defaultChecked = options.direct;
+		document.getElementById("s_tabs").disabled = (options.sync === false) ? true:false;
 		
 		gName();
 		document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
@@ -268,7 +253,6 @@ function restoreOptions() {
 			for (let {name, shortcut} of commands) {
 				var s = (name === 'bookmark-tab') ? shortcut:'undef';
 			}
-			document.getElementById("obmd").title = chrome.i18n.getMessage('bookmarkTab') + ` (${s})`;
 		});
 		
 	});
@@ -392,25 +376,6 @@ function clearLog() {
 	chrome.runtime.sendMessage({action: "emptyLoglines"});
 }
 
-function switchBackend() {
-	let backendPHP = this.checked;
-
-	if(backendPHP) {
-		document.getElementById("blbl").innerText = chrome.i18n.getMessage("backendType");
-		document.getElementById('cname').disabled = false;
-		document.getElementById('b_action').disabled = false;
-		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'unset';
-		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = ''
-	} else {
-		document.getElementById('cname').disabled = true;
-		document.getElementById('b_action').disabled = true;
-		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'none';
-		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = 'lightgrey'
-	}
-
-	saveOptions();
-}
-
 function requestHostPermission() {
 	const instance = document.getElementById('wdurl');
 	let newOrigin = new URL(instance.value).origin + '/*';
@@ -454,7 +419,6 @@ function serverImport() {
 	document.getElementById('cname').value = (selectedText != restored_Options.name) ? selectedText:restored_Options.name;
 	document.getElementById("s_tabs").checked = restored_Options.tabs;
 	document.getElementById("s_auto").checked = restored_Options.sync;
-	document.getElementById("b_action").checked = restored_Options.direct;
 
 	document.getElementById("coptionsdialog").style.display = "none";
 
@@ -597,7 +561,6 @@ window.addEventListener('load', function () {
 	document.getElementById("nuser").addEventListener("input", checkLoginForm);
 	document.getElementById("npassword").addEventListener("input", checkLoginForm);
 	document.getElementById('lgin').addEventListener("click", gToken);
-	document.getElementById("b_action").addEventListener("change", saveOptions);
 	document.getElementById("s_tabs").addEventListener("change", saveOptions);
 	document.getElementById("s_auto").addEventListener("change", saveOptions);
 	document.getElementById("cname").addEventListener("change", rName);

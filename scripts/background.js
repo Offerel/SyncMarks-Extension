@@ -71,7 +71,7 @@ chrome.runtime.onMessage.addListener(
 
 chrome.permissions.getAll(function(e) {
 	chrome.storage.local.get(null, function(options) {
-		if(options.sync && !options.direct) {
+		if(options.sync === true) {
 			chrome.bookmarks.onCreated.addListener(onCreatedCheck);
 			chrome.bookmarks.onMoved.addListener(onMovedCheck);
 			chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
@@ -119,7 +119,7 @@ function sendRequest(action, data = null, tab = null) {
 		let url = options.instance;
 		let client = options.uuid;
 
-		if(action.name === 'bookmarkAdd' && options.sync && options.direct) {
+		if(action.name === 'bookmarkAdd' && options.sync === false ) {
 			client = 'bookmarkTab';
 		}
 
@@ -319,7 +319,7 @@ function bookmarkAdd(response) {
 	let text = '';
 	let type = '';
 	chrome.storage.local.get(null, async function(options) {
-		if(options.direct) {
+		if(options.sync === false) {
 			if(response.code === 200) {
 				text = "Bookmark added";
 				changeIcon('info');
@@ -467,7 +467,7 @@ function ccMenus() {
 		if(e.permissions.includes('contextMenus')) {
 			chrome.contextMenus.removeAll();
 			chrome.storage.local.get(null, function(options) {
-				if(options.direct) {
+				if(options.sync === false) {
 					chrome.commands.getAll((commands) => {
 						for (let {name, shortcut} of commands) {
 							var s = (name === 'bookmark-tab') ? shortcut:'undef';
@@ -751,7 +751,6 @@ function migrateOptions() {
 		if(options.wdurl != undefined) {
 			chrome.storage.local.set({
 				sync: options.actions.startup,
-				direct: options.actions.crsrv,
 				uuid: options.s_uuid,
 				tabs: options.s_tabs,
 				instance: options.wdurl
@@ -759,7 +758,6 @@ function migrateOptions() {
 		}
 
 		if(options.sync != undefined) {
-			chrome.storage.local.set({direct: options.sync.manual});
 			chrome.storage.local.set({sync: options.sync.auto});
 		}
 	});

@@ -1,4 +1,8 @@
 # ChangeLog
+## v2.1.6 (2025-01-09)
+- Removed direct toggle
+- Fixed CSS for options
+
 ## v2.1.5 (2025-01-08)
 - Add info to options, when bookmark API is unsupported
 - Removed option for action

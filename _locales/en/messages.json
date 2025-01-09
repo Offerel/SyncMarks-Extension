@@ -187,10 +187,6 @@
     "message": "Activate automatic synchronization",
     "description": "Enable autosync"
   },
-  "toBackend": {
-    "message": "Send Bookmark directly manual to the server",
-    "description": "Send bookmark manual to server"
-  },
   "optionsLastLogged": {
     "message": "Last logged in with",
     "description": "Last logged in info"
