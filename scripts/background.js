@@ -64,6 +64,9 @@ chrome.runtime.onMessage.addListener(
 				case 'bookmarkTab':
 					bookmarkTab();
 					break;
+				case 'tabSync':
+					tabSync(request.data);
+					break;
 				default:
 					return false;
 			}
@@ -73,12 +76,8 @@ chrome.runtime.onMessage.addListener(
 
 chrome.permissions.getAll(function(e) {
 	chrome.storage.local.get(null, function(options) {
-		if(options.sync === true) {
-			chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-			chrome.bookmarks.onMoved.addListener(onMovedCheck);
-			chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-			chrome.bookmarks.onChanged.addListener(onChangedCheck);
-		}
+		bookmarkSync(options.sync);
+		tabSync(options.tabs);
 	});
 
 	if(e.permissions.includes('contextMenus')) {
@@ -418,9 +417,9 @@ function clientRename(response) {
 function tabsSend(response) {
 	let test = parseInt(response['tabs']);
 	if(test < 1) {
-		let message = "Tabs could not be saved remotely, please check server log";
+		let message = "Tabs could not be saved, please check server error log";
 		loglines = logit(message);
-		notify('error',message);
+		changeIcon('error');
 	}
 }
 
@@ -438,9 +437,33 @@ function tabsGet(response) {
 
 function getNewTabs() {
 	sendRequest(tabsGet);
-	chrome.tabs.onCreated.addListener(tabCreated);
-	chrome.tabs.onUpdated.addListener(tabUpdated);
-	chrome.tabs.onRemoved.addListener(tabCreated);
+	tabSync(true);
+}
+
+function tabSync(mode) {
+	if(mode === true) {
+		chrome.tabs.onCreated.addListener(tabCreated);
+		chrome.tabs.onUpdated.addListener(tabUpdated);
+		chrome.tabs.onRemoved.addListener(tabCreated);
+	} else {
+		chrome.tabs.onCreated.removeListener(tabCreated);
+		chrome.tabs.onUpdated.removeListener(tabUpdated);
+		chrome.tabs.onRemoved.removeListener(tabCreated);
+	}
+}
+
+function bookmarkSync(mode) {
+	if(mode === true) {
+		chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+		chrome.bookmarks.onMoved.addListener(onMovedCheck);
+		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+		chrome.bookmarks.onChanged.addListener(onChangedCheck);
+	} else {
+		chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+		chrome.bookmarks.onMoved.removeListener(onMovedCheck);
+		chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+		chrome.bookmarks.onChanged.removeListener(onChangedCheck);
+	}
 }
 
 function tabCreated(tab) {
@@ -457,7 +480,7 @@ function saveTabs(oTabs) {
 	var tabs = [];
 	oTabs.forEach(function(tab){
 		if(tab.url !== undefined && tab.pinned === false && tab.incognito === false && tab.url.startsWith('http')) {
-			tabs.push({'windowId':tab.windowId, 'url':tab.url, title:tab.title});
+			tabs.push({'windowId':tab.windowId, 'url':tab.url, 'title':tab.title});
 		}
 	});
 
@@ -553,7 +576,7 @@ function sendTab(element) {
 function logit(message) {
 	var ndate = new Date();
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
-	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('TypeError') <= 0) {
+	if(message.toString().toLowerCase().indexOf('error') >= 0) {
 		//notify('error',message);
 		changeIcon('error');
 		chrome.storage.local.set({
@@ -895,7 +918,7 @@ function removeMark(bookmark) {
 			"title": bookmark.node.title
 		};
 
-		loglines = logit("Info: Sending remove request to server: <a href='"+bookmark.node.url+"'>"+bookmark.node.url+"</a>");
+		loglines = logit("Info: Sending remove request to server: <a href='" + bookmark.node.url + "'>" + bookmark.node.url + "</a>");
 		sendRequest(bookmarkDel, jsonMark);
 	});
 }
@@ -1041,9 +1064,7 @@ async function importFull(rMarks) {
 		let newMark = (await moveBookmarkAsync(localMark.id, destination));
 	}
 
-	chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-	chrome.bookmarks.onMoved.removeListener(onMovedCheck);
-	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
+	bookmarkSync(false);
 
 	for (let index = 0; index < rMarks.length; index++) {
 		let action = 0;
@@ -1090,9 +1111,7 @@ async function importFull(rMarks) {
 		}
 	});
 
-	chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-	chrome.bookmarks.onMoved.addListener(onMovedCheck);
-	chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+	bookmarkSync(true);
 
 	if(uMarks.length > 0) exportPHPMarks(uMarks);
 }
@@ -1159,10 +1178,8 @@ function importMarks(parsedMarks, index=0) {
 			return false;
 		}
 	}
-	chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
-	chrome.bookmarks.onMoved.removeListener(onMovedCheck);
-	chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
-	chrome.bookmarks.onChanged.removeListener(onChangedCheck);
+
+	bookmarkSync(false);
 
 	if(mozilla === true) {
 		chrome.bookmarks.create(
@@ -1190,10 +1207,7 @@ function importMarks(parsedMarks, index=0) {
 					message = count + chrome.i18n.getMessage("successImportBookmarks");
 					notify('info',message);
 					loglines = logit('Info: ' + message + ' Re-adding the listeners now');
-					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-					chrome.bookmarks.onMoved.addListener(onMovedCheck);
-					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-					chrome.bookmarks.onChanged.addListener(onChangedCheck);
+					bookmarkSync(false);
 				}
 				else {
 					importMarks(parsedMarks, ++index);
@@ -1226,10 +1240,7 @@ function importMarks(parsedMarks, index=0) {
 					message = parsedMarks.length + chrome.i18n.getMessage("successImportBookmarks");
 					notify('info',message);
 					loglines = logit('Info: ' + message + ' Re-adding the listeners now');
-					chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-					chrome.bookmarks.onMoved.addListener(onMovedCheck);
-					chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-					chrome.bookmarks.onChanged.addListener(onChangedCheck);
+					bookmarkSync(true);
 				}
 			}
 		);
@@ -1238,7 +1249,7 @@ function importMarks(parsedMarks, index=0) {
 }
 
 function addAllMarks(parsedMarks, index=1) {
-	chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
+	bookmarkSync(false);
     let bmid = parsedMarks[index].id;
     let bmparentId = parsedMarks[index].parentId;
     let bmindex = parsedMarks[index].index;
@@ -1288,8 +1299,7 @@ function addAllMarks(parsedMarks, index=1) {
 			message = count + chrome.i18n.getMessage("successImportBookmarks");
 			notify('info',message);
 			loglines = logit('Info: '+message);
-			chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-			chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+			bookmarkSync(true);
 			
 			let datems = Date.now();
 			let date = new Date(datems);

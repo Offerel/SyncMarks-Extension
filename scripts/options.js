@@ -157,19 +157,7 @@ function gToken(e) {
 }
 
 function saveOptions(e) {
-	if(typeof e !== "undefined") {
-		e.preventDefault();
-		if(e.srcElement.id === 's_auto' && e.srcElement.checked) {
-			document.getElementById("s_tabs").disabled = false;
-		} else if (e.srcElement.id === 's_auto' && !e.srcElement.checked) {
-			document.getElementById("s_tabs").checked = false;
-			document.getElementById("s_tabs").disabled = true;
-		}
-	
-		if(e.srcElement.id === 's_tabs' && e.srcElement.checked) {
-			document.getElementById("s_auto").checked = true;
-		}
-	}
+	if(typeof e !== "undefined") e.preventDefault();
 
 	let text = chrome.i18n.getMessage("optionsSuccessSave");
 	let type = 'info';
@@ -189,8 +177,10 @@ function saveOptions(e) {
 
 	chrome.storage.local.set(cOptions);
 	chrome.runtime.sendMessage({action: "clientSendOptions", data: cOptions});
-
 	showMsg(text, type);
+
+	chrome.runtime.sendMessage({action: "tabSync", data: cOptions.tabs});
+	chrome.runtime.sendMessage({action: "bookmarkSync", data: cOptions.sync});
 }
 
 function rName() {
@@ -214,37 +204,37 @@ function restoreOptions() {
 		chrome.runtime.sendMessage({action: "clientInfo", tab: tabs[0]['id']});
 	});
 
+	let f_uuid = document.getElementById("s_uuid");
+	let f_cname = document.getElementById("cname");
+	let f_url = document.getElementById("wdurl");
+	let f_auto = document.getElementById("s_auto");
+	let f_tabs = document.getElementById("s_tabs");
+	let b_login = document.getElementById("blogin");
+
 	chrome.storage.local.get(null, function(options) {
 		if(options.instance == undefined) {
 			showMsg(chrome.i18n.getMessage("infoEmptyConfig"), 'info');
 		}
 
-		document.querySelector("#wdurl").defaultValue = options.instance || "";
+		f_url.defaultValue = options.instance || "";
 		checkURL();
-		
-		if(options.uuid === undefined) {
-			let nuuid = uuidv4();
-			document.getElementById("s_uuid").defaultValue = nuuid;
-			document.getElementById("cname").placeholder = nuuid;
-		} else {
-			document.getElementById("s_uuid").defaultValue = options.uuid;
-			document.getElementById("cname").placeholder = options.name;
-		}
 
-		document.getElementById("s_auto").defaultChecked = options.sync;
-		document.getElementById("s_tabs").disabled = (options.sync === false) ? true:false;
+		uuid = (options.uuid === undefined) ? uuidv4():options.uuid;
+		f_cname.placeholder = uuid;
+		f_uuid.defaultValue = uuid;
+		f_auto.defaultChecked = options.sync;
 		
 		gName();
-		document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
+
 		if(options.token === undefined) {
-			document.getElementById("blogin").disabled = false;
-			document.getElementById("blogin").style.backgroundColor = "red";
+			b_login.disabled = false;
+			b_login.style.backgroundColor = "red";
 		}
-		document.getElementById("s_tabs").defaultChecked = (options.tabs == undefined) ? false:options.tabs;
+		f_tabs.defaultChecked = (options.tabs == undefined) ? false:options.tabs;
 	
 		last_sync = options.last_sync || 0;
 		if(last_sync.toString().length > 0) {
-			document.querySelector("#s_auto").removeAttribute("disabled");
+			f_auto.removeAttribute("disabled");
 		}
 		
 		checkForm();
@@ -254,7 +244,6 @@ function restoreOptions() {
 				var s = (name === 'bookmark-tab') ? shortcut:'undef';
 			}
 		});
-		
 	});
 }
 

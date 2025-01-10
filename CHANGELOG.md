@@ -2,6 +2,7 @@
 ## v2.1.6 (2025-01-09)
 - Removed direct toggle
 - Fixed CSS for options
+- Fixed Tab Sync
 
 ## v2.1.5 (2025-01-08)
 - Add info to options, when bookmark API is unsupported
