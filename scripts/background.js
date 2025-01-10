@@ -148,7 +148,6 @@ function sendRequest(action, data = null, tab = null) {
 				if(xRinfo == 0) {
 					chrome.storage.local.remove('token');
 					changeIcon('error');
-
 					chrome.storage.local.set({
 						popup: {
 							message:'Token removed',
