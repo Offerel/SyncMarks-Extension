@@ -38,6 +38,7 @@ chrome.storage.local.get(null, function(options) {
 search = document.getElementById("search");
 document.getElementById("settings").addEventListener('click', function() {
 	chrome.runtime.openOptionsPage();
+	window.close();
 });
 
 document.getElementById("addbm").addEventListener('click', addBookmark);

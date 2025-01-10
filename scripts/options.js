@@ -238,6 +238,18 @@ function restoreOptions() {
 		}
 		
 		checkForm();
+
+		chrome.permissions.getAll(function(e) {
+			if(e.permissions.includes('bookmarks') === false) {
+				f_auto.disabled = true;
+				f_auto.checked = false;
+			}
+
+			if(e.permissions.includes('tabs') === false) {
+				f_tabs.disabled = true;
+				f_tabs.checked = false;
+			}
+		});
 		
 		chrome.commands.getAll((commands) => {
 			for (let {name, shortcut} of commands) {
