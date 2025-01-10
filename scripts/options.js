@@ -65,7 +65,7 @@ function checkForm() {
 				document.getElementById('mupload').disabled=true;
 			}
 		} else {
-			showMsg(chrome.i18n.getMessage(optionsBAPIHint), 'info');
+			showMsg(chrome.i18n.getMessage("optionsBAPIHint"), 'info');
 			chrome.storage.local.set({sync: false});
 			document.getElementById('mdownload').disabled=true;
 			document.getElementById('mupload').disabled=true;
@@ -251,7 +251,7 @@ function restoreOptions() {
 			}
 		});
 		
-		chrome.commands.getAll((commands) => {
+		if(chrome.commands) chrome.commands.getAll((commands) => {
 			for (let {name, shortcut} of commands) {
 				var s = (name === 'bookmark-tab') ? shortcut:'undef';
 			}

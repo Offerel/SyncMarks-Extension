@@ -76,7 +76,7 @@ chrome.runtime.onMessage.addListener(
 
 chrome.permissions.getAll(function(e) {
 	chrome.storage.local.get(null, function(options) {
-		bookmarkSync(options.sync);
+		if(chrome.bookmarks) bookmarkSync(options.sync);
 		tabSync(options.tabs);
 	});
 
@@ -103,7 +103,7 @@ chrome.notifications.onClicked.addListener(notificationSettings);
 
 chrome.tabs.onActivated.addListener(onTabActivated)
 
-chrome.commands.onCommand.addListener((command) => {
+if(chrome.commands !== undefined) chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
 

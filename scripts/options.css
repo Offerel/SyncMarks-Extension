@@ -550,12 +550,15 @@ h1 {
 	box-shadow: 0px 0px 0px 1px #20123a0a, 0px 1px 2px 0px #2200330a, 0px 2px 1px -1px #0730721f, 0px 1px 6px 0px #0e0d1a1f;
 	left: 0;
 	right: 0;
+	opacity: 0;
+	transition: opacity 1s;
 }
 #wmessage.show {
 	animation-name: bounceInUp;
 	animation-duration: 1s;
 	animation-fill-mode: both;
 	bottom: -20px;
+	opacity: 1;
 }
 @keyframes bounceInUp {
 	0%, 60%, 75%, 90%, 100% {
