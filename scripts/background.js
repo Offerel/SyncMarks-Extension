@@ -101,7 +101,7 @@ chrome.runtime.onInstalled.addListener(onInstalled);
 
 chrome.notifications.onClicked.addListener(notificationSettings);
 
-chrome.tabs.onActivated.addListener(onTabActivated)
+chrome.tabs.onActivated.addListener(onTabActivated);
 
 if(chrome.commands !== undefined) chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
@@ -414,8 +414,7 @@ function clientRename(response) {
 }
 
 function tabsSend(response) {
-	let test = parseInt(response['tabs']);
-	if(test < 1) {
+	if(parseInt(response['tabs']) < 1) {
 		let message = "Tabs could not be saved, please check server error log";
 		loglines = logit(message);
 		changeIcon('error');
@@ -423,9 +422,7 @@ function tabsSend(response) {
 }
 
 function tabsGet(response) {
-	tabCount = response.tabs.length;
-	
-	for(let i = 0; i < tabCount; i++) {
+	for(let i = 0; i < response.tabs.length; i++) {
 		chrome.tabs.query({url: response.tabs[i].bmURL}, function(tabInfo) {
 			if(tabInfo.length === 0) {
 				chrome.tabs.create({url: response.tabs[i].bmURL, active:false});

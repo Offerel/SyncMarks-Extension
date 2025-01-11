@@ -1,4 +1,7 @@
 # ChangeLog
+## v2.1.7 (2025-01-11)
+- Fix tab behavior
+
 ## v2.1.6 (2025-01-10)
 - Removed direct toggle
 - Fixed CSS for options
