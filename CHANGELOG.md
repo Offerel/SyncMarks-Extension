@@ -1,36 +1,36 @@
 # ChangeLog
-## v2.1.7 (2025-01-11)
+## v2.1.7
 - Fix tab behavior
 
-## v2.1.6 (2025-01-10)
+## v2.1.6
 - Removed direct toggle
 - Fixed CSS for options
 - Fixed Tab Sync
 - Fix Android Options
 
-## v2.1.5 (2025-01-08)
+## v2.1.5
 - Add info to options, when bookmark API is unsupported
 - Removed option for action
 - Fix Clientlist
 - Fix popup layout in Firefox
 
-## v2.1.4 (2025-01-04)
+## v2.1.4
 - Fix innerHTML
 
-## v2.1.3 (2025-01-04)
+## v2.1.3
 - Fix CSS
 
-## v2.1.2 (2025-01-02)
+## v2.1.2
 - Added PopUp
 - Removed action chaos
 - Fix delete bookmark
 
-## v2.1.1 (2024-12-25)
-- Added Chinese (Han Script) translation
-- Added Dutch translation
+## v2.1.1
+- Added Chinese (Han Script) translation by Outbreak2096
+- Added Dutch translation by Vistaus
 - Firefox fix for requesting host permission
 
-## v2.1.0 (2024-10-21)
+## v2.1.0
 - Removed WebDAV Support
 - Added Polish translation
 - Added Weblate as translation plattform
@@ -38,59 +38,59 @@
 - Fix defect token
 - Fix client Restore
 
-## v2.0.4 (2024-10-19)
+## v2.0.4
 - Fix response object
 - Remove token on invalid token
 
-## v2.0.3 (2024-10-17)
+## v2.0.3
 - Fix open Options Page
 - Fix Client restore
 - Fix request host permissions
 
-## v2.0.2 (2024-10-15)
+## v2.0.2
 - Fix Remove Bookmark
 - Add support for store/restore client settings from server
 
-## v2.0.1 (2024-10-07)
+## v2.0.1
 - Fix bookmarkTab/permission
 
-## v2.0.0 (2024-09-26)
+## v2.0.0)
 - Migrated to manifest v3
 - Added API changes
 - Added option host permissions
 - Added URL verify
 - Small fixes
 
-## v1.20.20 (2024-04-28)
+## v1.20.20
 - Add check for correct backend url
 - Optimized feedback messages
 
-## v1.20.19 (2022-11-03)
+## v1.20.19
 - Fixed Android bug in options
 - Fixed backup bug on Android
 - Fixed tab sync bug on Android
 
-## v1.20.18 (2022-11-03)
+## v1.20.18
 - Added tab sync function
 
-## v1.20.16 (2022-10-24)
+## v1.20.16
 - Fixed Initial sync with empty parent folder
 
-## v1.20.15 (2022-10-20)
+## v1.20.15
 - Added changeIcon function
 
-## v1.20.14 (2022-09-14)
+## v1.20.14
 - Removed FindByID
 - Fixed rare issue with empty URL in options
 
-## v1.20.13 (2022-09-11)
+## v1.20.13
 - Fix in Options
 - Fix delete bookmark
 
-## v1.20.11 (2022-09-03)
+## v1.20.11
 - Fixed mobile detection
 
-## v1.20.10 (2022-08-28)
+## v1.20.10
 - Added icon context menu
 
 ## v1.20.9 (2022-08-21)
