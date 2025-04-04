@@ -30,12 +30,12 @@ chrome.storage.local.get(null, function(options) {
 		urlExists();
 
 		clone = document.getElementById('bookmarks').cloneNode(true);
+		document.getElementById('loader').classList.remove('loader');
 	}).catch(err => {
 		console.error(err);
 		chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
+		document.getElementById('loader').classList.remove('loader');
 	});
-
-	document.getElementById('loader').classList.remove('loader');
 });
 
 search = document.getElementById("search");

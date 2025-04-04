@@ -238,7 +238,8 @@ button:disabled > svg {
 #loader {
 	position: absolute;
 	left: calc(50% - 25px);
-	top: 65px;
+	top: calc(50% - 25px);
+	z-index: 1;
 }
 .loader {
 	width: 50px;
