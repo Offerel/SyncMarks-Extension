@@ -1,6 +1,7 @@
 # ChangeLog
 ## v2.1.7
 - Fix tab behavior
+- Fix error messages in popup
 
 ## v2.1.6
 - Removed direct toggle

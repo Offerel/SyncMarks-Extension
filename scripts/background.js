@@ -142,7 +142,7 @@ function sendRequest(action, data = null, tab = null) {
 			referrerPolicy: "no-referrer",
 			body: JSON.stringify(params)
 		}).then(response => {
-			let rStatus = response.status;
+			//let rStatus = response.status;
 			let xRinfo = response.headers.get("X-Request-Info");
 			if (xRinfo != null) {
 				if(xRinfo == 0) {
@@ -163,7 +163,7 @@ function sendRequest(action, data = null, tab = null) {
 		}).then(responseData => {
 			action(responseData, tab);
 		}).catch(err => {
-			loglines = logit("Error: " + err);
+			loglines = logit("Error: " + action + ': ' + err);
 		});
 	});
 }
@@ -256,7 +256,7 @@ function pushGet(response) {
 				openTab(notification.url,notification.nkey,notification.title);
 			});
 		} catch(error) {
-			loglines = logit(error);
+			loglines = logit('pushGet: ' + error);
 		}
 		loglines = logit("Info: List of " + response.notifications.length + " notifications received successful.");
 	}
@@ -307,7 +307,7 @@ function bookmarkImport(response) {
 		message.text = "successExportBookmarks";
 		message.type = 'success';
 	} else {
-		loglines = logit("Error: "+ response.message);
+		loglines = logit("Error: bookmarkImport: "+ response.message);
 		message.text = chrome.i18n.getMessage("errorExportBookmarks");
 		message.type = 'error';
 	}
@@ -330,7 +330,7 @@ function bookmarkAdd(response) {
 				changeIcon('warn');
 				chrome.storage.local.set({
 					popup: {
-						message:response.message,
+						message:'bookmarkAdd: ' + response.message,
 						mode:'warn'
 					}
 				});
@@ -349,7 +349,7 @@ function bookmarkAdd(response) {
 }
 
 function pushHide(response) {
-	if(response.error) loglines = logit("Error: " + response.error);
+	if(response.error) loglines = logit("Error: pushHide: " + response.error);
 }
 
 function bookmarkEdit(response) {
@@ -385,10 +385,10 @@ function bookmarkDel(response) {
 			});
 		default:
 			changeIcon('error');
-			loglines = logit("Error: " +  + response['message']);
+			loglines = logit("Error: bookmarkDel: " +  + response['message']);
 			chrome.storage.local.set({
 				popup: {
-					message:response['message'],
+					message:'bookmarkDel: ' + response['message'],
 					mode:'error'
 				}
 			});
@@ -526,7 +526,7 @@ function ccMenus() {
 						});
 					} catch {}
 				} catch(error) {
-					loglines = logit(error);
+					loglines = logit('ccMenus: ' + error);
 				}
 			})
 		}
@@ -950,7 +950,7 @@ async function doFullSync() {
 			sendRequest(bookmarkExport, 'json');
 		});
 	} catch(error) {
-		loglines = logit(error);
+		loglines = logit('doFullSync: ' + error);
 	} finally {
 		chrome.storage.local.set({last_s: 1});
 	}

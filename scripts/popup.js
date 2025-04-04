@@ -118,7 +118,7 @@ function popupMessage(message, state) {
 		mdiv.classList.remove('show');
 		chrome.storage.local.remove('popup');
 		chrome.action.setBadgeText({text: ''});
-	}, 10000);
+	}, 5000);
 }
 
 function addBookmark() {
