@@ -1,5 +1,6 @@
 var clone;
 chrome.storage.local.get(null, function(options) {
+	document.getElementById('loader').classList.add('loader');
 	let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
 		client:options.uuid,
 		token:options.token
@@ -33,6 +34,8 @@ chrome.storage.local.get(null, function(options) {
 		console.error(err);
 		chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
 	});
+
+	document.getElementById('loader').classList.remove('loader');
 });
 
 search = document.getElementById("search");
