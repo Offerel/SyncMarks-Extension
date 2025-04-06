@@ -49,6 +49,7 @@ document.getElementById("addbm").addEventListener('click', addBookmark);
 chrome.storage.local.get(null, function(options) {
 	if(options.popup !== undefined) {
 		popupMessage(options.popup.message, options.popup.mode);
+		chrome.action.setBadgeText({text: ''});
 	}
 });
 

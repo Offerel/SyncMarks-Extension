@@ -142,7 +142,6 @@ function sendRequest(action, data = null, tab = null) {
 			referrerPolicy: "no-referrer",
 			body: JSON.stringify(params)
 		}).then(response => {
-			//let rStatus = response.status;
 			let xRinfo = response.headers.get("X-Request-Info");
 			if (xRinfo != null) {
 				if(xRinfo == 0) {
