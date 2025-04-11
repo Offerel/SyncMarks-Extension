@@ -184,7 +184,7 @@ function clientSendOptions(response) {
 		changeIcon('warn');
 		chrome.storage.local.set({
 			popup: {
-				message:response.message,
+				message:'clientSendOptions: ' + response.message,
 				mode:'warn'
 			}
 		});
@@ -378,7 +378,7 @@ function bookmarkDel(response) {
 			loglines = logit("Warn: " +  + response['message']);
 			chrome.storage.local.set({
 				popup: {
-					message:response['message'],
+					message:'bookmarkDel: ' + response['message'],
 					mode:'warn'
 				}
 			});
@@ -576,7 +576,7 @@ function logit(message) {
 		changeIcon('error');
 		chrome.storage.local.set({
 			popup: {
-				message: message,
+				message: 'logit: ' + message,
 				mode:'error'
 			}
 		});
