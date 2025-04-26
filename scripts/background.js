@@ -571,12 +571,12 @@ function sendTab(element) {
 function logit(message) {
 	var ndate = new Date();
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
-	if(message.toString().toLowerCase().indexOf('error') >= 0) {
+	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('typeerror') === false )  {
 		//notify('error',message);
 		changeIcon('error');
 		chrome.storage.local.set({
 			popup: {
-				message: 'logit: ' + message,
+				message: message,
 				mode:'error'
 			}
 		});
@@ -1073,23 +1073,23 @@ async function importFull(rMarks) {
 		
 		switch (action) {
 			case 0:
-				loglines = logit('Debug: Ignore bookmark "'+remoteMark.bmID+'"');
+				loglines = logit('Debug: Ignore bookmark "'+remoteMark.bmTitle+'"');
 				break;
 			case 1:
-				loglines = logit('Debug: Create bookmark "'+remoteMark.bmID+'"');
+				loglines = logit('Debug: Create bookmark "'+remoteMark.bmTitle+'"');
 				await createMark(remoteMark);
 				break;
 			case 2:
-				loglines = logit('Debug: Move bookmark "'+remoteMark.bmID+'"');
+				loglines = logit('Debug: Move bookmark "'+remoteMark.bmTitle+'"');
 				await iMoveMark(remoteMark);
 				break;
 			case 3:
-				loglines = logit('Debug: Existing Bookmark "'+remoteMark.bmID+'"');
+				loglines = logit('Debug: Existing Bookmark "'+remoteMark.bmTitle+'"');
 				//delete remoteMark.bmIndex;
 				await iMoveMark(remoteMark);
 				break;
 			default:
-				loglines = logit('Debug: Unknown action for bookmark "'+remoteMark.bmID+'"');
+				loglines = logit('Debug: Unknown action for bookmark "'+remoteMark.bmTitle+'"');
 				break;
 		}
 	}
