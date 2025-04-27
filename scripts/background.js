@@ -777,7 +777,7 @@ function migrateOptions() {
 			});
 		}
 
-		if(options.sync != undefined) {
+		if(options.sync != undefined && options.sync.auto != undefined) {
 			chrome.storage.local.set({sync: options.sync.auto});
 		}
 	});
