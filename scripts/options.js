@@ -347,7 +347,7 @@ function openTab(tabname) {
 		larea.removeChild(larea.childNodes[2]); 
 	}
 
-	if(tabname.target.innerText == 'Logfile') {
+	if(tabname.target.dataset.val == 'logfile') {
 		chrome.runtime.sendMessage({action: "getLoglines"});
 	}
 	
