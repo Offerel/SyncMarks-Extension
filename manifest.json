@@ -2,7 +2,7 @@
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
   "homepage_url": "https://codeberg.org/Offerel/SyncMarks-Extension",
-  "version": "2.1.5",
+  "version": "2.1.7",
   "author": "Offerel",
   "manifest_version": 3,
   "default_locale": "en",
@@ -43,7 +43,7 @@
     "storage",
     "notifications",
     "contextMenus",
-    "activeTab"
+    "tabs"
   ],
   "optional_host_permissions": [
     "https://*/*"

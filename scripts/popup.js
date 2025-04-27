@@ -1,5 +1,6 @@
 var clone;
 chrome.storage.local.get(null, function(options) {
+	document.getElementById('loader').classList.add('loader');
 	let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
 		client:options.uuid,
 		token:options.token
@@ -29,15 +30,18 @@ chrome.storage.local.get(null, function(options) {
 		urlExists();
 
 		clone = document.getElementById('bookmarks').cloneNode(true);
+		document.getElementById('loader').classList.remove('loader');
 	}).catch(err => {
 		console.error(err);
 		chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
+		document.getElementById('loader').classList.remove('loader');
 	});
 });
 
 search = document.getElementById("search");
 document.getElementById("settings").addEventListener('click', function() {
 	chrome.runtime.openOptionsPage();
+	window.close();
 });
 
 document.getElementById("addbm").addEventListener('click', addBookmark);
@@ -45,6 +49,7 @@ document.getElementById("addbm").addEventListener('click', addBookmark);
 chrome.storage.local.get(null, function(options) {
 	if(options.popup !== undefined) {
 		popupMessage(options.popup.message, options.popup.mode);
+		chrome.action.setBadgeText({text: ''});
 	}
 });
 
@@ -117,13 +122,13 @@ function popupMessage(message, state) {
 		mdiv.classList.remove('show');
 		chrome.storage.local.remove('popup');
 		chrome.action.setBadgeText({text: ''});
-	}, 10000);
+	}, 5000);
 }
 
 function addBookmark() {
 	chrome.storage.local.get(null, function(options) {
 		chrome.permissions.getAll(function(e) {
-			if(options.direct || !e.permissions.includes('bookmarks')) {
+			if(options.sync === false || e.permissions.includes('bookmarks') === false) {
 				chrome.runtime.sendMessage({action: "bookmarkTab"});
 				window.close();
 			} else {

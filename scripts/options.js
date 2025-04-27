@@ -65,12 +65,8 @@ function checkForm() {
 				document.getElementById('mupload').disabled=true;
 			}
 		} else {
-			showMsg(chrome.i18n.getMessage(optionsBAPIHint), 'info');
-			let cOptions = {
-				sync: false,
-				direct: document.getElementById("b_action").checked
-			};
-			chrome.storage.local.set(cOptions);
+			showMsg(chrome.i18n.getMessage("optionsBAPIHint"), 'info');
+			chrome.storage.local.set({sync: false});
 			document.getElementById('mdownload').disabled=true;
 			document.getElementById('mupload').disabled=true;
 			document.getElementById('s_auto').checked = false;
@@ -115,7 +111,6 @@ function gToken(e) {
 
 		let cOptions = {
 			sync: document.getElementById("s_auto").checked,
-			direct: document.getElementById("b_action").checked,
 			name: document.getElementById("cname").value,
 			uuid: document.getElementById("s_uuid").value,
 			tabs: document.getElementById("s_tabs").checked,
@@ -162,29 +157,7 @@ function gToken(e) {
 }
 
 function saveOptions(e) {
-	if(typeof e !== "undefined") {
-		e.preventDefault();
-		if(e.srcElement.id === 's_auto' && e.srcElement.checked) {
-			document.getElementById("b_action").checked = false;
-			document.getElementById("b_action").disabled = true;
-			document.getElementById("s_tabs").disabled = false;
-		} else if (e.srcElement.id === 's_auto' && !e.srcElement.checked) {
-			document.getElementById("b_action").disabled = false;
-			document.getElementById("s_tabs").checked = false;
-			document.getElementById("s_tabs").disabled = true;
-		}
-	
-		if(e.srcElement.id === 's_tabs' && e.srcElement.checked) {
-			document.getElementById("s_auto").checked = true;
-		}
-	
-		if(e.srcElement.id === 'b_action' && e.srcElement.checked) {
-			document.getElementById("s_auto").checked = false;
-			document.getElementById("s_tabs").disabled = true;
-		} else if(e.srcElement.id === 'b_action' && !e.srcElement.checked) {
-			document.getElementById("s_tabs").disabled = false;
-		}
-	}
+	if(typeof e !== "undefined") e.preventDefault();
 
 	let text = chrome.i18n.getMessage("optionsSuccessSave");
 	let type = 'info';
@@ -196,7 +169,6 @@ function saveOptions(e) {
 
 	const cOptions = {
 		sync: document.getElementById("s_auto").checked,
-		direct: document.getElementById("b_action").checked,
 		name: document.getElementById("cname").value,
 		uuid: document.getElementById("s_uuid").value,
 		tabs: document.getElementById("s_tabs").checked,
@@ -205,8 +177,10 @@ function saveOptions(e) {
 
 	chrome.storage.local.set(cOptions);
 	chrome.runtime.sendMessage({action: "clientSendOptions", data: cOptions});
-
 	showMsg(text, type);
+
+	chrome.runtime.sendMessage({action: "tabSync", data: cOptions.tabs});
+	chrome.runtime.sendMessage({action: "bookmarkSync", data: cOptions.sync});
 }
 
 function rName() {
@@ -230,47 +204,58 @@ function restoreOptions() {
 		chrome.runtime.sendMessage({action: "clientInfo", tab: tabs[0]['id']});
 	});
 
+	let f_uuid = document.getElementById("s_uuid");
+	let f_cname = document.getElementById("cname");
+	let f_url = document.getElementById("wdurl");
+	let f_auto = document.getElementById("s_auto");
+	let f_tabs = document.getElementById("s_tabs");
+	let b_login = document.getElementById("blogin");
+
 	chrome.storage.local.get(null, function(options) {
 		if(options.instance == undefined) {
 			showMsg(chrome.i18n.getMessage("infoEmptyConfig"), 'info');
 		}
-		document.querySelector("#wdurl").defaultValue = options.instance || "";
-		checkURL();
-		
-		if(options.uuid === undefined) {
-			let nuuid = uuidv4();
-			document.getElementById("s_uuid").defaultValue = nuuid;
-			document.getElementById("cname").placeholder = nuuid;
-		} else {
-			document.getElementById("s_uuid").defaultValue = options.uuid;
-			document.getElementById("cname").placeholder = options.name;
-		}
 
-		document.getElementById("s_auto").defaultChecked = options.sync;
-		document.getElementById("b_action").defaultChecked = options.direct;
+		f_url.defaultValue = options.instance || "";
+		checkURL();
+
+		uuid = (options.uuid === undefined) ? uuidv4():options.uuid;
+		f_cname.placeholder = uuid;
+		f_uuid.defaultValue = uuid;
+		f_auto.defaultChecked = options.sync;
 		
 		gName();
-		document.querySelector("#cname").placeholder = document.querySelector("#s_uuid").defaultValue;
+
 		if(options.token === undefined) {
-			document.getElementById("blogin").disabled = false;
-			document.getElementById("blogin").style.backgroundColor = "red";
+			b_login.disabled = false;
+			b_login.style.backgroundColor = "red";
 		}
-		document.getElementById("s_tabs").defaultChecked = (options.tabs == undefined) ? false:options.tabs;
+		f_tabs.defaultChecked = (options.tabs == undefined) ? false:options.tabs;
 	
 		last_sync = options.last_sync || 0;
 		if(last_sync.toString().length > 0) {
-			document.querySelector("#s_auto").removeAttribute("disabled");
+			f_auto.removeAttribute("disabled");
 		}
 		
 		checkForm();
+
+		chrome.permissions.getAll(function(e) {
+			if(e.permissions.includes('bookmarks') === false) {
+				f_auto.disabled = true;
+				f_auto.checked = false;
+			}
+
+			if(e.permissions.includes('tabs') === false) {
+				f_tabs.disabled = true;
+				f_tabs.checked = false;
+			}
+		});
 		
-		chrome.commands.getAll((commands) => {
+		if(chrome.commands) chrome.commands.getAll((commands) => {
 			for (let {name, shortcut} of commands) {
 				var s = (name === 'bookmark-tab') ? shortcut:'undef';
 			}
-			document.getElementById("obmd").title = chrome.i18n.getMessage('bookmarkTab') + ` (${s})`;
 		});
-		
 	});
 }
 
@@ -362,7 +347,7 @@ function openTab(tabname) {
 		larea.removeChild(larea.childNodes[2]); 
 	}
 
-	if(tabname.target.innerText == 'Logfile') {
+	if(tabname.target.dataset.val == 'logfile') {
 		chrome.runtime.sendMessage({action: "getLoglines"});
 	}
 	
@@ -390,25 +375,6 @@ function saveLog() {
 
 function clearLog() {
 	chrome.runtime.sendMessage({action: "emptyLoglines"});
-}
-
-function switchBackend() {
-	let backendPHP = this.checked;
-
-	if(backendPHP) {
-		document.getElementById("blbl").innerText = chrome.i18n.getMessage("backendType");
-		document.getElementById('cname').disabled = false;
-		document.getElementById('b_action').disabled = false;
-		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'unset';
-		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = ''
-	} else {
-		document.getElementById('cname').disabled = true;
-		document.getElementById('b_action').disabled = true;
-		document.getElementById('b_action').parentElement.querySelector('.slider').style.pointerEvents = 'none';
-		document.getElementById('b_action').parentElement.querySelector('.slider').style.backgroundColor = 'lightgrey'
-	}
-
-	saveOptions();
 }
 
 function requestHostPermission() {
@@ -454,7 +420,6 @@ function serverImport() {
 	document.getElementById('cname').value = (selectedText != restored_Options.name) ? selectedText:restored_Options.name;
 	document.getElementById("s_tabs").checked = restored_Options.tabs;
 	document.getElementById("s_auto").checked = restored_Options.sync;
-	document.getElementById("b_action").checked = restored_Options.direct;
 
 	document.getElementById("coptionsdialog").style.display = "none";
 
@@ -597,7 +562,6 @@ window.addEventListener('load', function () {
 	document.getElementById("nuser").addEventListener("input", checkLoginForm);
 	document.getElementById("npassword").addEventListener("input", checkLoginForm);
 	document.getElementById('lgin').addEventListener("click", gToken);
-	document.getElementById("b_action").addEventListener("change", saveOptions);
 	document.getElementById("s_tabs").addEventListener("change", saveOptions);
 	document.getElementById("s_auto").addEventListener("change", saveOptions);
 	document.getElementById("cname").addEventListener("change", rName);
