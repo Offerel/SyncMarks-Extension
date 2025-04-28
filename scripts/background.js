@@ -572,7 +572,6 @@ function logit(message) {
 	var ndate = new Date();
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('typeerror') === false )  {
-		//notify('error',message);
 		changeIcon('error');
 		chrome.storage.local.set({
 			popup: {
@@ -580,7 +579,6 @@ function logit(message) {
 				mode:'error'
 			}
 		});
-		//console.error(message);
 	}
 	return logline;
 }
@@ -740,7 +738,7 @@ function notificationSettings(id) {
 		try {
 			nd = JSON.parse(id.substring(0, id.indexOf('_')));
 		} catch (e) {
-			//
+			loglines = logit(e);
 		}
 		
 		if (typeof nd !== 'undefined') {
