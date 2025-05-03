@@ -7,12 +7,15 @@ var pTabs = [];
 var lastseen = null;
 
 chrome.runtime.onStartup.addListener(async () => {
+	loglines = logit('Debug: startup listener');
 	init();
 });
 
-if(mozilla === true) {
+if(mozilla) {
+	loglines = logit('Debug: Mozilla true');
 	init();
 } else {
+	loglines = logit('Debug: Mozilla false');
 	const pingInterval = setInterval(() => {
 		chrome.runtime.getPlatformInfo;
 		self.serviceWorker.postMessage('keep');
