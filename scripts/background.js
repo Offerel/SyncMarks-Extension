@@ -6,19 +6,21 @@ var oMarks = [];
 var pTabs = [];
 var lastseen = null;
 
+loglines = logit("Info: " + globalThis.browwser);
+
 chrome.runtime.onStartup.addListener(async () => {
-	loglines = logit('Debug: startup listener');
 	init();
 });
 
-if(mozilla) {
-	loglines = logit('Debug: Mozilla true');
-	init();
-} else {
-	loglines = logit('Debug: Mozilla false');
+if(!mozilla) {
 	const pingInterval = setInterval(() => {
 		chrome.runtime.getPlatformInfo;
 		self.serviceWorker.postMessage('keep');
+	}, 20000);
+} else {
+	const pingInterval = setInterval(() => {
+		chrome.runtime.getPlatformInfo;
+		self.postMessage('keep');
 	}, 20000);
 }
 
