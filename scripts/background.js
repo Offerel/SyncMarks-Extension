@@ -7,8 +7,12 @@ var pTabs = [];
 var lastseen = null;
 
 loglines = logit("Info: " + globalThis.browwser);
-
+/*
 chrome.runtime.onStartup.addListener(async () => {
+	init();
+});
+*/
+chrome.runtime.onStartup.addListener( () => {
 	init();
 });
 
@@ -642,13 +646,15 @@ function changeIcon(mode) {
 	 }
 }
 
-async function init() {
+function init() {
+//async function init() {
 	loglines = logit("Info: AddOn version: " + chrome.runtime.getManifest().version);
 	loglines = logit("Info: " + navigator.userAgent);
 	chrome.runtime.getPlatformInfo(function(info){
 		loglines = logit("Info: Current architecture: " + info.arch + " | Current OS: " + info.os);
 	});
-	await get_oMarks();
+	//await get_oMarks();
+	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, async function(options) {
 		if(options.instance == undefined) {
