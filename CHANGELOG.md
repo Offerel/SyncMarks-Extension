@@ -1,4 +1,10 @@
 # ChangeLog
+## v2.1.9
+- Fix undefined variable
+
+## v2.1.8
+- Fix onStartup.addListener
+
 ## v2.1.7
 - Fix tab behavior
 - Fix error messages in PopUp

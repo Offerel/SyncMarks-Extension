@@ -5,17 +5,24 @@ var debug = false;
 var oMarks = [];
 var pTabs = [];
 var lastseen = null;
+var count = 0;
+var remoteMark;
 
-chrome.runtime.onStartup.addListener(async () => {
+loglines = logit("Info: " + globalThis.browwser);
+
+chrome.runtime.onStartup.addListener( () => {
 	init();
 });
 
-if(mozilla === true) {
-	init();
-} else {
+if(!mozilla) {
 	const pingInterval = setInterval(() => {
 		chrome.runtime.getPlatformInfo;
 		self.serviceWorker.postMessage('keep');
+	}, 20000);
+} else {
+	const pingInterval = setInterval(() => {
+		chrome.runtime.getPlatformInfo;
+		self.postMessage('keep');
 	}, 20000);
 }
 
@@ -572,7 +579,6 @@ function logit(message) {
 	var ndate = new Date();
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('typeerror') === false )  {
-		//notify('error',message);
 		changeIcon('error');
 		chrome.storage.local.set({
 			popup: {
@@ -580,7 +586,6 @@ function logit(message) {
 				mode:'error'
 			}
 		});
-		//console.error(message);
 	}
 	return logline;
 }
@@ -639,13 +644,15 @@ function changeIcon(mode) {
 	 }
 }
 
-async function init() {
+function init() {
+//async function init() {
 	loglines = logit("Info: AddOn version: " + chrome.runtime.getManifest().version);
 	loglines = logit("Info: " + navigator.userAgent);
 	chrome.runtime.getPlatformInfo(function(info){
 		loglines = logit("Info: Current architecture: " + info.arch + " | Current OS: " + info.os);
 	});
-	await get_oMarks();
+	//await get_oMarks();
+	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, async function(options) {
 		if(options.instance == undefined) {
@@ -740,7 +747,7 @@ function notificationSettings(id) {
 		try {
 			nd = JSON.parse(id.substring(0, id.indexOf('_')));
 		} catch (e) {
-			//
+			loglines = logit(e);
 		}
 		
 		if (typeof nd !== 'undefined') {

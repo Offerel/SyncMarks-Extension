@@ -453,7 +453,7 @@ function serverImport() {
 			}).then(responseData => {
 				chrome.runtime.sendMessage({action: "loglines", data: 'Info: Old client removed'});
 			}).catch(err => {
-				//console.warn(err);
+				chrome.runtime.sendMessage({action: "loglines", data: 'Error: ' + err});
 			});
 		}
 	}, 500);
