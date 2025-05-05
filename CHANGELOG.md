@@ -1,4 +1,7 @@
 # ChangeLog
+## v2.1.9
+- Fix undefined variable
+
 ## v2.1.8
 - Fix onStartup.addListener
 

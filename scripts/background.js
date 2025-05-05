@@ -5,13 +5,11 @@ var debug = false;
 var oMarks = [];
 var pTabs = [];
 var lastseen = null;
+var count = 0;
+var remoteMark;
 
 loglines = logit("Info: " + globalThis.browwser);
-/*
-chrome.runtime.onStartup.addListener(async () => {
-	init();
-});
-*/
+
 chrome.runtime.onStartup.addListener( () => {
 	init();
 });
