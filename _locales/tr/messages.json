@@ -1,1 +1,32 @@
-{}
+{
+    "extensionName": {
+        "message": "SyncMarks"
+    },
+    "extensionDescription": {
+        "message": "Yer işaretlerini ve sekmeleri kendi kendine barındırılan bir sunucu ile eşlemek için bu uzantıyı kullanın."
+    },
+    "optionsServerURL": {
+        "message": "Sunucu Adresi"
+    },
+    "optionsUsername": {
+        "message": "Kullanıcı adı"
+    },
+    "optionsPassword": {
+        "message": "Parola"
+    },
+    "optionsSyncOptions": {
+        "message": "Seçenekler"
+    },
+    "optionsBTNImport": {
+        "message": "İndir"
+    },
+    "optionsBTNSettingsHint": {
+        "message": "Yedekleme ayarları"
+    },
+    "optionsBTNExport": {
+        "message": "Yükle"
+    },
+    "optionsBTNSave": {
+        "message": "Kaydet"
+    }
+}
