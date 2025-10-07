@@ -1,4 +1,7 @@
 # ChangeLog
+## v2.1.10
+- Keep PopUp open, if ctrl key is pressed
+
 ## v2.1.9
 - Fix undefined variable
 

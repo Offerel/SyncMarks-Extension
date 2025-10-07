@@ -85,7 +85,11 @@ function cSearch() {
 function addClick() {
 	document.querySelectorAll('.file').forEach(function(bookmark){
 		bookmark.addEventListener('mouseup', function(e) {
-			window.open(e.target.dataset.url, '_blank', 'noopener,noreferrer');
+			if(!e.ctrlKey) {
+				chrome.tabs.create({url: e.target.dataset.url, active: true});
+			} else {
+				chrome.tabs.create({url: e.target.dataset.url, active: false});
+			}
 		}, false);
 	});
 }
@@ -122,7 +126,7 @@ function popupMessage(message, state) {
 		mdiv.classList.remove('show');
 		chrome.storage.local.remove('popup');
 		chrome.action.setBadgeText({text: ''});
-	}, 5000);
+	}, 3000);
 }
 
 function addBookmark() {
