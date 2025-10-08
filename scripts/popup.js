@@ -61,6 +61,9 @@ document.getElementById("settings").addEventListener('click', function() {
 
 document.getElementById("addbm").addEventListener('click', addBookmark);
 
+document.getElementById('cyes').addEventListener('click', cbtn);
+document.getElementById('cno').addEventListener('click', cbtn);
+
 chrome.storage.local.get(null, function(options) {
 	if(options.popup !== undefined) {
 		popupMessage(options.popup.message, options.popup.mode);
@@ -97,14 +100,26 @@ document.addEventListener('contextmenu', function(e) {
 });
 
 function keypress(e) {
-	if(e.keyCode === 46 && bmIDs.length > 0) {
+	if(e.keyCode === 46 && bmIDs.length > 0) showBox();
+}
+
+function cbtn(e) {
+	if(e.target.id === 'cyes') {
 		chrome.runtime.sendMessage({action: "bmRemove", data: bmIDs});
 		chrome.storage.session.remove("bmhtml");
 		bmIDs = [];
-		window.close();
+		document.getElementById('bglayer').style.display = 'none';
 	}
+
+	document.getElementById('bglayer').style.display = 'none';
+	bmIDs = [];
+	window.close();
 }
 
+function showBox() {
+	document.getElementById('msgText').innerText = chrome.i18n.getMessage("optionsPuDelConfirm");
+	document.getElementById('bglayer').style.display = 'block';
+}
 
 function cSearch() {
 	let bookmarks = document.getElementById('bookmarks');
