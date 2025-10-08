@@ -1,6 +1,7 @@
 # ChangeLog
 ## v2.1.10
 - Keep PopUp open, if ctrl key is pressed
+- Delete Bookmarks via PopUp
 
 ## v2.1.9
 - Fix undefined variable
