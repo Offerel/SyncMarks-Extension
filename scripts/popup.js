@@ -1,41 +1,56 @@
 var clone;
-chrome.storage.local.get(null, function(options) {
+var bmIDs = new Array();
+
+chrome.storage.local.get(null, async function(options) {
 	document.getElementById('loader').classList.add('loader');
 	let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
 		client:options.uuid,
 		token:options.token
 	})));
-
-	fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
-		method: "GET",
-		cache: "no-cache",
-		referrerPolicy: "no-referrer",
-		headers: {
-			'Authorization': authheader,
-		}
-	}).then(response => {
-		let xRinfo = response.headers.get("X-Request-Info");
-		if (xRinfo != null) {
-			chrome.storage.local.set({token:xRinfo});
-		}
-		return response.text();
-	}).then(html => {
+	
+	const data = await chrome.storage.session.get("bmhtml");
+	
+	if(data.bmhtml === undefined) {
+		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
+			method: "GET",
+			cache: "no-cache",
+			referrerPolicy: "no-referrer",
+			headers: {
+				'Authorization': authheader,
+			}
+		}).then(response => {
+			let xRinfo = response.headers.get("X-Request-Info");
+			if (xRinfo != null) {
+				chrome.storage.local.set({token:xRinfo});
+			}
+			return response.text();
+		}).then(html => {
+			let parser = new DOMParser();
+			let doc = parser.parseFromString(html, "text/html");
+			let bookmarks = document.getElementById('bookmarks');
+			clone = doc.getElementById('bookmarks').cloneNode(true);
+			while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
+			addClick();
+			urlExists();
+			clone = document.getElementById('bookmarks').cloneNode(true);
+			chrome.storage.session.set({bmhtml: html});
+			document.getElementById('loader').classList.remove('loader');
+		}).catch(err => {
+			console.error(err);
+			chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
+			document.getElementById('loader').classList.remove('loader');
+		});
+	} else {
 		let parser = new DOMParser();
-		let doc = parser.parseFromString(html, "text/html");
+		let doc = parser.parseFromString(data.bmhtml, "text/html");
 		let bookmarks = document.getElementById('bookmarks');
 		clone = doc.getElementById('bookmarks').cloneNode(true);
 		while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
-
 		addClick();
 		urlExists();
-
 		clone = document.getElementById('bookmarks').cloneNode(true);
 		document.getElementById('loader').classList.remove('loader');
-	}).catch(err => {
-		console.error(err);
-		chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
-		document.getElementById('loader').classList.remove('loader');
-	});
+	}
 });
 
 search = document.getElementById("search");
@@ -75,6 +90,22 @@ search.addEventListener('input', function(e) {
 	}
 });
 
+document.addEventListener('keyup', keypress);
+
+document.addEventListener('contextmenu', function(e) {
+	e.preventDefault();
+});
+
+function keypress(e) {
+	if(e.keyCode === 46 && bmIDs.length > 0) {
+		chrome.runtime.sendMessage({action: "bmRemove", data: bmIDs});
+		chrome.storage.session.remove("bmhtml");
+		bmIDs = [];
+		window.close();
+	}
+}
+
+
 function cSearch() {
 	let bookmarks = document.getElementById('bookmarks');
 	while(bookmarks.firstChild) bookmarks.removeChild(bookmarks.firstChild);
@@ -85,12 +116,26 @@ function cSearch() {
 function addClick() {
 	document.querySelectorAll('.file').forEach(function(bookmark){
 		bookmark.addEventListener('mouseup', function(e) {
-			if(!e.ctrlKey) {
-				chrome.tabs.create({url: e.target.dataset.url, active: true});
+			if(e.button === 0) {
+				if(!e.ctrlKey) {
+					chrome.tabs.create({url: e.target.dataset.url, active: true});
+				} else {
+					chrome.tabs.create({url: e.target.dataset.url, active: false});
+				}
 			} else {
-				chrome.tabs.create({url: e.target.dataset.url, active: false});
+				
+				if(e.ctrlKey) {
+					if(e.target.classList.contains('bmMarked')) {
+						e.target.classList.remove('bmMarked');
+						bmIDs.indexOf(e.target.id) !== -1 && bmIDs.splice(bmIDs.indexOf(e.target.id), 1)
+					} else {
+						e.target.classList.add('bmMarked');
+						bmIDs.push(e.target.id);
+					}
+				}
 			}
 		}, false);
+		return false;
 	});
 }
 
@@ -147,4 +192,6 @@ function addBookmark() {
 			}
 		});
 	});
+
+	chrome.storage.session.remove("bmhtml");
 }

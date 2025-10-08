@@ -259,7 +259,7 @@ button:disabled > svg {
 }
 .loader::before {
 	border-color: #f03355 #0000;
-	animation: inherit; 
+	animation: inherit;
 	animation-duration: .5s;
 	animation-direction: reverse;
 }
@@ -268,4 +268,10 @@ button:disabled > svg {
 }
 @keyframes l16 { 
 	100%{transform: rotate(1turn)}
+}
+.bmMarked {
+	background-color: #00000073;
+	padding: 0 .51em;
+	border-radius: .3em;
+	color: white !important;
 }

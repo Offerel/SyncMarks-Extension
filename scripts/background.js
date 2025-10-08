@@ -74,6 +74,9 @@ chrome.runtime.onMessage.addListener(
 				case 'tabSync':
 					tabSync(request.data);
 					break;
+				case 'bmRemove':
+					sendRequest(bmRemove, request.data);
+					break;
 				default:
 					return false;
 			}
@@ -201,6 +204,9 @@ function clientSendOptions(response) {
 
 function clientGetOptions(response) {
 	chrome.runtime.sendMessage({task: "clientOptions", cOptions: response.cOptions});
+}
+
+function bmRemove(response) {
 }
 
 function clientRemove(response) {
