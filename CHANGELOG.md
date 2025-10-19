@@ -1,4 +1,7 @@
 # ChangeLog
+## v2.1.12
+- Added Turkish
+
 ## v2.1.11
 - Fix startup error
 
