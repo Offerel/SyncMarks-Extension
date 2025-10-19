@@ -8,7 +8,7 @@ var lastseen = null;
 var count = 0;
 var remoteMark;
 
-loglines = logit("Info: " + globalThis.browwser);
+loglines = logit("Info: " + navigator.userAgent);
 
 chrome.runtime.onStartup.addListener( () => {
 	init();
@@ -583,6 +583,12 @@ function sendTab(element) {
 
 function logit(message) {
 	var ndate = new Date();
+
+	if(message.toString().toLowerCase().indexOf('undefined') >= 0) {
+		//message = logit.caller;
+		message = new Error().stack.toString();
+	}
+
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('typeerror') === false )  {
 		changeIcon('error');

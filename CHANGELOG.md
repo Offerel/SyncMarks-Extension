@@ -1,4 +1,7 @@
 # ChangeLog
+## v2.1.11
+- Fix startup error
+
 ## v2.1.10
 - Keep PopUp open, if ctrl key is pressed
 - Delete Bookmarks via PopUp
