@@ -701,31 +701,38 @@ function init() {
 }
 
 function getPopupData() {
-	const data = chrome.storage.session.get("bmhtml");
+	chrome.storage.local.get(null, async function(options) {
+		const data = chrome.storage.session.get("bmhtml");
+		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
+			client:options.uuid,
+			token:options.token
+		})));
 	
-	if(data.bmhtml === undefined) {
-		loglines = logit("Info: get PopUP data");
-		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
-			method: "GET",
-			cache: "no-cache",
-			referrerPolicy: "no-referrer",
-			headers: {
-				'Authorization': authheader,
-			}
-		}).then(response => {
-			let xRinfo = response.headers.get("X-Request-Info");
-			if (xRinfo != null) {
-				chrome.storage.local.set({token:xRinfo});
-			}
-			return response.text();
-		}).then(html => {
-			chrome.storage.session.set({bmhtml: html});
-		}).catch(err => {
-			console.error(err);
-			chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
-			document.getElementById('loader').classList.remove('loader');
-		});
-	}
+		if(data.bmhtml === undefined) {
+			loglines = logit("Info: Get data for PopUp");
+			fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
+				method: "GET",
+				cache: "no-cache",
+				referrerPolicy: "no-referrer",
+				headers: {
+					'Authorization': authheader,
+				}
+			}).then(response => {
+				let xRinfo = response.headers.get("X-Request-Info");
+				if (xRinfo != null) {
+					chrome.storage.local.set({token:xRinfo});
+				}
+				return response.text();
+			}).then(html => {
+				chrome.storage.session.set({bmhtml: html});
+				loglines = logit("Info: PopUp data saved in session storage");
+				changeIcon('info');
+			}).catch(err => {
+				console.error(err);
+				changeIcon('error');
+			});
+		}
+	});
 }
 
 function onTabActivated(tab){
