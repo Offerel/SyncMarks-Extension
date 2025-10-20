@@ -106,9 +106,7 @@ function keypress(e) {
 function cbtn(e) {
 	if(e.target.id === 'cyes') {
 		chrome.runtime.sendMessage({action: "bmRemove", data: bmIDs});
-		chrome.storage.session.remove("bmhtml");
-		bmIDs = [];
-		document.getElementById('bglayer').style.display = 'none';
+		chrome.runtime.sendMessage({action: "puData"});
 	}
 
 	document.getElementById('bglayer').style.display = 'none';
@@ -208,5 +206,5 @@ function addBookmark() {
 		});
 	});
 
-	chrome.storage.session.remove("bmhtml");
+	chrome.runtime.sendMessage({action: "puData"});
 }

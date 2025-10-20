@@ -1,6 +1,7 @@
 # ChangeLog
 ## v2.1.12
 - Added Turkish
+- Get PopUp data faster
 
 ## v2.1.11
 - Fix startup error

@@ -8,8 +8,6 @@ var lastseen = null;
 var count = 0;
 var remoteMark;
 
-loglines = logit("Info: " + navigator.userAgent);
-
 chrome.runtime.onStartup.addListener( () => {
 	init();
 });
@@ -76,6 +74,9 @@ chrome.runtime.onMessage.addListener(
 					break;
 				case 'bmRemove':
 					sendRequest(bmRemove, request.data);
+					break;
+				case 'puData':
+					getPopupData();
 					break;
 				default:
 					return false;
@@ -273,7 +274,6 @@ function pushGet(response) {
 		loglines = logit("Info: List of " + response.notifications.length + " notifications received successful.");
 	}
 
-	loglines = logit("Info: Start Sync");
 	sendRequest(clientInfo);
 }
 
@@ -657,13 +657,11 @@ function changeIcon(mode) {
 }
 
 function init() {
-//async function init() {
-	loglines = logit("Info: AddOn version: " + chrome.runtime.getManifest().version);
-	loglines = logit("Info: " + navigator.userAgent);
+	loglines = logit("Info: AddOn: " + chrome.runtime.getManifest().version);
+	loglines = logit("Info: Browser: " + navigator.userAgent);
 	chrome.runtime.getPlatformInfo(function(info){
-		loglines = logit("Info: Current architecture: " + info.arch + " | Current OS: " + info.os);
+		loglines = logit("Info: Architecture: " + info.arch + " | OS: " + info.os);
 	});
-	//await get_oMarks();
 	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, async function(options) {
@@ -694,11 +692,40 @@ function init() {
 
 		if(options.instance) {
 			await ccMenus();
+			getPopupData();
 			loglines = logit("Info: Get list of clients.");
 			sendRequest(clientList);
 			loglines = logit("Info: Init finished");
 		}
 	});
+}
+
+function getPopupData() {
+	const data = chrome.storage.session.get("bmhtml");
+	
+	if(data.bmhtml === undefined) {
+		loglines = logit("Info: get PopUP data");
+		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
+			method: "GET",
+			cache: "no-cache",
+			referrerPolicy: "no-referrer",
+			headers: {
+				'Authorization': authheader,
+			}
+		}).then(response => {
+			let xRinfo = response.headers.get("X-Request-Info");
+			if (xRinfo != null) {
+				chrome.storage.local.set({token:xRinfo});
+			}
+			return response.text();
+		}).then(html => {
+			chrome.storage.session.set({bmhtml: html});
+		}).catch(err => {
+			console.error(err);
+			chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
+			document.getElementById('loader').classList.remove('loader');
+		});
+	}
 }
 
 function onTabActivated(tab){
@@ -961,7 +988,7 @@ function sendMark(bookmark) {
 }
 
 async function doFullSync() {
-	loglines = logit("Info: Sync started.");
+	loglines = logit("Info: Start Sync");
 	try {
 		chrome.storage.local.get(null, async function(options) {
 			loglines = logit('Info: Sending Sync request to server');
@@ -1308,8 +1335,7 @@ function addAllMarks(parsedMarks, index=1) {
 
 		if (typeof parsedMarks[index+1] !== 'undefined') {
 			addAllMarks(parsedMarks, ++index);
-		}
-		else {
+		} else {
 			message = count + chrome.i18n.getMessage("successImportBookmarks");
 			notify('info',message);
 			loglines = logit('Info: '+message);
