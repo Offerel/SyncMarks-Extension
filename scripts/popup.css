@@ -62,10 +62,10 @@ body {
 }
 button > svg {
 	height: 2em;
-	color: white;
+	color: #96caf5;
 }
 button:not([disabled]) > svg:hover {
-	color: #96caf5;
+	color: #e7f4ff;
 }
 button:disabled > svg {
 	color: cornflowerblue;

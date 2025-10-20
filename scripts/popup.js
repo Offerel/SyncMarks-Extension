@@ -157,6 +157,7 @@ function urlExists() {
 		let tabURL = tabs[0].url;
 		let urlExists = false;
 		let bookmarks = document.querySelectorAll('.file');
+		let tbutton = document.getElementById('addbm').children[0];
 
 		for (let i = 0; i < bookmarks.length; i++) {
 			bmURL = bookmarks[i].children[0].dataset.url;
@@ -166,13 +167,7 @@ function urlExists() {
 			}
 		}
 
-		if(urlExists) {
-			document.getElementById('svgfilled').style.display = 'inline';
-			document.getElementById('svgoutline').style.display = 'none';
-		} else {
-			document.getElementById('svgfilled').style.display = 'none';
-			document.getElementById('svgoutline').style.display = 'inline';
-		}
+		tbutton.attributes.fill.nodeValue = (urlExists) ? "gold":"currentColor";
 	});
 }
 
