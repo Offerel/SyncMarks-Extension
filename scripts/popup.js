@@ -53,7 +53,6 @@ chrome.storage.local.get(null, async function(options) {
 	}
 });
 
-search = document.getElementById("search");
 document.getElementById("settings").addEventListener('click', function() {
 	chrome.runtime.openOptionsPage();
 	window.close();
@@ -64,14 +63,14 @@ document.getElementById("addbm").addEventListener('click', addBookmark);
 document.getElementById('cyes').addEventListener('click', cbtn);
 document.getElementById('cno').addEventListener('click', cbtn);
 
-chrome.storage.local.get(null, function(options) {
-	if(options.popup !== undefined) {
-		popupMessage(options.popup.message, options.popup.mode);
+chrome.storage.session.get(null, function(data) {
+	if(data.popup !== undefined) {
+		popupMessage(data.popup.message, data.popup.mode);
 		chrome.action.setBadgeText({text: ''});
 	}
 });
 
-search.addEventListener('input', function(e) {
+document.getElementById("search").addEventListener('input', function(e) {
 	let filter = e.currentTarget.value;
 	let bookmarks = document.querySelectorAll('#bookmarks li.file');
 	let bdiv = document.getElementById('bookmarks');
@@ -177,7 +176,7 @@ function popupMessage(message, state) {
 	mdiv.className = 'show ' + state;
 	setTimeout(function(){
 		mdiv.classList.remove('show');
-		chrome.storage.local.remove('popup');
+		chrome.storage.session.remove('popup');
 		chrome.action.setBadgeText({text: ''});
 	}, 3000);
 }

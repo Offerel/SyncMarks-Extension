@@ -1,4 +1,7 @@
 # ChangeLog
+## v2.1.13
+- Save messages in session storage
+
 ## v2.1.12
 - Added Turkish
 - Get PopUp data faster

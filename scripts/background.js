@@ -158,7 +158,7 @@ function sendRequest(action, data = null, tab = null) {
 				if(xRinfo == 0) {
 					chrome.storage.local.remove('token');
 					changeIcon('error');
-					chrome.storage.local.set({
+					chrome.storage.session.set({
 						popup: {
 							message:'Token removed',
 							mode:'error'
@@ -185,7 +185,7 @@ function clientSendOptions(response) {
 		chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
 		chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName")});
 		changeIcon('info');
-		chrome.storage.local.set({
+		chrome.storage.session.set({
 			popup: {
 				message:response.message,
 				mode:'success'
@@ -193,7 +193,7 @@ function clientSendOptions(response) {
 		});
 	} else {
 		changeIcon('warn');
-		chrome.storage.local.set({
+		chrome.storage.session.set({
 			popup: {
 				message:'clientSendOptions: ' + response.message,
 				mode:'warn'
@@ -340,7 +340,7 @@ function bookmarkAdd(response) {
 			} else {
 				text = response.message;
 				changeIcon('warn');
-				chrome.storage.local.set({
+				chrome.storage.session.set({
 					popup: {
 						message:'bookmarkAdd: ' + response.message,
 						mode:'warn'
@@ -389,7 +389,7 @@ function bookmarkDel(response) {
 		case 204:
 			changeIcon('warn');
 			loglines = logit("Warn: " +  + response['message']);
-			chrome.storage.local.set({
+			chrome.storage.session.set({
 				popup: {
 					message:'bookmarkDel: ' + response['message'],
 					mode:'warn'
@@ -398,7 +398,7 @@ function bookmarkDel(response) {
 		default:
 			changeIcon('error');
 			loglines = logit("Error: bookmarkDel: " +  + response['message']);
-			chrome.storage.local.set({
+			chrome.storage.session.set({
 				popup: {
 					message:'bookmarkDel: ' + response['message'],
 					mode:'error'
@@ -592,7 +592,7 @@ function logit(message) {
 	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('typeerror') === false )  {
 		changeIcon('error');
-		chrome.storage.local.set({
+		chrome.storage.session.set({
 			popup: {
 				message: message,
 				mode:'error'
@@ -667,7 +667,7 @@ function init() {
 	chrome.storage.local.get(null, async function(options) {
 		if(options.instance == undefined) {
 			changeIcon('error');
-			chrome.storage.local.set({
+			chrome.storage.session.set({
 				popup: {
 					message:"Instance undefined",
 					mode:'error'
@@ -679,7 +679,7 @@ function init() {
 
 		if(options.token === undefined) {
 			changeIcon('error');
-			chrome.storage.local.set({
+			chrome.storage.session.set({
 				popup: {
 					message:"Login token missing",
 					mode:'error'
