@@ -54,9 +54,10 @@ chrome.runtime.onMessage.addListener(
 					break;
 				case 'loglines':
 					console.log(request.data);
+					loglines = logit(request.data);
 					break;
 				case 'getLoglines':
-					if(loglines.length == 0) loglines = logit("Info: No Log entry available");
+					if(loglines.length === 0) loglines = logit("Info: No Log entry available");
 					chrome.runtime.sendMessage({task: "rLoglines", text: loglines});
 					break;
 				case 'emptyLoglines':
@@ -128,7 +129,6 @@ function sendRequest(action, data = null, tab = null) {
 		};
 
 		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(btoken)));
-		let url = options.instance;
 		let client = options.uuid;
 
 		if(action.name === 'bookmarkAdd' && options.sync === false ) {
@@ -142,7 +142,7 @@ function sendRequest(action, data = null, tab = null) {
 		}
 		Object.keys(params).forEach((k) => params[k] == null && delete params[k]);
 
-		fetch(url + '?api=v1', {
+		fetch(options.instance + '?api=v1', {
 			method: "POST",
 			cache: "no-cache",
 			headers: {
@@ -582,14 +582,14 @@ function sendTab(element) {
 }
 
 function logit(message) {
-	var ndate = new Date();
+	const ndate = new Date();
+	let ds = ndate.toLocaleDateString(`sv`) + " " + ndate.toLocaleTimeString(`sv`);
 
 	if(message.toString().toLowerCase().indexOf('undefined') >= 0) {
-		//message = logit.caller;
 		message = new Error().stack.toString();
 	}
 
-	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
+	let logline = loglines + ds + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('typeerror') === false )  {
 		changeIcon('error');
 		chrome.storage.session.set({
