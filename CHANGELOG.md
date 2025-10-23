@@ -1,4 +1,18 @@
 # ChangeLog
+## v2.1.13
+- Save messages in session storage
+
+## v2.1.12
+- Added Turkish
+- Get PopUp data faster
+
+## v2.1.11
+- Fix startup error
+
+## v2.1.10
+- Keep PopUp open, if ctrl key is pressed
+- Delete Bookmarks via PopUp
+
 ## v2.1.9
 - Fix undefined variable
 

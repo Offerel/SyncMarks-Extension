@@ -233,5 +233,8 @@
   },
   "optionsBAPIHint": {
       "message": "The Bookmark API is not supported in this browser. Automatic synchronization is therefore deactivated."
+  },
+  "optionsPuDelConfirm": {
+      "message": "Should the selected bookmarks be removed?"
   }
 }

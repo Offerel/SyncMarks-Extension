@@ -8,8 +8,6 @@ var lastseen = null;
 var count = 0;
 var remoteMark;
 
-loglines = logit("Info: " + globalThis.browwser);
-
 chrome.runtime.onStartup.addListener( () => {
 	init();
 });
@@ -56,9 +54,10 @@ chrome.runtime.onMessage.addListener(
 					break;
 				case 'loglines':
 					console.log(request.data);
+					loglines = logit(request.data);
 					break;
 				case 'getLoglines':
-					if(loglines.length == 0) loglines = logit("Info: No Log entry available");
+					if(loglines.length === 0) loglines = logit("Info: No Log entry available");
 					chrome.runtime.sendMessage({task: "rLoglines", text: loglines});
 					break;
 				case 'emptyLoglines':
@@ -73,6 +72,12 @@ chrome.runtime.onMessage.addListener(
 					break;
 				case 'tabSync':
 					tabSync(request.data);
+					break;
+				case 'bmRemove':
+					sendRequest(bmRemove, request.data);
+					break;
+				case 'puData':
+					getPopupData();
 					break;
 				default:
 					return false;
@@ -124,7 +129,6 @@ function sendRequest(action, data = null, tab = null) {
 		};
 
 		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(btoken)));
-		let url = options.instance;
 		let client = options.uuid;
 
 		if(action.name === 'bookmarkAdd' && options.sync === false ) {
@@ -138,7 +142,7 @@ function sendRequest(action, data = null, tab = null) {
 		}
 		Object.keys(params).forEach((k) => params[k] == null && delete params[k]);
 
-		fetch(url + '?api=v1', {
+		fetch(options.instance + '?api=v1', {
 			method: "POST",
 			cache: "no-cache",
 			headers: {
@@ -154,7 +158,7 @@ function sendRequest(action, data = null, tab = null) {
 				if(xRinfo == 0) {
 					chrome.storage.local.remove('token');
 					changeIcon('error');
-					chrome.storage.local.set({
+					chrome.storage.session.set({
 						popup: {
 							message:'Token removed',
 							mode:'error'
@@ -181,7 +185,7 @@ function clientSendOptions(response) {
 		chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
 		chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName")});
 		changeIcon('info');
-		chrome.storage.local.set({
+		chrome.storage.session.set({
 			popup: {
 				message:response.message,
 				mode:'success'
@@ -189,7 +193,7 @@ function clientSendOptions(response) {
 		});
 	} else {
 		changeIcon('warn');
-		chrome.storage.local.set({
+		chrome.storage.session.set({
 			popup: {
 				message:'clientSendOptions: ' + response.message,
 				mode:'warn'
@@ -201,6 +205,9 @@ function clientSendOptions(response) {
 
 function clientGetOptions(response) {
 	chrome.runtime.sendMessage({task: "clientOptions", cOptions: response.cOptions});
+}
+
+function bmRemove(response) {
 }
 
 function clientRemove(response) {
@@ -267,7 +274,6 @@ function pushGet(response) {
 		loglines = logit("Info: List of " + response.notifications.length + " notifications received successful.");
 	}
 
-	loglines = logit("Info: Start Sync");
 	sendRequest(clientInfo);
 }
 
@@ -334,7 +340,7 @@ function bookmarkAdd(response) {
 			} else {
 				text = response.message;
 				changeIcon('warn');
-				chrome.storage.local.set({
+				chrome.storage.session.set({
 					popup: {
 						message:'bookmarkAdd: ' + response.message,
 						mode:'warn'
@@ -383,7 +389,7 @@ function bookmarkDel(response) {
 		case 204:
 			changeIcon('warn');
 			loglines = logit("Warn: " +  + response['message']);
-			chrome.storage.local.set({
+			chrome.storage.session.set({
 				popup: {
 					message:'bookmarkDel: ' + response['message'],
 					mode:'warn'
@@ -392,7 +398,7 @@ function bookmarkDel(response) {
 		default:
 			changeIcon('error');
 			loglines = logit("Error: bookmarkDel: " +  + response['message']);
-			chrome.storage.local.set({
+			chrome.storage.session.set({
 				popup: {
 					message:'bookmarkDel: ' + response['message'],
 					mode:'error'
@@ -576,11 +582,17 @@ function sendTab(element) {
 }
 
 function logit(message) {
-	var ndate = new Date();
-	var logline = loglines + ndate.toLocaleString() + " - " + message + "\n";
+	const ndate = new Date();
+	let ds = ndate.toLocaleDateString(`sv`) + " " + ndate.toLocaleTimeString(`sv`);
+
+	if(message.toString().toLowerCase().indexOf('undefined') >= 0) {
+		message = new Error().stack.toString();
+	}
+
+	let logline = loglines + ds + " - " + message + "\n";
 	if(message.toString().toLowerCase().indexOf('error') >= 0 && message.toString().toLowerCase().indexOf('typeerror') === false )  {
 		changeIcon('error');
-		chrome.storage.local.set({
+		chrome.storage.session.set({
 			popup: {
 				message: message,
 				mode:'error'
@@ -645,19 +657,17 @@ function changeIcon(mode) {
 }
 
 function init() {
-//async function init() {
-	loglines = logit("Info: AddOn version: " + chrome.runtime.getManifest().version);
-	loglines = logit("Info: " + navigator.userAgent);
+	loglines = logit("Info: AddOn: " + chrome.runtime.getManifest().version);
+	loglines = logit("Info: Browser: " + navigator.userAgent);
 	chrome.runtime.getPlatformInfo(function(info){
-		loglines = logit("Info: Current architecture: " + info.arch + " | Current OS: " + info.os);
+		loglines = logit("Info: Architecture: " + info.arch + " | OS: " + info.os);
 	});
-	//await get_oMarks();
 	get_oMarks();
 	chrome.storage.local.set({last_message: ""});
 	chrome.storage.local.get(null, async function(options) {
 		if(options.instance == undefined) {
 			changeIcon('error');
-			chrome.storage.local.set({
+			chrome.storage.session.set({
 				popup: {
 					message:"Instance undefined",
 					mode:'error'
@@ -669,7 +679,7 @@ function init() {
 
 		if(options.token === undefined) {
 			changeIcon('error');
-			chrome.storage.local.set({
+			chrome.storage.session.set({
 				popup: {
 					message:"Login token missing",
 					mode:'error'
@@ -682,9 +692,45 @@ function init() {
 
 		if(options.instance) {
 			await ccMenus();
+			getPopupData();
 			loglines = logit("Info: Get list of clients.");
 			sendRequest(clientList);
 			loglines = logit("Info: Init finished");
+		}
+	});
+}
+
+function getPopupData() {
+	chrome.storage.local.get(null, async function(options) {
+		const data = chrome.storage.session.get("bmhtml");
+		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
+			client:options.uuid,
+			token:options.token
+		})));
+	
+		if(data.bmhtml === undefined) {
+			loglines = logit("Info: Get data for PopUp");
+			fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
+				method: "GET",
+				cache: "no-cache",
+				referrerPolicy: "no-referrer",
+				headers: {
+					'Authorization': authheader,
+				}
+			}).then(response => {
+				let xRinfo = response.headers.get("X-Request-Info");
+				if (xRinfo != null) {
+					chrome.storage.local.set({token:xRinfo});
+				}
+				return response.text();
+			}).then(html => {
+				chrome.storage.session.set({bmhtml: html});
+				loglines = logit("Info: PopUp data saved in session storage");
+				changeIcon('info');
+			}).catch(err => {
+				console.error(err);
+				changeIcon('error');
+			});
 		}
 	});
 }
@@ -949,7 +995,7 @@ function sendMark(bookmark) {
 }
 
 async function doFullSync() {
-	loglines = logit("Info: Sync started.");
+	loglines = logit("Info: Start Sync");
 	try {
 		chrome.storage.local.get(null, async function(options) {
 			loglines = logit('Info: Sending Sync request to server');
@@ -1296,8 +1342,7 @@ function addAllMarks(parsedMarks, index=1) {
 
 		if (typeof parsedMarks[index+1] !== 'undefined') {
 			addAllMarks(parsedMarks, ++index);
-		}
-		else {
+		} else {
 			message = count + chrome.i18n.getMessage("successImportBookmarks");
 			notify('info',message);
 			loglines = logit('Info: '+message);

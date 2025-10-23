@@ -1,44 +1,60 @@
 var clone;
-chrome.storage.local.get(null, function(options) {
+var bmIDs = new Array();
+
+chrome.storage.local.get(null, async function(options) {
 	document.getElementById('loader').classList.add('loader');
 	let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
 		client:options.uuid,
 		token:options.token
 	})));
-
-	fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
-		method: "GET",
-		cache: "no-cache",
-		referrerPolicy: "no-referrer",
-		headers: {
-			'Authorization': authheader,
-		}
-	}).then(response => {
-		let xRinfo = response.headers.get("X-Request-Info");
-		if (xRinfo != null) {
-			chrome.storage.local.set({token:xRinfo});
-		}
-		return response.text();
-	}).then(html => {
+	
+	const data = await chrome.storage.session.get("bmhtml");
+	
+	if(data.bmhtml === undefined) {
+		chrome.runtime.sendMessage({action: "loglines", data: 'No bookmarks for PopUp found'});
+		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
+			method: "GET",
+			cache: "no-cache",
+			referrerPolicy: "no-referrer",
+			headers: {
+				'Authorization': authheader,
+			}
+		}).then(response => {
+			let xRinfo = response.headers.get("X-Request-Info");
+			if (xRinfo != null) {
+				chrome.storage.local.set({token:xRinfo});
+			}
+			return response.text();
+		}).then(html => {
+			let parser = new DOMParser();
+			let doc = parser.parseFromString(html, "text/html");
+			let bookmarks = document.getElementById('bookmarks');
+			clone = doc.getElementById('bookmarks').cloneNode(true);
+			while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
+			addClick();
+			urlExists();
+			clone = document.getElementById('bookmarks').cloneNode(true);
+			chrome.storage.session.set({bmhtml: html});
+			document.getElementById('loader').classList.remove('loader');
+		}).catch(err => {
+			console.error(err);
+			chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
+			document.getElementById('loader').classList.remove('loader');
+		});
+	} else {
+		chrome.runtime.sendMessage({action: "loglines", data: 'Bookmarks found in session'});
 		let parser = new DOMParser();
-		let doc = parser.parseFromString(html, "text/html");
+		let doc = parser.parseFromString(data.bmhtml, "text/html");
 		let bookmarks = document.getElementById('bookmarks');
 		clone = doc.getElementById('bookmarks').cloneNode(true);
 		while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
-
 		addClick();
 		urlExists();
-
 		clone = document.getElementById('bookmarks').cloneNode(true);
 		document.getElementById('loader').classList.remove('loader');
-	}).catch(err => {
-		console.error(err);
-		chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
-		document.getElementById('loader').classList.remove('loader');
-	});
+	}
 });
 
-search = document.getElementById("search");
 document.getElementById("settings").addEventListener('click', function() {
 	chrome.runtime.openOptionsPage();
 	window.close();
@@ -46,14 +62,17 @@ document.getElementById("settings").addEventListener('click', function() {
 
 document.getElementById("addbm").addEventListener('click', addBookmark);
 
-chrome.storage.local.get(null, function(options) {
-	if(options.popup !== undefined) {
-		popupMessage(options.popup.message, options.popup.mode);
+document.getElementById('cyes').addEventListener('click', cbtn);
+document.getElementById('cno').addEventListener('click', cbtn);
+
+chrome.storage.session.get(null, function(data) {
+	if(data.popup !== undefined) {
+		popupMessage(data.popup.message, data.popup.mode);
 		chrome.action.setBadgeText({text: ''});
 	}
 });
 
-search.addEventListener('input', function(e) {
+document.getElementById("search").addEventListener('input', function(e) {
 	let filter = e.currentTarget.value;
 	let bookmarks = document.querySelectorAll('#bookmarks li.file');
 	let bdiv = document.getElementById('bookmarks');
@@ -75,6 +94,32 @@ search.addEventListener('input', function(e) {
 	}
 });
 
+document.addEventListener('keyup', keypress);
+
+document.addEventListener('contextmenu', function(e) {
+	e.preventDefault();
+});
+
+function keypress(e) {
+	if(e.keyCode === 46 && bmIDs.length > 0) showBox();
+}
+
+function cbtn(e) {
+	if(e.target.id === 'cyes') {
+		chrome.runtime.sendMessage({action: "bmRemove", data: bmIDs});
+		chrome.runtime.sendMessage({action: "puData"});
+	}
+
+	document.getElementById('bglayer').style.display = 'none';
+	bmIDs = [];
+	window.close();
+}
+
+function showBox() {
+	document.getElementById('msgText').innerText = chrome.i18n.getMessage("optionsPuDelConfirm");
+	document.getElementById('bglayer').style.display = 'block';
+}
+
 function cSearch() {
 	let bookmarks = document.getElementById('bookmarks');
 	while(bookmarks.firstChild) bookmarks.removeChild(bookmarks.firstChild);
@@ -85,8 +130,26 @@ function cSearch() {
 function addClick() {
 	document.querySelectorAll('.file').forEach(function(bookmark){
 		bookmark.addEventListener('mouseup', function(e) {
-			window.open(e.target.dataset.url, '_blank', 'noopener,noreferrer');
+			if(e.button === 0) {
+				if(!e.ctrlKey) {
+					chrome.tabs.create({url: e.target.dataset.url, active: true});
+				} else {
+					chrome.tabs.create({url: e.target.dataset.url, active: false});
+				}
+			} else {
+				
+				if(e.ctrlKey) {
+					if(e.target.classList.contains('bmMarked')) {
+						e.target.classList.remove('bmMarked');
+						bmIDs.indexOf(e.target.id) !== -1 && bmIDs.splice(bmIDs.indexOf(e.target.id), 1)
+					} else {
+						e.target.classList.add('bmMarked');
+						bmIDs.push(e.target.id);
+					}
+				}
+			}
 		}, false);
+		return false;
 	});
 }
 
@@ -95,6 +158,7 @@ function urlExists() {
 		let tabURL = tabs[0].url;
 		let urlExists = false;
 		let bookmarks = document.querySelectorAll('.file');
+		let tbutton = document.getElementById('addbm').children[0];
 
 		for (let i = 0; i < bookmarks.length; i++) {
 			bmURL = bookmarks[i].children[0].dataset.url;
@@ -104,13 +168,7 @@ function urlExists() {
 			}
 		}
 
-		if(urlExists) {
-			document.getElementById('svgfilled').style.display = 'inline';
-			document.getElementById('svgoutline').style.display = 'none';
-		} else {
-			document.getElementById('svgfilled').style.display = 'none';
-			document.getElementById('svgoutline').style.display = 'inline';
-		}
+		tbutton.attributes.fill.nodeValue = (urlExists) ? "gold":"currentColor";
 	});
 }
 
@@ -120,9 +178,9 @@ function popupMessage(message, state) {
 	mdiv.className = 'show ' + state;
 	setTimeout(function(){
 		mdiv.classList.remove('show');
-		chrome.storage.local.remove('popup');
+		chrome.storage.session.remove('popup');
 		chrome.action.setBadgeText({text: ''});
-	}, 5000);
+	}, 3000);
 }
 
 function addBookmark() {
@@ -143,4 +201,6 @@ function addBookmark() {
 			}
 		});
 	});
+
+	chrome.runtime.sendMessage({action: "puData"});
 }

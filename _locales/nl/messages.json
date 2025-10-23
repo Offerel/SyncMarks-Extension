@@ -178,5 +178,8 @@
     },
     "optionsBAPIHint": {
         "message": "De Bookmark API wordt niet ondersteund in deze browser. Automatische synchronisatie is daarom uitgeschakeld."
+    },
+    "optionsPuDelConfirm": {
+        "message": "Wil je de gekozen bladwijzers verwijderen?"
     }
 }
