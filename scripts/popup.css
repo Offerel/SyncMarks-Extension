@@ -43,9 +43,7 @@ body {
 	background-color: #96caf5;
 }
 #search:focus {
-	border: 1px solid blue !important;
-	outline: 0 !important;
-	background-color: #96caf5;
+	background-color: #fffcee;
 }
 #toolbar button {
 	outline: 0;
