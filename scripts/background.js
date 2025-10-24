@@ -160,7 +160,7 @@ function sendRequest(action, data = null, tab = null) {
 					changeIcon('error');
 					chrome.storage.session.set({
 						popup: {
-							message:'Token removed',
+							message:'Invalid credentials - Token removed',
 							mode:'error'
 						}
 					});
