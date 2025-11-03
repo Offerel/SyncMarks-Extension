@@ -211,7 +211,6 @@ function bmRemove(response) {
 }
 
 function clientRemove(response) {
-	//
 }
 
 function clientList(response) {
@@ -598,6 +597,7 @@ function logit(message) {
 				mode:'error'
 			}
 		});
+		console.warn(ds + " - " + message);
 	}
 	return logline;
 }
