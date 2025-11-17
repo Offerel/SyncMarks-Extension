@@ -1,4 +1,12 @@
 # ChangeLog
+## v2.1.15
+- Cleanup unused functions
+- Cleanup logging
+
+## v2.1.14
+- Log PopUp messages to logfile
+- Changed logging to include console
+
 ## v2.1.13
 - Save messages in session storage
 

@@ -1,12 +1,10 @@
 const mozilla = typeof browser !== 'undefined';
 var dictOldIDsToNewIDs = { "-1": "-1" };
-var loglines = '';
-var debug = false;
 var oMarks = [];
 var pTabs = [];
-var lastseen = null;
-var count = 0;
 var remoteMark;
+
+var [loglines, debug, lastseen, count, last_s] = ['', false, null, 0, 0];
 
 chrome.runtime.onStartup.addListener( () => {
 	init();
@@ -53,11 +51,10 @@ chrome.runtime.onMessage.addListener(
 					exportPHPMarks();
 					break;
 				case 'loglines':
-					console.log(request.data);
 					loglines = logit(request.data);
 					break;
 				case 'getLoglines':
-					if(loglines.length === 0) loglines = logit("Info: No Log entry available");
+					if(loglines.length == 0) loglines = logit("Info: No Log entry available");
 					chrome.runtime.sendMessage({task: "rLoglines", text: loglines});
 					break;
 				case 'emptyLoglines':
@@ -160,7 +157,7 @@ function sendRequest(action, data = null, tab = null) {
 					changeIcon('error');
 					chrome.storage.session.set({
 						popup: {
-							message:'Invalid credentials - Token removed',
+							message:'Invalid credentials',
 							mode:'error'
 						}
 					});
@@ -302,10 +299,6 @@ function bookmarkExport(response, tab = null) {
 	message.task = bookmarkExport.name;
 	
 	importFull(bookmarks);
-
-	let date = new Date(Date.now());
-	let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-	chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined, doptions)});
 	
 	if (tab != null) chrome.runtime.sendMessage({task: message.task, type: message.type, text: message.text});
 	loglines = logit('Info: Import finished');
@@ -355,8 +348,8 @@ function bookmarkAdd(response) {
 		}
 	});
 
-	let datems = Date.now();
-	chrome.storage.local.set({last_s: datems});
+	last_s = Date.now();
+	chrome.storage.local.set({last_s: last_s});
 }
 
 function pushHide(response) {
@@ -405,8 +398,8 @@ function bookmarkDel(response) {
 			});
 	  }
 
-	let datems = Date.now();
-	chrome.storage.local.set({last_s: datems});
+	last_s = Date.now();
+	chrome.storage.local.set({last_s: last_s});
 }
 
 function clientRename(response) {
@@ -646,7 +639,6 @@ function changeIcon(mode) {
 		case 'info':
 			chrome.action.setBadgeText({text: 'i'});
 			chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
-			chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName")});
 			setTimeout(function(){
 				chrome.action.setBadgeText({text: ''});
 			}, 5000);
@@ -663,7 +655,7 @@ function init() {
 		loglines = logit("Info: Architecture: " + info.arch + " | OS: " + info.os);
 	});
 	get_oMarks();
-	chrome.storage.local.set({last_message: ""});
+
 	chrome.storage.local.get(null, async function(options) {
 		if(options.instance == undefined) {
 			changeIcon('error');
@@ -689,6 +681,8 @@ function init() {
 		} else {
 			chrome.action.setBadgeText({text: ''});
 		}
+
+		last_s = (options.last_s) ? options.last_s:0;
 
 		if(options.instance) {
 			await ccMenus();
@@ -950,8 +944,8 @@ function exportPHPMarks(upl=[]) {
 		sendRequest(bookmarkImport, bookmarks);
 	});
 	
-	let datems = Date.now();
-	chrome.storage.local.set({last_s: datems});
+	last_s = Date.now();
+	chrome.storage.local.set({last_s: last_s});
 }
 
 function removeMark(bookmark) {
@@ -1347,14 +1341,9 @@ function addAllMarks(parsedMarks, index=1) {
 			notify('info',message);
 			loglines = logit('Info: '+message);
 			bookmarkSync(true);
-			
-			let datems = Date.now();
-			let date = new Date(datems);
-			let doptions = { weekday: 'short',  hour: '2-digit', minute: '2-digit' };
-			chrome.storage.local.set({
-				last_s: datems,
-			});
-			chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName") + ": " + date.toLocaleDateString(undefined,doptions)});
+
+			last_s = Date.now();
+			chrome.storage.local.set({last_s: last_s});
 		}
 	});
 

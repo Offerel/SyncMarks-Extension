@@ -137,11 +137,11 @@ function gToken(e) {
 		} else {
 			wmessage.textContent = 'Warning: '+ responseData.message;
 			wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-			chrome.runtime.sendMessage({action: "loglines", data: 'Syncmarks Warning: '+ responseData.message});
+			chrome.runtime.sendMessage({action: "loglines", data: 'Warn: '+ responseData.message});
 		}
 	}).catch(err => {
 		wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-		chrome.runtime.sendMessage({action: "loglines", data: err});
+		chrome.runtime.sendMessage({action: "loglines", data: "Error: " + err});
 		switch(response.status) {
 			case 404:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL") + err;
 						break;
@@ -149,7 +149,7 @@ function gToken(e) {
 						break;
 			default:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorLogin") + response.status + err;
 		}
-		chrome.runtime.sendMessage({action: "loglines", data: 'Syncmarks Error: ' + wmessage.textContent});
+		chrome.runtime.sendMessage({action: "loglines", data: 'Error: ' + wmessage.textContent});
 	});
 
 	wmessage.className = "show";
@@ -270,7 +270,7 @@ function manualImport(e) {
 			chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
 		});
 	} catch(error) {
-		chrome.runtime.sendMessage({action: "loglines", data: error});
+		chrome.runtime.sendMessage({action: "loglines", data: "Error: " + error});
 	} finally {
 		document.getElementById("impdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
@@ -282,7 +282,7 @@ function manualExport(e) {
 	try {
 		chrome.runtime.sendMessage({action: "exportPHPMarks"});
 	} catch(error) {
-		chrome.runtime.sendMessage({action: "loglines", data: error});
+		chrome.runtime.sendMessage({action: "loglines", data: "Error: " + error});
 	} finally {
 		document.getElementById("expdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});

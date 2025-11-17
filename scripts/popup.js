@@ -11,7 +11,7 @@ chrome.storage.local.get(null, async function(options) {
 	const data = await chrome.storage.session.get("bmhtml");
 	
 	if(data.bmhtml === undefined) {
-		chrome.runtime.sendMessage({action: "loglines", data: 'No bookmarks for PopUp found'});
+		chrome.runtime.sendMessage({action: "loglines", data: 'Info: No bookmarks for PopUp found'});
 		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
 			method: "GET",
 			cache: "no-cache",
@@ -42,7 +42,7 @@ chrome.storage.local.get(null, async function(options) {
 			document.getElementById('loader').classList.remove('loader');
 		});
 	} else {
-		chrome.runtime.sendMessage({action: "loglines", data: 'Bookmarks found in session'});
+		chrome.runtime.sendMessage({action: "loglines", data: 'Info: Popup Data already in session'});
 		let parser = new DOMParser();
 		let doc = parser.parseFromString(data.bmhtml, "text/html");
 		let bookmarks = document.getElementById('bookmarks');
@@ -61,7 +61,6 @@ document.getElementById("settings").addEventListener('click', function() {
 });
 
 document.getElementById("addbm").addEventListener('click', addBookmark);
-
 document.getElementById('cyes').addEventListener('click', cbtn);
 document.getElementById('cno').addEventListener('click', cbtn);
 
