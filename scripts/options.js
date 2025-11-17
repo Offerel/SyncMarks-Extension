@@ -378,7 +378,8 @@ function requestHostPermission() {
 	chrome.permissions.request({
 		origins: [newOrigin]
 	}, (granted) => {
-		const message = (granted) ? 'Syncmarks: Access to ' + newOrigin + ' granted':'Syncmarks Warning: Access to ' + newOrigin + ' denied';
+		const message = (granted) ? 'Info: Access to ' + newOrigin + ' granted':'Warn: Access to ' + newOrigin + ' denied';
+		if(!granted) chrome.runtime.sendMessage({action: "changeIcon", data: 'warn'});
 		chrome.runtime.sendMessage({action: "loglines", data: message});
 		checkURL();
 	});
