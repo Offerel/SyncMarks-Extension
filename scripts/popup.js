@@ -43,7 +43,7 @@ chrome.storage.local.get(null, async function(options) {
 			document.getElementById('loader').classList.remove('loader');
 		});
 	} else {
-		chrome.runtime.sendMessage({action: "loglines", data: 'Info: Popup Data already in session'});
+		chrome.runtime.sendMessage({action: "loglines", data: 'Info: PopUp data already in session'});
 		let parser = new DOMParser();
 		let doc = parser.parseFromString(data.bmhtml, "text/html");
 		let bookmarks = document.getElementById('bookmarks');
@@ -64,6 +64,7 @@ document.getElementById("settings").addEventListener('click', function() {
 document.getElementById("addbm").addEventListener('click', addBookmark);
 document.getElementById('cyes').addEventListener('click', cbtn);
 document.getElementById('cno').addEventListener('click', cbtn);
+document.getElementById('vline').textContent = 'v'+chrome.runtime.getManifest().version;
 
 chrome.storage.session.get(null, function(data) {
 	if(data.popup !== undefined) {
