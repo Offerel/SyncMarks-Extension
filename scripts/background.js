@@ -155,6 +155,7 @@ function sendRequest(action, data = null, tab = null) {
 				if(xRinfo == 0) {
 					chrome.storage.local.remove('token');
 					changeIcon('error');
+					loglines = logit("Error: Invalid credentials");
 					chrome.storage.session.set({
 						popup: {
 							message:'Invalid credentials',
@@ -178,9 +179,6 @@ function sendRequest(action, data = null, tab = null) {
 function clientSendOptions(response) {
 	if(response.code == 200) {
 		loglines = logit("Info: " + response.message);
-		chrome.action.setBadgeText({text: ''});
-		chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
-		chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName")});
 		changeIcon('info');
 		chrome.storage.session.set({
 			popup: {
@@ -412,6 +410,7 @@ function clientRename(response) {
 		message.type = 'success';
 		message.text = 'Client renamed';
 		changeIcon('info');
+		loglines = logit("Info: " + message.text);
 	}
 
 	chrome.runtime.sendMessage({task: clientRename.name, type: message.type, text: '' + message.text});
@@ -419,7 +418,7 @@ function clientRename(response) {
 
 function tabsSend(response) {
 	if(parseInt(response['tabs']) < 1) {
-		let message = "Tabs could not be saved, please check server error log";
+		let message = "Error: Tabs could not be saved, please check server error log";
 		loglines = logit(message);
 		changeIcon('error');
 	}
@@ -624,28 +623,35 @@ function removeAllMarks() {
 }
 
 function changeIcon(mode) {
+	let color = 'transparent';
+	let text = '';
+
 	switch (mode) {
 		case 'error':
-			chrome.action.setBadgeText({text: '!'});
-			chrome.action.setBadgeBackgroundColor({color: "red"});
+			text = '!';
+			color = 'red';
 			break;
 		case 'warn':
-			chrome.action.setBadgeText({text: '!'});
-			chrome.action.setBadgeBackgroundColor({color: "gold"});
-			setTimeout(function(){
-				chrome.action.setBadgeText({text: ''});
-			}, 5000);
+			text = '!';
+			color = 'gold';
 			break;
 		case 'info':
-			chrome.action.setBadgeText({text: 'i'});
-			chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
-			setTimeout(function(){
-				chrome.action.setBadgeText({text: ''});
-			}, 5000);
+			text = 'i';
+			color = 'chartreuse';
 			break;
 		default:
-			statement(s)
-	 }
+			text = '';
+			color = 'transparent';
+	}
+
+	chrome.action.setBadgeText({text: text});
+	chrome.action.setBadgeBackgroundColor({color: color});
+
+	if(mode != 'error') {
+		setTimeout(function(){
+			chrome.action.setBadgeText({text: ''});
+		}, 5000);
+	}
 }
 
 function init() {
@@ -724,6 +730,7 @@ function getPopupData() {
 			}).catch(err => {
 				console.error(err);
 				changeIcon('error');
+				loglines = logit("Error: " + err);
 			});
 		}
 	});

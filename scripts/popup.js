@@ -39,6 +39,7 @@ chrome.storage.local.get(null, async function(options) {
 		}).catch(err => {
 			console.error(err);
 			chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
+			chrome.runtime.sendMessage({action: "loglines", data: 'Error: ' + err});
 			document.getElementById('loader').classList.remove('loader');
 		});
 	} else {

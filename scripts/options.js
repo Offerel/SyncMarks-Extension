@@ -120,20 +120,15 @@ function gToken(e) {
 		cOptions.token = responseData.token;
 
 		chrome.storage.local.set(cOptions);
-		document.getElementById('blogin').removeAttribute('style')
-		chrome.action.setBadgeText({text: 'i'});
-		chrome.action.setBadgeBackgroundColor({color: "chartreuse"});
-		chrome.action.setTitle({title: chrome.i18n.getMessage("extensionName")});
-		setTimeout(function(){
-			chrome.action.setBadgeText({text: ''});
-		}, 5000);
-
+		document.getElementById('blogin').removeAttribute('style');
+		chrome.runtime.sendMessage({action: "changeIcon", data: 'info'});
 		document.getElementById('cname').defaultValue = responseData.cname;
 		
 		if(responseData.message.indexOf('updated') !== -1 || responseData.message.indexOf('registered') !== -1) {
 			wmessage.textContent = responseData.message;
 			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
 			requestClientOptions(responseData.cOptions);
+			chrome.runtime.sendMessage({action: "loglines", data: 'Info: '+ responseData.message});
 		} else {
 			wmessage.textContent = 'Warning: '+ responseData.message;
 			wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
