@@ -154,6 +154,7 @@ function sendRequest(action, data = null, tab = null) {
 			if (xRinfo != null) {
 				if(xRinfo == 0) {
 					chrome.storage.local.remove('token');
+					chrome.storage.session.remove('bmhtml');
 					changeIcon('error');
 					loglines = logit("Error: Invalid credentials");
 					chrome.storage.session.set({
@@ -162,7 +163,7 @@ function sendRequest(action, data = null, tab = null) {
 							mode:'error'
 						}
 					});
-
+					chrome.storage.session.remove('bmhtml');
 				} else {
 					chrome.storage.local.set({token:xRinfo});
 				}
@@ -677,6 +678,7 @@ function init() {
 
 		if(options.token === undefined) {
 			changeIcon('error');
+			chrome.storage.session.remove('bmhtml');
 			chrome.storage.session.set({
 				popup: {
 					message:"Login token missing",
