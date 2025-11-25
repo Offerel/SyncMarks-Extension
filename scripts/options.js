@@ -87,6 +87,9 @@ function gToken(e) {
 	e.preventDefault();
 	document.getElementById('blogin').classList.add('loading');
 	document.getElementById('crdialog').style.display = "none";
+	
+	chrome.storage.session.remove('bmhtml');
+	chrome.storage.session.remove('popup');
 
 	const params = {
 		action: "clientCheck",
