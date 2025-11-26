@@ -2,6 +2,8 @@
 ## v2.1.15
 - Cleanup unused functions
 - Cleanup logging
+- Added version info to popup
+- Remove bmhtml when needed
 
 ## v2.1.14
 - Log PopUp messages to logfile
