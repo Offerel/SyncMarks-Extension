@@ -236,5 +236,11 @@
   },
   "optionsPuDelConfirm": {
       "message": "Should the selected bookmarks be removed?"
-  }
+  },
+    "popupAdd": {
+        "message": "Add"
+    },
+    "popupRefresh": {
+        "message": "Refresh"
+    }
 }

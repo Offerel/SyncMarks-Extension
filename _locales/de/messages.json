@@ -259,5 +259,11 @@
     },
     "optionsPuDelConfirm": {
         "message": "Sollen die markierten Bookmarks gelöscht werden?"
+    },
+    "popupAdd": {
+        "message": "Hinzufügen"
+    },
+    "popupRefresh": {
+        "message": "Aktualisieren"
     }
 }

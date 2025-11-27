@@ -62,6 +62,9 @@ document.getElementById("settings").addEventListener('click', function() {
 });
 
 document.getElementById("addbm").addEventListener('click', addBookmark);
+document.getElementById("refresh").addEventListener('click', function() {
+	chrome.runtime.sendMessage({action: "puData"});
+});
 document.getElementById('cyes').addEventListener('click', cbtn);
 document.getElementById('cno').addEventListener('click', cbtn);
 document.getElementById('vline').textContent = 'v'+chrome.runtime.getManifest().version;
@@ -101,6 +104,8 @@ document.addEventListener('contextmenu', function(e) {
 	e.preventDefault();
 });
 
+localizePopup();
+
 function keypress(e) {
 	if(e.keyCode === 46 && bmIDs.length > 0) showBox();
 }
@@ -131,14 +136,18 @@ function cSearch() {
 function addClick() {
 	document.querySelectorAll('.file').forEach(function(bookmark){
 		bookmark.addEventListener('mouseup', function(e) {
+			if(e.button === 1) {
+				chrome.tabs.create({url: e.target.dataset.url, active: false});
+			}
+
 			if(e.button === 0) {
 				if(!e.ctrlKey) {
 					chrome.tabs.create({url: e.target.dataset.url, active: true});
 				} else {
 					chrome.tabs.create({url: e.target.dataset.url, active: false});
 				}
+
 			} else {
-				
 				if(e.ctrlKey) {
 					if(e.target.classList.contains('bmMarked')) {
 						e.target.classList.remove('bmMarked');
@@ -204,4 +213,10 @@ function addBookmark() {
 	});
 
 	chrome.runtime.sendMessage({action: "puData"});
+}
+
+function localizePopup() {
+	document.getElementById('settings').title = chrome.i18n.getMessage("optionsBTNSettings");
+	document.getElementById('refresh').title = chrome.i18n.getMessage("popupRefresh");
+	document.getElementById('addbm').title = chrome.i18n.getMessage("popupAdd");
 }

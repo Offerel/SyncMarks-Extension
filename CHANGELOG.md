@@ -1,4 +1,8 @@
 # ChangeLog
+## v2.1.16
+- Added Refresh button in popup
+- Added middle click in popup
+
 ## v2.1.15
 - Cleanup unused functions
 - Cleanup logging
