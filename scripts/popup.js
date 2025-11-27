@@ -71,7 +71,6 @@ function getData(e) {
 		
 		if(data.bmhtml === undefined) {
 			chrome.runtime.sendMessage({action: "loglines", data: 'Info: No bookmarks for PopUp found'});
-			console.log("No bookmarks for PopUp found");
 			fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
 				method: "GET",
 				cache: "no-cache",
@@ -104,7 +103,6 @@ function getData(e) {
 			});
 		} else {
 			chrome.runtime.sendMessage({action: "loglines", data: 'Info: PopUp data already in session'});
-			console.log("PopUp data already in session", e);
 			let parser = new DOMParser();
 			let doc = parser.parseFromString(data.bmhtml, "text/html");
 			let bookmarks = document.getElementById('bookmarks');
