@@ -1,60 +1,7 @@
 var clone;
 var bmIDs = new Array();
 
-chrome.storage.local.get(null, async function(options) {
-	document.getElementById('loader').classList.add('loader');
-	let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
-		client:options.uuid,
-		token:options.token
-	})));
-	
-	const data = await chrome.storage.session.get("bmhtml");
-	
-	if(data.bmhtml === undefined) {
-		chrome.runtime.sendMessage({action: "loglines", data: 'Info: No bookmarks for PopUp found'});
-		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
-			method: "GET",
-			cache: "no-cache",
-			referrerPolicy: "no-referrer",
-			headers: {
-				'Authorization': authheader,
-			}
-		}).then(response => {
-			let xRinfo = response.headers.get("X-Request-Info");
-			if (xRinfo != null) {
-				chrome.storage.local.set({token:xRinfo});
-			}
-			return response.text();
-		}).then(html => {
-			let parser = new DOMParser();
-			let doc = parser.parseFromString(html, "text/html");
-			let bookmarks = document.getElementById('bookmarks');
-			clone = doc.getElementById('bookmarks').cloneNode(true);
-			while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
-			addClick();
-			urlExists();
-			clone = document.getElementById('bookmarks').cloneNode(true);
-			chrome.storage.session.set({bmhtml: html});
-			document.getElementById('loader').classList.remove('loader');
-		}).catch(err => {
-			console.error(err);
-			chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
-			chrome.runtime.sendMessage({action: "loglines", data: 'Error: ' + err});
-			document.getElementById('loader').classList.remove('loader');
-		});
-	} else {
-		chrome.runtime.sendMessage({action: "loglines", data: 'Info: PopUp data already in session'});
-		let parser = new DOMParser();
-		let doc = parser.parseFromString(data.bmhtml, "text/html");
-		let bookmarks = document.getElementById('bookmarks');
-		clone = doc.getElementById('bookmarks').cloneNode(true);
-		while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
-		addClick();
-		urlExists();
-		clone = document.getElementById('bookmarks').cloneNode(true);
-		document.getElementById('loader').classList.remove('loader');
-	}
-});
+getData();
 
 document.getElementById("settings").addEventListener('click', function() {
 	chrome.runtime.openOptionsPage();
@@ -62,9 +9,7 @@ document.getElementById("settings").addEventListener('click', function() {
 });
 
 document.getElementById("addbm").addEventListener('click', addBookmark);
-document.getElementById("refresh").addEventListener('click', function() {
-	chrome.runtime.sendMessage({action: "puData"});
-});
+document.getElementById("refresh").addEventListener('click', getData);
 document.getElementById('cyes').addEventListener('click', cbtn);
 document.getElementById('cno').addEventListener('click', cbtn);
 document.getElementById('vline').textContent = 'v'+chrome.runtime.getManifest().version;
@@ -105,6 +50,73 @@ document.addEventListener('contextmenu', function(e) {
 });
 
 localizePopup();
+
+function getData(e) {
+	chrome.storage.local.get(null, async function(options) {
+		document.getElementById('loader').classList.add('loader');
+		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
+			client:options.uuid,
+			token:options.token
+		})));
+
+		if(e !== undefined) {
+			chrome.storage.session.remove("bmhtml");
+			let bookmarks = document.getElementById('bookmarks');
+			while (bookmarks.firstChild) {
+				bookmarks.removeChild(bookmarks.lastChild);
+			}
+		}
+		
+		const data = await chrome.storage.session.get("bmhtml");
+		
+		if(data.bmhtml === undefined) {
+			chrome.runtime.sendMessage({action: "loglines", data: 'Info: No bookmarks for PopUp found'});
+			console.log("No bookmarks for PopUp found");
+			fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
+				method: "GET",
+				cache: "no-cache",
+				referrerPolicy: "no-referrer",
+				headers: {
+					'Authorization': authheader,
+				}
+			}).then(response => {
+				let xRinfo = response.headers.get("X-Request-Info");
+				if (xRinfo != null) {
+					chrome.storage.local.set({token:xRinfo});
+				}
+				return response.text();
+			}).then(html => {
+				let parser = new DOMParser();
+				let doc = parser.parseFromString(html, "text/html");
+				let bookmarks = document.getElementById('bookmarks');
+				clone = doc.getElementById('bookmarks').cloneNode(true);
+				while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
+				addClick();
+				urlExists();
+				clone = document.getElementById('bookmarks').cloneNode(true);
+				chrome.storage.session.set({bmhtml: html});
+				document.getElementById('loader').classList.remove('loader');
+			}).catch(err => {
+				console.error(err);
+				chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
+				chrome.runtime.sendMessage({action: "loglines", data: 'Error: ' + err});
+				document.getElementById('loader').classList.remove('loader');
+			});
+		} else {
+			chrome.runtime.sendMessage({action: "loglines", data: 'Info: PopUp data already in session'});
+			console.log("PopUp data already in session", e);
+			let parser = new DOMParser();
+			let doc = parser.parseFromString(data.bmhtml, "text/html");
+			let bookmarks = document.getElementById('bookmarks');
+			clone = doc.getElementById('bookmarks').cloneNode(true);
+			while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
+			addClick();
+			urlExists();
+			clone = document.getElementById('bookmarks').cloneNode(true);
+			document.getElementById('loader').classList.remove('loader');
+		}
+	});
+}
 
 function keypress(e) {
 	if(e.keyCode === 46 && bmIDs.length > 0) showBox();
