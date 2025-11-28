@@ -29,7 +29,7 @@ chrome.runtime.onMessage.addListener(
 					showMsg(message.text, (message.type === 'error') ? 'error':'info');
 					break;
 				case 'rLoglines':
-					rLoglines(message.text);
+					rLoglines();
 					break;
 				case 'clientOptions':
 					requestClientOptions(message.cOptions, false);
@@ -312,9 +312,11 @@ function filterLog() {
 	chrome.runtime.sendMessage({action: "getLoglines"});
 }
 
-function rLoglines(loglines) {
+async function rLoglines() {
 	let larea = document.getElementById("logarea");
-	let lines = loglines.split("\n");
+	let data = await chrome.storage.session.get('sessionlog');
+	data.sessionlog = (data.sessionlog === undefined) ? "No Log entry available\n":data.sessionlog;
+	let lines = data.sessionlog.split("\n");
 	let debug = document.getElementById('logdebug').checked;
 	let tlines = new Array();
 

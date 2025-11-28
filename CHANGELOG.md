@@ -1,4 +1,7 @@
 # ChangeLog
+## v2.1.17
+- Save local log in session
+
 ## v2.1.16
 - Added Refresh button in popup
 - Added middle click in popup
