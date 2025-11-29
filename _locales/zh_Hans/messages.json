@@ -181,5 +181,11 @@
     },
     "optionsPuDelConfirm": {
         "message": "是否应移除所选书签？"
+    },
+    "popupAdd": {
+        "message": "添加"
+    },
+    "popupRefresh": {
+        "message": "刷新"
     }
 }
