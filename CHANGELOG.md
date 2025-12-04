@@ -1,4 +1,7 @@
 # ChangeLog
+## v2.1.18
+- Fix message in popup
+
 ## v2.1.17
 - Save local log in session
 
