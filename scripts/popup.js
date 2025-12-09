@@ -18,6 +18,10 @@ chrome.storage.session.get(null, function(data) {
 	if(data.popup !== undefined) {
 		popupMessage(data.popup.message, data.popup.mode);
 		chrome.action.setBadgeText({text: ''});
+	} else {
+		setTimeout(function(){
+			chrome.action.setBadgeText({text: ''});
+		}, 3000);
 	}
 });
 
