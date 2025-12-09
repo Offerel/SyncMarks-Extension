@@ -51,7 +51,7 @@ chrome.runtime.onMessage.addListener(
 					exportPHPMarks();
 					break;
 				case 'loglines':
-					logit(request.data);
+					logit2(request.data);
 					break;
 				case 'getLoglines':
 					chrome.runtime.sendMessage({task: "rLoglines"});
@@ -136,65 +136,78 @@ function sendRequest(action, data = null, tab = null) {
 			client: client,
 			data: data
 		}
+
 		Object.keys(params).forEach((k) => params[k] == null && delete params[k]);
 
-		fetch(options.instance + '?api=v1', {
-			method: "POST",
-			cache: "no-cache",
-			headers: {
-				'Content-type': 'application/json;charset=UTF-8',
-				'Authorization': authheader,
-			},
-			redirect: "follow",
-			referrerPolicy: "no-referrer",
-			body: JSON.stringify(params)
-		}).then(response => {
-			let xRinfo = response.headers.get("X-Request-Info");
-			if (xRinfo != null) {
-				if(xRinfo == 0) {
-					chrome.storage.local.remove('token');
-					chrome.storage.session.remove('bmhtml');
-					changeIcon('error');
-					logit("Error: Invalid credentials");
-					chrome.storage.session.set({
-						popup: {
-							message:'Invalid credentials',
-							mode:'error'
-						}
-					});
-					chrome.storage.session.remove('bmhtml');
-				} else {
-					chrome.storage.local.set({token:xRinfo});
+		try {
+			fetch(options.instance + '?api=v1', {
+				method: "POST",
+				cache: "no-cache",
+				headers: {
+					'Content-type': 'application/json;charset=UTF-8',
+					'Authorization': authheader,
+				},
+				redirect: "follow",
+				referrerPolicy: "no-referrer",
+				body: JSON.stringify(params)
+			}).then(response => {
+				let xRinfo = response.headers.get("X-Request-Info");
+				if (xRinfo != null) {
+					if(xRinfo == 0) {
+						chrome.storage.local.remove('token');
+						chrome.storage.session.remove('bmhtml');
+						let ldata = {message: 'Invalid credentials', type: 'error', source: action.name};
+						changeIcon(ldata.type);
+						logit2(ldata);
+						chrome.storage.session.set({
+							popup: {
+								message:ldata.message,
+								mode:ldata.type
+							}
+						});
+						chrome.storage.session.remove('bmhtml');
+					} else {
+						chrome.storage.local.set({token:xRinfo});
+					}
 				}
-			}
-			return response.json();
-		}).then(responseData => {
-			action(responseData, tab);
-		}).catch(err => {
-			logit("Error: " + action + ': ' + err);
-		});
+				return response.json();
+			}).then(responseData => {
+				action(responseData, tab);
+			}).catch(err => {
+				let ldata = {message: err, type: 'error', source: action.name};
+				logit2(ldata);
+			});
+		} catch (ferror) {
+			params.url = options.instance;
+			params.error = ferror;
+			let estr = JSON.stringify(params);
+			let ldata = {message: estr, type: 'error', source: 'Fetch'};
+			logit2(ldata);
+		}
 	});
 }
 
 function clientSendOptions(response) {
 	if(response.code == 200) {
-		logit("Info: " + response.message);
+		let ldata = {message: response.message, type: 'info', source: 'clientSendOptions'};
+		logit2(ldata);
 		changeIcon('info');
 		chrome.storage.session.set({
 			popup: {
-				message:response.message,
-				mode:'success'
+				message: response.message,
+				mode: 'success'
 			}
 		});
 	} else {
 		changeIcon('warn');
 		chrome.storage.session.set({
 			popup: {
-				message:'clientSendOptions: ' + response.message,
-				mode:'warn'
+				message: response.message,
+				mode: 'warn'
 			}
 		});
-		logit("Error: " + response.message);
+		let ldata = {message: response.message, type: 'error', source: 'clientSendOptions'};
+		logit2(ldata);
 	}
 }
 
@@ -242,30 +255,32 @@ function clientList(response) {
 					} catch {}
 				});
 				let cnt = response.clients.length - 1;
-				logit("Info: List of " + cnt + " clients received successful.");
+				let ldata = {message: 'List of ' + cnt + ' clients received successful', type: 'info', source: 'clientList'};
+				logit2(ldata);
 			}
 		}
 	});
 
-	logit("Info: Get notifications for current client.");
+	logit2({message: 'Get notifications for current client', type: 'info', source: 'clientList'});
 	sendRequest(pushGet);
 }
 
 function pushURL(response) {
-	if(response.error) logit("Error: " + response.error);
+	if(response.error) logit2({message: 'response.error', type: 'error', source: 'pushURL'});
 }
 
 function pushGet(response) {
 	if(Array.isArray(response.notifications)) {
 		try {
 			response.notifications.forEach(function(notification) {
-				logit('Info: Received tab: <a href="' + notification.url + '">' + notification.url + '</a>');
+				logit2({message: 'Received tab: <a href="' + notification.url + '">' + notification.url + '</a>', type: 'info', source: 'pushGet'});
 				openTab(notification.url,notification.nkey,notification.title);
 			});
 		} catch(error) {
-			logit('pushGet: ' + error);
+			logit2({message: error, type: 'error', source: 'pushGet'});
 		}
-		logit("Info: List of " + response.notifications.length + " notifications received successful.");
+
+		logit2({message: "List of " + response.notifications.length + " notifications received successful", type: 'info', source: 'pushGet'});
 	}
 
 	sendRequest(clientInfo);
@@ -291,25 +306,26 @@ function bookmarkExport(response, tab = null) {
 	const message = [];
 	if(mozilla === false) bookmarks = c2cm(bookmarks);
 	count = 0;
-	logit('Info: '+ bookmarks.length +' Bookmarks received from server');
-	message.text = '' + bookmarks.length + ' Bookmarks received from server';
+	let ldata = {message: bookmarks.length +' Bookmarks received from server', type: 'info', source: 'bookmarkExport'};
+	logit2(ldata);
+	message.text = ldata.message;
 	message.type = 'success';
 	message.task = bookmarkExport.name;
 	
 	importFull(bookmarks);
 	
 	if (tab != null) chrome.runtime.sendMessage({task: message.task, type: message.type, text: message.text});
-	logit('Info: Import finished');
+	logit2({message: 'Import finished', type: 'info', source: 'bookmarkExport'});
 }
 
 function bookmarkImport(response) {
 	const message = [];
 	if(response.code == 200) {
-		logit("Info: " + response.message);
+		logit2({message: response.message, type: 'info', source: 'bookmarkImport'});
 		message.text = "successExportBookmarks";
 		message.type = 'success';
 	} else {
-		logit("Error: bookmarkImport: "+ response.message);
+		logit2({message: response.message, type: 'error', source: 'bookmarkImport'});
 		message.text = chrome.i18n.getMessage("errorExportBookmarks");
 		message.type = 'error';
 	}
@@ -326,23 +342,23 @@ function bookmarkAdd(response) {
 				text = "Bookmark added";
 				changeIcon('info');
 				mode = '0';
-				type = 'Info';
+				type = 'info';
 			} else {
 				text = response.message;
 				changeIcon('warn');
 				chrome.storage.session.set({
 					popup: {
-						message:'bookmarkAdd: ' + response.message,
-						mode:'warn'
+						message: response.message,
+						mode: 'warn'
 					}
 				});
 				mode = '1';
-				type = 'Error';
+				type = 'error';
 			}
 			
 			if(response.code !== 200) notify(Math.random().toString(16).substring(2, 10), text);
 
-			logit(type + ": " + text);
+			logit2({message: text, type: type, source: 'bookmarkAdd'});
 		}
 	});
 
@@ -351,47 +367,52 @@ function bookmarkAdd(response) {
 }
 
 function pushHide(response) {
-	if(response.error) logit("Error: pushHide: " + response.error);
+	if(response.error) logit2({message: response.error, type: type, source: 'pushHide'});
 }
 
 function bookmarkEdit(response) {
+	let ldata = {message: '', type: '', source: 'bookmarkEdit'};
+
 	if(response['code'] == 200) {
-		logit("Info: Bookmark edited successfully at the server");
+		ldata.type = 'info';
+		ldata.message = 'Bookmark edited successfully at the server';
 	} else {
-		message = "Error: Bookmark not edited at the server, please check the server logfile.";
-		logit(message);
-		notify('error',message);
+		ldata.type = 'error';
+		ldata.message = 'Bookmark not edited at the server, please check the server logfile';
+		notify(ldata.type, ldata.message);
 	}
+
+	logit2(ldata);
 }
 
 function bookmarkMove(response) {
 	if(response['code'] == 200)
-		logit("Info: Bookmark moved successfully at the server");
+		logit2({message: 'Bookmark moved successfully at the server', type: 'info', source: 'bookmarkMove'});
 	else
-		logit("Error: Bookmark not moved on server. " + response[`message`]);
+		logit2({message: "Bookmark not moved on server. " + response[`message`], type: 'error', source: 'bookmarkMove'});
 }
 
 function bookmarkDel(response) {
 	switch (response['code']) {
 		case 200:
-			logit("Info: " + response['message']);
+			logit2({message: response['message'], type: 'info', source: 'bookmarkDel'});
 			break;
 		case 204:
 			changeIcon('warn');
-			logit("Warn: " +  + response['message']);
+			logit2({message: response['message'], type: 'warn', source: 'bookmarkDel'});
 			chrome.storage.session.set({
 				popup: {
-					message:'bookmarkDel: ' + response['message'],
-					mode:'warn'
+					message: response['message'],
+					mode: 'warn'
 				}
 			});
 		default:
 			changeIcon('error');
-			logit("Error: bookmarkDel: " +  + response['message']);
+			logit2({message: response['message'], type: 'error', source: 'bookmarkDel'});
 			chrome.storage.session.set({
 				popup: {
-					message:'bookmarkDel: ' + response['message'],
-					mode:'error'
+					message: response['message'],
+					mode: 'error'
 				}
 			});
 	  }
@@ -403,23 +424,22 @@ function bookmarkDel(response) {
 function clientRename(response) {
 	const message = [];
 	if(response.message) {
-		logit("Error: " + response.message);
 		message.type = 'error';
 		message.text = response.message;
 	} else {
 		message.type = 'success';
 		message.text = 'Client renamed';
 		changeIcon('info');
-		logit("Info: " + message.text);
 	}
+
+	logit2({message: message.text, type: message.type, source: 'clientRename'});
 
 	chrome.runtime.sendMessage({task: clientRename.name, type: message.type, text: '' + message.text});
 }
 
 function tabsSend(response) {
 	if(parseInt(response['tabs']) < 1) {
-		let message = "Error: Tabs could not be saved, please check server error log";
-		logit(message);
+		logit2({message: 'Tabs could not be saved, please check server error log', type: 'error', source: 'tabsSend'});
 		changeIcon('error');
 	}
 }
@@ -529,7 +549,7 @@ function ccMenus() {
 						});
 					} catch {}
 				} catch(error) {
-					logit('ccMenus: ' + error);
+					logit2({message: error, type: 'error', source: 'ccMenus'});
 				}
 			})
 		}
@@ -566,18 +586,19 @@ function sendTab(element) {
 				target: element.target.id
 			};
 
-			logit("Info: " + chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options.uuid);
+			logit2({message: chrome.i18n.getMessage("sendLinkYes") + ", Client: " + options.uuid, type: 'info', source: 'sendTab'});
 			sendRequest(pushURL, data);
 		});
 	});
 }
-
+/*
 async function logit(message) {
 	const ndate = new Date();
 	let ds = ndate.toLocaleDateString(`sv`) + " " + ndate.toLocaleTimeString(`sv`);
 
 	if(message.toString().toLowerCase().indexOf('undefined') >= 0) {
-		message = new Error().stack.toString();
+		let nmessage = new Error().stack.toString();
+		message = message + ': trace: ' + nmessage;
 	}
 
 	let data = await chrome.storage.session.get('sessionlog');
@@ -596,6 +617,35 @@ async function logit(message) {
 
 	chrome.storage.session.set({sessionlog: data.sessionlog + ds + " - " + message + "\n"});
 }
+*/
+async function logit2(logdata) {
+	const ndate = new Date();
+	let ds = ndate.toLocaleDateString(`sv`) + " " + ndate.toLocaleTimeString(`sv`);
+
+	if(logdata.message.toString().toLowerCase().indexOf('undefined') >= 0) {
+		let nmessage = new Error().stack.toString();
+		logdata.message = logdata.message + ': trace: ' + nmessage;
+		logdata.type = 'error';
+	}
+
+	let data = await chrome.storage.session.get('sessionlog');
+	data.sessionlog = (data.sessionlog === undefined) ? '':data.sessionlog;
+
+	//if(logdata.message.toString().toLowerCase().indexOf('error') >= 0 && logdata.message.toString().toLowerCase().indexOf('typeerror') === false )  {
+	if(logdata.type === 'error' )  {
+		changeIcon('error');
+		chrome.storage.session.set({
+			popup: {
+				message: logdata.message,
+				mode: logdata.type
+			}
+		});
+
+		console.warn(ds + " - " + logdata.message);
+	}
+
+	chrome.storage.session.set({sessionlog: data.sessionlog + ds + " - " + logdata.type + ': ' + logdata.message + "\n"});
+}
 
 function get_oMarks() {
 	chrome.permissions.getAll(function(e) {
@@ -606,7 +656,7 @@ function get_oMarks() {
 }
 
 function removeAllMarks() {
-	logit('Info: Try to remove all local bookmarks');
+	logit2({message: 'Try to remove all local bookmarks', type: 'info', source: 'removeAllMarks'});
 	try {
 		chrome.bookmarks.onRemoved.removeListener(onRemovedCheck);
 		chrome.bookmarks.getTree(function(tree) {
@@ -619,7 +669,7 @@ function removeAllMarks() {
 		});
 		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 	} catch(error) {
-		logit(error);
+		logit2({message: error, type: 'error', source: 'removeAllMarks'});
 	} finally {
 		chrome.storage.local.set({last_s: 1});
 	}
@@ -658,23 +708,25 @@ function changeIcon(mode) {
 }
 
 function init() {
-	logit("Info: AddOn: " + chrome.runtime.getManifest().version);
-	logit("Info: Browser: " + navigator.userAgent);
+	logit2({message: "AddOn: " + chrome.runtime.getManifest().version, type: 'info', source: 'init'});
+	logit2({message: "Browser: " + navigator.userAgent, type: 'info', source: 'init'});
+
 	chrome.runtime.getPlatformInfo(function(info){
-		logit("Info: Architecture: " + info.arch + " | OS: " + info.os);
+		logit2({message: "Architecture: " + info.arch + " | OS: " + info.os, type: 'info', source: 'init'});
 	});
 	get_oMarks();
 
 	chrome.storage.local.get(null, async function(options) {
 		if(options.instance == undefined) {
 			changeIcon('error');
+			let ldata = {message: 'Instance undefined', type: 'error', source: 'init'};
 			chrome.storage.session.set({
 				popup: {
-					message:"Instance undefined",
-					mode:'error'
+					message: ldata.message,
+					mode: ldata.type
 				}
 			});
-			logit("Error: Instance undefined");
+			logit2(ldata);
 			return false;
 		}
 
@@ -683,11 +735,11 @@ function init() {
 			chrome.storage.session.remove('bmhtml');
 			chrome.storage.session.set({
 				popup: {
-					message:"Login token missing",
-					mode:'error'
+					message: "Login token missing",
+					mode: 'error'
 				}
 			});
-			logit("Error: Login token missing");
+			logit2({message: 'Login token missing', type: 'error', source: 'init'});
 		} else {
 			chrome.action.setBadgeText({text: ''});
 		}
@@ -697,9 +749,9 @@ function init() {
 		if(options.instance) {
 			await ccMenus();
 			getPopupData();
-			logit("Info: Get list of clients.");
+			logit2({message: 'Get list of clients', type: 'info', source: 'init'});
 			sendRequest(clientList);
-			logit("Info: Init finished");
+			logit2({message: 'Init finished', type: 'info', source: 'init'});
 		}
 	});
 }
@@ -713,7 +765,7 @@ function getPopupData() {
 		})));
 	
 		if(data.bmhtml === undefined) {
-			logit("Info: Get data for PopUp");
+			logit2({message: 'Get data for PopUp', type: 'info', source: 'getPopupData'});
 			fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
 				method: "GET",
 				cache: "no-cache",
@@ -729,12 +781,12 @@ function getPopupData() {
 				return response.text();
 			}).then(html => {
 				chrome.storage.session.set({bmhtml: html});
-				logit("Info: PopUp data saved in session storage");
+				logit2({message: 'PopUp data saved in session storage', type: 'info', source: 'getPopupData'});
 				changeIcon('info');
 			}).catch(err => {
 				console.error(err);
 				changeIcon('error');
-				logit("Error: " + err);
+				logit2({message: err, type: 'error', source: 'getPopupData'});
 			});
 		}
 	});
@@ -798,7 +850,7 @@ function notificationSettings(id) {
 		try {
 			nd = JSON.parse(id.substring(0, id.indexOf('_')));
 		} catch (e) {
-			logit(e);
+			logit2({message: e, type: 'error', source: 'notificationSettings'});
 		}
 		
 		if (typeof nd !== 'undefined') {
@@ -807,7 +859,7 @@ function notificationSettings(id) {
 					if(tabInfo.length > 0) chrome.tabs.highlight({tabs: tabInfo[0].index});
 				});
 			} catch(error) {
-				logit(error);
+				logit2({message: error, type: 'error', source: 'notificationSettings'});
 			}
 		}
 	}
@@ -868,7 +920,7 @@ function notify(notid, message, title=chrome.i18n.getMessage("extensionName")) {
 			"message": message
 		});
 	} catch(error) {
-		logit(error);
+		logit2({message: error, type: 'error', source: 'notify'});
 	}
 }
 
@@ -898,7 +950,7 @@ function onMovedCheck(id, bookmark) {
 						"title":bmark[0].title
 					};
 
-					logit("Info: Sending move request to server. Bookmark ID: " + id);
+					logit2({message: 'Sending move request to server. Bookmark ID: ' + id, type: 'info', source: 'onMovedCheck'});
 					sendRequest(bookmarkMove, jMark);
 				});
 			});
@@ -920,7 +972,7 @@ function onChangedCheck(id, changeInfo) {
 					"index": bmark[0].index
 				};
 
-				logit("Info: Sending edit request to server. URL: "+ changeInfo.url);
+				logit2({message: 'Sending edit request to server. URL: '+ changeInfo.url, type: 'info', source: 'onMovedCheck'});
 				sendRequest(bookmarkEdit, jsonMark);
 			});
 		}
@@ -939,7 +991,7 @@ function onRemovedCheck(id, bookmark) {
 }
 
 function exportPHPMarks(upl=[]) {
-	logit("Info: Send new local bookmarks to server");
+	logit2({message: 'Send new local bookmarks to server', type: 'info', source: 'exportPHPMarks'});
 	let bookmarks = '';
 	let p = 0;
 
@@ -971,7 +1023,7 @@ function removeMark(bookmark) {
 			"title": bookmark.node.title
 		};
 
-		logit("Info: Sending remove request to server: <a href='" + bookmark.node.url + "'>" + bookmark.node.url + "</a>");
+		logit2({message: "Sending remove request to server: <a href='" + bookmark.node.url + "'>" + bookmark.node.url + "</a>", type: 'info', source: 'removeMark'});
 		sendRequest(bookmarkDel, jsonMark);
 	});
 }
@@ -994,27 +1046,27 @@ function sendMark(bookmark) {
 			"added": bookmark.dateAdded
 		};
 
-		logit("Info: Sending add request to server: <a href='"+bookmark.url+"'>"+bookmark.url+"</a>");
+		logit2({message: "Sending add request to server: <a href='"+bookmark.url+"'>"+bookmark.url+"</a>", type: 'info', source: 'sendMark'});
 		sendRequest(bookmarkAdd, jMark);
 	});
 }
 
 async function doFullSync() {
-	logit("Info: Start Sync");
+	logit2({message: "Start Sync", type: 'info', source: 'doFullSync'});
 	try {
 		chrome.storage.local.get(null, async function(options) {
-			logit('Info: Sending Sync request to server');
+			logit2({message: "Sending Sync request to server", type: 'info', source: 'doFullSync'});
 			sendRequest(bookmarkExport, 'json');
 		});
 	} catch(error) {
-		logit('doFullSync: ' + error);
+		logit2({message: error, type: 'error', source: 'doFullSync'});
 	} finally {
 		chrome.storage.local.set({last_s: 1});
 	}
 }
 
 async function importFull(rMarks) {
-	logit("Info: Starting import");
+	logit2({message: 'Starting import', type: 'info', source: 'importFull'});
 	const lMarks = [];
 	const dMarks = new Array();
 	const uMarks = new Array();
@@ -1131,23 +1183,23 @@ async function importFull(rMarks) {
 		
 		switch (action) {
 			case 0:
-				logit('Debug: Ignore bookmark "'+remoteMark.bmTitle+'"');
+				logit2({message: 'Ignore bookmark "'+remoteMark.bmTitle+'"', type: 'debug', source: 'importFull'});
 				break;
 			case 1:
-				logit('Debug: Create bookmark "'+remoteMark.bmTitle+'"');
+				logit2({message: 'Create bookmark "'+remoteMark.bmTitle+'"', type: 'debug', source: 'importFull'});
 				await createMark(remoteMark);
 				break;
 			case 2:
-				logit('Debug: Move bookmark "'+remoteMark.bmTitle+'"');
+				logit2({message: 'Move bookmark "'+remoteMark.bmTitle+'"', type: 'debug', source: 'importFull'});
 				await iMoveMark(remoteMark);
 				break;
 			case 3:
-				logit('Debug: Existing Bookmark "'+remoteMark.bmTitle+'"');
+				logit2({message: 'Existing Bookmark "'+remoteMark.bmTitle+'"', type: 'debug', source: 'importFull'});
 				//delete remoteMark.bmIndex;
 				await iMoveMark(remoteMark);
 				break;
 			default:
-				logit('Debug: Unknown action for bookmark "'+remoteMark.bmTitle+'"');
+				logit2({message: 'Unknown action for bookmark "'+remoteMark.bmTitle+'"', type: 'debug', source: 'importFull'});
 				break;
 		}
 	}
@@ -1259,7 +1311,7 @@ function importMarks(parsedMarks, index=0) {
 				if (typeof parsedMarks[index+1] == 'undefined') {
 					message = count + chrome.i18n.getMessage("successImportBookmarks");
 					notify('info',message);
-					logit('Info: ' + message + ' Re-adding the listeners now');
+					logit2({message: message + ' Re-adding the listeners now', type: 'info', source: 'importMarks'});
 					bookmarkSync(false);
 				}
 				else {
@@ -1292,7 +1344,7 @@ function importMarks(parsedMarks, index=0) {
 				} else {
 					message = parsedMarks.length + chrome.i18n.getMessage("successImportBookmarks");
 					notify('info',message);
-					logit('Info: ' + message + ' Re-adding the listeners now');
+					logit2({message: message + ' Re-adding the listeners now', type: 'info', source: 'importMarks'});
 					bookmarkSync(true);
 				}
 			}
@@ -1350,7 +1402,7 @@ function addAllMarks(parsedMarks, index=1) {
 		} else {
 			message = count + chrome.i18n.getMessage("successImportBookmarks");
 			notify('info',message);
-			logit('Info: '+message);
+			logit2({message: message, type: 'info', source: 'addAllMarks'});
 			bookmarkSync(true);
 
 			last_s = Date.now();

@@ -131,15 +131,15 @@ function gToken(e) {
 			wmessage.textContent = responseData.message;
 			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
 			requestClientOptions(responseData.cOptions);
-			chrome.runtime.sendMessage({action: "loglines", data: 'Info: '+ responseData.message});
+			chrome.runtime.sendMessage({action: "loglines", data: {message: responseData.message, type: 'info', source: 'Options, gToken'}});
 		} else {
 			wmessage.textContent = 'Warning: '+ responseData.message;
 			wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-			chrome.runtime.sendMessage({action: "loglines", data: 'Warn: '+ responseData.message});
+			chrome.runtime.sendMessage({action: "loglines", data: {message: responseData.message, type: 'warn', source: 'Options, gToken'}});
 		}
 	}).catch(err => {
 		wmessage.style.cssText = "border-color: red; background-color: lightsalmon;";
-		chrome.runtime.sendMessage({action: "loglines", data: "Error: " + err});
+		chrome.runtime.sendMessage({action: "loglines", data: {message: err, type: 'error', source: 'Options, gToken'}});
 		switch(response.status) {
 			case 404:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorURL") + err;
 						break;
@@ -147,7 +147,7 @@ function gToken(e) {
 						break;
 			default:	wmessage.textContent = chrome.i18n.getMessage("optionsErrorLogin") + response.status + err;
 		}
-		chrome.runtime.sendMessage({action: "loglines", data: 'Error: ' + wmessage.textContent});
+		chrome.runtime.sendMessage({action: "loglines", data: {message: wmessage.textContent, type: 'error', source: 'Options, gToken'}});
 	});
 
 	wmessage.className = "show";
@@ -268,7 +268,7 @@ function manualImport(e) {
 			chrome.runtime.sendMessage({action: "bookmarkExport", data: 'json', tab: tabs[0]['id']});
 		});
 	} catch(error) {
-		chrome.runtime.sendMessage({action: "loglines", data: "Error: " + error});
+		chrome.runtime.sendMessage({action: "loglines", data: {message: error, type: 'error', source: 'Options, manualImport'}});
 	} finally {
 		document.getElementById("impdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
@@ -280,7 +280,7 @@ function manualExport(e) {
 	try {
 		chrome.runtime.sendMessage({action: "exportPHPMarks"});
 	} catch(error) {
-		chrome.runtime.sendMessage({action: "loglines", data: "Error: " + error});
+		chrome.runtime.sendMessage({action: "loglines", data: {message: error, type: 'error', source: 'Options, manualExport'}});
 	} finally {
 		document.getElementById("expdialog").style.display = "none";
 		chrome.storage.local.set({last_s: 1});
@@ -385,7 +385,7 @@ function requestHostPermission() {
 	}, (granted) => {
 		const message = (granted) ? 'Info: Access to ' + newOrigin + ' granted':'Warn: Access to ' + newOrigin + ' denied';
 		if(!granted) chrome.runtime.sendMessage({action: "changeIcon", data: 'warn'});
-		chrome.runtime.sendMessage({action: "loglines", data: message});
+		chrome.runtime.sendMessage({action: "loglines", data: {message: message, type: 'info', source: 'Options, requestHostPermission'}});
 		checkURL();
 	});
 }
@@ -452,9 +452,9 @@ function serverImport() {
 				if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
 				return response.json();
 			}).then(responseData => {
-				chrome.runtime.sendMessage({action: "loglines", data: 'Info: Old client removed'});
+				chrome.runtime.sendMessage({action: "loglines", data: {message: 'Old client removed', type: 'info', source: 'Options, serverImport'}});
 			}).catch(err => {
-				chrome.runtime.sendMessage({action: "loglines", data: 'Error: ' + err});
+				chrome.runtime.sendMessage({action: "loglines", data: {message: err, type: 'error', source: 'Options, serverImport'}});
 			});
 		}
 	}, 500);

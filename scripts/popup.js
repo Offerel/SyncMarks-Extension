@@ -74,7 +74,8 @@ function getData(e) {
 		const data = await chrome.storage.session.get("bmhtml");
 		
 		if(data.bmhtml === undefined) {
-			chrome.runtime.sendMessage({action: "loglines", data: 'Info: No bookmarks for PopUp found'});
+			let ldata = {message: 'No bookmarks for PopUp found', type: 'info', source: 'PopUp, getData'};
+			chrome.runtime.sendMessage({action: "loglines", data: ldata});
 			fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
 				method: "GET",
 				cache: "no-cache",
@@ -102,11 +103,12 @@ function getData(e) {
 			}).catch(err => {
 				console.error(err);
 				chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
-				chrome.runtime.sendMessage({action: "loglines", data: 'Error: ' + err});
+				let ldata = {message: err, type: 'error', source: 'PopUp, getData'};
+				chrome.runtime.sendMessage({action: "loglines", data: ldata});
 				document.getElementById('loader').classList.remove('loader');
 			});
 		} else {
-			chrome.runtime.sendMessage({action: "loglines", data: 'Info: PopUp data already in session'});
+			chrome.runtime.sendMessage({action: "loglines", data: {message: 'Info: PopUp data already in session', type: 'info', source: 'PopUp, getData'}});
 			let parser = new DOMParser();
 			let doc = parser.parseFromString(data.bmhtml, "text/html");
 			let bookmarks = document.getElementById('bookmarks');
