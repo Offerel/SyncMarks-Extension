@@ -1,6 +1,8 @@
 # ChangeLog
 ## v2.1.18
 - Fix message in popup
+- Fix error overlay
+- Rewrite logit
 
 ## v2.1.17
 - Save local log in session
