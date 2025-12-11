@@ -1009,6 +1009,11 @@ function sendMark(bookmark) {
 		bookmark.type = "bookmark";
 	}
 
+	if(!bookmark.url.startsWith("http")) {
+		logit({message: 'Will not add none-http(s) url' + bookmark.url, type: 'debug', source: 'sendMark'});
+		return false;
+	}
+
 	chrome.bookmarks.get(bookmark.parentId, async function(bmark) {
 		let jMark = { 
 			"id": bookmark.id,
