@@ -1,4 +1,13 @@
-const mozilla = typeof browser !== 'undefined';
+var mozilla = false;
+
+try {
+	chrome.runtime.getBrowserInfo();
+	mozilla = true;
+}
+catch (em) {
+	mozilla = false;
+}
+
 var dictOldIDsToNewIDs = { "-1": "-1" };
 var oMarks = [];
 var pTabs = [];

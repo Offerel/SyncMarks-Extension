@@ -1,4 +1,7 @@
 # ChangeLog
+## v2.1.20
+- Fix for Brave detecting as Firefox
+
 ## v2.1.19
 - Dont add none-http urls
 
