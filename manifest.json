@@ -48,15 +48,5 @@
   ],
   "optional_host_permissions": [
     "https://*/*"
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "icons/bookmark.png"
-      ],
-      "matches": [
-        "*://*/*"
-      ]
-    }
   ]
 }
