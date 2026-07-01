@@ -15,10 +15,27 @@ var remoteMark;
 
 var [debug, lastseen, count, last_s] = [false, null, 0, 0];
 
+let initialized = false;
+let initPromise = null;
+async function ensureInit() {
+	if (initialized) return;
+
+	if (!initPromise) {
+		initPromise = init();
+	}
+
+	await initPromise;
+}
+
 chrome.runtime.onStartup.addListener( () => {
+	logit({message: 'Create context menus', type: 'info', source: 'startup'});
+	await ccMenus();
+	logit({message: 'Get list of clients', type: 'info', source: 'startup'});
+	sendRequest(clientList);
 	init();
 });
 
+/*
 if(!mozilla) {
 	const pingInterval = setInterval(() => {
 		chrome.runtime.getPlatformInfo;
@@ -30,6 +47,7 @@ if(!mozilla) {
 		self.postMessage('keep');
 	}, 20000);
 }
+*/
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
@@ -470,9 +488,9 @@ function getNewTabs() {
 
 function tabSync(mode) {
 	if(mode === true) {
-		chrome.tabs.onCreated.addListener(tabCreated);
-		chrome.tabs.onUpdated.addListener(tabUpdated);
-		chrome.tabs.onRemoved.addListener(tabCreated);
+		if(!chrome.tabs.onCreated.hasListener(tabCreated)) chrome.tabs.onCreated.addListener(tabCreated);
+		if(!chrome.tabs.onUpdated.hasListener(tabUpdated)) chrome.tabs.onUpdated.addListener(tabUpdated);
+		if(!chrome.tabs.onRemoved.hasListener(tabCreated)) chrome.tabs.onRemoved.addListener(tabCreated);
 	} else {
 		chrome.tabs.onCreated.removeListener(tabCreated);
 		chrome.tabs.onUpdated.removeListener(tabUpdated);
@@ -690,7 +708,7 @@ function changeIcon(mode) {
 	}
 }
 
-function init() {
+async function init() {
 	logit({message: "AddOn: " + chrome.runtime.getManifest().version, type: 'info', source: 'init'});
 	logit({message: "Browser: " + navigator.userAgent, type: 'info', source: 'init'});
 
@@ -730,13 +748,15 @@ function init() {
 		last_s = (options.last_s) ? options.last_s:0;
 
 		if(options.instance) {
-			await ccMenus();
+			//await ccMenus();
 			getPopupData();
-			logit({message: 'Get list of clients', type: 'info', source: 'init'});
-			sendRequest(clientList);
+			//logit({message: 'Get list of clients', type: 'info', source: 'init'});
+			//sendRequest(clientList);
 			logit({message: 'Init finished', type: 'info', source: 'init'});
 		}
 	});
+
+	initialized = true;
 }
 
 function getPopupData() {
