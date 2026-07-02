@@ -12,28 +12,17 @@ var dictOldIDsToNewIDs = { "-1": "-1" };
 var oMarks = [];
 var pTabs = [];
 var remoteMark;
-
 var [debug, lastseen, count, last_s] = [false, null, 0, 0];
-
 let initialized = false;
 let initPromise = null;
+
 async function ensureInit() {
 	if (initialized) return;
-
-	if (!initPromise) {
-		initPromise = init();
-	}
-
+	if (!initPromise) initPromise = init();
 	await initPromise;
 }
 
-chrome.runtime.onStartup.addListener( () => {
-	logit({message: 'Create context menus', type: 'info', source: 'startup'});
-	await ccMenus();
-	logit({message: 'Get list of clients', type: 'info', source: 'startup'});
-	sendRequest(clientList);
-	init();
-});
+if(!chrome.runtime.onStartup.hasListener(onStartup)) chrome.runtime.onStartup.addListener(onStartup);
 
 /*
 if(!mozilla) {
@@ -132,15 +121,23 @@ chrome.permissions.getAll(function(e) {
 	}
 });
 
-chrome.runtime.onInstalled.addListener(onInstalled);
+if(!chrome.runtime.onInstalled.hasListener(onInstalled)) chrome.runtime.onInstalled.addListener(onInstalled);
 
-chrome.notifications.onClicked.addListener(notificationSettings);
+if(!chrome.notifications.onClicked.hasListener(notificationSettings)) chrome.notifications.onClicked.addListener(notificationSettings);
 
-chrome.tabs.onActivated.addListener(onTabActivated);
+if(!chrome.tabs.onActivated.hasListener(onTabActivated)) chrome.tabs.onActivated.addListener(onTabActivated);
 
 if(chrome.commands !== undefined) chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
+
+function onStartup() {
+	logit({message: 'Create context menus', type: 'info', source: 'startup'});
+	ccMenus();
+	logit({message: 'Get list of clients', type: 'info', source: 'startup'});
+	sendRequest(clientList);
+	init();
+}
 
 function sendRequest(action, data = null, tab = null) {
 	chrome.storage.local.get(null, function(options) {
@@ -500,10 +497,10 @@ function tabSync(mode) {
 
 function bookmarkSync(mode) {
 	if(mode === true) {
-		chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-		chrome.bookmarks.onMoved.addListener(onMovedCheck);
-		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-		chrome.bookmarks.onChanged.addListener(onChangedCheck);
+		if(!chrome.bookmarks.onCreated.hasListener(onCreatedCheck)) chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+		if(!chrome.bookmarks.onMoved.hasListener(onMovedCheck)) chrome.bookmarks.onMoved.addListener(onMovedCheck);
+		if(!chrome.bookmarks.onRemoved.hasListener(onRemovedCheck)) chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+		if(!chrome.bookmarks.onChanged.hasListener(onChangedCheck)) chrome.bookmarks.onChanged.addListener(onChangedCheck);
 	} else {
 		chrome.bookmarks.onCreated.removeListener(onCreatedCheck);
 		chrome.bookmarks.onMoved.removeListener(onMovedCheck);
@@ -668,7 +665,7 @@ function removeAllMarks() {
 				});
 			});
 		});
-		chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+		if(!chrome.bookmarks.onRemoved.hasListener(onRemovedCheck)) chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 	} catch(error) {
 		logit({message: error, type: 'error', source: 'removeAllMarks'});
 	} finally {
