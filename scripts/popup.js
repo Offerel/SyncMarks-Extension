@@ -112,7 +112,6 @@ function getData(e) {
 				document.getElementById('loader').classList.remove('loader');
 			});
 		} else {
-			chrome.runtime.sendMessage({action: "loglines", data: {message: 'Info: PopUp data already in session', type: 'info', source: 'PopUp, getData'}});
 			let parser = new DOMParser();
 			let doc = parser.parseFromString(data.bmhtml, "text/html");
 			let bookmarks = document.getElementById('bookmarks');
