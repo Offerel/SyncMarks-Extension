@@ -1,5 +1,6 @@
 var mozilla = false;
-
+console.log("Background gestartet", new Date().toISOString());
+logit({message: 'Background gestartet' + new Date().toISOString(), type: 'info', source: 'anfang'});
 try {
 	chrome.runtime.getBrowserInfo();
 	mozilla = true;
@@ -23,6 +24,11 @@ async function ensureInit() {
 }
 
 if(!chrome.runtime.onStartup.hasListener(onStartup)) chrome.runtime.onStartup.addListener(onStartup);
+
+if(!chrome.bookmarks.onCreated.hasListener(onCreatedCheck)) chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+if(!chrome.bookmarks.onMoved.hasListener(onMovedCheck)) chrome.bookmarks.onMoved.addListener(onMovedCheck);
+if(!chrome.bookmarks.onRemoved.hasListener(onRemovedCheck)) chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+if(!chrome.bookmarks.onChanged.hasListener(onChangedCheck)) chrome.bookmarks.onChanged.addListener(onChangedCheck);
 
 /*
 if(!mozilla) {
