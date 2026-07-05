@@ -1,4 +1,10 @@
 # SyncMarks Extension
+**Synchronize Firefox, Edge and Chrome bookmarks using your own self-hosted server.**  
+No cloud service.  
+No account.  
+No tracking.  
+Your server, your data.  
+  
 [![Translation status](https://translate.codeberg.org/widget/syncmarks/browser-extension/svg-badge.svg)](https://translate.codeberg.org/engage/syncmarks/) [![Issues](https://img.shields.io/gitea/issues/open/Offerel/SyncMarks-Extension?gitea_url=https%3A%2F%2Fcodeberg.org%2F)](https://codeberg.org/Offerel/SyncMarks-Extension/issues) ![License](https://img.shields.io/github/license/Offerel/SyncMarks-Extension) [![Version](https://img.shields.io/amo/v/davmarks%40example.org?label=version)](https://codeberg.org/Offerel/SyncMarks-Extension/releases/latest)  
 This is a Webextension for Browsers to sync and backup your bookmarks via the SyncMarks Backend. You can simply install the AddOn for Firefox via [AMO](https://addons.mozilla.org/firefox/addon/syncmarks/) or for Microsoft Edge via [Edge Store](https://microsoftedge.microsoft.com/addons/detail/ffobakhdlfhmnnkmimkbnbmnplihhphg). The Addon will work also on other Chromium derivates, including [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser). You can use this plugin to export, import and sync your bookmarks to your backend.
 
