@@ -1,11 +1,9 @@
 var mozilla = false;
-console.log("Background gestartet", new Date().toISOString());
-logit({message: 'Background gestartet' + new Date().toISOString(), type: 'info', source: 'anfang'});
+
 try {
 	chrome.runtime.getBrowserInfo();
 	mozilla = true;
-}
-catch (em) {
+} catch (em) {
 	mozilla = false;
 }
 
@@ -14,35 +12,9 @@ var oMarks = [];
 var pTabs = [];
 var remoteMark;
 var [debug, lastseen, count, last_s] = [false, null, 0, 0];
-let initialized = false;
-let initPromise = null;
-
-async function ensureInit() {
-	if (initialized) return;
-	if (!initPromise) initPromise = init();
-	await initPromise;
-}
 
 if(!chrome.runtime.onStartup.hasListener(onStartup)) chrome.runtime.onStartup.addListener(onStartup);
-
-if(!chrome.bookmarks.onCreated.hasListener(onCreatedCheck)) chrome.bookmarks.onCreated.addListener(onCreatedCheck);
-if(!chrome.bookmarks.onMoved.hasListener(onMovedCheck)) chrome.bookmarks.onMoved.addListener(onMovedCheck);
-if(!chrome.bookmarks.onRemoved.hasListener(onRemovedCheck)) chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
-if(!chrome.bookmarks.onChanged.hasListener(onChangedCheck)) chrome.bookmarks.onChanged.addListener(onChangedCheck);
-
-/*
-if(!mozilla) {
-	const pingInterval = setInterval(() => {
-		chrome.runtime.getPlatformInfo;
-		self.serviceWorker.postMessage('keep');
-	}, 20000);
-} else {
-	const pingInterval = setInterval(() => {
-		chrome.runtime.getPlatformInfo;
-		self.postMessage('keep');
-	}, 20000);
-}
-*/
+init();
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
@@ -131,18 +103,57 @@ if(!chrome.runtime.onInstalled.hasListener(onInstalled)) chrome.runtime.onInstal
 
 if(!chrome.notifications.onClicked.hasListener(notificationSettings)) chrome.notifications.onClicked.addListener(notificationSettings);
 
-if(!chrome.tabs.onActivated.hasListener(onTabActivated)) chrome.tabs.onActivated.addListener(onTabActivated);
-
 if(chrome.commands !== undefined) chrome.commands.onCommand.addListener((command) => {
 	bookmarkTab();
 });
 
 function onStartup() {
+	logit({message: "AddOn: " + chrome.runtime.getManifest().version, type: 'info', source: 'init'});
+	logit({message: "Browser: " + navigator.userAgent, type: 'info', source: 'init'});
+
+	chrome.runtime.getPlatformInfo(function(info){
+		logit({message: "Architecture: " + info.arch + " | OS: " + info.os, type: 'info', source: 'init'});
+	});
+
 	logit({message: 'Create context menus', type: 'info', source: 'startup'});
 	ccMenus();
 	logit({message: 'Get list of clients', type: 'info', source: 'startup'});
 	sendRequest(clientList);
+
+	getPopupData();
+	logit({message: 'Startup finished', type: 'info', source: 'startup'});
 	init();
+
+	chrome.storage.local.get(null, async function(options) {
+		if(options.instance == undefined) {
+			changeIcon('error');
+			let ldata = {message: 'Instance undefined', type: 'error', source: 'init'};
+			chrome.storage.session.set({
+				popup: {
+					message: ldata.message,
+					mode: ldata.type
+				}
+			});
+			logit(ldata);
+			return false;
+		}
+
+		if(options.token === undefined) {
+			changeIcon('error');
+			chrome.storage.session.remove('bmhtml');
+			chrome.storage.session.set({
+				popup: {
+					message: "Login token missing",
+					mode: 'error'
+				}
+			});
+			logit({message: 'Login token missing', type: 'error', source: 'init'});
+		} else {
+			chrome.action.setBadgeText({text: ''});
+		}
+
+		last_s = (options.last_s) ? options.last_s:0;
+	});
 }
 
 function sendRequest(action, data = null, tab = null) {
@@ -712,54 +723,15 @@ function changeIcon(mode) {
 }
 
 async function init() {
-	logit({message: "AddOn: " + chrome.runtime.getManifest().version, type: 'info', source: 'init'});
-	logit({message: "Browser: " + navigator.userAgent, type: 'info', source: 'init'});
+	logit({message: 'Starting init', type: 'info', source: 'init'});
+	if(!chrome.bookmarks.onRemoved.hasListener(onRemovedCheck)) chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
+	if(!chrome.bookmarks.onCreated.hasListener(onCreatedCheck)) chrome.bookmarks.onCreated.addListener(onCreatedCheck);
+	if(!chrome.bookmarks.onMoved.hasListener(onMovedCheck)) chrome.bookmarks.onMoved.addListener(onMovedCheck);
+	if(!chrome.bookmarks.onChanged.hasListener(onChangedCheck)) chrome.bookmarks.onChanged.addListener(onChangedCheck);
+	if(!chrome.tabs.onActivated.hasListener(onTabActivated)) chrome.tabs.onActivated.addListener(onTabActivated);
 
-	chrome.runtime.getPlatformInfo(function(info){
-		logit({message: "Architecture: " + info.arch + " | OS: " + info.os, type: 'info', source: 'init'});
-	});
 	get_oMarks();
-
-	chrome.storage.local.get(null, async function(options) {
-		if(options.instance == undefined) {
-			changeIcon('error');
-			let ldata = {message: 'Instance undefined', type: 'error', source: 'init'};
-			chrome.storage.session.set({
-				popup: {
-					message: ldata.message,
-					mode: ldata.type
-				}
-			});
-			logit(ldata);
-			return false;
-		}
-
-		if(options.token === undefined) {
-			changeIcon('error');
-			chrome.storage.session.remove('bmhtml');
-			chrome.storage.session.set({
-				popup: {
-					message: "Login token missing",
-					mode: 'error'
-				}
-			});
-			logit({message: 'Login token missing', type: 'error', source: 'init'});
-		} else {
-			chrome.action.setBadgeText({text: ''});
-		}
-
-		last_s = (options.last_s) ? options.last_s:0;
-
-		if(options.instance) {
-			//await ccMenus();
-			getPopupData();
-			//logit({message: 'Get list of clients', type: 'info', source: 'init'});
-			//sendRequest(clientList);
-			logit({message: 'Init finished', type: 'info', source: 'init'});
-		}
-	});
-
-	initialized = true;
+	logit({message: 'Init finished', type: 'info', source: 'init'});
 }
 
 function getPopupData() {
@@ -1029,7 +1001,7 @@ function removeMark(bookmark) {
 			"title": bookmark.node.title
 		};
 
-		logit({message: "Sending remove request to server: <a href='" + bookmark.node.url + "'>" + bookmark.node.url + "</a>", type: 'info', source: 'removeMark'});
+		logit({message: "Remove request: <a href='" + bookmark.node.url + "'>" + bookmark.node.url + "</a>", type: 'info', source: 'removeMark'});
 		sendRequest(bookmarkDel, jsonMark);
 	});
 }
@@ -1057,7 +1029,7 @@ function sendMark(bookmark) {
 			"added": bookmark.dateAdded
 		};
 
-		logit({message: "Sending add request to server: <a href='"+bookmark.url+"'>"+bookmark.url+"</a>", type: 'info', source: 'sendMark'});
+		logit({message: "Add request: <a href='"+bookmark.url+"'>"+bookmark.url+"</a>", type: 'info', source: 'sendMark'});
 		sendRequest(bookmarkAdd, jMark);
 	});
 }
@@ -1066,7 +1038,7 @@ async function doFullSync() {
 	logit({message: "Start Sync", type: 'info', source: 'doFullSync'});
 	try {
 		chrome.storage.local.get(null, async function(options) {
-			logit({message: "Sending Sync request to server", type: 'info', source: 'doFullSync'});
+			logit({message: "Sync request", type: 'info', source: 'doFullSync'});
 			sendRequest(bookmarkExport, 'json');
 		});
 	} catch(error) {
