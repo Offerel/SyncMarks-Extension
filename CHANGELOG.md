@@ -1,4 +1,12 @@
 # ChangeLog
+## v2.2.0
+- Fixed an issue where Brave was detected as Firefox
+- Fixed re-registering listeners
+- Fixed Startup
+- Removed KeepAlive
+- Removed unnecessary permissions
+- Improved MV3 compatibility
+
 ## v2.1.20
 - Fix for Brave detecting as Firefox
 
