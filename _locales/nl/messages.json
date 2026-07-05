@@ -181,5 +181,11 @@
     },
     "optionsPuDelConfirm": {
         "message": "Wil je de gekozen bladwijzers verwijderen?"
+    },
+    "popupAdd": {
+        "message": "Toevoegen"
+    },
+    "popupRefresh": {
+        "message": "Herladen"
     }
 }

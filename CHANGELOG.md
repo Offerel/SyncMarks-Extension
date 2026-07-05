@@ -1,4 +1,40 @@
 # ChangeLog
+## v2.2.0
+- Fixed an issue where Brave was detected as Firefox
+- Fixed re-registering listeners
+- Fixed Startup
+- Removed KeepAlive
+- Removed unnecessary permissions
+- Improved MV3 compatibility
+
+## v2.1.20
+- Fix for Brave detecting as Firefox
+
+## v2.1.19
+- Dont add none-http urls
+
+## v2.1.18
+- Fix message in popup
+- Fix error overlay
+- Rewrite logit
+
+## v2.1.17
+- Save local log in session
+
+## v2.1.16
+- Added Refresh button in popup
+- Added middle click in popup
+
+## v2.1.15
+- Cleanup unused functions
+- Cleanup logging
+- Added version info to popup
+- Remove bmhtml when needed
+
+## v2.1.14
+- Log PopUp messages to logfile
+- Changed logging to include console
+
 ## v2.1.13
 - Save messages in session storage
 

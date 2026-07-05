@@ -1,59 +1,7 @@
 var clone;
 var bmIDs = new Array();
 
-chrome.storage.local.get(null, async function(options) {
-	document.getElementById('loader').classList.add('loader');
-	let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
-		client:options.uuid,
-		token:options.token
-	})));
-	
-	const data = await chrome.storage.session.get("bmhtml");
-	
-	if(data.bmhtml === undefined) {
-		chrome.runtime.sendMessage({action: "loglines", data: 'No bookmarks for PopUp found'});
-		fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
-			method: "GET",
-			cache: "no-cache",
-			referrerPolicy: "no-referrer",
-			headers: {
-				'Authorization': authheader,
-			}
-		}).then(response => {
-			let xRinfo = response.headers.get("X-Request-Info");
-			if (xRinfo != null) {
-				chrome.storage.local.set({token:xRinfo});
-			}
-			return response.text();
-		}).then(html => {
-			let parser = new DOMParser();
-			let doc = parser.parseFromString(html, "text/html");
-			let bookmarks = document.getElementById('bookmarks');
-			clone = doc.getElementById('bookmarks').cloneNode(true);
-			while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
-			addClick();
-			urlExists();
-			clone = document.getElementById('bookmarks').cloneNode(true);
-			chrome.storage.session.set({bmhtml: html});
-			document.getElementById('loader').classList.remove('loader');
-		}).catch(err => {
-			console.error(err);
-			chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
-			document.getElementById('loader').classList.remove('loader');
-		});
-	} else {
-		chrome.runtime.sendMessage({action: "loglines", data: 'Bookmarks found in session'});
-		let parser = new DOMParser();
-		let doc = parser.parseFromString(data.bmhtml, "text/html");
-		let bookmarks = document.getElementById('bookmarks');
-		clone = doc.getElementById('bookmarks').cloneNode(true);
-		while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
-		addClick();
-		urlExists();
-		clone = document.getElementById('bookmarks').cloneNode(true);
-		document.getElementById('loader').classList.remove('loader');
-	}
-});
+getData();
 
 document.getElementById("settings").addEventListener('click', function() {
 	chrome.runtime.openOptionsPage();
@@ -61,14 +9,19 @@ document.getElementById("settings").addEventListener('click', function() {
 });
 
 document.getElementById("addbm").addEventListener('click', addBookmark);
-
+document.getElementById("refresh").addEventListener('click', getData);
 document.getElementById('cyes').addEventListener('click', cbtn);
 document.getElementById('cno').addEventListener('click', cbtn);
+document.getElementById('vline').textContent = 'v'+chrome.runtime.getManifest().version;
 
 chrome.storage.session.get(null, function(data) {
 	if(data.popup !== undefined) {
 		popupMessage(data.popup.message, data.popup.mode);
 		chrome.action.setBadgeText({text: ''});
+	} else {
+		setTimeout(function(){
+			chrome.action.setBadgeText({text: ''});
+		}, 3000);
 	}
 });
 
@@ -100,6 +53,78 @@ document.addEventListener('contextmenu', function(e) {
 	e.preventDefault();
 });
 
+localizePopup();
+
+function getData(e) {
+	chrome.storage.local.get(null, async function(options) {
+		if(options.token === undefined) {
+			popupMessage('Invalid credentials', 'error');
+			return false;
+		}
+		document.getElementById('loader').classList.add('loader');
+		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
+			client:options.uuid,
+			token:options.token
+		})));
+
+		if(e !== undefined) {
+			chrome.storage.session.remove("bmhtml");
+			let bookmarks = document.getElementById('bookmarks');
+			while (bookmarks.firstChild) {
+				bookmarks.removeChild(bookmarks.lastChild);
+			}
+		}
+		
+		const data = await chrome.storage.session.get("bmhtml");
+		
+		if(data.bmhtml === undefined) {
+			let ldata = {message: 'No bookmarks for PopUp found', type: 'info', source: 'PopUp, getData'};
+			chrome.runtime.sendMessage({action: "loglines", data: ldata});
+			fetch(options.instance + '?t=' + Math.random().toString(24).substring(2, 12), {
+				method: "GET",
+				cache: "no-cache",
+				referrerPolicy: "no-referrer",
+				headers: {
+					'Authorization': authheader,
+				}
+			}).then(response => {
+				let xRinfo = response.headers.get("X-Request-Info");
+				if (xRinfo != null) {
+					chrome.storage.local.set({token:xRinfo});
+				}
+				return response.text();
+			}).then(html => {
+				let parser = new DOMParser();
+				let doc = parser.parseFromString(html, "text/html");
+				let bookmarks = document.getElementById('bookmarks');
+				clone = doc.getElementById('bookmarks').cloneNode(true);
+				while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
+				addClick();
+				urlExists();
+				clone = document.getElementById('bookmarks').cloneNode(true);
+				chrome.storage.session.set({bmhtml: html});
+				document.getElementById('loader').classList.remove('loader');
+			}).catch(err => {
+				console.error(err);
+				chrome.runtime.sendMessage({action: "changeIcon", data: 'error'});
+				let ldata = {message: err, type: 'error', source: 'PopUp, getData'};
+				chrome.runtime.sendMessage({action: "loglines", data: ldata});
+				document.getElementById('loader').classList.remove('loader');
+			});
+		} else {
+			let parser = new DOMParser();
+			let doc = parser.parseFromString(data.bmhtml, "text/html");
+			let bookmarks = document.getElementById('bookmarks');
+			clone = doc.getElementById('bookmarks').cloneNode(true);
+			while(clone.firstChild) bookmarks.appendChild(clone.firstChild);
+			addClick();
+			urlExists();
+			clone = document.getElementById('bookmarks').cloneNode(true);
+			document.getElementById('loader').classList.remove('loader');
+		}
+	});
+}
+
 function keypress(e) {
 	if(e.keyCode === 46 && bmIDs.length > 0) showBox();
 }
@@ -130,14 +155,18 @@ function cSearch() {
 function addClick() {
 	document.querySelectorAll('.file').forEach(function(bookmark){
 		bookmark.addEventListener('mouseup', function(e) {
+			if(e.button === 1) {
+				chrome.tabs.create({url: e.target.dataset.url, active: false});
+			}
+
 			if(e.button === 0) {
 				if(!e.ctrlKey) {
 					chrome.tabs.create({url: e.target.dataset.url, active: true});
 				} else {
 					chrome.tabs.create({url: e.target.dataset.url, active: false});
 				}
+
 			} else {
-				
 				if(e.ctrlKey) {
 					if(e.target.classList.contains('bmMarked')) {
 						e.target.classList.remove('bmMarked');
@@ -203,4 +232,10 @@ function addBookmark() {
 	});
 
 	chrome.runtime.sendMessage({action: "puData"});
+}
+
+function localizePopup() {
+	document.getElementById('settings').title = chrome.i18n.getMessage("optionsBTNSettings");
+	document.getElementById('refresh').title = chrome.i18n.getMessage("popupRefresh");
+	document.getElementById('addbm').title = chrome.i18n.getMessage("popupAdd");
 }
