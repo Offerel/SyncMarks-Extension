@@ -14,7 +14,7 @@ var remoteMark;
 var [debug, lastseen, count, last_s] = [false, null, 0, 0];
 
 if(!chrome.runtime.onStartup.hasListener(onStartup)) chrome.runtime.onStartup.addListener(onStartup);
-init();
+init('Re-');
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
@@ -270,6 +270,32 @@ function clientList(response) {
 			if(Array.isArray(response.clients)) {
 				response.clients.forEach(function(client){
 					var ctitle = client.name ? client.name:client.id;
+
+					chrome.contextMenus.update('page_' + client.id, { title: ctitle }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: 'page_' + client.id,
+							type: "normal",
+							parentId: "ssendpage",
+							title: ctitle,
+							contexts: ["page"]
+							});
+						}
+						});
+
+					chrome.contextMenus.update('link_' + client.id, { title: ctitle }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: 'link_' + client.id,
+							type: "normal",
+							parentId: "ssendlink",
+							title: ctitle,
+							contexts: ["link"]
+							});
+						}
+						});
+
+					/*
 					chrome.contextMenus.create({
 						title: ctitle,
 						type: "normal",
@@ -277,6 +303,7 @@ function clientList(response) {
 						contexts: ["page"],
 						id: 'page_' + client.id
 					});
+					
 					chrome.contextMenus.create({
 						title: ctitle,
 						type: "normal",
@@ -284,8 +311,21 @@ function clientList(response) {
 						contexts: ["link"],
 						id: 'link_' + client.id
 					});
+					*/
 
 					try{
+						chrome.contextMenus.update('tab_' + client.id, { title: ctitle }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: 'tab_' + client.id,
+							type: "normal",
+							parentId: "ssendtab",
+							title: ctitle,
+							contexts: ["tab"]
+							});
+						}
+						});
+						/*
 						chrome.contextMenus.create({
 							title: ctitle,
 							type: "normal",
@@ -293,6 +333,7 @@ function clientList(response) {
 							contexts: ["tab"],
 							id: 'tab_' + client.id
 						});
+						*/
 					} catch {}
 				});
 				let cnt = response.clients.length - 1;
@@ -557,37 +598,86 @@ function ccMenus() {
 						for (let {name, shortcut} of commands) {
 							var s = (name === 'bookmark-tab') ? shortcut:'undef';
 						}
+
+						chrome.contextMenus.update("smark", { title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})` }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: "smark",
+							type: "normal",
+							title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
+							contexts: ["page"]
+							});
+						}
+						});
+						/*
 						chrome.contextMenus.create({
 							title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
 							type: "normal",
 							contexts: ["page"],
 							id: "smark"
 						});
+						*/
 					});
 				}
 				
 				try{
+					
+					chrome.contextMenus.update("ssendpage", { title: chrome.i18n.getMessage("sendPage") }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: "ssendpage",
+							type: "normal",
+							title: chrome.i18n.getMessage("sendPage"),
+							contexts: ["page"]
+							});
+						}
+						});
+					/*
 					chrome.contextMenus.create({
 						title: chrome.i18n.getMessage("sendPage"),
 						type: "normal",
 						contexts: ["page"],
 						id: "ssendpage"
 					});
-
+					*/
+					
+					chrome.contextMenus.update("ssendlink", { title: chrome.i18n.getMessage("sendLink") }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: "ssendlink",
+							type: "normal",
+							title: chrome.i18n.getMessage("sendLink"),
+							contexts: ["link"]
+							});
+						}
+						});
+					/*
 					chrome.contextMenus.create({
 						title: chrome.i18n.getMessage("sendLink"),
 						type: "normal",
 						contexts: ["link"],
 						id: "ssendlink"
 					});
-
+					*/
 					try{
+						chrome.contextMenus.update("ssendtab", { title: chrome.i18n.getMessage("sendTab") }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: "ssendtab",
+							type: "normal",
+							title: chrome.i18n.getMessage("sendTab"),
+							contexts: ["tab"]
+							});
+						}
+						});
+						/*
 						chrome.contextMenus.create({
 							title: chrome.i18n.getMessage("sendTab"),
 							type: "normal",
 							contexts: ["tab"],
 							id: "ssendtab"
 						});
+						*/
 					} catch {}
 				} catch(error) {
 					logit({message: error, type: 'error', source: 'ccMenus'});
@@ -722,7 +812,7 @@ function changeIcon(mode) {
 	}
 }
 
-async function init() {
+async function init(re = '') {
 	logit({message: 'Starting init', type: 'info', source: 'init'});
 	if(!chrome.bookmarks.onRemoved.hasListener(onRemovedCheck)) chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 	if(!chrome.bookmarks.onCreated.hasListener(onCreatedCheck)) chrome.bookmarks.onCreated.addListener(onCreatedCheck);
@@ -731,7 +821,7 @@ async function init() {
 	if(!chrome.tabs.onActivated.hasListener(onTabActivated)) chrome.tabs.onActivated.addListener(onTabActivated);
 
 	get_oMarks();
-	logit({message: 'Init finished', type: 'info', source: 'init'});
+	logit({message: re + 'Init finished', type: 'info', source: 'init'});
 }
 
 function getPopupData() {
