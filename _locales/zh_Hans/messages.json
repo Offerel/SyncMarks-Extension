@@ -24,7 +24,7 @@
         "message": "SyncMarks"
     },
     "extensionDescription": {
-        "message": "使用此扩展可将书签和标签页与自托管服务器同步。"
+        "message": "使用此扩展将书签和标签页与自托管服务器同步。"
     },
     "optionsServerURL": {
         "message": "服务器 URL"
