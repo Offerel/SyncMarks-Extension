@@ -21,12 +21,9 @@
 					<a href="#" id="lginl"><span>__MSG_optionsWrongAData__</span></a><input type="hidden" id="s_uuid">
 					<div class="toptionc"><label for="wdurl"><span>__MSG_optionsServerURL__</span>:</label><input inputmode="url" type="url" id="wdurl" placeholder="https://servername.com/syncmarks/" /><span class="wdurl"></span><button id="blogin" disabled><span>__MSG_optionsLogin__</span></button></div>
 					<div class="toptionc"><label for="cname"><span>__MSG_optionsClientName__</span>:</label><input type="text" id="cname" placeholder=""></div>
+					<div class="toptionc"><label for="deviceid"><span>__MSG_optionsDeviceID__</span>:</label><input type="text" id="deviceid" value="" disabled></div>
 				</fieldset>
-				<fieldset class="ocontainer">
-					<legend><span>__MSG_optionsSyncOptions__</span></legend>
-					<div class="toptionc"><label class="switch"><input id="s_auto" type="checkbox" checked><span class="slider round"></span><span class="lbl" id="oauto">__MSG_optionsAuto__</span></label></div>
-					<div class="toptionc"><label class="switch"><input id="s_tabs" type="checkbox"><span class="slider round"></span><span class="lbl" id="obmc">__MSG_optionsTabs__</span></label></div>
-				</fieldset>
+				&nbsp;
 				<div class="btnc">
 					<fieldset class="ocontainer bmarks">
 						<legend><span>__MSG_optionsLegendBookmarks__</span></legend>
@@ -38,10 +35,15 @@
 						</div>
 					</fieldset>
 					<fieldset class="ocontainer sett">
-						<legend><span>__MSG_optionsBTNSettings__</span></legend>
-						<div class="toptionc" style="display: inline-block;"><button id="econf" type="button" class="browser-style"><span>__MSG_optionsBTNBackup__</span><span class="tooltiptext">__MSG_optionsBTNSettingsHint__</span></button></div>
+						<legend><span>__MSG_optionsBTNBackup__</span></legend>
+						<div class="toptionc" style="display: inline-block;"><button id="econf" type="button" class="browser-style"><span>__MSG_optionsBTNSettings__</span><span class="tooltiptext">__MSG_optionsBTNSettingsHint__</span></button></div>
 					</fieldset>
 				</div>
+				<fieldset class="ocontainer">
+					<legend><span>__MSG_optionsSyncOptions__</span></legend>
+					<div class="toptionc"><label class="switch"><input id="s_auto" type="checkbox" checked><span class="slider round"></span><span class="lbl" id="oauto">__MSG_optionsAuto__</span></label></div>
+					<div class="toptionc"><label class="switch"><input id="s_tabs" type="checkbox"><span class="slider round"></span><span class="lbl" id="obmc">__MSG_optionsTabs__</span></label></div>
+				</fieldset>
 				<div id="wmessage"></div>
 				<div id="crdialog" class="modal">
 					<div class="modal-content">

@@ -1,235 +1,180 @@
 {
   "extensionName": {
-    "message": "SyncMarks",
-    "description": "Name of the extension."
+    "message": "SyncMarks"
   },
   "extensionDescription": {
-    "message": "Use this extension to synchronize bookmarks and tabs with a self-hosted server.",
-    "description": "Description for the extension"
+    "message": "Use this extension to synchronize bookmarks and tabs with a self-hosted backend."
   },
   "optionsServerURL": {
-    "message": "Server URL",
-    "description": "URL to the backend"
+    "message": "Backend URL"
   },
   "optionsUsername": {
-    "message": "Username",
-    "description": "Username"
+    "message": "Username"
   },
   "optionsPassword": {
-    "message": "Password",
-    "description": "Password"
+    "message": "Password"
   },
   "optionsSyncOptions": {
-    "message": "Options",
-    "description": "Syncmark Options"
+    "message": "Device Options"
   },
   "optionsAuto": {
-    "message": "Automatic synchronization",
-    "description": "Automatic synchronization"
+    "message": "Automatic synchronization"
   },
   "optionsBTNImport": {
-    "message": "Download",
-    "description": "Download Bookmarks"
+    "message": "Download"
   },
   "optionsBTNImportHint": {
-    "message": "Restore from server, overwrite local bookmarks.",
-    "description": "Import Button Hint"
+    "message": "Restore from backend, overwrite local bookmarks."
   },
   "optionsBTNSettingsHint": {
-    "message": "Backup settings",
-    "description": "Backup settings tooltip"
+    "message": "Backup settings"
   },
   "optionsBTNExport": {
-    "message": "Upload",
-    "description": "Upload Bookmarks"
+    "message": "Upload"
   },
   "optionsBTNExportHint": {
-    "message": "Overwrite all bookmarks on the server.",
-    "description": "Export Button Hint tooltip"
+    "message": "Overwrite all bookmarks on the backend."
   },
   "optionsBTNSave": {
-    "message": "Save",
-    "description": "Save Button"
+    "message": "Save"
   },
   "optionsBTNSettings": {
-    "message": "Settings",
-    "description": "Settings button"
+    "message": "Settings"
   },
   "optionsBTNRestore": {
-    "message": "Restore",
-    "description": "Re-Store the settings"
+    "message": "Restore"
   },
   "optionsBTNClear": {
-    "message": "Delete",
-    "description": "Clear the logfile"
+    "message": "Delete"
   },
   "optionsDebugLog": {
-    "message": "Debug Log",
-    "description": "Show debug messages"
+    "message": "Debug Log"
   },
   "optionsBTNYes": {
-    "message": "Yes",
-    "description": "Yes Button"
+    "message": "Yes"
   },
   "optionsBTNNo": {
-    "message": "No",
-    "description": "No Button"
+    "message": "No"
   },
   "optionsBTNCancel": {
-    "message": "Cancel",
-    "description": "Cancel Button"
+    "message": "Cancel"
   },  
   "optionsNotUsed": {
-    "message": "You can now synchronize bookmarks from the server.",
-    "description": "Hint that you can now sync bookmarks"
+    "message": "You can now synchronize bookmarks from the backend."
   },  
   "optionsErrorUser": {
-    "message": "Login failed: Please check username and password.",
-    "description": "Login failed, wrong User"
+    "message": "Login failed: Please check username and password."
   },
   "optionsSuccessSave": {
-    "message": "Options saved.",
-    "description": "Login successfully"
+    "message": "Options saved."
   },
   "optionsErrorLogin": {
-    "message": "Login failed: Status: ",
-    "description": "Login failed, unknown state"
+    "message": "Login failed: Status: "
   },
   "optionsBeforeCImpExp": {
-    "message": "Here you can restore your existing client settings from the server.",
-    "description": "Description to store the settings"
+    "message": "With this you can restore your existing device settings from the backend."
   },
   "optionsBeforeLogin": {
-    "message": "Please log in with your credentials to receive an access your bookmarks",
-    "description": "Hint before login"
+    "message": "Please log in with your credentials to receive an access your bookmarks"
   },
   "optionsWrongAData": {
-    "message": "Login error. Please log in again",
-    "description": "Login error message"
+    "message": "Login error. Please log in again"
   },
   "infoRestoreID": {
-    "message": "Should the old client be removed from the server to avoid synchronization problems?",
-    "description": "Question if you want to remove old client id from the server"
+    "message": "Should the old device be removed from the backend to avoid synchronization problems?"
   },
   "optionsSuccessImport": {
-    "message": "Import successfully.",
-    "description": "Message on succesfull import"
+    "message": "Import successfully."
   },
   "optionsBeforeImport": { 
-    "message": "Should all local bookmarks be deleted before import?",
-    "description": "Warning message before importing"
+    "message": "Should all local bookmarks be deleted before import?"
   },
   "optionsBeforeExport": { 
-    "message": "All bookmarks are deleted at the server before exporting. Afterwards the new bookmarks are exported to the server.\n\nShould the remote bookmarks be deleted before the export?",
-    "description": "Warning message that all remote bookmarks are deleted"
+    "message": "All bookmarks are deleted at the backend before exporting. Afterwards the new bookmarks are exported to the backend.\n\nShould the remote bookmarks be deleted before the export?"
   },
   "optionsInfoRemove": {
-    "message": "When you continue, all your current bookmarks are removed.\n\nAre you sure to delete all local bookmarks?",
-    "description": "Warning message, that all local bookmarks will be deleted"
+    "message": "When you continue, all your current bookmarks are removed.\n\nAre you sure to delete all local bookmarks?"
   },
   "popupBTNOptions": {
-    "message": "Options",
-    "description": "Options Button"
+    "message": "Options"
   },
   "errorGetBookmarks": {
-  "message": "There was a error retrieving the bookmarks from the server. The status response is: ",
-    "description": "http error when retrieving bookmarks."
+  "message": "There was a error retrieving the bookmarks from the backend. The status response is: "
   },
   "errorSaveBookmarks": {
-    "message": "There was some error saving all bookmarks. The status response is: ",
-    "description": "http error when saving bookmarks."
+    "message": "There was some error saving all bookmarks. The status response is: "
   },
   "errorExportBookmarks": {
-    "message": "There was a problem exporting the bookmarks.",
-    "description": "Error when exporting bookmarks."
+    "message": "There was a problem exporting the bookmarks."
   },
   "successExportBookmarks": {
-    "message": "Local bookmarks successfully added at server.",
-    "description": "All bookmarks exported."
+    "message": "Local bookmarks successfully added at backend."
   },
   "successImportBookmarks": {
-    "message": " bookmarks/folders imported.",
-    "description": "Message with count bookmarks imported"
+    "message": " bookmarks/folders imported."
   },
   "infoNewClient": {
-    "message": "This browser is a new client and is now registered at the server.",
-    "description": "New Client, unknown to the server."
+    "message": "This browser is a new device and is now registered at the backend."
   },
   "infoEmptyConfig": {
-    "message": "Configuration is empty. Please configure the AddOn before use.",
-    "description": "Message if extension is not configured yet."
+    "message": "Configuration is empty. Please configure the AddOn before use."
   },
   "sendPage": {
-    "message": "Send Page",
-    "description": "Context Menu entry"
+    "message": "Send Page"
   },
   "sendTab": {
-    "message": "Send Tab",
-    "description": "Context Menu entry"
+    "message": "Send Tab"
   },
   "sendLink": {
-    "message": "Send Link",
-    "description": "Context Menu entry"
+    "message": "Send Link"
   },
   "sendLinkNot": {
-    "message": "Link could not be send.",
-    "description": "Error message on server failure"
+    "message": "Link could not be send."
   },
   "sendLinkYes": {
-    "message": "Link successfully send.",
-    "description": "Message after send the link"
+    "message": "Link successfully send."
   },
   "bookmarkTab": {
-    "message": "Bookmark direct to server",
-    "description": "Bookmark to server without autosync"
+    "message": "Bookmark direct to backend"
   },
   "ManAuto": {
-    "message": "Activate automatic synchronization",
-    "description": "Enable autosync"
+    "message": "Activate automatic synchronization"
   },
   "optionsLastLogged": {
-    "message": "Last logged in with",
-    "description": "Last logged in info"
+    "message": "Last logged in with"
   },
   "optionsRestoreServer": {
-    "message": "The following clients can be restored from the server. Please select a client from the list or click on cancel to not use any of these clients.",
-    "description": "Restoring a client"
+    "message": "The following devices can be restored from the backend. Please select a device from the list or click on cancel to not use any of these devices."
   },
   "optionsLogfile": {
-    "message": "Logfile",
-    "description": "Logfile tab in options"
+    "message": "Logfile"
   },
   "optionsChangelog": {
-    "message": "Changelog",
-    "description": "Changelog tab in options"
+    "message": "Changelog"
   },
   "optionsLogin": {
-    "message": "Login",
-    "description": "Login button in options"
+    "message": "Login"
   },
   "optionsClientName": {
-    "message": "Client Name",
-    "description": "Client Name label in options"
+    "message": "Device Name"
+  },
+  "optionsDeviceID": {
+    "message": "Device-ID"
   },
   "optionsTabs": {
-    "message": "Tabs",
-    "description": "Enable \"Synchronize open tabs\" in options"
+    "message": "Tabs"
   },
   "optionsTabsHint": {
-    "message": "Synchronize open tabs between the clients",
-    "description": "Tooltip text for syncing tabs"
+    "message": "Synchronize open tabs between devices"
   },
   "optionsLegendServer": {
-    "message": "Server",
-    "description": "Descriptive label for Server in options"
+    "message": "Backend URL"
   },
   "optionsLegendBookmarks": {
-    "message": "Bookmarks",
-    "description": "Descriptive label for Bookmarks in options"
+    "message": "Backend Bookmarks"
   },
   "optionsBTNBackup": {
-    "message": "Backup",
-    "description": "Backup button in options"
+    "message": "Backup"
   },
   "optionsBAPIHint": {
       "message": "The Bookmark API is not supported in this browser. Automatic synchronization is therefore deactivated."
@@ -237,10 +182,10 @@
   "optionsPuDelConfirm": {
       "message": "Should the selected bookmarks be removed?"
   },
-    "popupAdd": {
-        "message": "Add"
-    },
-    "popupRefresh": {
-        "message": "Refresh"
-    }
+  "popupAdd": {
+      "message": "Add"
+  },
+  "popupRefresh": {
+      "message": "Refresh"
+  }
 }

@@ -432,7 +432,8 @@ button:not(:disabled) {
 	color: unset;
 }
 .tab-bar button:hover {
-	background-color: darkgrey;
+    background-color: #b9e0f9;
+    color: steelblue;
 }
 .tab-button > span {
 	overflow: hidden;
@@ -442,8 +443,12 @@ button:not(:disabled) {
 	display: block;
 	padding: 0 3px;
 }
+.server .toptionc input:disabled {
+    background-color: whitesmoke;
+    color: darkgrey;
+}
 .abutton {
-	background-color: DimGray !important;
+	background-color: #2980b9 !important;
 	color: white !important;
 }
 .tab-bar {

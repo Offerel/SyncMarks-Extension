@@ -1,40 +1,33 @@
 {
     "extensionName": {
-        "message": "SyncMarks",
-        "description": "Name der Erweiterung."
+        "message": "SyncMarks"
     },
     "extensionDescription": {
-        "message": "Mit Hilfe dieser Erweiterung synchronisieren Sie Lesezeichen und Tabs mit einem selbstgehosteten Server."
+        "message": "Mit Hilfe dieser Erweiterung synchronisieren Sie Lesezeichen und Tabs mit einem selbstgehosteten Backend."
     },
     "optionsServerURL": {
-        "message": "Server URL",
-        "description": "URL to the backend"
+        "message": "Backend URL"
     },
     "optionsUsername": {
-        "message": "Benutzername",
-        "description": "Username"
+        "message": "Benutzername"
     },
     "optionsPassword": {
-        "message": "Passwort",
-        "description": "Password"
+        "message": "Passwort"
     },
     "optionsSyncOptions": {
-        "message": "Optionen",
-        "description": "Sync Options"
+        "message": "Geräte Optionen"
     },
     "optionsAuto": {
         "message": "Automatische Synchronisation"
     },
     "optionsManualActions": {
-        "message": "Manuelle Funktionen",
-        "description": "Manual Actions"
+        "message": "Manuelle Funktionen"
     },
     "optionsBTNImport": {
         "message": "Download"
     },
     "optionsBTNImportHint": {
-        "message": "Wiederherstellen vom Server, überschreiben der lokalen Bookmarks.",
-        "description": "Import Button Hint."
+        "message": "Wiederherstellen vom Backend, überschreiben der lokalen Bookmarks."
     },
     "optionsBTNSettingsHint": {
         "message": "Backup der Einstellungen"
@@ -43,12 +36,10 @@
         "message": "Upload"
     },
     "optionsBTNExportHint": {
-        "message": "Überschreiben aller Bookmarks auf dem Server.",
-        "description": "Export Button Hint."
+        "message": "Überschreiben aller Bookmarks auf dem Backend."
     },
     "optionsBTNSave": {
-        "message": "Speichern",
-        "description": "Save Button."
+        "message": "Speichern"
     },
     "optionsBTNSettings": {
         "message": "Einstellungen"
@@ -63,42 +54,34 @@
         "message": "Debug Log"
     },
     "optionsBTNYes": {
-        "message": "Ja",
-        "description": "Yes Button."
+        "message": "Ja"
     },
     "optionsBTNNo": {
-        "message": "Nein",
-        "description": "No Button."
+        "message": "Nein"
     },
     "optionsBTNCancel": {
-        "message": "Abbrechen",
-        "description": "Cancel Button."
+        "message": "Abbrechen"
     },
     "optionsNotUsed": {
-        "message": "Du kannst nun alle Bookmarks vom Server Synchronisieren.",
-        "description": "Not used hint."
+        "message": "Du kannst nun alle Bookmarks vom Backend Synchronisieren."
     },
     "optionsErrorURL": {
-        "message": "Login Fehler: Bitte prüfe den URL. Dieser sollte im Format https://servername/folder sein",
-        "description": "Login failed, wrong URL."
+        "message": "Login Fehler: Bitte prüfe den URL. Dieser sollte im Format https://servername/folder sein"
     },
     "optionsErrorUser": {
-        "message": "Login Fehler: Bitte prüfe Benutzer und Passwort.",
-        "description": "Login failed, wrong User."
+        "message": "Login Fehler: Bitte prüfe Benutzer und Passwort."
     },
     "optionsSuccessSave": {
-        "message": "Option gespeichert.",
-        "description": "Login failed, wrong User."
+        "message": "Option gespeichert."
     },
     "optionsErrorLogin": {
-        "message": "Login Fehler: Status: ",
-        "description": "Login failed, unknown state."
+        "message": "Login Fehler: Status: "
     },
     "optionsLoginError": {
         "message": "Login Fehler: Bitte erneut einloggen"
     },
     "optionsBeforeCImpExp": {
-        "message": "Hier kannst du deine bestehenden Client Einstellungen vom Server wiederherstellen."
+        "message": "Hiermit kannst du deine bestehenden Geräte Einstellungen vom Backend wiederherstellen."
     },
     "optionsBeforeLogin": {
         "message": "Bitte melden Sie sich mit Ihren Zugangsdaten an, um Zugang zu Ihren Lesezeichen zu erhalten"
@@ -107,92 +90,73 @@
         "message": "Login Error. Bitte erneut einloggen"
     },
     "infoRestoreID": {
-        "message": "Soll der alte Client auf dem Server entfernt werden, um Synchronisations Probleme zu vermeiden?"
+        "message": "Soll das bisherige Gerät auf dem Backend entfernt werden, um Synchronisations Probleme zu vermeiden?"
     },
     "optionsSuccessImport": {
         "message": "Import gelungen."
     },
     "optionsBeforeImport": {
-        "message": "Sollen alle lokalen Bookmarks vor dem Import gelöscht werden?",
-        "description": "Message before importing."
+        "message": "Sollen alle lokalen Bookmarks vor dem Import gelöscht werden?"
     },
     "optionsBeforeExport": {
-        "message": "Vor dem Export werden alle Bookmarks auf dem Server gelöscht. Danach werden die neuen Bookmarks zum Server exportiert.\n\nSollen die Bookmarks vor dem Export auf dem Server gelöscht werden?"
+        "message": "Vor dem Export werden alle Bookmarks auf dem Backend gelöscht. Danach werden die neuen Bookmarks zum Backend exportiert.\n\nSollen die Bookmarks vor dem Export auf dem Backend gelöscht werden?"
     },
     "optionsInfoRemove": {
-        "message": "Wenn du fortfährst, werden alle deine aktuellen Bookmarks entfernt.\n\nSollen alle lokalen Bookmarks gelöscht werden?",
-        "description": "Login failed, unknown state."
+        "message": "Wenn du fortfährst, werden alle deine aktuellen Bookmarks entfernt.\n\nSollen alle lokalen Bookmarks gelöscht werden?"
     },
     "popupBTNOptions": {
-        "message": "Optionen",
-        "description": "Options Button."
+        "message": "Optionen"
     },
     "popupNoSync": {
-        "message": "Bisher wurde kein Sync beim Start durchgeführt.",
-        "description": "No startup sync done yet.."
+        "message": "Bisher wurde kein Sync beim Start durchgeführt."
     },
     "popupImportConfirm": {
-        "message": "Die Bookmarks werden nun vom Server übernommen. Bist du sicher?",
-        "description": "ImportConfirm"
+        "message": "Die Bookmarks werden nun vom Backend übernommen. Bist du sicher?"
     },
     "errorGetBookmarks": {
-        "message": "Es gab einen Fehler beim Abrufen der Bookmarks vom Server. Der Antwortcode vom Server lautet: ",
-        "description": "http Fehler beim Abrufen der Bookmarks."
+        "message": "Es gab einen Fehler beim Abrufen der Bookmarks vom Backend. Der Antwortcode vom Backend lautet: "
     },
     "errorSaveBookmarks": {
-        "message": "Es gab einen Fehler beim Speichern aller Bookmarks. Die Rückmeldung lautet: ",
-        "description": "http error beim Speichern der Bookmarks."
+        "message": "Es gab einen Fehler beim Speichern aller Bookmarks. Die Rückmeldung lautet: "
     },
     "errorSaveSingleBookmarks": {
-        "message": "Es gab einen Fehler beim Speichern des Bookmarks auf dem PHP Server. Die Rückmeldung lautet: ",
-        "description": "http error when saving single bookmark."
+        "message": "Es gab einen Fehler beim Speichern des Bookmarks auf dem Backend. Die Rückmeldung lautet: "
     },
     "errorExportBookmarks": {
-        "message": "Es gab einen Fehler beim Export der Bookmarks.",
-        "description": "Fehler beim exportieren der Bookmarks."
+        "message": "Es gab einen Fehler beim Export der Bookmarks."
     },
     "errorImportBookmark": {
-        "message": "Es gab einen Fehler beim Import des Bookmarks: ",
-        "description": "Error when import bookmark."
+        "message": "Es gab einen Fehler beim Import des Bookmarks: "
     },
     "errorRemoveBookmark": {
-        "message": "Es gab einen Fehler beim Entfernen des Bookmarks.",
-        "description": "Fehler beim Entfernen des Bookmarks mit PHP."
+        "message": "Es gab einen Fehler beim Entfernen des Bookmarks."
     },
     "errorEditBookmark": {
-        "message": "Es gab einen Fehler beim Ändern des Bookmarks auf dem Server."
+        "message": "Es gab einen Fehler beim Ändern des Bookmarks auf dem Backend."
     },
     "errorMoveBookmark": {
-        "message": "Es gab einen Fehler beim Verschieben des Bookmarks auf dem PHP-Server. Die Rückmeldung lautet: ",
-        "description": "Fehler beim Verschieben des Bookmarks."
+        "message": "Es gab einen Fehler beim Verschieben des Bookmarks auf dem Backend. Die Rückmeldung lautet: "
     },
     "successExportBookmarks": {
-        "message": "Lokale Bookmarks erfolgreich auf dem Server hinzugefügt.",
-        "description": "Alle Bookmarks erfolgreich exportiert."
+        "message": "Lokale Bookmarks erfolgreich auf dem Backend hinzugefügt."
     },
     "successImportBookmarks": {
-        "message": " Bookmark/Ordner importiert.",
-        "description": "Count bookmarks imported."
+        "message": " Bookmark/Ordner importiert."
     },
     "internalError": {
-        "message": "Ein interner Fehler ist aufgetreten. Die Meldung lautet: ",
-        "description": "Interner Fehler."
+        "message": "Ein interner Fehler ist aufgetreten. Die Meldung lautet: "
     },
     "infoNewClient": {
-        "message": "Dieser Browser ist ein neuer Client und wurde auf dem Server registriert.",
-        "description": "New Client, unknown to the server."
+        "message": "Dieser Browser ist ein neues Gerät und wurde auf dem Backend registriert."
     },
     "infoNoChange": {
-        "message": "Keine Bookmarks hinzugefügt, verschoben oder gelöscht bei der letzten Synchronisation.",
-        "description": "Meldung, wenn sich auf dem Server keine Daten verändert haben."
+        "message": "Keine Bookmarks hinzugefügt, verschoben oder gelöscht bei der letzten Synchronisation."
     },
     "infoChanges": {
-        "message": " Änderungen auf dem Server seit dem letzten Sync.",
-        "description": "Message if no data has changed on the server."
+        "message": " Änderungen auf dem Backend seit dem letzten Sync."
     },
     "infoEmptyConfig": {
-        "message": "Keine Konfigurationsdaten gefunden. Bitte konfiguriere das AddOn vor der ersten Verwendung.",
-        "description": "Message if extension is not configured yet."
+        "message": "Keine Konfigurationsdaten gefunden. Bitte konfiguriere das AddOn vor der ersten Verwendung."
     },
     "sendPage": {
         "message": "Seite senden"
@@ -210,10 +174,10 @@
         "message": "Link erfolgreich versendet."
     },
     "openBackend": {
-        "message": "Öffne Server"
+        "message": "Öffne Backend"
     },
     "bookmarkTab": {
-        "message": "Bookmark direkt zu Server"
+        "message": "Bookmark direkt zu Backend"
     },
     "ManAuto": {
         "message": "Automatische Synchronisation aktivieren"
@@ -222,7 +186,7 @@
         "message": "Zuletzt eingeloggt mit"
     },
     "optionsRestoreServer": {
-        "message": "Folgende Clients können vom Server wiederhergestellt werden. Bitte wähle einen Client aus der Liste aus oder klicke auf abbrechen, um keinen dieser Client zu verwenden."
+        "message": "Folgende Geräte können vom Backend wiederhergestellt werden. Bitte wähle ein Gerät aus der Liste aus oder klicke auf abbrechen, um keines dieser Geräte zu verwenden."
     },
     "optionsChangelog": {
         "message": "Änderungen"
@@ -234,22 +198,25 @@
         "message": "Logdatei"
     },
     "optionsClientName": {
-        "message": "Client Name"
+        "message": "Gerätename"
+    },
+    "optionsDeviceID": {
+        "message": "Geräte-ID"
     },
     "optionsBackendSyncmarks": {
-        "message": "Syncmarks Server"
+        "message": "Syncmarks Backend"
     },
     "optionsTabs": {
         "message": "Tabs"
     },
     "optionsTabsHint": {
-        "message": "Synchronisiere offene Tabs zwischen den Clients"
+        "message": "Synchronisiere offene Tabs zwischen den Geräten"
     },
     "optionsLegendServer": {
-        "message": "Server"
+        "message": "Backend"
     },
     "optionsLegendBookmarks": {
-        "message": "Bookmarks"
+        "message": "Backend Bookmarks"
     },
     "optionsBTNBackup": {
         "message": "Backup"
