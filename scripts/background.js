@@ -295,24 +295,6 @@ function clientList(response) {
 						}
 						});
 
-					/*
-					chrome.contextMenus.create({
-						title: ctitle,
-						type: "normal",
-						parentId: "ssendpage",
-						contexts: ["page"],
-						id: 'page_' + client.id
-					});
-					
-					chrome.contextMenus.create({
-						title: ctitle,
-						type: "normal",
-						parentId: "ssendlink",
-						contexts: ["link"],
-						id: 'link_' + client.id
-					});
-					*/
-
 					try{
 						chrome.contextMenus.update('tab_' + client.id, { title: ctitle }, () => {
 						if (chrome.runtime.lastError) {
@@ -325,15 +307,6 @@ function clientList(response) {
 							});
 						}
 						});
-						/*
-						chrome.contextMenus.create({
-							title: ctitle,
-							type: "normal",
-							parentId: "ssendtab",
-							contexts: ["tab"],
-							id: 'tab_' + client.id
-						});
-						*/
 					} catch {}
 				});
 				let cnt = response.clients.length - 1;
@@ -418,6 +391,8 @@ function bookmarkImport(response) {
 function bookmarkAdd(response) {
 	let text = '';
 	let type = '';
+	let mode = '';
+
 	chrome.storage.local.get(null, async function(options) {
 		if(options.sync === false) {
 			if(response.code === 200) {
@@ -425,6 +400,7 @@ function bookmarkAdd(response) {
 				changeIcon('info');
 				mode = '0';
 				type = 'info';
+				getPopupData();
 			} else {
 				text = response.message;
 				changeIcon('warn');
@@ -609,14 +585,6 @@ function ccMenus() {
 							});
 						}
 						});
-						/*
-						chrome.contextMenus.create({
-							title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
-							type: "normal",
-							contexts: ["page"],
-							id: "smark"
-						});
-						*/
 					});
 				}
 				

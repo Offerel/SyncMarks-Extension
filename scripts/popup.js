@@ -61,7 +61,9 @@ function getData(e) {
 			popupMessage('Invalid credentials', 'error');
 			return false;
 		}
+
 		document.getElementById('loader').classList.add('loader');
+
 		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
 			client:options.uuid,
 			token:options.token
