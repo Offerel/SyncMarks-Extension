@@ -39,6 +39,4 @@ On desktop you can right click on a empty space at the page or on a link and can
 ## Current open issues
 There are some open browser issue, where i must use a workaround or if no workaround is possible, we have to wait for a upstream fix in Fennec/Chromium. This is a list of a issues im aware as of now:
 - Bookmark API isn't supported on Android. There is hope, that this will be supported in the upcoming future, but currently it's unsupported at least on Android. In Kiwi Browser its working as expected. You can follow the Firefox bug at https://bugzilla.mozilla.org/show_bug.cgi?id=1625231. As some sort of workaround, the Addon displays the bookmarks from the WebApp in the popup page, when you click on the AddOn button.
-- Context menu isn't supported on Firefox Android. The only workaround so far is to use the toolbar button.  
-- Clicking the notification is not working on Android. The bug for this is now open since months. You can follow at https://github.com/mozilla-mobile/android-components/issues/7477 
-- The settings page will not opened correctly in Firefox Android. The settings page will be opened invisible in a tab in the background, some other times it will opened multiple times. You can follow the bugreport at https://github.com/mozilla-mobile/fenix/issues/15742
+- Context menu isn't supported on Firefox Android. The only workaround so far is to use the toolbar button.   
