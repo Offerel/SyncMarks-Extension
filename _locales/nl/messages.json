@@ -1,15 +1,15 @@
 {
     "extensionDescription": {
-        "message": "Met behulp van deze extensie kunt u uw bladwijzers en tabbladen synchroniseren naar uw eigen server."
+        "message": "Met behulp van deze extensie kunt u uw bladwijzers en tabbladen synchroniseren naar uw eigen backend."
     },
     "infoRestoreID": {
-        "message": "Dient de oude client verwijderd te worden om synchronisatieproblemen te voorkomen?"
+        "message": "Dient het oude apparaat verwijderd te worden om synchronisatieproblemen te voorkomen?"
     },
     "optionsErrorUser": {
         "message": "Het inloggen is mislukt: controleer uw gebruikersnaam en wachtwoord."
     },
     "optionsBeforeExport": {
-        "message": "Alle bladwijzers op de server worden voorafgaand aan het exporteren verwijderd. Nadien kunnen de nieuwe worden geëxporteerd naar de server.\n\nWeet u zeker dat u alle serverbladwijzers wilt verwijderen?"
+        "message": "Alle bladwijzers op de backend worden voorafgaand aan het exporteren verwijderd. Nadien kunnen de nieuwe worden geëxporteerd naar de backend.\n\nWeet u zeker dat u alle backendbladwijzers wilt verwijderen?"
     },
     "optionsDebugLog": {
         "message": "Foutopsporingslogboek"
@@ -18,7 +18,7 @@
         "message": "SyncMarks"
     },
     "optionsServerURL": {
-        "message": "Server-url"
+        "message": "Backend-url"
     },
     "optionsUsername": {
         "message": "Gebruikersnaam"
@@ -27,7 +27,7 @@
         "message": "Wachtwoord"
     },
     "optionsSyncOptions": {
-        "message": "Instellingen"
+        "message": "Apparaatinstellingen"
     },
     "optionsAuto": {
         "message": "Automatisch synchroniseren"
@@ -36,7 +36,7 @@
         "message": "Downloaden"
     },
     "optionsBTNImportHint": {
-        "message": "Herstel vanaf de server en overschrijf lokale bladwijzers."
+        "message": "Herstel vanaf de backend en overschrijf lokale bladwijzers."
     },
     "optionsBTNSettingsHint": {
         "message": "Reservekopie-instellingen"
@@ -45,7 +45,7 @@
         "message": "Uploaden"
     },
     "optionsBTNExportHint": {
-        "message": "Overschrijf alle bladwijzers op de server."
+        "message": "Overschrijf alle bladwijzers op de backend."
     },
     "optionsBTNSave": {
         "message": "Opslaan"
@@ -78,7 +78,7 @@
         "message": "Het inloggen is mislukt - status: "
     },
     "optionsBeforeCImpExp": {
-        "message": "Hier kunt u de clientinstellingen herstellen vanaf de server."
+        "message": "Hier kunt u de apparaatinstellingen herstellen vanaf de backend."
     },
     "optionsBeforeLogin": {
         "message": "Log in op uw account om toegang tot uw bladwijzers te verkrijgen"
@@ -108,13 +108,13 @@
         "message": "Er is een probleem opgetreden tijdens het exporteren."
     },
     "successExportBookmarks": {
-        "message": "De lokale bladwijzers zijn geëxporteerd naar de server."
+        "message": "De lokale bladwijzers zijn geëxporteerd naar de backend."
     },
     "successImportBookmarks": {
         "message": " bladwijzers/mappen geïmporteerd."
     },
     "infoNewClient": {
-        "message": "Deze browser is nieuw en daarom geregistreerd op de server."
+        "message": "Deze browser is nieuw en daarom geregistreerd op de backend."
     },
     "infoEmptyConfig": {
         "message": "Er zijn geen instellingen. Stel de extensie in alvorens deze te gebruiken."
@@ -135,7 +135,7 @@
         "message": "De link is verstuurd."
     },
     "bookmarkTab": {
-        "message": "Bladwijzer naar server versturen"
+        "message": "Bladwijzer naar backend versturen"
     },
     "ManAuto": {
         "message": "Automatische synchronisatie inschakelen"
@@ -147,7 +147,7 @@
         "message": "Laatst ingelogd met"
     },
     "optionsRestoreServer": {
-        "message": "De volgende clients kunnen worden hersteld vanaf de server. Kies een client uit de lijst of klik op annuleren om geen van de clients te kiezen."
+        "message": "De volgende apparaten kunnen worden hersteld vanaf de backend. Kies een apparaat uit de lijst of klik op annuleren om geen van de apparaten te kiezen."
     },
     "optionsLogfile": {
         "message": "Logboek"
@@ -159,19 +159,19 @@
         "message": "Inloggen"
     },
     "optionsClientName": {
-        "message": "Clientnaam"
+        "message": "Apparaatnaam"
     },
     "optionsTabs": {
         "message": "Tabbladen"
     },
     "optionsTabsHint": {
-        "message": "Geopende tabbladen synchroniseren tussen clients"
+        "message": "Geopende tabbladen synchroniseren tussen apparaten"
     },
     "optionsLegendServer": {
-        "message": "Server"
+        "message": "Backend-url"
     },
     "optionsLegendBookmarks": {
-        "message": "Bladwijzers"
+        "message": "Bladwijzers op backend"
     },
     "optionsBTNBackup": {
         "message": "Reservekopie"
@@ -187,5 +187,8 @@
     },
     "popupRefresh": {
         "message": "Herladen"
+    },
+    "optionsDeviceID": {
+        "message": "Apparaat-id"
     }
 }
