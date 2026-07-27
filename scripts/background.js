@@ -14,7 +14,7 @@ var remoteMark;
 var [debug, lastseen, count, last_s] = [false, null, 0, 0];
 
 if(!chrome.runtime.onStartup.hasListener(onStartup)) chrome.runtime.onStartup.addListener(onStartup);
-init();
+init('Re-');
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
@@ -270,28 +270,42 @@ function clientList(response) {
 			if(Array.isArray(response.clients)) {
 				response.clients.forEach(function(client){
 					var ctitle = client.name ? client.name:client.id;
-					chrome.contextMenus.create({
-						title: ctitle,
-						type: "normal",
-						parentId: "ssendpage",
-						contexts: ["page"],
-						id: 'page_' + client.id
-					});
-					chrome.contextMenus.create({
-						title: ctitle,
-						type: "normal",
-						parentId: "ssendlink",
-						contexts: ["link"],
-						id: 'link_' + client.id
-					});
+
+					chrome.contextMenus.update('page_' + client.id, { title: ctitle }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: 'page_' + client.id,
+							type: "normal",
+							parentId: "ssendpage",
+							title: ctitle,
+							contexts: ["page"]
+							});
+						}
+						});
+
+					chrome.contextMenus.update('link_' + client.id, { title: ctitle }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: 'link_' + client.id,
+							type: "normal",
+							parentId: "ssendlink",
+							title: ctitle,
+							contexts: ["link"]
+							});
+						}
+						});
 
 					try{
-						chrome.contextMenus.create({
-							title: ctitle,
+						chrome.contextMenus.update('tab_' + client.id, { title: ctitle }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: 'tab_' + client.id,
 							type: "normal",
 							parentId: "ssendtab",
-							contexts: ["tab"],
-							id: 'tab_' + client.id
+							title: ctitle,
+							contexts: ["tab"]
+							});
+						}
 						});
 					} catch {}
 				});
@@ -377,6 +391,8 @@ function bookmarkImport(response) {
 function bookmarkAdd(response) {
 	let text = '';
 	let type = '';
+	let mode = '';
+
 	chrome.storage.local.get(null, async function(options) {
 		if(options.sync === false) {
 			if(response.code === 200) {
@@ -384,6 +400,7 @@ function bookmarkAdd(response) {
 				changeIcon('info');
 				mode = '0';
 				type = 'info';
+				getPopupData();
 			} else {
 				text = response.message;
 				changeIcon('warn');
@@ -557,37 +574,56 @@ function ccMenus() {
 						for (let {name, shortcut} of commands) {
 							var s = (name === 'bookmark-tab') ? shortcut:'undef';
 						}
-						chrome.contextMenus.create({
-							title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
+
+						chrome.contextMenus.update("smark", { title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})` }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: "smark",
 							type: "normal",
-							contexts: ["page"],
-							id: "smark"
+							title: chrome.i18n.getMessage("bookmarkTab") + ` (${s})`,
+							contexts: ["page"]
+							});
+						}
 						});
 					});
 				}
 				
 				try{
-					chrome.contextMenus.create({
-						title: chrome.i18n.getMessage("sendPage"),
-						type: "normal",
-						contexts: ["page"],
-						id: "ssendpage"
-					});
-
-					chrome.contextMenus.create({
-						title: chrome.i18n.getMessage("sendLink"),
-						type: "normal",
-						contexts: ["link"],
-						id: "ssendlink"
-					});
+					
+					chrome.contextMenus.update("ssendpage", { title: chrome.i18n.getMessage("sendPage") }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: "ssendpage",
+							type: "normal",
+							title: chrome.i18n.getMessage("sendPage"),
+							contexts: ["page"]
+							});
+						}
+						});
+					
+					chrome.contextMenus.update("ssendlink", { title: chrome.i18n.getMessage("sendLink") }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: "ssendlink",
+							type: "normal",
+							title: chrome.i18n.getMessage("sendLink"),
+							contexts: ["link"]
+							});
+						}
+						});
 
 					try{
-						chrome.contextMenus.create({
-							title: chrome.i18n.getMessage("sendTab"),
+						chrome.contextMenus.update("ssendtab", { title: chrome.i18n.getMessage("sendTab") }, () => {
+						if (chrome.runtime.lastError) {
+							chrome.contextMenus.create({
+							id: "ssendtab",
 							type: "normal",
-							contexts: ["tab"],
-							id: "ssendtab"
+							title: chrome.i18n.getMessage("sendTab"),
+							contexts: ["tab"]
+							});
+						}
 						});
+
 					} catch {}
 				} catch(error) {
 					logit({message: error, type: 'error', source: 'ccMenus'});
@@ -722,7 +758,7 @@ function changeIcon(mode) {
 	}
 }
 
-async function init() {
+async function init(re = '') {
 	logit({message: 'Starting init', type: 'info', source: 'init'});
 	if(!chrome.bookmarks.onRemoved.hasListener(onRemovedCheck)) chrome.bookmarks.onRemoved.addListener(onRemovedCheck);
 	if(!chrome.bookmarks.onCreated.hasListener(onCreatedCheck)) chrome.bookmarks.onCreated.addListener(onCreatedCheck);
@@ -731,7 +767,7 @@ async function init() {
 	if(!chrome.tabs.onActivated.hasListener(onTabActivated)) chrome.tabs.onActivated.addListener(onTabActivated);
 
 	get_oMarks();
-	logit({message: 'Init finished', type: 'info', source: 'init'});
+	logit({message: re + 'Init finished', type: 'info', source: 'init'});
 }
 
 function getPopupData() {

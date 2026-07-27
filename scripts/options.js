@@ -208,6 +208,7 @@ function restoreOptions() {
 	let f_auto = document.getElementById("s_auto");
 	let f_tabs = document.getElementById("s_tabs");
 	let b_login = document.getElementById("blogin");
+	let deviceid = document.getElementById("deviceid");
 
 	chrome.storage.local.get(null, function(options) {
 		if(options.instance == undefined) {
@@ -220,6 +221,7 @@ function restoreOptions() {
 		uuid = (options.uuid === undefined) ? uuidv4():options.uuid;
 		f_cname.placeholder = uuid;
 		f_uuid.defaultValue = uuid;
+		deviceid.value = uuid;
 		f_auto.defaultChecked = options.sync;
 		
 		gName();

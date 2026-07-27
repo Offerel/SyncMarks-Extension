@@ -25,20 +25,19 @@ You can also contribute to the translation. This is very easy to do via Weblate.
 There are some permissions needed for the Extension, to work properly.
 
 ### Read and modify bookmarks
-Since you export and import all your bookmarks, the AddOn needs access to them. Currently this API is supported on the desktop and on Kiwi on mobile. If the Mozilla implements this finally on mobile, it will work there to.
-
+Since this AddOn primary sync your bookmarks, it should be able to read, write, modify and delete bookmarks. 
 ### Storage
-This is to save the AddOn options. 
-
+The Addon has some options. These options needs to be saved somewhere. The options are saved only localy, but can be backed up to the server, if needed.
 ### Notifications
-The AddOn uses notifications to alert you about error occured or to notify you about pushes send from other clients.
-
-### Context menus
-On desktop you can right click on a empty space at the page or on a link and can push this link as notification to other clients, including the Webapp. Since this API is not available on mobile, you can't use this feature there. On mobile you can use the toolbar button to send a page as notification.
+In case of a important error or warning, this permission ensures, that can be notified about important issues or warnings.
+### ContextMenus
+You can rightclick on links and tabs to send them to the server, without to open the side and bookmark it. The menu which apears on rightclick is a contextmenu. To build this menu with its entries, this permission is needed.
+### Tabs
+To read the state of the current tab and to check if a similar tab is already opened. 
+### optional host permissions
+Since the Extenstion doesnt know about your server url, this is to ensure, that your server can be accessed. All data will be transmitted only via your own url. I choosed optional permission here, because in this case, you will get asked, if you want to allow communication between your client and only this specific url.
  
 ## Current open issues
 There are some open browser issue, where i must use a workaround or if no workaround is possible, we have to wait for a upstream fix in Fennec/Chromium. This is a list of a issues im aware as of now:
 - Bookmark API isn't supported on Android. There is hope, that this will be supported in the upcoming future, but currently it's unsupported at least on Android. In Kiwi Browser its working as expected. You can follow the Firefox bug at https://bugzilla.mozilla.org/show_bug.cgi?id=1625231. As some sort of workaround, the Addon displays the bookmarks from the WebApp in the popup page, when you click on the AddOn button.
-- Context menu isn't supported on Firefox Android. The only workaround so far is to use the toolbar button.  
-- Clicking the notification is not working on Android. The bug for this is now open since months. You can follow at https://github.com/mozilla-mobile/android-components/issues/7477 
-- The settings page will not opened correctly in Firefox Android. The settings page will be opened invisible in a tab in the background, some other times it will opened multiple times. You can follow the bugreport at https://github.com/mozilla-mobile/fenix/issues/15742
+- Context menu isn't supported on Firefox Android. The only workaround so far is to use the toolbar button.   
