@@ -1,4 +1,11 @@
 # ChangeLog
+## v2.2.1
+- Fixed a data issue in PopUp
+- Fixed a issue on Options
+- Fixed Context Menu creation
+- Updated Translation
+- Updated Readme
+
 ## v2.2.0
 - Fixed an issue where Brave was detected as Firefox
 - Fixed re-registering listeners
