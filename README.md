@@ -26,13 +26,13 @@ There are some permissions needed for the Extension, to work properly.
 
 ### Read and modify bookmarks
 Since this AddOn primary sync your bookmarks, it should be able to read, write, modify and delete bookmarks. 
-### storage
+### Storage
 The Addon has some options. These options needs to be saved somewhere. The options are saved only localy, but can be backed up to the server, if needed.
-### notifications
+### Notifications
 In case of a important error or warning, this permission ensures, that can be notified about important issues or warnings.
-### contextMenus
+### ContextMenus
 You can rightclick on links and tabs to send them to the server, without to open the side and bookmark it. The menu which apears on rightclick is a contextmenu. To build this menu with its entries, this permission is needed.
-### tabs
+### Tabs
 To read the state of the current tab and to check if a similar tab is already opened. 
 ### optional host permissions
 Since the Extenstion doesnt know about your server url, this is to ensure, that your server can be accessed. All data will be transmitted only via your own url. I choosed optional permission here, because in this case, you will get asked, if you want to allow communication between your client and only this specific url.
