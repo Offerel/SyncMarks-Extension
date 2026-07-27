@@ -600,14 +600,6 @@ function ccMenus() {
 							});
 						}
 						});
-					/*
-					chrome.contextMenus.create({
-						title: chrome.i18n.getMessage("sendPage"),
-						type: "normal",
-						contexts: ["page"],
-						id: "ssendpage"
-					});
-					*/
 					
 					chrome.contextMenus.update("ssendlink", { title: chrome.i18n.getMessage("sendLink") }, () => {
 						if (chrome.runtime.lastError) {
@@ -619,14 +611,7 @@ function ccMenus() {
 							});
 						}
 						});
-					/*
-					chrome.contextMenus.create({
-						title: chrome.i18n.getMessage("sendLink"),
-						type: "normal",
-						contexts: ["link"],
-						id: "ssendlink"
-					});
-					*/
+
 					try{
 						chrome.contextMenus.update("ssendtab", { title: chrome.i18n.getMessage("sendTab") }, () => {
 						if (chrome.runtime.lastError) {
@@ -638,14 +623,7 @@ function ccMenus() {
 							});
 						}
 						});
-						/*
-						chrome.contextMenus.create({
-							title: chrome.i18n.getMessage("sendTab"),
-							type: "normal",
-							contexts: ["tab"],
-							id: "ssendtab"
-						});
-						*/
+
 					} catch {}
 				} catch(error) {
 					logit({message: error, type: 'error', source: 'ccMenus'});
