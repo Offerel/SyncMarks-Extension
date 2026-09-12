@@ -57,17 +57,12 @@ localizePopup();
 
 function getData(e) {
 	chrome.storage.local.get(null, async function(options) {
-		if(options.token === undefined) {
+		if(options.cr === undefined) {
 			popupMessage('Invalid credentials', 'error');
 			return false;
 		}
 
 		document.getElementById('loader').classList.add('loader');
-
-		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
-			client:options.uuid,
-			token:options.token
-		})));
 
 		if(e !== undefined) {
 			chrome.storage.session.remove("bmhtml");
@@ -87,13 +82,9 @@ function getData(e) {
 				cache: "no-cache",
 				referrerPolicy: "no-referrer",
 				headers: {
-					'Authorization': authheader,
+					'Authorization': 'Basic ' + options.cr
 				}
 			}).then(response => {
-				let xRinfo = response.headers.get("X-Request-Info");
-				if (xRinfo != null) {
-					chrome.storage.local.set({token:xRinfo});
-				}
 				return response.text();
 			}).then(html => {
 				let parser = new DOMParser();

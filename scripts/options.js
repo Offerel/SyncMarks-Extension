@@ -98,10 +98,19 @@ function gToken(e) {
 	};
 
 	const url = document.getElementById('wdurl').value;
-	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
+
+	const fc = document.getElementById('nuser').value + ':' + document.getElementById('npassword').value;
+    const bt = new TextEncoder().encode(fc);
+
+    let bn = "";
+    for (const byte of bt) {
+        bn += String.fromCharCode(byte);
+    }
+
+	const cr = btoa(bn);
 	const headers = new Headers();
 	headers.append("Content-Type", "application/json;charset=UTF-8");
-	headers.append("Authorization", 'Basic ' + creds);
+	headers.append("Authorization", 'Basic ' + cr);
 
 	const myRequest = fetch(url + '?api=v1', {
 		method: "POST",
@@ -117,10 +126,9 @@ function gToken(e) {
 			name: document.getElementById("cname").value,
 			uuid: document.getElementById("s_uuid").value,
 			tabs: document.getElementById("s_tabs").checked,
-			instance: document.getElementById("wdurl").value
+			instance: document.getElementById("wdurl").value,
+			cr: cr
 		};
-
-		cOptions.token = responseData.token;
 
 		chrome.storage.local.set(cOptions);
 		document.getElementById('blogin').removeAttribute('style');
@@ -226,7 +234,7 @@ function restoreOptions() {
 		
 		gName();
 
-		if(options.token === undefined) {
+		if(options.cr === undefined) {	
 			b_login.disabled = false;
 			b_login.style.backgroundColor = "red";
 		}
@@ -418,8 +426,13 @@ function serverImport() {
 	let selectedText = clientSelect.options[clientSelect.selectedIndex].text;
 
 	const restored_uuid = restored_Options.uuid;
-	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
-
+	const fc = document.getElementById('nuser').value + ':' + document.getElementById('npassword').value;
+	const bt = new TextEncoder().encode(fc);
+	let bn = "";
+	for (const byte of bt) {
+		bn += String.fromCharCode(byte);
+	}
+	const cr = btoa(bn);
 	document.getElementById('cname').value = (selectedText != restored_Options.name) ? selectedText:restored_Options.name;
 	document.getElementById("s_tabs").checked = restored_Options.tabs;
 	document.getElementById("s_auto").checked = restored_Options.sync;
@@ -444,14 +457,12 @@ function serverImport() {
 				cache: "no-cache",
 				headers: {
 					'Content-type': 'application/json;charset=UTF-8',
-					'Authorization': 'Basic ' + creds,
+					'Authorization': 'Basic ' + cr,
 				},
 				redirect: "follow",
 				referrerPolicy: "no-referrer",
 				body: JSON.stringify(params)
 			}).then(response => {
-				let xRinfo = response.headers.get("X-Request-Info");
-				if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
 				return response.json();
 			}).then(responseData => {
 				chrome.runtime.sendMessage({action: "loglines", data: {message: 'Old client removed', type: 'info', source: 'Options, serverImport'}});

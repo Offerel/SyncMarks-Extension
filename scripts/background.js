@@ -138,16 +138,16 @@ function onStartup() {
 			return false;
 		}
 
-		if(options.token === undefined) {
+		if(options.cr === undefined) {
 			changeIcon('error');
 			chrome.storage.session.remove('bmhtml');
 			chrome.storage.session.set({
 				popup: {
-					message: "Login token missing",
+					message: "Credentials missing",
 					mode: 'error'
 				}
 			});
-			logit({message: 'Login token missing', type: 'error', source: 'init'});
+			logit({message: 'Credentials missing', type: 'error', source: 'init'});
 		} else {
 			chrome.action.setBadgeText({text: ''});
 		}
@@ -160,12 +160,6 @@ function sendRequest(action, data = null, tab = null) {
 	chrome.storage.local.get(null, function(options) {
 		if(options.instance == undefined || options.instance.length < 4) return false;
 
-		let btoken = {
-			client:options.uuid,
-			token:options.token
-		};
-
-		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify(btoken)));
 		let client = options.uuid;
 
 		if(action.name === 'bookmarkAdd' && options.sync === false ) {
@@ -186,31 +180,12 @@ function sendRequest(action, data = null, tab = null) {
 				cache: "no-cache",
 				headers: {
 					'Content-type': 'application/json;charset=UTF-8',
-					'Authorization': authheader,
+					'Authorization': 'Basic ' + options.cr
 				},
 				redirect: "follow",
 				referrerPolicy: "no-referrer",
 				body: JSON.stringify(params)
 			}).then(response => {
-				let xRinfo = response.headers.get("X-Request-Info");
-				if (xRinfo != null) {
-					if(xRinfo == 0) {
-						chrome.storage.local.remove('token');
-						chrome.storage.session.remove('bmhtml');
-						let ldata = {message: 'Invalid credentials', type: 'error', source: action.name};
-						changeIcon(ldata.type);
-						logit(ldata);
-						chrome.storage.session.set({
-							popup: {
-								message:ldata.message,
-								mode:ldata.type
-							}
-						});
-						chrome.storage.session.remove('bmhtml');
-					} else {
-						chrome.storage.local.set({token:xRinfo});
-					}
-				}
 				return response.json();
 			}).then(responseData => {
 				action(responseData, tab);
@@ -773,10 +748,6 @@ async function init(re = '') {
 function getPopupData() {
 	chrome.storage.local.get(null, async function(options) {
 		const data = chrome.storage.session.get("bmhtml");
-		let authheader = 'Bearer ' + btoa(encodeURIComponent(JSON.stringify({
-			client:options.uuid,
-			token:options.token
-		})));
 	
 		if(data.bmhtml === undefined) {
 			logit({message: 'Get data for PopUp', type: 'info', source: 'getPopupData'});
@@ -785,13 +756,9 @@ function getPopupData() {
 				cache: "no-cache",
 				referrerPolicy: "no-referrer",
 				headers: {
-					'Authorization': authheader,
+					'Authorization': 'Basic ' + options.cr
 				}
 			}).then(response => {
-				let xRinfo = response.headers.get("X-Request-Info");
-				if (xRinfo != null) {
-					chrome.storage.local.set({token:xRinfo});
-				}
 				return response.text();
 			}).then(html => {
 				chrome.storage.session.set({bmhtml: html});
