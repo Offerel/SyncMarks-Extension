@@ -217,6 +217,8 @@ function restoreOptions() {
 	let f_tabs = document.getElementById("s_tabs");
 	let b_login = document.getElementById("blogin");
 	let deviceid = document.getElementById("deviceid");
+	let usr = document.getElementById('nuser');
+	let psw = document.getElementById('npassword');
 
 	chrome.storage.local.get(null, function(options) {
 		if(options.instance == undefined) {
@@ -238,6 +240,7 @@ function restoreOptions() {
 			b_login.disabled = false;
 			b_login.style.backgroundColor = "red";
 		}
+
 		f_tabs.defaultChecked = (options.tabs == undefined) ? false:options.tabs;
 	
 		last_sync = options.last_sync || 0;
@@ -519,14 +522,6 @@ window.addEventListener('load', function () {
 	localizeHtmlPage();
 
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
-	document.getElementById("econf").addEventListener("click", function() {comodal.style.display = "block"});
-	document.getElementById("cclose").addEventListener("click", function() {comodal.style.display = "none";});
-	document.getElementById("cimp").addEventListener("click", function(e){
-		e.preventDefault();
-		e.stopPropagation();
-		comodal.style.display = "none";
-		chrome.runtime.sendMessage({action: "clientGetOptions"});
-	});
 	document.getElementById("logdebug").addEventListener('change', filterLog);
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
@@ -545,11 +540,6 @@ window.addEventListener('load', function () {
 		e.preventDefault();
 		e.stopPropagation();
 		document.getElementById("crdialog").style.display = "none";
-	});
-	document.getElementById("imchancel").addEventListener("click", function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		document.getElementById("expimpdialog").style.display = "none";
 	});
 	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";});
