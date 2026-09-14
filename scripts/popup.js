@@ -190,7 +190,7 @@ function urlExists() {
 			}
 		}
 
-		tbutton.attributes.fill.nodeValue = (urlExists) ? "gold":"currentColor";
+		tbutton.querySelector('path').setAttribute('fill', urlExists ? 'gold' : 'currentColor');
 	});
 }
 

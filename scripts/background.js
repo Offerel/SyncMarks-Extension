@@ -26,15 +26,6 @@ chrome.runtime.onMessage.addListener(
 				case 'clientRename':
 					sendRequest(clientRename, request.data);
 					break;
-				case 'clientSendOptions':
-					sendRequest(clientSendOptions, request.data);
-					break;
-				case 'clientGetOptions':
-					sendRequest(clientGetOptions);
-					break;
-				case 'clientRemove':
-					sendRequest(clientRemove, request.data);
-					break;
 				case 'removeAllMarks':
 					removeAllMarks();
 					break;
@@ -203,38 +194,7 @@ function sendRequest(action, data = null, tab = null) {
 	});
 }
 
-function clientSendOptions(response) {
-	if(response.code == 200) {
-		let ldata = {message: response.message, type: 'info', source: 'clientSendOptions'};
-		logit(ldata);
-		changeIcon('info');
-		chrome.storage.session.set({
-			popup: {
-				message: response.message,
-				mode: 'success'
-			}
-		});
-	} else {
-		changeIcon('warn');
-		chrome.storage.session.set({
-			popup: {
-				message: response.message,
-				mode: 'warn'
-			}
-		});
-		let ldata = {message: response.message, type: 'error', source: 'clientSendOptions'};
-		logit(ldata);
-	}
-}
-
-function clientGetOptions(response) {
-	chrome.runtime.sendMessage({task: "clientOptions", cOptions: response.cOptions});
-}
-
 function bmRemove(response) {
-}
-
-function clientRemove(response) {
 }
 
 function clientList(response) {

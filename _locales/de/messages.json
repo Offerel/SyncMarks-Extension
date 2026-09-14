@@ -3,10 +3,10 @@
         "message": "SyncMarks"
     },
     "extensionDescription": {
-        "message": "Mit Hilfe dieser Erweiterung synchronisieren Sie Lesezeichen und Tabs mit einem selbstgehosteten Backend."
+        "message": "Mit Hilfe dieser Erweiterung synchronisieren Sie Lesezeichen und Tabs mit einem selbstgehosteten Server."
     },
     "optionsServerURL": {
-        "message": "Backend URL"
+        "message": "Server URL"
     },
     "optionsUsername": {
         "message": "Benutzername"
@@ -15,37 +15,28 @@
         "message": "Passwort"
     },
     "optionsSyncOptions": {
-        "message": "Geräte Optionen"
+        "message": "Client Optionen"
     },
     "optionsAuto": {
         "message": "Automatische Synchronisation"
-    },
-    "optionsManualActions": {
-        "message": "Manuelle Funktionen"
     },
     "optionsBTNImport": {
         "message": "Download"
     },
     "optionsBTNImportHint": {
-        "message": "Wiederherstellen vom Backend, überschreiben der lokalen Bookmarks."
-    },
-    "optionsBTNSettingsHint": {
-        "message": "Backup der Einstellungen"
+        "message": "Wiederherstellen vom Server, überschreiben der lokalen Bookmarks."
     },
     "optionsBTNExport": {
         "message": "Upload"
     },
     "optionsBTNExportHint": {
-        "message": "Überschreiben aller Bookmarks auf dem Backend."
+        "message": "Überschreiben aller Bookmarks auf dem Server."
     },
     "optionsBTNSave": {
         "message": "Speichern"
     },
     "optionsBTNSettings": {
         "message": "Einstellungen"
-    },
-    "optionsBTNRestore": {
-        "message": "Wiederherstellen"
     },
     "optionsBTNClear": {
         "message": "Löschen"
@@ -63,7 +54,7 @@
         "message": "Abbrechen"
     },
     "optionsNotUsed": {
-        "message": "Du kannst nun alle Bookmarks vom Backend Synchronisieren."
+        "message": "Du kannst nun alle Bookmarks vom Server Synchronisieren."
     },
     "optionsErrorURL": {
         "message": "Login Fehler: Bitte prüfe den URL. Dieser sollte im Format https://servername/folder sein"
@@ -80,17 +71,11 @@
     "optionsLoginError": {
         "message": "Login Fehler: Bitte erneut einloggen"
     },
-    "optionsBeforeCImpExp": {
-        "message": "Hiermit kannst du deine bestehenden Geräte Einstellungen vom Backend wiederherstellen."
-    },
     "optionsBeforeLogin": {
         "message": "Bitte melden Sie sich mit Ihren Zugangsdaten an, um Zugang zu Ihren Lesezeichen zu erhalten"
     },
     "optionsWrongAData": {
         "message": "Login Error. Bitte erneut einloggen"
-    },
-    "infoRestoreID": {
-        "message": "Soll das bisherige Gerät auf dem Backend entfernt werden, um Synchronisations Probleme zu vermeiden?"
     },
     "optionsSuccessImport": {
         "message": "Import gelungen."
@@ -99,7 +84,7 @@
         "message": "Sollen alle lokalen Bookmarks vor dem Import gelöscht werden?"
     },
     "optionsBeforeExport": {
-        "message": "Vor dem Export werden alle Bookmarks auf dem Backend gelöscht. Danach werden die neuen Bookmarks zum Backend exportiert.\n\nSollen die Bookmarks vor dem Export auf dem Backend gelöscht werden?"
+        "message": "Vor dem Export werden alle Bookmarks auf dem Server gelöscht. Danach werden die neuen Bookmarks zum Server exportiert.\n\nSollen die Bookmarks vor dem Export auf dem Server gelöscht werden?"
     },
     "optionsInfoRemove": {
         "message": "Wenn du fortfährst, werden alle deine aktuellen Bookmarks entfernt.\n\nSollen alle lokalen Bookmarks gelöscht werden?"
@@ -111,16 +96,16 @@
         "message": "Bisher wurde kein Sync beim Start durchgeführt."
     },
     "popupImportConfirm": {
-        "message": "Die Bookmarks werden nun vom Backend übernommen. Bist du sicher?"
+        "message": "Die Bookmarks werden nun vom Server übernommen. Bist du sicher?"
     },
     "errorGetBookmarks": {
-        "message": "Es gab einen Fehler beim Abrufen der Bookmarks vom Backend. Der Antwortcode vom Backend lautet: "
+        "message": "Es gab einen Fehler beim Abrufen der Bookmarks vom Server. Der Antwortcode vom Server lautet: "
     },
     "errorSaveBookmarks": {
         "message": "Es gab einen Fehler beim Speichern aller Bookmarks. Die Rückmeldung lautet: "
     },
     "errorSaveSingleBookmarks": {
-        "message": "Es gab einen Fehler beim Speichern des Bookmarks auf dem Backend. Die Rückmeldung lautet: "
+        "message": "Es gab einen Fehler beim Speichern des Bookmarks auf dem Server. Die Rückmeldung lautet: "
     },
     "errorExportBookmarks": {
         "message": "Es gab einen Fehler beim Export der Bookmarks."
@@ -132,13 +117,13 @@
         "message": "Es gab einen Fehler beim Entfernen des Bookmarks."
     },
     "errorEditBookmark": {
-        "message": "Es gab einen Fehler beim Ändern des Bookmarks auf dem Backend."
+        "message": "Es gab einen Fehler beim Ändern des Bookmarks auf dem Server."
     },
     "errorMoveBookmark": {
-        "message": "Es gab einen Fehler beim Verschieben des Bookmarks auf dem Backend. Die Rückmeldung lautet: "
+        "message": "Es gab einen Fehler beim Verschieben des Bookmarks auf dem Server. Die Rückmeldung lautet: "
     },
     "successExportBookmarks": {
-        "message": "Lokale Bookmarks erfolgreich auf dem Backend hinzugefügt."
+        "message": "Lokale Bookmarks erfolgreich auf dem Server hinzugefügt."
     },
     "successImportBookmarks": {
         "message": " Bookmark/Ordner importiert."
@@ -147,13 +132,13 @@
         "message": "Ein interner Fehler ist aufgetreten. Die Meldung lautet: "
     },
     "infoNewClient": {
-        "message": "Dieser Browser ist ein neues Gerät und wurde auf dem Backend registriert."
+        "message": "Dieser Browser ist ein neues Gerät und wurde auf dem Server registriert."
     },
     "infoNoChange": {
         "message": "Keine Bookmarks hinzugefügt, verschoben oder gelöscht bei der letzten Synchronisation."
     },
     "infoChanges": {
-        "message": " Änderungen auf dem Backend seit dem letzten Sync."
+        "message": " Änderungen auf dem Server seit dem letzten Sync."
     },
     "infoEmptyConfig": {
         "message": "Keine Konfigurationsdaten gefunden. Bitte konfiguriere das AddOn vor der ersten Verwendung."
@@ -174,19 +159,16 @@
         "message": "Link erfolgreich versendet."
     },
     "openBackend": {
-        "message": "Öffne Backend"
+        "message": "Öffne Server"
     },
     "bookmarkTab": {
-        "message": "Bookmark direkt zu Backend"
+        "message": "Bookmark direkt zu Server"
     },
     "ManAuto": {
         "message": "Automatische Synchronisation aktivieren"
     },
     "optionsLastLogged": {
         "message": "Zuletzt eingeloggt mit"
-    },
-    "optionsRestoreServer": {
-        "message": "Folgende Geräte können vom Backend wiederhergestellt werden. Bitte wähle ein Gerät aus der Liste aus oder klicke auf abbrechen, um keines dieser Geräte zu verwenden."
     },
     "optionsChangelog": {
         "message": "Änderungen"
@@ -204,7 +186,7 @@
         "message": "Geräte-ID"
     },
     "optionsBackendSyncmarks": {
-        "message": "Syncmarks Backend"
+        "message": "Syncmarks Server"
     },
     "optionsTabs": {
         "message": "Tabs"
@@ -213,10 +195,10 @@
         "message": "Synchronisiere offene Tabs zwischen den Geräten"
     },
     "optionsLegendServer": {
-        "message": "Backend"
+        "message": "Server"
     },
     "optionsLegendBookmarks": {
-        "message": "Backend Bookmarks"
+        "message": "Bookmarks"
     },
     "optionsBTNBackup": {
         "message": "Backup"
