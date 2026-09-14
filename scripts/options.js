@@ -446,15 +446,6 @@ window.addEventListener('load', function () {
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
 	document.getElementById("ino").addEventListener("click", manualImport);
-	document.getElementById("coimport").addEventListener("click", function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-	});
-	document.getElementById("cochancel").addEventListener("click", function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		cmodal.style.display = "none";
-	});
 	document.getElementById("lchancel").addEventListener("click", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -463,7 +454,6 @@ window.addEventListener('load', function () {
 	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";});
 	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";});
-	document.getElementById("oclose").addEventListener("click", function() {cmodal.style.display = "none";});
 	document.getElementById("crclose").addEventListener("click", function() {document.getElementById("crdialog").style.display = "none";});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});
