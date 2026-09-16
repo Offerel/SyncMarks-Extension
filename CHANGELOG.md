@@ -1,10 +1,8 @@
 # ChangeLog
 ## v2.2.2
+- Removed Token behavior
 - Removed dead code
-- Changed Token behavior
 - Removed Server restore
-- Fix broken Selects
-- Added Support for Authelia SSO authentication
 
 ## v2.2.1
 - Fixed a data issue in PopUp
