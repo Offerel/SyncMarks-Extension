@@ -444,8 +444,9 @@ button:not(:disabled) {
 	padding: 0 3px;
 }
 .server .toptionc input:disabled {
-    background-color: whitesmoke;
-    color: darkgrey;
+    background-color: #f5f5f5;
+    color: #a9a9a9;
+    border-color: #dcdcdc;
 }
 .abutton {
 	background-color: #2980b9 !important;
