@@ -1,4 +1,9 @@
 # ChangeLog
+## v2.2.2
+- Removed Token behavior
+- Removed dead code
+- Removed Server restore
+
 ## v2.2.1
 - Fixed a data issue in PopUp
 - Fixed a issue on Options

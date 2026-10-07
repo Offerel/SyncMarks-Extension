@@ -31,9 +31,6 @@ chrome.runtime.onMessage.addListener(
 				case 'rLoglines':
 					rLoglines();
 					break;
-				case 'clientOptions':
-					requestClientOptions(message.cOptions, false);
-					break;
 				default:
 					break;
 			}
@@ -98,10 +95,19 @@ function gToken(e) {
 	};
 
 	const url = document.getElementById('wdurl').value;
-	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
+
+	const fc = document.getElementById('nuser').value + ':' + document.getElementById('npassword').value;
+    const bt = new TextEncoder().encode(fc);
+
+    let bn = "";
+    for (const byte of bt) {
+        bn += String.fromCharCode(byte);
+    }
+
+	const cr = btoa(bn);
 	const headers = new Headers();
 	headers.append("Content-Type", "application/json;charset=UTF-8");
-	headers.append("Authorization", 'Basic ' + creds);
+	headers.append("Authorization", 'Basic ' + cr);
 
 	const myRequest = fetch(url + '?api=v1', {
 		method: "POST",
@@ -117,10 +123,9 @@ function gToken(e) {
 			name: document.getElementById("cname").value,
 			uuid: document.getElementById("s_uuid").value,
 			tabs: document.getElementById("s_tabs").checked,
-			instance: document.getElementById("wdurl").value
+			instance: document.getElementById("wdurl").value,
+			cr: cr
 		};
-
-		cOptions.token = responseData.token;
 
 		chrome.storage.local.set(cOptions);
 		document.getElementById('blogin').removeAttribute('style');
@@ -130,7 +135,6 @@ function gToken(e) {
 		if(responseData.message.indexOf('updated') !== -1 || responseData.message.indexOf('registered') !== -1) {
 			wmessage.textContent = responseData.message;
 			wmessage.style.cssText = "border-color: green; background-color: #98FB98;";
-			requestClientOptions(responseData.cOptions);
 			chrome.runtime.sendMessage({action: "loglines", data: {message: responseData.message, type: 'info', source: 'Options, gToken'}});
 		} else {
 			wmessage.textContent = 'Warning: '+ responseData.message;
@@ -174,7 +178,6 @@ function saveOptions(e) {
 	};
 
 	chrome.storage.local.set(cOptions);
-	chrome.runtime.sendMessage({action: "clientSendOptions", data: cOptions});
 	showMsg(text, type);
 
 	chrome.runtime.sendMessage({action: "tabSync", data: cOptions.tabs});
@@ -209,6 +212,8 @@ function restoreOptions() {
 	let f_tabs = document.getElementById("s_tabs");
 	let b_login = document.getElementById("blogin");
 	let deviceid = document.getElementById("deviceid");
+	let usr = document.getElementById('nuser');
+	let psw = document.getElementById('npassword');
 
 	chrome.storage.local.get(null, function(options) {
 		if(options.instance == undefined) {
@@ -226,10 +231,11 @@ function restoreOptions() {
 		
 		gName();
 
-		if(options.token === undefined) {
+		if(options.cr === undefined) {	
 			b_login.disabled = false;
 			b_login.style.backgroundColor = "red";
 		}
+
 		f_tabs.defaultChecked = (options.tabs == undefined) ? false:options.tabs;
 	
 		last_sync = options.last_sync || 0;
@@ -392,76 +398,6 @@ function requestHostPermission() {
 	});
 }
 
-function requestClientOptions(cOptions, av = false) {
-	chrome.storage.local.get(null, function(options) {
-		if(cOptions !== undefined && cOptions.length > 0) {
-			select = document.getElementById('cimport');
-			select.length = 0;
-			cOptions.forEach((client) => {
-				var opt = document.createElement('option');
-				opt.value = client['cOptions'];
-				opt.innerText = client['cname']
-				select.appendChild(opt);
-				if(options.uuid == client['cid']) av = true;
-			});
-	
-			if(!av) document.getElementById('coptionsdialog').style.display = 'block';
-		}
-	});
-}
-
-function serverImport() {
-	const current_uuid = document.getElementById('s_uuid').value;
-	const url = document.getElementById('wdurl').value;
-	const clientSelect = document.getElementById("cimport");
-	const restored_Options = JSON.parse(clientSelect.value);
-	let selectedText = clientSelect.options[clientSelect.selectedIndex].text;
-
-	const restored_uuid = restored_Options.uuid;
-	const creds = btoa(document.getElementById('nuser').value + ':' + document.getElementById('npassword').value);
-
-	document.getElementById('cname').value = (selectedText != restored_Options.name) ? selectedText:restored_Options.name;
-	document.getElementById("s_tabs").checked = restored_Options.tabs;
-	document.getElementById("s_auto").checked = restored_Options.sync;
-
-	document.getElementById("coptionsdialog").style.display = "none";
-
-	saveOptions();
-
-	setTimeout(() => {
-		if(confirm(chrome.i18n.getMessage("infoRestoreID"))) {
-			const params = {
-				action: 'clientRemove',
-				client: current_uuid,
-				data: {
-					new: current_uuid,
-					old: restored_uuid
-				}
-			}
-		
-			fetch(url + '?api=v1', {
-				method: "POST",
-				cache: "no-cache",
-				headers: {
-					'Content-type': 'application/json;charset=UTF-8',
-					'Authorization': 'Basic ' + creds,
-				},
-				redirect: "follow",
-				referrerPolicy: "no-referrer",
-				body: JSON.stringify(params)
-			}).then(response => {
-				let xRinfo = response.headers.get("X-Request-Info");
-				if (xRinfo != null) chrome.storage.local.set({token:xRinfo});
-				return response.json();
-			}).then(responseData => {
-				chrome.runtime.sendMessage({action: "loglines", data: {message: 'Old client removed', type: 'info', source: 'Options, serverImport'}});
-			}).catch(err => {
-				chrome.runtime.sendMessage({action: "loglines", data: {message: err, type: 'error', source: 'Options, serverImport'}});
-			});
-		}
-	}, 500);
-}
-
 function checkURL() {
 	let url = document.getElementById('wdurl');
 	var xhr = new XMLHttpRequest();
@@ -502,48 +438,22 @@ window.addEventListener('load', function () {
 
 	var imodal = document.getElementById("impdialog");
 	var emodal = document.getElementById("expdialog");
-	var comodal = document.getElementById("expimpdialog");
-	var cmodal = document.getElementById("coptionsdialog");
 
 	localizeHtmlPage();
 
 	document.getElementById('version').textContent = chrome.runtime.getManifest().version;
-	document.getElementById("econf").addEventListener("click", function() {comodal.style.display = "block"});
-	document.getElementById("cclose").addEventListener("click", function() {comodal.style.display = "none";});
-	document.getElementById("cimp").addEventListener("click", function(e){
-		e.preventDefault();
-		e.stopPropagation();
-		comodal.style.display = "none";
-		chrome.runtime.sendMessage({action: "clientGetOptions"});
-	});
 	document.getElementById("logdebug").addEventListener('change', filterLog);
 	document.getElementById("iyes").addEventListener("click", manualImport);
 	document.getElementById("eyes").addEventListener("click", manualExport);
 	document.getElementById("ino").addEventListener("click", manualImport);
-	document.getElementById("coimport").addEventListener("click", function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		serverImport();
-	});
-	document.getElementById("cochancel").addEventListener("click", function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		cmodal.style.display = "none";
-	});
 	document.getElementById("lchancel").addEventListener("click", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		document.getElementById("crdialog").style.display = "none";
 	});
-	document.getElementById("imchancel").addEventListener("click", function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		document.getElementById("expimpdialog").style.display = "none";
-	});
 	document.getElementById("eno").addEventListener("click", function() { emodal.style.display = "none";});
 	document.getElementById("iclose").addEventListener("click", function() {imodal.style.display = "none";});
 	document.getElementById("eclose").addEventListener("click", function() {emodal.style.display = "none";});
-	document.getElementById("oclose").addEventListener("click", function() {cmodal.style.display = "none";});
 	document.getElementById("crclose").addEventListener("click", function() {document.getElementById("crdialog").style.display = "none";});
 	document.getElementById("mdownload").addEventListener("click", function() {imodal.style.display = "block"});
 	document.getElementById("mupload").addEventListener("click", function() {emodal.style.display = "block"});

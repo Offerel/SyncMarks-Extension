@@ -3,10 +3,10 @@
     "message": "SyncMarks"
   },
   "extensionDescription": {
-    "message": "Use this extension to synchronize bookmarks and tabs with a self-hosted backend."
+    "message": "Use this extension to synchronize bookmarks and tabs with a self-hosted server."
   },
   "optionsServerURL": {
-    "message": "Backend URL"
+    "message": "Server URL"
   },
   "optionsUsername": {
     "message": "Username"
@@ -15,7 +15,7 @@
     "message": "Password"
   },
   "optionsSyncOptions": {
-    "message": "Device Options"
+    "message": "Client Options"
   },
   "optionsAuto": {
     "message": "Automatic synchronization"
@@ -24,25 +24,19 @@
     "message": "Download"
   },
   "optionsBTNImportHint": {
-    "message": "Restore from backend, overwrite local bookmarks."
-  },
-  "optionsBTNSettingsHint": {
-    "message": "Backup settings"
+    "message": "Restore from server, overwrite local bookmarks."
   },
   "optionsBTNExport": {
     "message": "Upload"
   },
   "optionsBTNExportHint": {
-    "message": "Overwrite all bookmarks on the backend."
+    "message": "Overwrite all bookmarks on the server."
   },
   "optionsBTNSave": {
     "message": "Save"
   },
   "optionsBTNSettings": {
     "message": "Settings"
-  },
-  "optionsBTNRestore": {
-    "message": "Restore"
   },
   "optionsBTNClear": {
     "message": "Delete"
@@ -60,7 +54,7 @@
     "message": "Cancel"
   },  
   "optionsNotUsed": {
-    "message": "You can now synchronize bookmarks from the backend."
+    "message": "You can now synchronize bookmarks from the server."
   },  
   "optionsErrorUser": {
     "message": "Login failed: Please check username and password."
@@ -71,17 +65,11 @@
   "optionsErrorLogin": {
     "message": "Login failed: Status: "
   },
-  "optionsBeforeCImpExp": {
-    "message": "With this you can restore your existing device settings from the backend."
-  },
   "optionsBeforeLogin": {
     "message": "Please log in with your credentials to receive an access your bookmarks"
   },
   "optionsWrongAData": {
     "message": "Login error. Please log in again"
-  },
-  "infoRestoreID": {
-    "message": "Should the old device be removed from the backend to avoid synchronization problems?"
   },
   "optionsSuccessImport": {
     "message": "Import successfully."
@@ -90,7 +78,7 @@
     "message": "Should all local bookmarks be deleted before import?"
   },
   "optionsBeforeExport": { 
-    "message": "All bookmarks are deleted at the backend before exporting. Afterwards the new bookmarks are exported to the backend.\n\nShould the remote bookmarks be deleted before the export?"
+    "message": "All bookmarks are deleted at the server before exporting. Afterwards the new bookmarks are exported to the server.\n\nShould the remote bookmarks be deleted before the export?"
   },
   "optionsInfoRemove": {
     "message": "When you continue, all your current bookmarks are removed.\n\nAre you sure to delete all local bookmarks?"
@@ -99,7 +87,7 @@
     "message": "Options"
   },
   "errorGetBookmarks": {
-  "message": "There was a error retrieving the bookmarks from the backend. The status response is: "
+  "message": "There was a error retrieving the bookmarks from the server. The status response is: "
   },
   "errorSaveBookmarks": {
     "message": "There was some error saving all bookmarks. The status response is: "
@@ -108,13 +96,13 @@
     "message": "There was a problem exporting the bookmarks."
   },
   "successExportBookmarks": {
-    "message": "Local bookmarks successfully added at backend."
+    "message": "Local bookmarks successfully added at server."
   },
   "successImportBookmarks": {
     "message": " bookmarks/folders imported."
   },
   "infoNewClient": {
-    "message": "This browser is a new device and is now registered at the backend."
+    "message": "This browser is a new device and is now registered at the server."
   },
   "infoEmptyConfig": {
     "message": "Configuration is empty. Please configure the AddOn before use."
@@ -135,16 +123,13 @@
     "message": "Link successfully send."
   },
   "bookmarkTab": {
-    "message": "Bookmark direct to backend"
+    "message": "Bookmark direct to server"
   },
   "ManAuto": {
     "message": "Activate automatic synchronization"
   },
   "optionsLastLogged": {
     "message": "Last logged in with"
-  },
-  "optionsRestoreServer": {
-    "message": "The following devices can be restored from the backend. Please select a device from the list or click on cancel to not use any of these devices."
   },
   "optionsLogfile": {
     "message": "Logfile"
@@ -168,10 +153,10 @@
     "message": "Synchronize open tabs between devices"
   },
   "optionsLegendServer": {
-    "message": "Backend URL"
+    "message": "Server URL"
   },
   "optionsLegendBookmarks": {
-    "message": "Backend Bookmarks"
+    "message": "Bookmarks"
   },
   "optionsBTNBackup": {
     "message": "Backup"
